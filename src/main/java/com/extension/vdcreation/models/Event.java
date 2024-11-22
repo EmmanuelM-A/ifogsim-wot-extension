@@ -26,6 +26,8 @@ public class Event {
      */
     private List<Form> forms;
 
+    private Data data;
+
     public String getName() {
         return name;
     }
@@ -56,5 +58,13 @@ public class Event {
 
     public void setForms(List<Form> forms) {
         this.forms = forms;
+    }
+
+    public Data getData() {
+        return data;
+    }
+
+    public void setData(Data data) {
+        this.data = data;
     }
 }

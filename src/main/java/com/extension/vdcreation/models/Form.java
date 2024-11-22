@@ -18,6 +18,8 @@ public class Form {
     /** Security requirements for accessing this form */
     private List<String> security;
 
+    private String subprotocol;
+
     public String getHref() {
         return href;
     }
@@ -48,5 +50,13 @@ public class Form {
 
     public void setSecurity(List<String> security) {
         this.security = security;
+    }
+
+    public String getSubprotocol() {
+        return subprotocol;
+    }
+
+    public void setSubprotocol(String subprotocol) {
+        this.subprotocol = subprotocol;
     }
 }

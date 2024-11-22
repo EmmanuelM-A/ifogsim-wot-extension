@@ -1,7 +1,5 @@
 package com.extension.vdcreation.models;
 
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 /**

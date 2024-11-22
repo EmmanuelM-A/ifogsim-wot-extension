@@ -1,6 +1,9 @@
 package com.extension.vdcreation.models;
 
 import java.util.Map;
+
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.List;
 
 /**
@@ -10,6 +13,7 @@ public class ThingDescription {
     /**
      * JSON-LD context
      */
+    @JsonProperty("@context")
     private String context;
 
     /**
@@ -20,6 +24,7 @@ public class ThingDescription {
     /**
      * Semantic type of the Thing.
      */
+    @JsonProperty("@type")
     private String type;
 
     /**

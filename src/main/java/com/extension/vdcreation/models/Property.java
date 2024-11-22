@@ -8,6 +8,8 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Represents a property of the Thing which can be read or written.
  */
 public class Property {
+    private String name;
+
     @JsonProperty("type")
     private String type;
 
@@ -23,7 +25,22 @@ public class Property {
     @JsonProperty("observable")
     private boolean observable;
 
-    // Getters and Setters
+    private boolean writeable;
+
+    private boolean readOnly;
+
+    private boolean writeOnly;
+
+    /////////////////////////// Getters and Setters ///////////////////////////
+    
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+    
     public String getType() {
         return type;
     }
@@ -54,5 +71,29 @@ public class Property {
 
     public void setObservable(boolean observable) {
         this.observable = observable;
+    }
+
+    public boolean isWriteable() {
+        return writeable;
+    }
+
+    public void setIsWriteable(boolean writeable) {
+        this.writeable = writeable;
+    }
+
+    public boolean getReadOnly() {
+        return readOnly;
+    }
+
+    public void setReadOnly(boolean readOnly) {
+        this.readOnly = readOnly;
+    }
+
+    public boolean getWriteOnly() {
+        return writeOnly;
+    }
+
+    public void setWriteOnly(boolean writeOnly) {
+        this.writeOnly = writeOnly;
     }
 }
