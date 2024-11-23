@@ -210,4 +210,27 @@ public class ThingDescription {
             System.out.println("Details: " + value);
         }
     }
+
+    public static void printData(ThingDescription thingDescription) { 
+        if (thingDescription != null) {
+            System.out.println("-----------------------------------------------------------------");
+            System.out.println("Thing Description: " + thingDescription.getTitle());
+            System.out.println("Context: " + thingDescription.getContext());
+            System.out.println("Id: " + thingDescription.getId());
+            System.out.println("Type: " + thingDescription.getType());
+            System.out.println("Base: " + thingDescription.getBase());
+            System.out.println("Description: " + thingDescription.getDescription());
+            System.out.println("VersionInfo: " + thingDescription.getVersionInfo());
+            ThingDescription.printAttributes("Definitions", thingDescription.getDefinitions());
+            ThingDescription.printAttributes("Security Definitions", thingDescription.getSecurityDefinitions());
+            System.out.println("Security: " + thingDescription.getSecurity());
+            ThingDescription.printAttributes("Properties", thingDescription.getProperties());
+            ThingDescription.printAttributes("Actions", thingDescription.getActions());
+            ThingDescription.printAttributes("Events", thingDescription.getEvents());
+            System.out.println("Links: " + thingDescription.getLinks());
+            System.out.println("-----------------------------------------------------------------");
+        } else {
+            System.out.println("Failed to parse JSON!");
+        }
+    }
 }
