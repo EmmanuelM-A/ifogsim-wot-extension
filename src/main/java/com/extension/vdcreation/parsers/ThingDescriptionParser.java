@@ -10,11 +10,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * https://playground.thingweb.io/
  * https://github.com/w3c/wot-thing-description
  */
-
-
- /*
-  * ISSUE WITH: Cannot deserialize instance of `java.util.ArrayList` out of VALUE_STRING token
-  */
 public class ThingDescriptionParser {
 
     public static void main(String[] args) {
