@@ -195,4 +195,19 @@ public class ThingDescription {
     public void setLinks(List<Link> links) {
         this.links = links;
     }
+
+    public static <T> void printAttributes(String title, Map<String, T> map) {
+        if (map == null || map.isEmpty()) {
+            System.out.println(title + ": No data available.");
+            return;
+        }
+
+        System.out.println(title + ":");
+        for (Map.Entry<String, T> entry : map.entrySet()) {
+            String name = entry.getKey();
+            T value = entry.getValue();
+            System.out.println("Name: " + name);
+            System.out.println("Details: " + value);
+        }
+    }
 }
