@@ -20,6 +20,8 @@ public class Form {
 
     private String subprotocol;
 
+    private Response response;
+
     public String getHref() {
         return href;
     }
@@ -58,5 +60,13 @@ public class Form {
 
     public void setSubprotocol(String subprotocol) {
         this.subprotocol = subprotocol;
+    }
+
+    public Response getResponse() {
+        return response;
+    }
+
+    public void setResponse(Response response) {
+        this.response = response;
     }
 }
