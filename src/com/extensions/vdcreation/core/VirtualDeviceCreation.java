@@ -1,11 +1,14 @@
-package com.extension.vdcreation.core;
+package com.extensions.vdcreation.core;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
-import com.extension.utils.FilePaths;
-import com.extension.vdcreation.models.ThingDescription;
-import com.extension.vdcreation.parsers.ThingDescriptionParser;
+import com.extensions.utils.FilePaths;
+import com.extensions.vdcreation.models.Property;
+import com.extensions.vdcreation.models.ThingDescription;
+import com.extensions.vdcreation.parsers.ThingDescriptionParser;
+import org.fog.entities.Sensor;
 
 
 public class VirtualDeviceCreation {
@@ -21,6 +24,26 @@ public class VirtualDeviceCreation {
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
 
+    public static VirtualDevice createVirtualDevice(ThingDescription thingDescription) {
+        // Create an empty virtual device
+        VirtualDevice virtualDevice = new VirtualDevice();
+
+        // Create the sensors for the TD properties
+        for(Map.Entry<String, Property> propertyEntry : thingDescription.getProperties().entrySet()) {
+            String propertyName = propertyEntry.getKey();
+            Property property = propertyEntry.getValue();
+
+            // Map the property to a Sensor
+            //Sensor sensor = new Sensor()
+        }
+
+        // Create actuators for the TD actions
+
+        // Create event triggers for the events (Create a Trigger class and an EventTrigger class)
+
+
+        return null;
     }
 }
