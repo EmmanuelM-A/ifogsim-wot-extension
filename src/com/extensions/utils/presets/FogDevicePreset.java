@@ -1,6 +1,6 @@
-package com.extensions.utils;
+package com.extensions.utils.presets;
 
-public enum Preset {
+public enum FogDevicePreset {
     DEFAULT(
             0, 0, 0, 0, 0, 0, 0, 0
     ),
@@ -22,7 +22,7 @@ public enum Preset {
     public final double UPLINK_LATENCY;
     public final double RATE_PER_MIPS;
 
-    Preset(int cpu, int memory, long storage, long schedulingInterval, double uplinkBandwidth, double downlinkBandwidth, double uplinkLatency, double ratePerMips) {
+    FogDevicePreset(int cpu, int memory, long storage, long schedulingInterval, double uplinkBandwidth, double downlinkBandwidth, double uplinkLatency, double ratePerMips) {
         this.CPU = cpu;
         this.MEMORY = memory;
         this.STORAGE = storage;

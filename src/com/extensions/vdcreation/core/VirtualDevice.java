@@ -1,6 +1,6 @@
 package com.extensions.vdcreation.core;
 
-import com.extensions.utils.Preset;
+import com.extensions.utils.presets.FogDevicePreset;
 import com.extensions.vdcreation.EventTrigger;
 import org.cloudbus.cloudsim.Storage;
 import org.cloudbus.cloudsim.VmAllocationPolicy;
@@ -9,7 +9,6 @@ import org.fog.entities.FogDevice;
 import org.fog.entities.FogDeviceCharacteristics;
 import org.fog.entities.Sensor;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -37,7 +36,7 @@ public class VirtualDevice {
      */
     private List<EventTrigger> events = null;
 
-    public VirtualDevice(String name, FogDeviceCharacteristics characteristics, VmAllocationPolicy vmAllocationPolicy, List<Storage> storageList, double schedulingInterval, Preset preset) {
+    public VirtualDevice(String name, FogDeviceCharacteristics characteristics, VmAllocationPolicy vmAllocationPolicy, List<Storage> storageList, double schedulingInterval, FogDevicePreset preset) {
         // Instantiate an "empty" fog device with the passed in preset configurations
         try {
             fogDevice = new FogDevice(
