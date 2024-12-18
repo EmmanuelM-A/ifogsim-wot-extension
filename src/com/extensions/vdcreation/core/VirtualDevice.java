@@ -1,5 +1,6 @@
 package com.extensions.vdcreation.core;
 
+import com.extensions.utils.Preset;
 import com.extensions.vdcreation.EventTrigger;
 import org.cloudbus.cloudsim.Storage;
 import org.cloudbus.cloudsim.VmAllocationPolicy;
@@ -19,47 +20,40 @@ public class VirtualDevice {
     /**
      * Represents the core virtual device in the simulation, mapping to the actual IoT device.
      */
-    private FogDevice fogDevice;
+    private FogDevice fogDevice = null;
 
     /**
      * Represents properties of the TD.
      */
-    private List<Sensor> properties;
+    private List<Sensor> properties = null;
 
     /**
      * Represents actions in the TD.
      */
-    private List<Actuator> actions;
+    private List<Actuator> actions = null;
 
     /**
      * Represents events in the TD.
      */
-    private List<EventTrigger> events;
+    private List<EventTrigger> events = null;
 
     public VirtualDevice(String name, FogDeviceCharacteristics characteristics, VmAllocationPolicy vmAllocationPolicy, List<Storage> storageList, double schedulingInterval, Preset preset) {
-        // Instantiate the fog device to represent the IoT device
-            // Define fog characteristics
-            // Define fog device arguments
-
-        // Instantiate an "empty" fog device
-        fogDevice = new FogDevice(
-                name,
-                characteristics,
-                vmAllocationPolicy,
-                storageList,
-                schedulingInterval,
-                preset.UPLINK_BW,
-                preset.DOWNLINK_BW,
-                preset.UPLINK_LATENCY,
-
-        );
-
-
-        //fogDevice = new FogDevice(name, characteristics, )
-
-        properties = new ArrayList<>();
-        actions = new ArrayList<>();
-        events = new ArrayList<>();
+        // Instantiate an "empty" fog device with the passed in preset configurations
+        try {
+            fogDevice = new FogDevice(
+                    name,
+                    characteristics,
+                    vmAllocationPolicy,
+                    storageList,
+                    schedulingInterval,
+                    preset.UPLINK_BW,
+                    preset.DOWNLINK_BW,
+                    preset.UPLINK_LATENCY,
+                    preset.RATE_PER_MIPS
+            );
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
     }
 
     public FogDevice getFogDevice() {
