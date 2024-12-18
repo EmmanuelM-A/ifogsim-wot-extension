@@ -1,17 +1,23 @@
 package com.extensions.vdcreation.core;
 
+import com.extensions.utils.presets.CharacteristicsPreset;
 import com.extensions.utils.presets.FogDevicePreset;
 import com.extensions.vdcreation.EventTrigger;
+import org.cloudbus.cloudsim.Host;
 import org.cloudbus.cloudsim.Pe;
 import org.cloudbus.cloudsim.Storage;
 import org.cloudbus.cloudsim.VmAllocationPolicy;
 import org.cloudbus.cloudsim.power.PowerHost;
 import org.cloudbus.cloudsim.provisioners.RamProvisionerSimple;
+import org.cloudbus.cloudsim.sdn.overbooking.BwProvisionerOverbooking;
 import org.cloudbus.cloudsim.sdn.overbooking.PeProvisionerOverbooking;
 import org.fog.entities.Actuator;
 import org.fog.entities.FogDevice;
 import org.fog.entities.FogDeviceCharacteristics;
 import org.fog.entities.Sensor;
+import org.fog.policy.AppModuleAllocationPolicy;
+import org.fog.scheduler.StreamOperatorScheduler;
+import org.fog.utils.FogLinearPowerModel;
 import org.fog.utils.FogUtils;
 
 import java.util.ArrayList;
@@ -26,47 +32,73 @@ public class VirtualDevice {
     /**
      * Represents the core virtual device in the simulation, mapping to the actual IoT device.
      */
-    private FogDevice fogDevice = null;
+    private FogDevice fogDevice;
 
     /**
      * Represents properties of the TD.
      */
-    private List<Sensor> properties = null;
+    private List<Sensor> properties;
 
     /**
      * Represents actions in the TD.
      */
-    private List<Actuator> actions = null;
+    private List<Actuator> actions;
 
     /**
      * Represents events in the TD.
      */
-    private List<EventTrigger> events = null;
+    private List<EventTrigger> events;
 
     public VirtualDevice(String name, FogDevicePreset preset) {
+        this.fogDevice = createFogDevice(name, preset);
+        this.properties = null;
+        this.actions = null;
+        this.events = null;
+    }
+
+    public FogDevice createFogDevice(String name, FogDevicePreset preset) {
         // Define the arguments for the FogDevice
         List<Pe> peList = new ArrayList<>();
 
         peList.add(new Pe(0, new PeProvisionerOverbooking(preset.MIPS)));
 
-        List<Storage> storageList = new LinkedList<>();
-
         int hostId = FogUtils.generateEntityId();
         long storage = 10000000;
-        int bandwidth = 10000;
 
         PowerHost host = new PowerHost(
-                hostId,
-                new RamProvisionerSimple(preset.R)
-        )
+            hostId,
+            new RamProvisionerSimple(preset.RAM),
+            new BwProvisionerOverbooking(preset.BANDWIDTH),
+            storage,
+            peList,
+            new StreamOperatorScheduler(peList),
+            new FogLinearPowerModel(preset.BUSY_POWER, preset.IDLE_POWER)
+        );
 
+        List<Host> hostList = new ArrayList<>();
+        hostList.add(host);
+
+        List<Storage> storageList = new LinkedList<>();
+
+        FogDeviceCharacteristics characteristics = new FogDeviceCharacteristics(
+                CharacteristicsPreset.SYS_ARCH,
+                CharacteristicsPreset.OS,
+                CharacteristicsPreset.VMM,
+                host,
+                CharacteristicsPreset.TIME_ZONE,
+                CharacteristicsPreset.COST,
+                CharacteristicsPreset.COST_PER_MEMORY,
+                CharacteristicsPreset.COST_PER_STORAGE,
+                CharacteristicsPreset.COST_PER_BW
+        );
 
         // Instantiate an "empty" fog device with the passed in preset configurations
+        FogDevice fogDevice = null;
         try {
             fogDevice = new FogDevice(
                     name,
                     characteristics,
-                    preset.VM_AL,
+                    new AppModuleAllocationPolicy(hostList), // CHANGE THIS LATER
                     storageList,
                     preset.SCHEDULING_INTERVAL,
                     preset.UPLINK_BW,
@@ -74,12 +106,13 @@ public class VirtualDevice {
                     preset.UPLINK_LATENCY,
                     preset.RATE_PER_MIPS
             );
+
+            return fogDevice;
         } catch(Exception e) {
             e.printStackTrace();
+            return null;
         }
     }
-
-
 
     public FogDevice getFogDevice() {
         return fogDevice;

@@ -38,7 +38,7 @@ public class VirtualDeviceFactory {
 
     public VirtualDevice createVirtualDevice(ThingDescription thingDescription) {
         // Create an empty virtual device
-        VirtualDevice virtualDevice = new VirtualDevice()
+        //VirtualDevice virtualDevice = new VirtualDevice()
 
         // Create the sensors for the TD properties
         for(Map.Entry<String, Property> propertyEntry : thingDescription.getProperties().entrySet()) {
