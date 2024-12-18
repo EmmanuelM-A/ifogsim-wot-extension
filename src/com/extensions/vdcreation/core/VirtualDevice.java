@@ -2,13 +2,20 @@ package com.extensions.vdcreation.core;
 
 import com.extensions.utils.presets.FogDevicePreset;
 import com.extensions.vdcreation.EventTrigger;
+import org.cloudbus.cloudsim.Pe;
 import org.cloudbus.cloudsim.Storage;
 import org.cloudbus.cloudsim.VmAllocationPolicy;
+import org.cloudbus.cloudsim.power.PowerHost;
+import org.cloudbus.cloudsim.provisioners.RamProvisionerSimple;
+import org.cloudbus.cloudsim.sdn.overbooking.PeProvisionerOverbooking;
 import org.fog.entities.Actuator;
 import org.fog.entities.FogDevice;
 import org.fog.entities.FogDeviceCharacteristics;
 import org.fog.entities.Sensor;
+import org.fog.utils.FogUtils;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 /**
@@ -36,15 +43,32 @@ public class VirtualDevice {
      */
     private List<EventTrigger> events = null;
 
-    public VirtualDevice(String name, FogDeviceCharacteristics characteristics, VmAllocationPolicy vmAllocationPolicy, List<Storage> storageList, double schedulingInterval, FogDevicePreset preset) {
+    public VirtualDevice(String name, FogDevicePreset preset) {
+        // Define the arguments for the FogDevice
+        List<Pe> peList = new ArrayList<>();
+
+        peList.add(new Pe(0, new PeProvisionerOverbooking(preset.MIPS)));
+
+        List<Storage> storageList = new LinkedList<>();
+
+        int hostId = FogUtils.generateEntityId();
+        long storage = 10000000;
+        int bandwidth = 10000;
+
+        PowerHost host = new PowerHost(
+                hostId,
+                new RamProvisionerSimple(preset.R)
+        )
+
+
         // Instantiate an "empty" fog device with the passed in preset configurations
         try {
             fogDevice = new FogDevice(
                     name,
                     characteristics,
-                    vmAllocationPolicy,
+                    preset.VM_AL,
                     storageList,
-                    schedulingInterval,
+                    preset.SCHEDULING_INTERVAL,
                     preset.UPLINK_BW,
                     preset.DOWNLINK_BW,
                     preset.UPLINK_LATENCY,
@@ -54,6 +78,8 @@ public class VirtualDevice {
             e.printStackTrace();
         }
     }
+
+
 
     public FogDevice getFogDevice() {
         return fogDevice;
