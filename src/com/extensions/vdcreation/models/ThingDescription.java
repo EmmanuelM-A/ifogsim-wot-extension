@@ -38,7 +38,7 @@ public class ThingDescription {
     private String title;
 
     /**
-     * Description of the Thing, providing addtional information.
+     * Description of the Thing, providing additional information.
      */
     private String description;
 
@@ -48,7 +48,7 @@ public class ThingDescription {
     private VersionInfo versionInfo;
 
     /**
-     * Definitions for resuable data schemas in the Thing.
+     * Definitions for reusable data schemas in the Thing.
      */
     private Map<String, Definition> definitions;
 

@@ -1,6 +1,8 @@
 package com.extensions.vdcreation.core;
 
 import com.extensions.vdcreation.EventTrigger;
+import org.cloudbus.cloudsim.Storage;
+import org.cloudbus.cloudsim.VmAllocationPolicy;
 import org.fog.entities.Actuator;
 import org.fog.entities.FogDevice;
 import org.fog.entities.FogDeviceCharacteristics;
@@ -34,10 +36,23 @@ public class VirtualDevice {
      */
     private List<EventTrigger> events;
 
-    public VirtualDevice(String name, FogDeviceCharacteristics characteristics) {
+    public VirtualDevice(String name, FogDeviceCharacteristics characteristics, VmAllocationPolicy vmAllocationPolicy, List<Storage> storageList, double schedulingInterval, Preset preset) {
         // Instantiate the fog device to represent the IoT device
             // Define fog characteristics
             // Define fog device arguments
+
+        // Instantiate an "empty" fog device
+        fogDevice = new FogDevice(
+                name,
+                characteristics,
+                vmAllocationPolicy,
+                storageList,
+                schedulingInterval,
+                preset.UPLINK_BW,
+                preset.DOWNLINK_BW,
+                preset.UPLINK_LATENCY,
+
+        );
 
 
         //fogDevice = new FogDevice(name, characteristics, )
