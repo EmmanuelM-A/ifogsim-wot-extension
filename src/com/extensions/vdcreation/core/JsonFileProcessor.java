@@ -1,4 +1,4 @@
-package com.extension.vdcreation.core;
+package com.extensions.vdcreation.core;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -7,7 +7,8 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.extension.vdcreation.models.ThingDescription;
+import com.extensions.utils.processors.FileProcessor;
+import com.extensions.vdcreation.models.ThingDescription;
 
 public class JsonFileProcessor {
     public static List<ThingDescription> processJsonFiles(String folderPath, FileProcessor<ThingDescription> processor) throws IOException {

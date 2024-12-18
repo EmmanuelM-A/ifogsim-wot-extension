@@ -1,4 +1,4 @@
-package com.extension;
+package com.extensions;
 
 /**
  * Hello world!

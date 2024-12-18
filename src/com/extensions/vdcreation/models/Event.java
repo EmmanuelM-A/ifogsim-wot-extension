@@ -1,4 +1,4 @@
-package com.extension.vdcreation.models;
+package com.extensions.vdcreation.models;
 
 import java.util.List;
 

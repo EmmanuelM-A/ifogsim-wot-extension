@@ -1,4 +1,4 @@
-package com.extension.vdcreation.models;
+package com.extensions.vdcreation.models;
 
 /**
  * Represents a field in an input schema or an event schema.

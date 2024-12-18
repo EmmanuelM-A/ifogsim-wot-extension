@@ -1,4 +1,4 @@
-package com.extension.vdcreation.models;
+package com.extensions.vdcreation.models;
 
 /**
  * Represents a data schema definition for reusable types in the Thing

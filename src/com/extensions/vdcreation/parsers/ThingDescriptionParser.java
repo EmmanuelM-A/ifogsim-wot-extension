@@ -1,9 +1,9 @@
-package com.extension.vdcreation.parsers;
+package com.extensions.vdcreation.parsers;
 
 import java.io.File;
 
-import com.extension.vdcreation.core.FileProcessor;
-import com.extension.vdcreation.models.ThingDescription;
+import com.extensions.utils.processors.FileProcessor;
+import com.extensions.vdcreation.models.ThingDescription;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -12,7 +12,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
  * https://github.com/w3c/wot-thing-description
  */
 public class ThingDescriptionParser implements FileProcessor<ThingDescription> {
-    private ObjectMapper objectMapper;
+    private final ObjectMapper objectMapper;
 
     public ThingDescriptionParser() {
         // Create and configure object instance

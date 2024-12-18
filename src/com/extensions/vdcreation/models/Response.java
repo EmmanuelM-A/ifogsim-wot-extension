@@ -1,4 +1,4 @@
-package com.extension.vdcreation.models;
+package com.extensions.vdcreation.models;
 
 /**
  * Represents a response for an action form in a Thing Description.
