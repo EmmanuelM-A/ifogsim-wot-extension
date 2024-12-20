@@ -1,11 +1,11 @@
 package com.extensions.utils;
 
 public enum FilePaths {
-    JSON_THINGS_REPO("src\\main\\java\\com\\extension\\input\\things");
+    JSON_THINGS_REPO("src/com/extensions/input/things");
 
-    private String filepath;
+    private final String filepath;
 
-    private FilePaths(String filepath) {
+    FilePaths(String filepath) {
         this.filepath = filepath;
     }
 
