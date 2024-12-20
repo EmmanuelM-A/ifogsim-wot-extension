@@ -1,5 +1,7 @@
 package com.extensions.vdcreation.core;
 
+import com.extensions.customfog.ActuatorAction;
+import com.extensions.customfog.SensorProperty;
 import com.extensions.utils.presets.CharacteristicsPreset;
 import com.extensions.utils.presets.FogDevicePreset;
 import com.extensions.vdcreation.EventTrigger;
@@ -23,6 +25,7 @@ import org.fog.utils.FogUtils;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * This class acts as a high level representation of a Thing Description (TD) in iFogSim. When simulated it will be able
@@ -37,17 +40,17 @@ public class VirtualDevice {
     /**
      * Represents properties of the TD.
      */
-    private List<Sensor> properties;
+    private Map<String, SensorProperty> properties;
 
     /**
      * Represents actions in the TD.
      */
-    private List<Actuator> actions;
+    private Map<String, ActuatorAction> actions;
 
     /**
      * Represents events in the TD.
      */
-    private List<EventTrigger> events;
+    private Map<String, EventTrigger> events;
 
     public VirtualDevice(String name, FogDevicePreset preset) {
         this.fogDevice = createFogDevice(name, preset);
@@ -122,27 +125,27 @@ public class VirtualDevice {
         this.fogDevice = fogDevice;
     }
 
-    public List<Sensor> getProperties() {
+    public Map<String, SensorProperty> getProperties() {
         return properties;
     }
 
-    public void setProperties(List<Sensor> properties) {
+    public void setProperties(Map<String, SensorProperty> properties) {
         this.properties = properties;
     }
 
-    public List<Actuator> getActions() {
+    public Map<String, ActuatorAction> getActions() {
         return actions;
     }
 
-    public void setActions(List<Actuator> actions) {
+    public void setActions(Map<String, ActuatorAction> actions) {
         this.actions = actions;
     }
 
-    public List<EventTrigger> getEvents() {
+    public Map<String, EventTrigger> getEvents() {
         return events;
     }
 
-    public void setEvents(List<EventTrigger> events) {
+    public void setEvents(Map<String, EventTrigger> events) {
         this.events = events;
     }
 }

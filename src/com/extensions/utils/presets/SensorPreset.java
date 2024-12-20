@@ -5,7 +5,8 @@ import org.fog.utils.distribution.Distribution;
 
 public enum SensorPreset {
     DEFAULT(
-            0.0, new DeterministicDistribution(5)
+            0.0,
+            new DeterministicDistribution(5)
     );
 
     public final double LATENCY;

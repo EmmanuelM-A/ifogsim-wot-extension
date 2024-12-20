@@ -14,6 +14,7 @@ public class SensorProperty extends Sensor {
 
     public SensorProperty(String name, int userId, String appId, Property property, SensorPreset preset) {
         super(name, property.getType(), userId, appId, preset.DISTRIBUTION);
+
         this.property = property;
         this.preset = preset;
     }

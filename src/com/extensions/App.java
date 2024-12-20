@@ -9,11 +9,8 @@ import java.io.IOException;
 import java.util.List;
 
 public final class App {
-    private App() {
-    }
-
     public static void main(String[] args) {
-        ThingDescriptionParser tdParser = new ThingDescriptionParser();
+        /*ThingDescriptionParser tdParser = new ThingDescriptionParser();
 
         try {
             List<ThingDescription> thingDescriptions = JsonFileProcessor.processJsonFiles(FilePaths.JSON_THINGS_REPO.getFilepath(), tdParser);
@@ -23,6 +20,22 @@ public final class App {
             }
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        }*/
+
+        // User passed in documents
+            // A folder containing TDs
+            // JSON file of the nodeRED system design
+            // Config files for VDs (OPTIONAL)
+
+        // Load and create VDs from TDs
+
+        // Load NodeRED translated system design
+
+        // Construct system using system design and VDs
+            // Apply configs to tagged element if any
+
+        // Start simulation application
+
+        // Stop simulation
     }
 }
