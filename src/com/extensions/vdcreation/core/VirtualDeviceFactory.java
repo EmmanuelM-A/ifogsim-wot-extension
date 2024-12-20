@@ -19,17 +19,17 @@ import org.fog.entities.Sensor;
 
 
 public class VirtualDeviceFactory {
-    private int userId;
+    private final int userId;
 
-    private String appId;
+    private final String appId;
 
-    private int parentId;
+    private final int parentId;
 
-    private FogDevicePreset fogDevicePreset;
+    private final FogDevicePreset fogDevicePreset;
 
-    private SensorPreset sensorPreset;
+    private final SensorPreset sensorPreset;
 
-    private ActuatorPreset actuatorPreset;
+    private final ActuatorPreset actuatorPreset;
 
     public VirtualDeviceFactory(int userId, String appId, int parentId, FogDevicePreset fogDevicePreset, SensorPreset sensorPreset, ActuatorPreset actuatorPreset) {
         this.userId = userId;
@@ -46,9 +46,9 @@ public class VirtualDeviceFactory {
      * @param thingDescription The extracted information from a IoT TD.
      * @return A virtual device that contains all necessary information about the TD.
      */
-    public VirtualDevice createVirtualDevice(ThingDescription thingDescription) {
-        // Create an empty virtual device
-        VirtualDevice virtualDevice = new VirtualDevice(thingDescription.getTitle(), fogDevicePreset);
+    public VirtualDevice createVirtualDevice(ThingDescription thingDescription, List<VirtualDeviceConfig> configs) {
+        // Instantiate a virtual device with no sensors or actuators
+        VirtualDevice virtualDevice = defineVirtualDevice(thingDescription, configs);
 
         // Set the parent ID of the VD
         virtualDevice.getFogDevice().setParentId(parentId);
@@ -97,6 +97,22 @@ public class VirtualDeviceFactory {
             // Add actuator action to the virtual device
         }
 
+        return virtualDevice;
+    }
+
+    private VirtualDevice defineVirtualDevice(ThingDescription thingDescription, List<VirtualDeviceConfig> configs) {
+        // Create a virtual device using defined presets only
+        VirtualDevice virtualDevice = new VirtualDevice(thingDescription.getTitle(), fogDevicePreset);
+
+        // Search through the configs to find a VD config file for the TD
+        for(VirtualDeviceConfig config : configs) {
+            // Check if the TD has a config file for its VD
+            if(config.getTags().contains(thingDescription.getTitle())) {
+                // Create a virtual device using the defined presets and the config data for this VD
+                virtualDevice = new VirtualDevice(thingDescription.getTitle(), fogDevicePreset, config);
+                break;
+            }
+        }
         return virtualDevice;
     }
 }
