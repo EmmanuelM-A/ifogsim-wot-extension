@@ -23,7 +23,7 @@ public class VirtualDeviceFactory {
 
     private String appId;
 
-    private int gatewayDeviceId;
+    private int parentId;
 
     private FogDevicePreset fogDevicePreset;
 
@@ -31,18 +31,27 @@ public class VirtualDeviceFactory {
 
     private ActuatorPreset actuatorPreset;
 
-    public VirtualDeviceFactory(int userId, String appId, int gatewayDeviceId, FogDevicePreset fogDevicePreset, SensorPreset sensorPreset, ActuatorPreset actuatorPreset) {
+    public VirtualDeviceFactory(int userId, String appId, int parentId, FogDevicePreset fogDevicePreset, SensorPreset sensorPreset, ActuatorPreset actuatorPreset) {
         this.userId = userId;
         this.appId = appId;
-        this.gatewayDeviceId = gatewayDeviceId;
+        this.parentId = parentId;
         this.fogDevicePreset = fogDevicePreset;
         this.sensorPreset = sensorPreset;
         this.actuatorPreset = actuatorPreset;
     }
 
+    /**
+     * Creates a virtual device based on the provided {@link ThingDescription}.
+     *
+     * @param thingDescription The extracted information from a IoT TD.
+     * @return A virtual device that contains all necessary information about the TD.
+     */
     public VirtualDevice createVirtualDevice(ThingDescription thingDescription) {
         // Create an empty virtual device
         VirtualDevice virtualDevice = new VirtualDevice(thingDescription.getTitle(), fogDevicePreset);
+
+        // Set the parent ID of the VD
+        virtualDevice.getFogDevice().setParentId(parentId);
 
         // Create the sensors for the TD properties
         for(Map.Entry<String, Property> propertyEntry : thingDescription.getProperties().entrySet()) {
@@ -55,6 +64,9 @@ public class VirtualDeviceFactory {
 
             // Add sensor property to the virtual device
             virtualDevice.getProperties().put(propertyName, sensorProperty);
+
+            // Set the sensor's gateway device ID to the VD's ID
+            sensorProperty.setGatewayDeviceId(virtualDevice.getFogDevice().getId());
         }
 
         // Create actuators for the TD actions
@@ -68,6 +80,9 @@ public class VirtualDeviceFactory {
 
             // Add actuator action to the virtual device
             virtualDevice.getActions().put(actionName, actuatorAction);
+
+            // Set the actuator's gateway device ID to the VD's ID
+            actuatorAction.setGatewayDeviceId(virtualDevice.getFogDevice().getId());
         }
 
         // Create event triggers for the events (Create a Trigger class and an EventTrigger class)

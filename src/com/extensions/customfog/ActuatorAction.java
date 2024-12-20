@@ -11,6 +11,8 @@ public class ActuatorAction extends Actuator {
     public ActuatorAction(String name, int userId, String appId, Action action, ActuatorPreset preset) {
         super(name, userId, appId, action.getName());
 
+        // Define actuator configs in file
+
         this.action = action;
         this.preset = preset;
     }
