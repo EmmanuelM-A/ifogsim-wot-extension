@@ -1,6 +1,7 @@
 package com.extensions.vdcreation.parsers;
 
 import java.io.File;
+import java.io.IOException;
 
 import com.extensions.utils.processors.FileProcessor;
 import com.extensions.vdcreation.models.ThingDescription;
@@ -21,7 +22,7 @@ public class ThingDescriptionParser implements FileProcessor<ThingDescription> {
     }
 
     @Override
-    public ThingDescription process(File file) throws Exception {
+    public ThingDescription process(File file) throws IOException {
         try {
             // Read JSON file and map it to Thing Description class
             return objectMapper.readValue(file, ThingDescription.class);
