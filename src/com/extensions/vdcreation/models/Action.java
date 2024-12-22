@@ -9,11 +9,6 @@ import java.util.List;
  */
 public class Action {
     /** 
-     * The name of the action. 
-     */
-    private String name;
-
-    /** 
      * The description of the action.
      */
     private String description;
@@ -27,14 +22,6 @@ public class Action {
      * Interaction endpoints for invoking this action. 
      */
     private List<Form> forms;
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
 
     public String getDescription() {
         return this.description;

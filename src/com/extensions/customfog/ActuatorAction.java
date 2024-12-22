@@ -9,7 +9,7 @@ public class ActuatorAction extends Actuator {
     private final ActuatorPreset preset;
 
     public ActuatorAction(String name, int userId, String appId, Action action, ActuatorPreset preset) {
-        super(name, userId, appId, action.getName());
+        super(name, userId, appId, name);
 
         // Define actuator configs in file
 
