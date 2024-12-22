@@ -14,9 +14,6 @@ import com.extensions.vdcreation.models.Event;
 import com.extensions.vdcreation.models.Property;
 import com.extensions.vdcreation.models.ThingDescription;
 import com.extensions.vdcreation.models.Action;
-import com.extensions.vdcreation.parsers.ThingDescriptionParser;
-import org.fog.entities.Sensor;
-
 
 public class VirtualDeviceFactory {
     private final int userId;
@@ -86,7 +83,7 @@ public class VirtualDeviceFactory {
         }
 
         // Create event triggers for the events (Create a Trigger class and an EventTrigger class)
-        for(Map.Entry<String, Event> eventEntry : thingDescription.getEvents().entrySet()) {
+        /*for(Map.Entry<String, Event> eventEntry : thingDescription.getEvents().entrySet()) {
             // Extract entry data
             String eventName = eventEntry.getKey();
             Event event = eventEntry.getValue();
@@ -95,7 +92,7 @@ public class VirtualDeviceFactory {
 
 
             // Add actuator action to the virtual device
-        }
+        }*/
 
         return virtualDevice;
     }

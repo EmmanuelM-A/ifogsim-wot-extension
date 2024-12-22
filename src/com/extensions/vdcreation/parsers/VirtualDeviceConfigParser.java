@@ -37,6 +37,7 @@ public class VirtualDeviceConfigParser implements FileProcessor<List<VirtualDevi
                 tags.add(tagNode.asText());
             }
 
+            // Extract other
             long mips = node.get("mips").asLong();
             int ram = node.get("ram").asInt();
             long upBw = node.get("upBw").asLong();
