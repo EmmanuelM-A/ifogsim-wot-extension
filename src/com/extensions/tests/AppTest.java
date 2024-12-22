@@ -16,10 +16,14 @@ import org.fog.application.Application;
 import org.fog.application.selectivity.FractionalSelectivity;
 import org.fog.entities.FogBroker;
 import org.fog.entities.FogDevice;
+import org.fog.entities.Sensor;
 import org.fog.entities.Tuple;
 import org.fog.placement.Controller;
 import org.fog.placement.ModuleMapping;
+import org.fog.placement.ModulePlacementEdgewards;
+import org.fog.placement.ModulePlacementMapping;
 import org.fog.utils.FogEntityFactory;
+import org.fog.utils.TimeKeeper;
 
 import java.io.File;
 import java.io.IOException;
@@ -27,7 +31,7 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-/*
+/**
     A simple IoT application which consists of one Virtual Device, a temperature sensor. This application is a basic Temperature
     Monitoring System, where a temperature sensor reads and sends data periodically to a gateway device, that acts as a
     communication hub for the sensor.
@@ -44,7 +48,7 @@ public class AppTest {
     private static final boolean CLOUD = false;
 
     public static void main(String[] args) {
-        Log.printLine("Loading Simulation....");
+        //Log.printLine("Loading Simulation....");
 
         try {
             Log.disable();
@@ -69,6 +73,8 @@ public class AppTest {
             ThingDescriptionParser tdParser = new ThingDescriptionParser();
 
             ThingDescription tempSensorTD = tdParser.process(new File("src/com/extensions/input/things/MyTemperatureSensor.json"));
+
+            ThingDescription.printData(tempSensorTD);
 
             // Create VD from TD
             VirtualDeviceFactory virtualDeviceFactory = new VirtualDeviceFactory(broker.getId(), appId, FogDevicePreset.DEFAULT, SensorPreset.DEFAULT, ActuatorPreset.DEFAULT);
@@ -108,14 +114,28 @@ public class AppTest {
             }
 
             // Create the controller for managing the simulation
-            Controller controller = new Controller("iot-controller", fogDevices, temperatureSensorVD.get, actuators);
+            Controller controller = new Controller("iot-controller", fogDevices, temperatureSensorVD.getProperties(), temperatureSensorVD.getActions());
 
             // Submit the application to the controller with the appropriate placement strategy
+            controller.submitApplication(
+                    application,
+                    0,
+                    (CLOUD) ? (new ModulePlacementMapping(fogDevices, application, moduleMapping))
+                            : (new ModulePlacementEdgewards(fogDevices, temperatureSensorVD.getProperties(), temperatureSensorVD.getActions(), application, moduleMapping))
+            );
 
+            // Set the simulation start time
+            TimeKeeper.getInstance().setSimulationStartTime(Calendar.getInstance().getTimeInMillis());
 
+            // Start the CloudSim simulation
+            CloudSim.startSimulation();
 
+            // Stop the simulation once it completes
+            CloudSim.stopSimulation();
+
+            Log.printLine("IoT Application simulation finished!");
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.printLine(e.getMessage());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
