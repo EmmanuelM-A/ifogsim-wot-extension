@@ -48,7 +48,7 @@ public class VirtualDeviceFactory {
         VirtualDevice virtualDevice = defineVirtualDevice(thingDescription, configs);
 
         // Set the parent ID of the VD
-        virtualDevice.getFogDevice().setParentId(parentId);
+        //virtualDevice.getFogDevice().setParentId(parentId);
 
         // Create the sensors for the TD properties
         for(Map.Entry<String, Property> propertyEntry : thingDescription.getProperties().entrySet()) {
@@ -100,6 +100,8 @@ public class VirtualDeviceFactory {
     private VirtualDevice defineVirtualDevice(ThingDescription thingDescription, List<VirtualDeviceConfig> configs) {
         // Create a virtual device using defined presets only
         VirtualDevice virtualDevice = new VirtualDevice(thingDescription.getTitle(), fogDevicePreset);
+
+        if(configs == null || configs.isEmpty()) return virtualDevice;
 
         // Search through the configs to find a VD config file for the TD
         for(VirtualDeviceConfig config : configs) {

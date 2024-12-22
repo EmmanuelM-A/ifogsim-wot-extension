@@ -1,0 +1,41 @@
+{
+  "@context": [
+    "https://www.w3.org/2019/wot/td/v1",
+    {
+      "saref": "https://saref.etsi.org/core/"
+    }
+  ],
+  "id": "urn:dev:wot:com:example:temp-sensor-001",
+  "title": "TemperatureSensor",
+  "description": "A simple temperature sensor that sends readings.",
+  "securityDefinitions": {
+    "noSec": {
+      "scheme": "nosec"
+    }
+  },
+  "security": ["noSec"],
+  "properties": {
+    "temperature": {
+      "type": "number",
+      "description": "Current temperature reading in Celsius.",
+      "readOnly": true,
+      "observable": true
+    }
+  },
+  "actions": {
+    "reset": {
+      "description": "Resets the temperature sensor to its default state.",
+      "input": {
+        "type": "null"
+      }
+    }
+  },
+  "events": {
+    "overheat": {
+      "description": "Triggered when the temperature exceeds a threshold.",
+      "data": {
+        "type": "number"
+      }
+    }
+  }
+}
