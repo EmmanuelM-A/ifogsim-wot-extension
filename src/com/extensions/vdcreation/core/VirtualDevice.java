@@ -35,30 +35,30 @@ public class VirtualDevice {
     /**
      * Represents properties of the TD.
      */
-    private final Map<String, SensorProperty> properties;
+    private final List<SensorProperty> properties;
 
     /**
      * Represents actions in the TD.
      */
-    private final Map<String, ActuatorAction> actions;
+    private final List<ActuatorAction> actions;
 
     /**
      * Represents events in the TD.
      */
-    private final Map<String, EventTrigger> events;
+    private final List<EventTrigger> events;
 
     public VirtualDevice(String name, FogDevicePreset preset) {
         this.fogDevice = FogDeviceFactory.createFogDevice(name, preset);
-        this.properties = new HashMap<>();
-        this.actions = new HashMap<>();
-        this.events = new HashMap<>();
+        this.properties = new ArrayList<>();
+        this.actions = new ArrayList<>();
+        this.events = new ArrayList<>();
     }
 
     public VirtualDevice(String name, FogDevicePreset preset, VirtualDeviceConfig config) {
         this.fogDevice = FogDeviceFactory.createFogDevice(name, preset, config);
-        this.properties = new HashMap<>();
-        this.actions = new HashMap<>();
-        this.events = new HashMap<>();
+        this.properties = new ArrayList<>();
+        this.actions = new ArrayList<>();
+        this.events = new ArrayList<>();
     }
 
     public FogDevice getFogDevice() {
@@ -69,15 +69,15 @@ public class VirtualDevice {
         this.fogDevice = fogDevice;
     }
 
-    public Map<String, SensorProperty> getProperties() {
+    public List<SensorProperty> getProperties() {
         return properties;
     }
 
-    public Map<String, ActuatorAction> getActions() {
+    public List<ActuatorAction> getActions() {
         return actions;
     }
 
-    public Map<String, EventTrigger> getEvents() {
+    public List<EventTrigger> getEvents() {
         return events;
     }
 }

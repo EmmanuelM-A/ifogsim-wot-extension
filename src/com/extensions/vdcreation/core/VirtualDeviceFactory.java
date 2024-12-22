@@ -54,7 +54,7 @@ public class VirtualDeviceFactory {
             SensorProperty sensorProperty = new SensorProperty(propertyName, userId, appId, property, sensorPreset);
 
             // Add sensor property to the virtual device
-            virtualDevice.getProperties().put(propertyName, sensorProperty);
+            virtualDevice.getProperties().add(sensorProperty);
 
             // Set the sensor's gateway device ID to the VD's ID
             sensorProperty.setGatewayDeviceId(virtualDevice.getFogDevice().getId());
@@ -73,7 +73,7 @@ public class VirtualDeviceFactory {
             ActuatorAction actuatorAction = new ActuatorAction(actionName, userId, appId, action, actuatorPreset);
 
             // Add actuator action to the virtual device
-            virtualDevice.getActions().put(actionName, actuatorAction);
+            virtualDevice.getActions().add(actuatorAction);
 
             // Set the actuator's gateway device ID to the VD's ID
             actuatorAction.setGatewayDeviceId(virtualDevice.getFogDevice().getId());
