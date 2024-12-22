@@ -20,18 +20,15 @@ public class VirtualDeviceFactory {
 
     private final String appId;
 
-    private final int parentId;
-
     private final FogDevicePreset fogDevicePreset;
 
     private final SensorPreset sensorPreset;
 
     private final ActuatorPreset actuatorPreset;
 
-    public VirtualDeviceFactory(int userId, String appId, int parentId, FogDevicePreset fogDevicePreset, SensorPreset sensorPreset, ActuatorPreset actuatorPreset) {
+    public VirtualDeviceFactory(int userId, String appId, FogDevicePreset fogDevicePreset, SensorPreset sensorPreset, ActuatorPreset actuatorPreset) {
         this.userId = userId;
         this.appId = appId;
-        this.parentId = parentId;
         this.fogDevicePreset = fogDevicePreset;
         this.sensorPreset = sensorPreset;
         this.actuatorPreset = actuatorPreset;
@@ -47,9 +44,6 @@ public class VirtualDeviceFactory {
         // Instantiate a virtual device with no sensors or actuators
         VirtualDevice virtualDevice = defineVirtualDevice(thingDescription, configs);
 
-        // Set the parent ID of the VD
-        //virtualDevice.getFogDevice().setParentId(parentId);
-
         // Create the sensors for the TD properties
         for(Map.Entry<String, Property> propertyEntry : thingDescription.getProperties().entrySet()) {
             // Extract entry data
@@ -64,6 +58,9 @@ public class VirtualDeviceFactory {
 
             // Set the sensor's gateway device ID to the VD's ID
             sensorProperty.setGatewayDeviceId(virtualDevice.getFogDevice().getId());
+
+            // Set the latency of the sensor communication
+            sensorProperty.setLatency(sensorPreset.LATENCY);
         }
 
         // Create actuators for the TD actions
@@ -80,6 +77,9 @@ public class VirtualDeviceFactory {
 
             // Set the actuator's gateway device ID to the VD's ID
             actuatorAction.setGatewayDeviceId(virtualDevice.getFogDevice().getId());
+
+            // Set the latency of the actuator communication
+            actuatorAction.setLatency(actuatorPreset.LATENCY);
         }
 
         // Create event triggers for the events (Create a Trigger class and an EventTrigger class)
