@@ -5,18 +5,18 @@ import org.fog.policy.AppModuleAllocationPolicy;
 
 public enum FogDevicePreset {
     DEFAULT(
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
-            0,
+            1000,
+            4096,
+            100000,
+            10,
+            10000,
+            10000,
+            2,
+            0.01,
             null,
             10000,
-            124.34,
-            85.49
+            150.00,
+            50.00
     );
 
     /*ASU_PERFECT(

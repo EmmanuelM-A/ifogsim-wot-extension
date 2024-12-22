@@ -5,7 +5,7 @@ import org.fog.utils.distribution.Distribution;
 
 public enum ActuatorPreset {
     DEFAULT(
-            0.0
+            5.0
     );
 
     public final double LATENCY;
