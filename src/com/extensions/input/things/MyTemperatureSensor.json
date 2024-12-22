@@ -1,10 +1,5 @@
 {
-  "@context": [
-    "https://www.w3.org/2019/wot/td/v1",
-    {
-      "saref": "https://saref.etsi.org/core/"
-    }
-  ],
+  "@context": "https://www.w3.org/2019/wot/td/v1",
   "id": "urn:dev:wot:com:example:temp-sensor-001",
   "title": "TemperatureSensor",
   "description": "A simple temperature sensor that sends readings.",
@@ -25,7 +20,7 @@
   "actions": {
     "reset": {
       "description": "Resets the temperature sensor to its default state.",
-      "input": {
+      "inputSchema": {
         "type": "null"
       }
     }

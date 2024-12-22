@@ -13,8 +13,10 @@ import org.cloudbus.cloudsim.power.PowerHost;
 import org.cloudbus.cloudsim.provisioners.RamProvisionerSimple;
 import org.cloudbus.cloudsim.sdn.overbooking.BwProvisionerOverbooking;
 import org.cloudbus.cloudsim.sdn.overbooking.PeProvisionerOverbooking;
+import org.fog.entities.Actuator;
 import org.fog.entities.FogDevice;
 import org.fog.entities.FogDeviceCharacteristics;
+import org.fog.entities.Sensor;
 import org.fog.policy.AppModuleAllocationPolicy;
 import org.fog.scheduler.StreamOperatorScheduler;
 import org.fog.utils.FogLinearPowerModel;
@@ -35,12 +37,12 @@ public class VirtualDevice {
     /**
      * Represents properties of the TD.
      */
-    private final List<SensorProperty> properties;
+    private final List<Sensor> properties;
 
     /**
      * Represents actions in the TD.
      */
-    private final List<ActuatorAction> actions;
+    private final List<Actuator> actions;
 
     /**
      * Represents events in the TD.
@@ -69,11 +71,11 @@ public class VirtualDevice {
         this.fogDevice = fogDevice;
     }
 
-    public List<SensorProperty> getProperties() {
+    public List<Sensor> getProperties() {
         return properties;
     }
 
-    public List<ActuatorAction> getActions() {
+    public List<Actuator> getActions() {
         return actions;
     }
 
