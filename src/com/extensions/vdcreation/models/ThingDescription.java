@@ -211,6 +211,20 @@ public class ThingDescription {
         }
     }
 
+    public static void printAttributeNames(String title, Map<String, ?> map) {
+        if (map == null || map.isEmpty()) {
+            System.out.println(title + ": No data available.");
+            return;
+        }
+
+        System.out.print(title + ": [");
+        for (String attributeName : map.keySet()) {
+            System.out.print(" " + attributeName + " ");
+        }
+        System.out.print("]");
+        System.out.println();
+    }
+
     public static void printData(ThingDescription thingDescription) { 
         if (thingDescription != null) {
             System.out.println("-----------------------------------------------------------------");
@@ -221,12 +235,12 @@ public class ThingDescription {
             System.out.println("Base: " + thingDescription.getBase());
             System.out.println("Description: " + thingDescription.getDescription());
             System.out.println("VersionInfo: " + thingDescription.getVersionInfo());
-            ThingDescription.printAttributes("Definitions", thingDescription.getDefinitions());
-            ThingDescription.printAttributes("Security Definitions", thingDescription.getSecurityDefinitions());
+            ThingDescription.printAttributeNames("Definitions", thingDescription.getDefinitions());
+            ThingDescription.printAttributeNames("Security Definitions", thingDescription.getSecurityDefinitions());
             System.out.println("Security: " + thingDescription.getSecurity());
-            ThingDescription.printAttributes("Properties", thingDescription.getProperties());
-            ThingDescription.printAttributes("Actions", thingDescription.getActions());
-            ThingDescription.printAttributes("Events", thingDescription.getEvents());
+            ThingDescription.printAttributeNames("Properties", thingDescription.getProperties());
+            ThingDescription.printAttributeNames("Actions", thingDescription.getActions());
+            ThingDescription.printAttributeNames("Events", thingDescription.getEvents());
             System.out.println("Links: " + thingDescription.getLinks());
             System.out.println("-----------------------------------------------------------------");
         } else {
