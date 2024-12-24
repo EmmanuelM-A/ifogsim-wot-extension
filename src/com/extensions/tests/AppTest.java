@@ -16,13 +16,11 @@ import org.fog.application.Application;
 import org.fog.application.selectivity.FractionalSelectivity;
 import org.fog.entities.FogBroker;
 import org.fog.entities.FogDevice;
-import org.fog.entities.Sensor;
 import org.fog.entities.Tuple;
 import org.fog.placement.Controller;
 import org.fog.placement.ModuleMapping;
 import org.fog.placement.ModulePlacementEdgewards;
 import org.fog.placement.ModulePlacementMapping;
-import org.fog.utils.FogEntityFactory;
 import org.fog.utils.TimeKeeper;
 
 import java.io.File;
@@ -42,13 +40,15 @@ public class AppTest {
      */
     private static final List<FogDevice> fogDevices = new ArrayList<>();
 
+    private static VirtualDevice temperatureSensorVD;
+
     /**
      * Determines if the application is cloud-based
      */
-    private static final boolean CLOUD = false;
+    private static final boolean CLOUD = true;
 
     public static void main(String[] args) {
-        //Log.printLine("Loading Simulation....");
+        Log.printLine("Starting Temperature Monitor....");
 
         try {
             Log.disable();
@@ -74,18 +74,21 @@ public class AppTest {
 
             ThingDescription tempSensorTD = tdParser.process(new File("src/com/extensions/input/things/MyTemperatureSensor.json"));
 
-            ThingDescription.printData(tempSensorTD);
+            //ThingDescription.printData(tempSensorTD);
 
             // Create VD from TD
             VirtualDeviceFactory virtualDeviceFactory = new VirtualDeviceFactory(broker.getId(), appId, FogDevicePreset.DEFAULT, SensorPreset.DEFAULT, ActuatorPreset.DEFAULT);
 
-            VirtualDevice temperatureSensorVD = virtualDeviceFactory.createVirtualDevice(tempSensorTD, null);
+            temperatureSensorVD = virtualDeviceFactory.createVirtualDevice(tempSensorTD, null);
 
             // Create Temperature Monitoring application
             Application application = createApplication(appId, broker.getId());
 
             // Create the physical topology for the fog devices
-            createPhysicalTopology(broker.getId(), appId, temperatureSensorVD);
+            createPhysicalTopology(temperatureSensorVD);
+
+            temperatureSensorVD.getSensorProperty("sensor-temperature").setApp(application);
+            temperatureSensorVD.getActuatorAction("actuator-reset").setApp(application);
 
             // Initialize a module mapping to map application modules to fog devices
             ModuleMapping moduleMapping = ModuleMapping.createModuleMapping();
@@ -94,34 +97,36 @@ public class AppTest {
             if (CLOUD) {
                 // Assign specific application modules to the cloud
                 moduleMapping.addModuleToDevice("data_processor", "cloud"); // Assign data processing to the cloud
-                moduleMapping.addModuleToDevice("alert_manager", "cloud");  // Assign alert management to the cloud
             } else {
                 // Edge-ward placement: Other modules will be dynamically assigned
                 for (FogDevice device : fogDevices) {
-                    if (device.getName().startsWith("sensor_device")) {
+                    if (device.getName().startsWith("sensor")) {
                         // Assign the "temperature_sensor" module to devices that represent sensors
                         moduleMapping.addModuleToDevice("temperature_sensor", device.getName());
-                    }
-                    if (device.getName().startsWith("edge_processor")) {
-                        // Assign the "data_processor" module to devices that act as edge processors
-                        moduleMapping.addModuleToDevice("data_processor", device.getName());
-                    }
-                    if (device.getName().startsWith("alert_device")) {
-                        // Assign the "alert_manager" module to devices responsible for alerting
-                        moduleMapping.addModuleToDevice("alert_manager", device.getName());
                     }
                 }
             }
 
             // Create the controller for managing the simulation
-            Controller controller = new Controller("iot-controller", fogDevices, temperatureSensorVD.getProperties(), temperatureSensorVD.getActions());
+            Controller controller = new Controller(
+                    "iot-controller",
+                    fogDevices,
+                    temperatureSensorVD.getSensorProperties(),
+                    temperatureSensorVD.getActuatorActions()
+            );
 
             // Submit the application to the controller with the appropriate placement strategy
             controller.submitApplication(
                     application,
                     0,
                     (CLOUD) ? (new ModulePlacementMapping(fogDevices, application, moduleMapping))
-                            : (new ModulePlacementEdgewards(fogDevices, temperatureSensorVD.getProperties(), temperatureSensorVD.getActions(), application, moduleMapping))
+                            : (new ModulePlacementEdgewards(
+                                    fogDevices,
+                                    temperatureSensorVD.getSensorProperties(),
+                                    temperatureSensorVD.getActuatorActions(),
+                                    application,
+                                    moduleMapping
+                                ))
             );
 
             // Set the simulation start time
@@ -141,7 +146,7 @@ public class AppTest {
         }
     }
 
-    private static void createPhysicalTopology(int userId, String appId, VirtualDevice virtualDevice) {
+    private static void createPhysicalTopology(VirtualDevice virtualDevice) {
         // Create the cloud device at the top of the hierarchy
         FogDevice cloud = FogDeviceFactory.createFogDevice("cloud", 44800, 100, 10000, 100, 0.01);
 
@@ -201,60 +206,50 @@ public class AppTest {
         // Creates an empty application model with the given app ID and user ID.
         Application application = Application.createApplication(appId, userId);
 
+        String rawTempProcessor = "temperature_sensor";
+        String dataProcessor = "data_processor";
+        String TEMP_SENSOR = "sensor-temperature"; // THE TUPLE TYPE OF THE EDGE NEEDS TO MATCH THE TUPLE TYPE OF THE CORRESPONDING SENSOR
+
         /*
          * Adding modules (vertices) to the application model (directed graph).
          * Each module represents a processing or functional unit in the application.
          */
-        application.addAppModule("temperature_sensor", 10); // Module for processing raw sensor data.
-        application.addAppModule("data_processor", 10);     // Module for evaluating data and making decisions.
-        application.addAppModule("alert_manager", 10);      // Module for managing alerts or user notifications.
+        application.addAppModule(rawTempProcessor, 10); // Module for processing raw sensor data.
+        application.addAppModule(dataProcessor, 10);     // Module for evaluating data and making decisions.
 
         /*
          * Connecting the application modules (vertices) in the application model (directed graph) with edges.
          * Each edge represents data flow (tuples) between modules, sensors, or actuators.
          */
         // Edge from the physical sensor to the processing module.
-        application.addAppEdge("TemperatureSensor", "temperature_sensor", 500, 200, "TEMP_DATA", Tuple.UP, AppEdge.SENSOR);
+        application.addAppEdge(TEMP_SENSOR, rawTempProcessor, 500, 200, TEMP_SENSOR, Tuple.UP, AppEdge.SENSOR);
 
         // Edge from the sensor module to the data processor module.
-        application.addAppEdge("temperature_sensor", "data_processor", 1000, 500, "PROCESSED_TEMP", Tuple.UP, AppEdge.MODULE);
-
-        // Edge from the processor to the alert manager module.
-        application.addAppEdge("data_processor", "alert_manager", 500, 500, "TEMP_ALERT", Tuple.UP, AppEdge.MODULE);
-
-        // Edge from the alert manager to the actuator/display.
-        application.addAppEdge("alert_manager", "DISPLAY", 1000, 200, "ALERT_DISPLAY", Tuple.DOWN, AppEdge.ACTUATOR);
+        application.addAppEdge(rawTempProcessor, dataProcessor, 1000, 500, "PROCESSED_TEMP", Tuple.UP, AppEdge.MODULE);
 
         /*
          * Defining tuple mappings for input-output relationships in each module.
          * Selectivity ratios specify how many output tuples are generated per input tuple.
          */
-        application.addTupleMapping("temperature_sensor", "TEMP_DATA", "PROCESSED_TEMP",
+        application.addTupleMapping(rawTempProcessor, TEMP_SENSOR, "PROCESSED_TEMP",
                 new FractionalSelectivity(1.0)); // 1 output tuple per input tuple in the sensor module.
 
-        application.addTupleMapping("data_processor", "PROCESSED_TEMP", "TEMP_ALERT",
-                new FractionalSelectivity(0.8)); // 0.8 alerts generated per processed tuple in the processor module.
-
-        application.addTupleMapping("alert_manager", "TEMP_ALERT", "ALERT_DISPLAY",
-                new FractionalSelectivity(1.0)); // 1 output tuple per alert in the alert manager module.
 
         /*
          * Defining application loops to monitor and analyze application latency.
          * Loops represent a complete flow of data from source to destination.
          */
         final AppLoop loop1 = new AppLoop(new ArrayList<String>() {{
-            add("TemperatureSensor");  // Start from the physical sensor.
-            add("temperature_sensor"); // Pass through the sensor processing module.
-            add("data_processor");     // Continue to the data processor module.
-            add("alert_manager");      // Next, send alerts via the alert manager.
-            add("DISPLAY");            // End at the display actuator.
+            add(TEMP_SENSOR);  // Start from the physical sensor.
+            add(rawTempProcessor); // Pass through the sensor processing module.
+            add(dataProcessor);     // End at the data processor module.
         }});
-        List<AppLoop> loops = new ArrayList<AppLoop>() {{
+        List<AppLoop> loops =  new ArrayList<AppLoop>() {{
             add(loop1); // Add the defined loop to the application.
         }};
+
         application.setLoops(loops); // Set the application loops for monitoring.
 
         return application; // Return the constructed application model.
     }
-
 }

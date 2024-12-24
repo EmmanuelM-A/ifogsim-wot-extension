@@ -1,19 +1,17 @@
 package com.extensions.vdcreation.core;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
 import com.extensions.customfog.ActuatorAction;
 import com.extensions.customfog.SensorProperty;
-import com.extensions.utils.FilePaths;
 import com.extensions.utils.presets.ActuatorPreset;
 import com.extensions.utils.presets.FogDevicePreset;
 import com.extensions.utils.presets.SensorPreset;
-import com.extensions.vdcreation.models.Event;
 import com.extensions.vdcreation.models.Property;
 import com.extensions.vdcreation.models.ThingDescription;
 import com.extensions.vdcreation.models.Action;
+import org.fog.entities.Sensor;
 
 public class VirtualDeviceFactory {
     private final int userId;
@@ -51,10 +49,10 @@ public class VirtualDeviceFactory {
             Property property = propertyEntry.getValue();
 
             // Map the property to a SensorProperty
-            SensorProperty sensorProperty = new SensorProperty(propertyName, userId, appId, property, sensorPreset);
+            Sensor sensorProperty = new SensorProperty("sensor-" + propertyName, userId, appId, property, sensorPreset);
 
             // Add sensor property to the virtual device
-            virtualDevice.getProperties().add(sensorProperty);
+            virtualDevice.getSensorProperties().add(sensorProperty);
 
             // Set the sensor's gateway device ID to the VD's ID
             sensorProperty.setGatewayDeviceId(virtualDevice.getFogDevice().getId());
@@ -70,10 +68,10 @@ public class VirtualDeviceFactory {
             Action action = actionEntry.getValue();
 
             // Map action to an ActuatorAction
-            ActuatorAction actuatorAction = new ActuatorAction(actionName, userId, appId, action, actuatorPreset);
+            ActuatorAction actuatorAction = new ActuatorAction("actuator-" + actionName, userId, appId, action, actuatorPreset);
 
             // Add actuator action to the virtual device
-            virtualDevice.getActions().add(actuatorAction);
+            virtualDevice.getActuatorActions().add(actuatorAction);
 
             // Set the actuator's gateway device ID to the VD's ID
             actuatorAction.setGatewayDeviceId(virtualDevice.getFogDevice().getId());

@@ -1,26 +1,11 @@
 package com.extensions.vdcreation.core;
 
-import com.extensions.customfog.ActuatorAction;
 import com.extensions.customfog.FogDeviceFactory;
-import com.extensions.customfog.SensorProperty;
-import com.extensions.utils.presets.CharacteristicsPreset;
 import com.extensions.utils.presets.FogDevicePreset;
 import com.extensions.vdcreation.EventTrigger;
-import org.cloudbus.cloudsim.Host;
-import org.cloudbus.cloudsim.Pe;
-import org.cloudbus.cloudsim.Storage;
-import org.cloudbus.cloudsim.power.PowerHost;
-import org.cloudbus.cloudsim.provisioners.RamProvisionerSimple;
-import org.cloudbus.cloudsim.sdn.overbooking.BwProvisionerOverbooking;
-import org.cloudbus.cloudsim.sdn.overbooking.PeProvisionerOverbooking;
 import org.fog.entities.Actuator;
 import org.fog.entities.FogDevice;
-import org.fog.entities.FogDeviceCharacteristics;
 import org.fog.entities.Sensor;
-import org.fog.policy.AppModuleAllocationPolicy;
-import org.fog.scheduler.StreamOperatorScheduler;
-import org.fog.utils.FogLinearPowerModel;
-import org.fog.utils.FogUtils;
 
 import java.util.*;
 
@@ -37,12 +22,12 @@ public class VirtualDevice {
     /**
      * Represents properties of the TD.
      */
-    private final List<Sensor> properties;
+    private final List<Sensor> sensorProperties;
 
     /**
      * Represents actions in the TD.
      */
-    private final List<Actuator> actions;
+    private final List<Actuator> actuatorActions;
 
     /**
      * Represents events in the TD.
@@ -51,15 +36,15 @@ public class VirtualDevice {
 
     public VirtualDevice(String name, FogDevicePreset preset) {
         this.fogDevice = FogDeviceFactory.createFogDevice(name, preset);
-        this.properties = new ArrayList<>();
-        this.actions = new ArrayList<>();
+        this.sensorProperties = new ArrayList<>();
+        this.actuatorActions = new ArrayList<>();
         this.events = new ArrayList<>();
     }
 
     public VirtualDevice(String name, FogDevicePreset preset, VirtualDeviceConfig config) {
         this.fogDevice = FogDeviceFactory.createFogDevice(name, preset, config);
-        this.properties = new ArrayList<>();
-        this.actions = new ArrayList<>();
+        this.sensorProperties = new ArrayList<>();
+        this.actuatorActions = new ArrayList<>();
         this.events = new ArrayList<>();
     }
 
@@ -71,15 +56,29 @@ public class VirtualDevice {
         this.fogDevice = fogDevice;
     }
 
-    public List<Sensor> getProperties() {
-        return properties;
+    public List<Sensor> getSensorProperties() {
+        return sensorProperties;
     }
 
-    public List<Actuator> getActions() {
-        return actions;
+    public List<Actuator> getActuatorActions() {
+        return actuatorActions;
     }
 
     public List<EventTrigger> getEvents() {
         return events;
+    }
+
+    public Sensor getSensorProperty(String name) {
+        for(Sensor sensor : sensorProperties) {
+            if(sensor.getName().equalsIgnoreCase(name)) return sensor;
+        }
+        return null;
+    }
+
+    public Actuator getActuatorAction(String name) {
+        for(Actuator actuator : actuatorActions) {
+            if(actuator.getName().equalsIgnoreCase(name)) return actuator;
+        }
+        return null;
     }
 }
