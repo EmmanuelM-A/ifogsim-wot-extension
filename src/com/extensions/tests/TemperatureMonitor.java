@@ -34,18 +34,16 @@ import java.util.List;
     Monitoring System, where a temperature sensor reads and sends data periodically to a gateway device, that acts as a
     communication hub for the sensor.
  */
-public class AppTest {
+public class TemperatureMonitor {
     /**
      * Represents all fog devices in the application including the fog devices of the virtual devices.
      */
     private static final List<FogDevice> fogDevices = new ArrayList<>();
 
-    private static VirtualDevice temperatureSensorVD;
-
     /**
      * Determines if the application is cloud-based
      */
-    private static final boolean CLOUD = true;
+    private static final boolean CLOUD = false;
 
     public static void main(String[] args) {
         Log.printLine("Starting Temperature Monitor....");
@@ -79,7 +77,7 @@ public class AppTest {
             // Create VD from TD
             VirtualDeviceFactory virtualDeviceFactory = new VirtualDeviceFactory(broker.getId(), appId, FogDevicePreset.DEFAULT, SensorPreset.DEFAULT, ActuatorPreset.DEFAULT);
 
-            temperatureSensorVD = virtualDeviceFactory.createVirtualDevice(tempSensorTD, null);
+            VirtualDevice temperatureSensorVD = virtualDeviceFactory.createVirtualDevice(tempSensorTD, null);
 
             // Create Temperature Monitoring application
             Application application = createApplication(appId, broker.getId());
