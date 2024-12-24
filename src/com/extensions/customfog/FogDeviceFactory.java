@@ -1,13 +1,13 @@
 package com.extensions.customfog;
 
 import com.extensions.utils.presets.CharacteristicsPreset;
+import com.extensions.utils.presets.FogDeviceHostPreset;
 import com.extensions.utils.presets.FogDevicePreset;
 import com.extensions.vdcreation.core.VirtualDeviceConfig;
 import org.cloudbus.cloudsim.Host;
 import org.cloudbus.cloudsim.Pe;
 import org.cloudbus.cloudsim.Storage;
 import org.cloudbus.cloudsim.power.PowerHost;
-import org.cloudbus.cloudsim.power.models.PowerModelLinear;
 import org.cloudbus.cloudsim.provisioners.RamProvisionerSimple;
 import org.cloudbus.cloudsim.sdn.overbooking.BwProvisionerOverbooking;
 import org.cloudbus.cloudsim.sdn.overbooking.PeProvisionerOverbooking;
@@ -34,7 +34,17 @@ public class FogDeviceFactory {
      * @param ratePerMips the cost rate (in currency units) per MIPS for executing tasks on this FogDevice
      * @return the created FogDevice instance with the specified configuration
      */
-    public static FogDevice createFogDevice(String name, int mips, double uplinkBandwidth, double downlinkBandwidth, double latency, double ratePerMips) {
+    public static FogDevice createFogDevice(
+            String name,
+            long mips,
+            int ram,
+            double uplinkBandwidth,
+            double downlinkBandwidth,
+            double latency,
+            double ratePerMips,
+            double busyPower,
+            double idlePower
+            ) {
         // Create a list of Processing Elements (PEs) with the specified MIPS value from the preset
         List<Pe> peList = new ArrayList<>();
         peList.add(new Pe(0, new PeProvisionerOverbooking(mips)));
@@ -42,28 +52,15 @@ public class FogDeviceFactory {
         // Generate a unique host ID and define host properties
         int hostId = FogUtils.generateEntityId();
 
-        // The host memory in MB
-        int hostRam = 2048;
-
-        // The storage capacity in bytes
-        long hostStorage = 10000000;
-
-        // The bandwidth of the host
-        int hostBandwidth = 10000;
-
-        int hostBusyPower = 100;
-
-        int hostIdlePower = 40;
-
         // Create a PowerHost instance with the given specifications
         PowerHost host = new PowerHost(
                 hostId,
-                new RamProvisionerSimple(hostRam),
-                new BwProvisionerOverbooking(hostBandwidth),
-                hostStorage,
+                new RamProvisionerSimple(ram),
+                new BwProvisionerOverbooking(FogDeviceHostPreset.DEFAULT.HOST_BANDWIDTH),
+                FogDeviceHostPreset.DEFAULT.HOST_STORAGE,
                 peList,
                 new StreamOperatorScheduler(peList),
-                new FogLinearPowerModel(hostBusyPower, hostIdlePower)
+                new FogLinearPowerModel(busyPower, idlePower)
         );
 
         // Add the created host to a host list
@@ -119,14 +116,13 @@ public class FogDeviceFactory {
 
         // Generate a unique host ID and define host properties
         int hostId = FogUtils.generateEntityId();
-        long hostStorage = 10000000; // The storage capacity in bytes
 
         // Create a PowerHost instance with the given specifications
         PowerHost host = new PowerHost(
                 hostId,
                 new RamProvisionerSimple(preset.RAM),
-                new BwProvisionerOverbooking(preset.BANDWIDTH),
-                hostStorage,
+                new BwProvisionerOverbooking(FogDeviceHostPreset.DEFAULT.HOST_BANDWIDTH),
+                FogDeviceHostPreset.DEFAULT.HOST_STORAGE, // The storage capacity in bytes
                 peList,
                 new StreamOperatorScheduler(peList),
                 new FogLinearPowerModel(preset.BUSY_POWER, preset.IDLE_POWER)
@@ -190,7 +186,15 @@ public class FogDeviceFactory {
 
         // Generate a unique host ID and use it to create a PowerHost with the virtual device configuration
         int hostId = FogUtils.generateEntityId();
-        PowerHost host = getPowerHost(config, hostId, peList);
+        PowerHost host = new PowerHost(
+                hostId,
+                new RamProvisionerSimple(config.getRam()),
+                new BwProvisionerOverbooking(FogDeviceHostPreset.DEFAULT.HOST_BANDWIDTH),
+                FogDeviceHostPreset.DEFAULT.HOST_STORAGE,
+                peList,
+                new StreamOperatorScheduler(peList),
+                new FogLinearPowerModel(config.getBusyPower(), config.getIdlePower())
+        );
 
         // Add the created host to a host list
         List<Host> hostList = new ArrayList<>();
@@ -232,20 +236,5 @@ public class FogDeviceFactory {
             e.printStackTrace();
             return null;
         }
-    }
-
-    private static PowerHost getPowerHost(VirtualDeviceConfig config, int hostId, List<Pe> peList) {
-        long hostStorage = 10000000; // CHANGE THIS SO USERS CAN DEFINE THE HOST STORAGE
-        int bandwidth = 10000; /// CHANGE THIS SO USERS CAN DEFINE THE BANDWIDTH
-
-        return new PowerHost(
-                hostId,
-                new RamProvisionerSimple(config.getRam()),
-                new BwProvisionerOverbooking(bandwidth),
-                hostStorage,
-                peList,
-                new StreamOperatorScheduler(peList),
-                new FogLinearPowerModel(config.getBusyPower(), config.getIdlePower())
-        );
     }
 }

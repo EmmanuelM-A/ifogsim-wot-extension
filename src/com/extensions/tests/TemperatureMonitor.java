@@ -2,6 +2,7 @@ package com.extensions.tests;
 
 import com.extensions.customfog.FogDeviceFactory;
 import com.extensions.utils.presets.ActuatorPreset;
+import com.extensions.utils.presets.FogDeviceHostPreset;
 import com.extensions.utils.presets.FogDevicePreset;
 import com.extensions.utils.presets.SensorPreset;
 import com.extensions.vdcreation.core.VirtualDevice;
@@ -146,13 +147,13 @@ public class TemperatureMonitor {
 
     private static void createPhysicalTopology(VirtualDevice virtualDevice) {
         // Create the cloud device at the top of the hierarchy
-        FogDevice cloud = FogDeviceFactory.createFogDevice("cloud", 44800, 100, 10000, 100, 0.01);
+        FogDevice cloud = FogDeviceFactory.createFogDevice("cloud", 44800, 40000, 100, 10000, 0, 0.01, 16*103, 16*83.25);
 
         // Cloud has no parent, it is the root of the hierarchy
         cloud.setParentId(-1);
 
         // Create the proxy server device as an intermediary between cloud and gateways
-        FogDevice proxy = FogDeviceFactory.createFogDevice("proxy-server", 2800, 10000, 10000, 100, 0.0);
+        FogDevice proxy = FogDeviceFactory.createFogDevice("proxy-server", 2800, 4000, 10000, 10000, 1, 0.0, 107.339, 83.4333);
 
         // Set the cloud device as the parent of the proxy server
         proxy.setParentId(cloud.getId());
@@ -165,7 +166,7 @@ public class TemperatureMonitor {
         fogDevices.add(proxy);
 
         // Create a gateway device to represent the edge node closer to IoT devices
-        FogDevice gateway = FogDeviceFactory.createFogDevice("gateway", 1000, 10000, 10000, 50, 0.0);
+        FogDevice gateway = FogDeviceFactory.createFogDevice("gateway", 1000, 400, 10000, 10000, 50, 0.0,  81.63, 67.59);
 
         // Set the proxy server as the parent of the gateway
         gateway.setParentId(proxy.getId());
