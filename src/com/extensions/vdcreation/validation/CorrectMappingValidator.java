@@ -1,6 +1,7 @@
 package com.extensions.vdcreation.validation;
 
 import com.extensions.vdcreation.core.VirtualDevice;
+import com.extensions.vdcreation.models.Action;
 import com.extensions.vdcreation.models.Property;
 import org.fog.entities.Sensor;
 
@@ -13,41 +14,26 @@ public class CorrectMappingValidator extends Validator {
     @Override
     public boolean validate() {
         for(VirtualDevice virtualDevice : virtualDevices) {
+            // Validate property mappings
             Map<String, Property> thingDescriptionProperties = virtualDevice.getThingDescription().getProperties();
-            List<Sensor> virtualDeviceSensorProperties = virtualDevice.getSensorProperties();
 
             for (String property : thingDescriptionProperties.keySet()) {
-                if (!virtualDeviceSensorProperties.contains(property)) {
-                    System.err.println("Error: TD property '" + property + "' is not mapped to VD sensor properties.");
-                }
-
                 if(virtualDevice.getSensorProperty(property) == null || !virtualDevice.getSensorProperty(property).getName().equals(property)) {
-
+                    //System.err.println("Error: TD property '" + property + "' is not mapped to VD sensor properties.");
+                    return false;
                 }
             }
 
-            // Validate actions
-            /*Map<String, Object> tdActions = virtualDevice.getThingDescription().getActions();
-            List<String> vdActuatorActions = virtualDevice.getActuatorActions();
+            // Validate action mappings
+            Map<String, Action> thingDescriptionActions = virtualDevice.getThingDescription().getActions();
 
-            for (String action : tdActions.keySet()) {
-                if (!vdActuatorActions.contains(action)) {
-                    System.err.println("Error: TD action '" + action + "' is not mapped to VD actuator actions.");
+            for (String action : thingDescriptionActions.keySet()) {
+                if (virtualDevice.getActuatorAction(action) == null || !virtualDevice.getActuatorAction(action).getName().equals(action)) {
+                    //System.err.println("Error: TD action '" + action + "' is not mapped to VD actuator actions.");
+                    return false;
                 }
-            }*/
+            }
         }
-        return false;
+        return true;
     }
 }
-
-/*
- * VD Validation Report:
- * Map<Validator, Boolean> {
- *      CorrectMapping - Success,
- *      Functional - Success,
- *      Data - Fail,
- *      ... - ...,
- * }
- * sucessRate: 5 / No. validators
- *
- */

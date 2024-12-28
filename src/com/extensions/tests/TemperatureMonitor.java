@@ -1,7 +1,6 @@
 package com.extensions.tests;
 
 import com.extensions.customfog.FogDeviceFactory;
-import com.extensions.utils.FogEntityPrefixes;
 import com.extensions.utils.presets.ActuatorPreset;
 import com.extensions.utils.presets.FogDeviceHostPreset;
 import com.extensions.utils.presets.FogDevicePreset;
@@ -94,7 +93,7 @@ public class TemperatureMonitor {
             // Create the physical topology for the fog devices
             createPhysicalTopology(temperatureSensorVD);
 
-            temperatureSensorVD.getSensorProperty(FogEntityPrefixes.SENSOR_PREFIX + "temperature").setApp(application);
+            temperatureSensorVD.getSensorProperty("temperature").setApp(application);
 
             // Initialize a module mapping to map application modules to fog devices
             ModuleMapping moduleMapping = ModuleMapping.createModuleMapping();
@@ -214,7 +213,7 @@ public class TemperatureMonitor {
 
         String rawTempProcessor = "temperature_sensor";
         String dataProcessor = "data_processor";
-        String TEMP_SENSOR = FogEntityPrefixes.SENSOR_PREFIX + "temperature"; // THE TUPLE TYPE OF THE EDGE NEEDS TO MATCH THE TUPLE TYPE OF THE CORRESPONDING SENSOR
+        String TEMP_SENSOR = "temperature"; // THE TUPLE TYPE OF THE EDGE NEEDS TO MATCH THE TUPLE TYPE OF THE CORRESPONDING SENSOR
 
         /*
          * Adding modules (vertices) to the application model (directed graph).

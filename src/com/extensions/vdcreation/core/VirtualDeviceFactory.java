@@ -46,7 +46,7 @@ public class VirtualDeviceFactory {
         // Create the sensors for the TD properties
         for(Map.Entry<String, Property> propertyEntry : thingDescription.getProperties().entrySet()) {
             // Extract entry data
-            String propertyName = FogEntityPrefixes.SENSOR_PREFIX + propertyEntry.getKey();
+            String propertyName = propertyEntry.getKey();
             Property property = propertyEntry.getValue();
 
             // Map the property to a SensorProperty
@@ -65,7 +65,7 @@ public class VirtualDeviceFactory {
         // Create actuators for the TD actions
         for(Map.Entry<String, Action> actionEntry : thingDescription.getActions().entrySet()) {
             // Extract entry data
-            String actionName = FogEntityPrefixes.ACTUATOR_PREFIX + actionEntry.getKey();
+            String actionName = actionEntry.getKey();
             Action action = actionEntry.getValue();
 
             // Map action to an ActuatorAction

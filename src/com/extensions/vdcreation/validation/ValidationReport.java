@@ -3,6 +3,7 @@ package com.extensions.vdcreation.validation;
 import com.extensions.vdcreation.core.VirtualDevice;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * Contains a report of all VD validators
@@ -20,7 +21,22 @@ public class ValidationReport {
     private double successRate;
     private double acceptance;
 
-    public ValidationReport(List<VirtualDevice> originalVirtualDevices, List<VirtualDevice> passedVirtualDevices, List<Report> virtualDeviceReports) {
+    /**
+     * The id of virtual device which this report is addressed to.
+     */
+    private String id;
+
+    /**
+     * Stores which validators the virtual device passed and which ones it failed.
+     */
+    private Map<Validator, Boolean> validationResults;
+
+    /**
+     * Represents the number validators the virtual device passed.
+     */
+    private boolean successCount;
+
+    public ValidationReport(List<Validator> validators) {
 
     }
 }
