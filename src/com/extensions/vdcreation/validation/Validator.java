@@ -1,6 +1,5 @@
-package com.extensions.vdcreation.core.validation;
+package com.extensions.vdcreation.validation;
 
-import com.extensions.utils.ObjectValidator;
 import com.extensions.vdcreation.core.VirtualDevice;
 
 import java.util.List;

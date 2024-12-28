@@ -1,4 +1,4 @@
-package com.extensions.vdcreation.core.validation;
+package com.extensions.vdcreation.validation;
 
 /**
  * Contains a report of all VD validators

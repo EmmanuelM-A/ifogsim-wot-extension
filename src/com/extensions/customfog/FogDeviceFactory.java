@@ -103,7 +103,7 @@ public class FogDeviceFactory {
     }
 
     /**
-     * Creates a FogDevice instance using the specified name and preset configuration.
+     * Creates a FogDevice instance using the specified name and preset configurations.
      *
      * @param name   The name of the FogDevice to be created.
      * @param preset The preset configuration containing the default values for the device.
@@ -154,7 +154,7 @@ public class FogDeviceFactory {
             fogDevice = new FogDevice(
                     name,
                     characteristics,
-                    new AppModuleAllocationPolicy(hostList), // CHANGE THIS SO USERS CAN DEFINE THEIR OWN VM ALLOCATION POLICY
+                    new AppModuleAllocationPolicy(hostList),
                     storageList,
                     preset.SCHEDULING_INTERVAL,
                     preset.UPLINK_BW,
@@ -172,7 +172,7 @@ public class FogDeviceFactory {
     }
 
     /**
-     * Creates a FogDevice instance using the specified name, preset configuration, and custom virtual device configuration.
+     * Creates a FogDevice instance using the specified name, preset configurations, and custom virtual device configuration.
      *
      * @param name The name of the FogDevice to be created.
      * @param preset The preset configuration containing default values for the device.
@@ -221,14 +221,17 @@ public class FogDeviceFactory {
             fogDevice = new FogDevice(
                     name,
                     characteristics,
-                    new AppModuleAllocationPolicy(hostList), // CHANGE THIS SO USERS CAN DEFINE THEIR OWN VM ALLOCATION POLICY
+                    new AppModuleAllocationPolicy(hostList),
                     storageList,
                     preset.SCHEDULING_INTERVAL,
-                    config.getUpBw(),  // Use custom uplink bandwidth
-                    config.getDownBw(), // Use custom down link bandwidth
+                    config.getUpBw(),
+                    config.getDownBw(),
                     preset.UPLINK_LATENCY,
-                    config.getRatePerMips() // Use custom rate per MIPS
+                    config.getRatePerMips()
             );
+
+            // Set the fog device's level in the hierarchy
+            fogDevice.setLevel(config.getLevel());
 
             // Return null if the FogDevice could not be created
             return fogDevice;

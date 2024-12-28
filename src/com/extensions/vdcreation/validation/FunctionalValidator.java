@@ -1,4 +1,4 @@
-package com.extensions.vdcreation.core.validation;
+package com.extensions.vdcreation.validation;
 
 import com.extensions.vdcreation.core.VirtualDevice;
 
