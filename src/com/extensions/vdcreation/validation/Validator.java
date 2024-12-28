@@ -5,10 +5,10 @@ import com.extensions.vdcreation.core.VirtualDevice;
 import java.util.List;
 
 public abstract class Validator {
-    protected List<VirtualDevice> virtualDevice;
+    protected List<VirtualDevice> virtualDevices;
 
-    public Validator(List<VirtualDevice> virtualDevice) {
-        this.virtualDevice = virtualDevice;
+    public Validator(List<VirtualDevice> virtualDevices) {
+        this.virtualDevices = virtualDevices;
     }
 
     public abstract boolean validate();

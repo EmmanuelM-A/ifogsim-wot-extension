@@ -94,8 +94,7 @@ public class TemperatureMonitor {
             // Create the physical topology for the fog devices
             createPhysicalTopology(temperatureSensorVD);
 
-            temperatureSensorVD.getSensorProperty("sensor-temperature").setApp(application);
-            temperatureSensorVD.getActuatorAction("actuator-reset").setApp(application);
+            temperatureSensorVD.getSensorProperty(FogEntityPrefixes.SENSOR_PREFIX + "temperature").setApp(application);
 
             // Initialize a module mapping to map application modules to fog devices
             ModuleMapping moduleMapping = ModuleMapping.createModuleMapping();
