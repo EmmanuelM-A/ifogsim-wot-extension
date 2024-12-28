@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.extensions.customfog.ActuatorAction;
 import com.extensions.customfog.SensorProperty;
+import com.extensions.utils.FogEntityPrefixes;
 import com.extensions.utils.presets.ActuatorPreset;
 import com.extensions.utils.presets.FogDevicePreset;
 import com.extensions.utils.presets.SensorPreset;
@@ -45,11 +46,11 @@ public class VirtualDeviceFactory {
         // Create the sensors for the TD properties
         for(Map.Entry<String, Property> propertyEntry : thingDescription.getProperties().entrySet()) {
             // Extract entry data
-            String propertyName = propertyEntry.getKey();
+            String propertyName = FogEntityPrefixes.SENSOR_PREFIX + propertyEntry.getKey();
             Property property = propertyEntry.getValue();
 
             // Map the property to a SensorProperty
-            Sensor sensorProperty = new SensorProperty("sensor-" + propertyName, userId, appId, property, sensorPreset);
+            Sensor sensorProperty = new SensorProperty(propertyName, userId, appId, property, sensorPreset);
 
             // Add sensor property to the virtual device
             virtualDevice.getSensorProperties().add(sensorProperty);
@@ -64,11 +65,11 @@ public class VirtualDeviceFactory {
         // Create actuators for the TD actions
         for(Map.Entry<String, Action> actionEntry : thingDescription.getActions().entrySet()) {
             // Extract entry data
-            String actionName = actionEntry.getKey();
+            String actionName = FogEntityPrefixes.ACTUATOR_PREFIX + actionEntry.getKey();
             Action action = actionEntry.getValue();
 
             // Map action to an ActuatorAction
-            ActuatorAction actuatorAction = new ActuatorAction("actuator-" + actionName, userId, appId, action, actuatorPreset);
+            ActuatorAction actuatorAction = new ActuatorAction(actionName, userId, appId, action, actuatorPreset);
 
             // Add actuator action to the virtual device
             virtualDevice.getActuatorActions().add(actuatorAction);
@@ -98,6 +99,9 @@ public class VirtualDeviceFactory {
     private VirtualDevice defineVirtualDevice(ThingDescription thingDescription, List<VirtualDeviceConfig> configs) {
         // Create a virtual device using defined presets only
         VirtualDevice virtualDevice = new VirtualDevice(thingDescription.getTitle(), fogDevicePreset);
+
+        // Store the VD's TD
+        virtualDevice.setThingDescription(thingDescription);
 
         if(configs == null || configs.isEmpty()) return virtualDevice;
 
