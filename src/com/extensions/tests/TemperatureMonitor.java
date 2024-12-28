@@ -9,6 +9,7 @@ import com.extensions.vdcreation.core.VirtualDevice;
 import com.extensions.vdcreation.core.VirtualDeviceFactory;
 import com.extensions.vdcreation.models.ThingDescription;
 import com.extensions.vdcreation.parsers.ThingDescriptionParser;
+import com.extensions.vdcreation.parsers.VirtualDeviceConfigParser;
 import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.core.CloudSim;
 import org.fog.application.AppEdge;
@@ -78,7 +79,13 @@ public class TemperatureMonitor {
             // Create VD from TD
             VirtualDeviceFactory virtualDeviceFactory = new VirtualDeviceFactory(broker.getId(), appId, FogDevicePreset.DEFAULT, SensorPreset.DEFAULT, ActuatorPreset.DEFAULT);
 
-            VirtualDevice temperatureSensorVD = virtualDeviceFactory.createVirtualDevice(tempSensorTD, null);
+            VirtualDeviceConfigParser vdConfigParser = new VirtualDeviceConfigParser();
+
+
+            VirtualDevice temperatureSensorVD = virtualDeviceFactory.createVirtualDevice(
+                    tempSensorTD,
+                    vdConfigParser.process(new File("src/com/extensions/input/configs/TestConfig.json"))
+            );
 
             // Create Temperature Monitoring application
             Application application = createApplication(appId, broker.getId());

@@ -29,15 +29,21 @@ public class VirtualDeviceConfigParser implements FileProcessor<List<VirtualDevi
         // Parse the JSON file into a JsonNode
         JsonNode rootNode = objectMapper.readTree(file);
 
+        // Ensure the "configs" key exists
+        JsonNode configsNode = rootNode.get("configs");
+        if (configsNode == null || !configsNode.isArray()) {
+            throw new IllegalArgumentException("JSON file must contain a 'configs' key with an array of configurations.");
+        }
+
         // Iterate over the JSON array of configurations
-        for (JsonNode node : rootNode) {
+        for (JsonNode node : configsNode) {
             // Extract tagNames as a list of strings
             List<String> tags = new ArrayList<>();
             for (JsonNode tagNode : node.get("tagNames")) {
                 tags.add(tagNode.asText());
             }
 
-            // Extract other
+            // Extract other attributes
             long mips = node.get("mips").asLong();
             int ram = node.get("ram").asInt();
             long upBw = node.get("upBw").asLong();
