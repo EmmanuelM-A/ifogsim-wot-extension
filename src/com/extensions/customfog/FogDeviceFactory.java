@@ -5,6 +5,7 @@ import com.extensions.utils.presets.FogDeviceHostPreset;
 import com.extensions.utils.presets.FogDevicePreset;
 import com.extensions.vdcreation.core.VirtualDeviceConfig;
 import org.cloudbus.cloudsim.Host;
+import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.Pe;
 import org.cloudbus.cloudsim.Storage;
 import org.cloudbus.cloudsim.power.PowerHost;
@@ -149,9 +150,8 @@ public class FogDeviceFactory {
         );
 
         // Create and return the FogDevice instance
-        FogDevice fogDevice = null;
         try {
-            fogDevice = new FogDevice(
+            return new FogDevice(
                     name,
                     characteristics,
                     new AppModuleAllocationPolicy(hostList),
@@ -162,11 +162,9 @@ public class FogDeviceFactory {
                     preset.UPLINK_LATENCY,
                     preset.RATE_PER_MIPS
             );
-
-            return fogDevice;
         } catch(Exception e) {
             // Return null if the FogDevice could not be created
-            e.printStackTrace();
+            Log.printLine(e.getMessage());
             return null;
         }
     }

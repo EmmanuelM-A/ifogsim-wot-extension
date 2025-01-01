@@ -1,6 +1,7 @@
 package com.extensions.tests;
 
 import com.extensions.customfog.FogDeviceFactory;
+import com.extensions.utils.Utility;
 import com.extensions.utils.presets.ActuatorPreset;
 import com.extensions.utils.presets.FogDevicePreset;
 import com.extensions.utils.presets.SensorPreset;
@@ -84,7 +85,7 @@ public class SmartHealthCareFacility {
             //////////////////////////////// INITIAL SETUP ////////////////////////////////
 
             // Specifies the number of users interacting with the cloud.
-            int numUsers = 10;
+            int numUsers = 10; // SWITCH 100 LATER
 
             // Initializes a calendar object to track simulation time and events.
             Calendar calendar = Calendar.getInstance();
@@ -145,8 +146,11 @@ public class SmartHealthCareFacility {
         // Cloud has no parent, it is the root of the hierarchy
         cloud.setParentId(-1);
 
-        // Create the centralized fog devices
-        //FogDevice patientFog = FogDeviceFactory.createFogDevice()
+        // Create the centralized fog devices (patient-fog and facility-fog)
+        FogDevice patientFog = FogDeviceFactory.createFogDevice("patient-fog", FogDevicePreset.DEFAULT);
+        patientFog.setParentId(cloud.getId());
+
+
 
         // Add the cloud and proxy devices to the list of fog devices
         fogDevices.add(cloud);
