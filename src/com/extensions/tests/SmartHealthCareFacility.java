@@ -130,7 +130,7 @@ public class SmartHealthCareFacility {
             Application application = createApplication(appId, broker.getId());
 
             // Create the physical topology for the fog devices
-            createPhysicalTopology(virtualDevices);
+            createPhysicalTopology();
 
             //////////////////////////////// SIMULATION ////////////////////////////////
 
@@ -139,21 +139,70 @@ public class SmartHealthCareFacility {
         }
     }
 
-    private static void createPhysicalTopology(List<VirtualDevice> virtualDevices) {
+    private static void createPhysicalTopology() {
         // Create the cloud device at the top of the hierarchy
         FogDevice cloud = FogDeviceFactory.createFogDevice("cloud", 44800, 40000, 100, 10000, 0, 0.01, 16*103, 16*83.25);
 
         // Cloud has no parent, it is the root of the hierarchy
         cloud.setParentId(-1);
 
+        fogDevices.add(cloud);
+
         // Create the centralized fog devices (patient-fog and facility-fog)
         FogDevice patientFog = FogDeviceFactory.createFogDevice("patient-fog", FogDevicePreset.DEFAULT);
-        patientFog.setParentId(cloud.getId());
+        if(patientFog != null) {
+            patientFog.setParentId(cloud.getId());
+            patientFog.setUplinkLatency(100);
+            fogDevices.add(patientFog);
+        }
 
+        FogDevice facilityFog = FogDeviceFactory.createFogDevice("facility-fog", FogDevicePreset.DEFAULT);
+        if(facilityFog != null) {
+            facilityFog.setParentId(cloud.getId());
+            facilityFog.setUplinkLatency(100);
+            fogDevices.add(facilityFog);
+        }
 
+        // Create the patient fog gateway
+        FogDevice patientGateway = FogDeviceFactory.createFogDevice("patient-gateway", FogDevicePreset.DEFAULT);
+        if(patientGateway != null) {
+            if(patientFog != null) patientGateway.setParentId(patientFog.getId());
+            patientGateway.setUplinkLatency(50);
+            fogDevices.add(patientGateway);
+        }
 
-        // Add the cloud and proxy devices to the list of fog devices
-        fogDevices.add(cloud);
+        // Create the facility fog gateway
+        FogDevice facilityGateway = FogDeviceFactory.createFogDevice("patient-gateway", FogDevicePreset.DEFAULT);
+        if(facilityGateway != null) {
+            if(patientFog != null) facilityGateway.setParentId(patientFog.getId());
+            facilityGateway.setUplinkLatency(50);
+            fogDevices.add(facilityGateway);
+        }
+
+        // Create and connect the virtual devices for the patient gateway
+        String[] patientVDNames = new String[]{
+                "MedicationDispenser", "TemperatureSensor", "HumiditySensor", "AirQualitySensor", "SmartBed", "SmartBed",
+                "SmartBed", "SmartBed", "WearableHealthMonitor", "WearableHealthMonitor", "WearableHealthMonitor",
+                "WearableHealthMonitor"
+        };
+        setupVDConnections(patientVDNames, patientGateway);
+
+        // Create and connect the virtual devices for the fog gateway
+        String[] facilityVDNames = new String[]{
+                "SurveillanceCamera", "RFIDTagScanner", "SmartDoorLock", "SmartLightingSystem"
+        };
+        setupVDConnections(facilityVDNames, facilityGateway);
+    }
+
+    private static void setupVDConnections(String[] vdNames, FogDevice gateway) {
+        for(String vdName : vdNames) {
+            VirtualDevice virtualDevice = Utility.getVirtualDevice(virtualDevices, vdName);
+            if(virtualDevice != null) {
+                FogDevice VDFogDevice = virtualDevice.getFogDevice();
+                if(gateway != null) VDFogDevice.setParentId(gateway.getId());
+                VDFogDevice.setUplinkLatency(10);
+            }
+        }
     }
 
     private static Application createApplication(String appId, int userId) {
