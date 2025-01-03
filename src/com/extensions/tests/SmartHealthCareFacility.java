@@ -205,131 +205,24 @@ public class SmartHealthCareFacility {
         }
     }
 
-    /*private static Application createApplication(String appId, int userId) {
-        // Creates an empty application model with the given app ID and user ID.
-        Application application = Application.createApplication(appId, userId);
-
-        // Define IoT devices' actuators and sensors
-        String MED_DISPENSER = "medication_dispenser";
-
-        // Define module names
-        String CLOUD_MOD = "cloud_module";
-
-        String PATIENT_FOG_MOD = "patient_fog_module";
-        String PATIENT_GATEWAY_MOD = "patient_gateway";
-        String MED_DISPENSER_MOD = "medication_dispenser_module";
-        String ENV_SENSOR_MOD = "env_sensor_module";
-        String AQ_SENSOR_MOD = "air_quality_sensor_module";
-        String SMART_BED_MOD = "smart_bed_module";
-        String WEARABLE_MONITOR_MOD = "wearable_monitor_module";
-
-        String FACILITY_FOG_MOD = "facility_fog_module";
-        String FACILITY_GATEWAY_MOD = "facility_gateway";
-        String SURVEILLANCE_MOD = "surveillance_module";
-        String RFID_SCANNER_MOD = "rfid_scanner_module";
-        String SMART_DOOR_LOCK_MOD = "smart_door_lock_module";
-        String SMART_LIGHTS_MOD = "smart_lighting_module";
-
-        String MED_DATA_PROCESSOR = "medication_processor";
-
-        // Add application modules (vertices)
-        application.addAppModule(CLOUD_MOD, 50);
-        application.addAppModule(PATIENT_FOG_MOD, 30);
-        application.addAppModule(PATIENT_GATEWAY_MOD, 20);
-        application.addAppModule(MED_DISPENSER_MOD, 10);
-        application.addAppModule(ENV_SENSOR_MOD, 10);
-        application.addAppModule(AQ_SENSOR_MOD, 10);
-        application.addAppModule(SMART_BED_MOD, 15);
-        application.addAppModule(WEARABLE_MONITOR_MOD, 15);
-        application.addAppModule(FACILITY_FOG_MOD, 30);
-        application.addAppModule(FACILITY_GATEWAY_MOD, 20);
-        application.addAppModule(SURVEILLANCE_MOD, 10);
-        application.addAppModule(RFID_SCANNER_MOD, 10);
-        application.addAppModule(SMART_DOOR_LOCK_MOD, 10);
-        application.addAppModule(SMART_LIGHTS_MOD, 10);
-
-        // Define tuple types for data flow ****NOTE - THE TUPLE TYPE OF THE EDGE NEEDS TO MATCH THE TUPLE TYPE OF THE CORRESPONDING SENSOR
-        String MEDICATION_DATA = "medication_data";
-        String ENV_DATA = "environmental_data";
-        String AIR_QUALITY_DATA = "air_quality_data";
-        String BED_DATA = "smart_bed_data";
-        String WEARABLE_DATA = "wearable_data";
-
-        String GATEWAY_TO_FOG = "gateway_to_fog_data";
-        String FOG_TO_CLOUD = "fog_to_cloud_data";
-        String CLOUD_TO_FOG = "cloud_to_fog_data";
-        String FOG_TO_GATEWAY = "fog_to_gateway_data";
-
-        String SURVEILLANCE_DATA = "surveillance_data";
-        String RFID_DATA = "rfid_data";
-        String DOOR_LOCK_DATA = "door_lock_data";
-        String LIGHTING_DATA = "lighting_data";
-
-        // Add application edges (directed data flow)
-
-        // Data sources (sensors) to data modules
-        application.addAppEdge(PATIENT_FOG_MOD, MED_DISPENSER_MOD, 100, 500, MEDICATION_DATA, Tuple.UP, AppEdge.SENSOR);
-
-        // Adding edge from MED_DATA_PROCESSOR to MED_DISPENSER (actuator) carrying tuples of type MEDICATION_DATA
-        application.addAppEdge(MED_DISPENSER_MOD, MED_DISPENSER, 100, 50, 100, MEDICATION_DATA, Tuple.DOWN, AppEdge.ACTUATOR);
-
-        // Adding edge from ENV_DATA (sensor) to ENV_SENSOR_MOD carrying tuples of type ENV_DATA
-        application.addAppEdge(ENV_DATA, ENV_SENSOR_MOD, 100, 500, ENV_DATA, Tuple.UP, AppEdge.SENSOR);
-
-        // Adding edge from AIR_QUALITY_DATA (sensor) to AQ_SENSOR_MOD carrying tuples of type AIR_QUALITY_DATA
-        application.addAppEdge(AIR_QUALITY_DATA, AQ_SENSOR_MOD, 100, 500, AIR_QUALITY_DATA, Tuple.UP, AppEdge.SENSOR);
-
-        //application.addAppEdge(BED_DATA, SMART_BED_MOD, 100, 500, BED_DATA, Tuple.UP, AppEdge.SENSOR);
-        application.addAppEdge(WEARABLE_DATA, WEARABLE_MONITOR_MOD, 100, 500, WEARABLE_DATA, Tuple.UP, AppEdge.SENSOR);
-
-        // Data modules to gateway modules
-        application.addAppEdge(ENV_SENSOR_MOD, PATIENT_GATEWAY_MOD, 500, 1000, ENV_DATA, Tuple.UP, AppEdge.MODULE);
-        application.addAppEdge();
-
-        application.addAppEdge(medicationDispenserModule, patientGatewayModule, 500, 1000, GATEWAY_TO_FOG, Tuple.UP, AppEdge.MODULE);
-        application.addAppEdge(envSensorModule, patientGatewayModule, 500, 1000, GATEWAY_TO_FOG, Tuple.UP, AppEdge.MODULE);
-        application.addAppEdge(patientGatewayModule, patientFogModule, 1000, 2000, FOG_TO_CLOUD, Tuple.UP, AppEdge.MODULE);
-        //application.addAppEdge(patientFogModule, cloudModule, 2000, 4000, CLOUD_TO_FOG, Tuple.UP, AppEdge.MODULE);
-
-        //application.addAppEdge(cloudModule, facilityFogModule, 2000, 4000, CLOUD_TO_FOG, Tuple.DOWN, AppEdge.MODULE);
-        application.addAppEdge(facilityFogModule, facilityGatewayModule, 1000, 2000, FOG_TO_GATEWAY, Tuple.DOWN, AppEdge.MODULE);
-
-        application.addAppEdge(SURVEILLANCE_DATA, surveillanceModule, 100, 500, SURVEILLANCE_DATA, Tuple.UP, AppEdge.SENSOR);
-        application.addAppEdge(RFID_DATA, rfidScannerModule, 100, 500, RFID_DATA, Tuple.UP, AppEdge.SENSOR);
-        application.addAppEdge(DOOR_LOCK_DATA, smartDoorLockModule, 100, 500, DOOR_LOCK_DATA, Tuple.UP, AppEdge.SENSOR);
-        application.addAppEdge(LIGHTING_DATA, smartLightingModule, 100, 500, LIGHTING_DATA, Tuple.UP, AppEdge.SENSOR);
-
-        // Define tuple mappings (input-output relationships)
-        application.addTupleMapping(medicationDispenserModule, MEDICATION_DATA, GATEWAY_TO_FOG, new FractionalSelectivity(1.0));
-        application.addTupleMapping(envSensorModule, ENV_DATA, GATEWAY_TO_FOG, new FractionalSelectivity(1.0));
-        application.addTupleMapping(patientGatewayModule, GATEWAY_TO_FOG, FOG_TO_CLOUD, new FractionalSelectivity(1.0));
-        application.addTupleMapping(patientFogModule, FOG_TO_CLOUD, CLOUD_TO_FOG, new FractionalSelectivity(1.0));
-
-        application.addTupleMapping(cloudModule, CLOUD_TO_FOG, FOG_TO_GATEWAY, new FractionalSelectivity(1.0));
-        application.addTupleMapping(facilityFogModule, FOG_TO_GATEWAY, SURVEILLANCE_DATA, new FractionalSelectivity(1.0));
-
-        // Define application loops for latency monitoring
-        List<AppLoop> loops = getAppLoops(MEDICATION_DATA, SURVEILLANCE_DATA);
-
-        application.setLoops(loops);
-
-        return application;
-
-        return null;
-    }*/
-
     private static Application createApplication(String appId, int userId) {
         // Creates an empty application model with the given app ID and user ID.
         Application application = Application.createApplication(appId, userId);
 
         // Define application components
         String CLOUD = "cloud";
+        String PATIENT_GATEWAY = "patient_gateway";
+        String FACILITY_GATEWAY = "facility_gateway";
+        String DISPENSE_CONTROL = "medication_dispenser";
+        String BED_CONTROL = "smart_bed_control";
+        String LIGHTING_CONTROL = "lighting_control";
+        String DOOR_LOCK_CONTROL = "door_lock_control";
 
         // Define modules
         String PATIENT_DATA_PROCESSOR = "patient_data_processor";
         String FACILITY_DATA_PROCESSOR = "facility_data_processor";
 
-        // Define tuple types for data flow ****NOTE - THE TUPLE TYPE OF THE EDGE NEEDS TO MATCH THE TUPLE TYPE OF THE CORRESPONDING SENSOR
+        // Define tuple types for data flow
         String MED_DISPENSER_DATA = "medication_data";
         String ENV_SENSOR_DATA = "environmental_data";
         String AQ_SENSOR_DATA = "air_quality_data";
@@ -354,24 +247,28 @@ public class SmartHealthCareFacility {
          * Connecting the application modules (vertices) in the application model (directed graph) with edges
          */
         // Patient-side devices
-        application.addAppEdge(PATIENT_DATA_PROCESSOR, MED_DISPENSER_DATA, 1000, 100, "DISPENSER_COMMAND", Tuple.DOWN, AppEdge.ACTUATOR);
-        application.addAppEdge(ENV_SENSOR_DATA, PATIENT_DATA_PROCESSOR, 1000, 2000, ENV_SENSOR_DATA, Tuple.UP, AppEdge.SENSOR);
-        application.addAppEdge(AQ_SENSOR_DATA, PATIENT_DATA_PROCESSOR, 1000, 2000, AQ_SENSOR_DATA, Tuple.UP, AppEdge.SENSOR);
-        application.addAppEdge(PATIENT_DATA_PROCESSOR, SMART_BED_DATA, 1000, 2000, "SMART_BED_COMMAND", Tuple.DOWN, AppEdge.ACTUATOR);
-        application.addAppEdge(WEARABLE_SENSOR_DATA, PATIENT_DATA_PROCESSOR, 1000, 2000, WEARABLE_SENSOR_DATA, Tuple.UP, AppEdge.SENSOR);
+        application.addAppEdge(ENV_SENSOR_DATA, PATIENT_GATEWAY, 500, 1000, ENV_SENSOR_DATA, Tuple.UP, AppEdge.SENSOR); // From Environmental Sensors to Patient Gateway
+        application.addAppEdge(AQ_SENSOR_DATA, PATIENT_GATEWAY, 400, 900, AQ_SENSOR_DATA, Tuple.UP, AppEdge.SENSOR); // From Air Quality Sensors to Patient Gateway
+        application.addAppEdge(WEARABLE_SENSOR_DATA, PATIENT_GATEWAY, 700, 1500, WEARABLE_SENSOR_DATA, Tuple.UP, AppEdge.SENSOR); // From Wearable Monitors to Patient Gateway
+        application.addAppEdge(PATIENT_GATEWAY, PATIENT_DATA_PROCESSOR, 800, 2000, AGGREGATED_PATIENT_DATA, Tuple.UP, AppEdge.MODULE); // From Patient Gateway to Data Processor
+
+        application.addAppEdge(PATIENT_DATA_PROCESSOR, MED_DISPENSER_DATA, 300, 500, DISPENSE_CONTROL, Tuple.DOWN, AppEdge.ACTUATOR); // To Medication Dispenser (Actuator)
+        application.addAppEdge(PATIENT_DATA_PROCESSOR, SMART_BED_DATA, 1000, 2000, BED_CONTROL, Tuple.DOWN, AppEdge.ACTUATOR); // To Smart Bed (Actuator)
 
         // Facility-side devices
-        application.addAppEdge(SURVEILLANCE_DATA, FACILITY_DATA_PROCESSOR, 1000, 2000, SURVEILLANCE_DATA, Tuple.UP, AppEdge.SENSOR);
-        application.addAppEdge(RFID_DATA, FACILITY_DATA_PROCESSOR, 1000, 2000, RFID_DATA, Tuple.UP, AppEdge.SENSOR);
-        application.addAppEdge(FACILITY_DATA_PROCESSOR, DOOR_LOCK_DATA, 500, 100, "LOCK_COMMAND", Tuple.DOWN, AppEdge.ACTUATOR);
-        application.addAppEdge(FACILITY_DATA_PROCESSOR, LIGHTING_SYS_DATA, 1000, 100, "LIGHT_COMMAND", Tuple.DOWN, AppEdge.ACTUATOR);
-        application.addAppEdge(LIGHTING_SYS_DATA, FACILITY_DATA_PROCESSOR, 1000, 2000, LIGHTING_SYS_DATA, Tuple.UP, AppEdge.SENSOR);
+        application.addAppEdge(SURVEILLANCE_DATA, FACILITY_GATEWAY, 1000, 2000, SURVEILLANCE_DATA, Tuple.UP, AppEdge.SENSOR); // From Surveillance Cameras to Facility Gateway
+        application.addAppEdge(RFID_DATA, FACILITY_GATEWAY, 500, 800, RFID_DATA, Tuple.UP, AppEdge.SENSOR); // From RFID Scanners to Facility Gateway
+        application.addAppEdge(DOOR_LOCK_DATA, FACILITY_GATEWAY, 600, 1000, DOOR_LOCK_DATA, Tuple.UP, AppEdge.SENSOR); // From Smart Door Locks to Facility Gateway
+        application.addAppEdge(LIGHTING_SYS_DATA, FACILITY_GATEWAY, 400, 700, LIGHTING_SYS_DATA, Tuple.UP, AppEdge.SENSOR); // From Lighting Systems (Sensor part) to Facility Gateway
+        application.addAppEdge(FACILITY_GATEWAY, FACILITY_DATA_PROCESSOR, 900, 2000, AGGREGATED_FACILITY_DATA, Tuple.UP, AppEdge.MODULE); // From Facility Gateway to Data Processor
+
+        application.addAppEdge(FACILITY_DATA_PROCESSOR, LIGHTING_SYS_DATA, 500, 800, LIGHTING_CONTROL, Tuple.DOWN, AppEdge.ACTUATOR); // To Lighting Systems (Actuator part)
+        application.addAppEdge(FACILITY_DATA_PROCESSOR, DOOR_LOCK_DATA, 300, 600, DOOR_LOCK_CONTROL, Tuple.DOWN, AppEdge.ACTUATOR); // To Door Locks (Actuator)
 
         // Cloud connections
         application.addAppEdge(PATIENT_DATA_PROCESSOR, CLOUD, 5000, 500, AGGREGATED_PATIENT_DATA, Tuple.UP, AppEdge.MODULE);
         application.addAppEdge(FACILITY_DATA_PROCESSOR, CLOUD, 5000, 500, AGGREGATED_FACILITY_DATA, Tuple.UP, AppEdge.MODULE);
 
-        // Cloud-to-fog interactions
         application.addAppEdge(CLOUD, PATIENT_DATA_PROCESSOR, 2000, 500, "CLOUD_PATIENT_COMMAND", Tuple.DOWN, AppEdge.MODULE);
         application.addAppEdge(CLOUD, FACILITY_DATA_PROCESSOR, 2000, 500, "CLOUD_FACILITY_COMMAND", Tuple.DOWN, AppEdge.MODULE);
 
@@ -387,31 +284,38 @@ public class SmartHealthCareFacility {
         application.addTupleMapping(FACILITY_DATA_PROCESSOR, DOOR_LOCK_DATA, AGGREGATED_FACILITY_DATA, new FractionalSelectivity(1.0));
         application.addTupleMapping(FACILITY_DATA_PROCESSOR, LIGHTING_SYS_DATA, AGGREGATED_FACILITY_DATA, new FractionalSelectivity(3.2));
 
+        /*
+         *  Defining the application loops
+         */
+        List<List<String>> definedLoops = new ArrayList<>();
+        definedLoops.add(new ArrayList<>(){{add(PATIENT_DATA_PROCESSOR); add(PATIENT_GATEWAY); add(DISPENSE_CONTROL);}});
+        definedLoops.add(new ArrayList<>(){{add(PATIENT_DATA_PROCESSOR); add(PATIENT_GATEWAY); add(BED_CONTROL);}});
+        definedLoops.add(new ArrayList<>(){{add(ENV_SENSOR_DATA); add(PATIENT_GATEWAY); add(PATIENT_DATA_PROCESSOR);}});
+        definedLoops.add(new ArrayList<>(){{add(AQ_SENSOR_DATA); add(PATIENT_GATEWAY); add(PATIENT_DATA_PROCESSOR);}});
+        definedLoops.add(new ArrayList<>(){{add(WEARABLE_SENSOR_DATA); add(PATIENT_GATEWAY); add(PATIENT_DATA_PROCESSOR);}});
 
-        return null;
+        definedLoops.add(new ArrayList<>(){{add(SURVEILLANCE_DATA); add(FACILITY_GATEWAY); add(FACILITY_DATA_PROCESSOR);}});
+        definedLoops.add(new ArrayList<>(){{add(RFID_DATA); add(FACILITY_GATEWAY); add(FACILITY_DATA_PROCESSOR);}});
+        definedLoops.add(new ArrayList<>(){{add(FACILITY_DATA_PROCESSOR); add(FACILITY_GATEWAY); add(DOOR_LOCK_CONTROL);}});
+        definedLoops.add(new ArrayList<>(){{add(LIGHTING_SYS_DATA); add(FACILITY_GATEWAY); add(FACILITY_DATA_PROCESSOR);}});
+        definedLoops.add(new ArrayList<>(){{add(FACILITY_DATA_PROCESSOR); add(FACILITY_GATEWAY); add(LIGHTING_CONTROL);}});
+
+        List<AppLoop> loops = generateAppLoops(definedLoops);
+
+        application.setLoops(loops);
+
+        return application;
     }
 
-    private static List<AppLoop> getAppLoops(String MEDICATION_DATA, String SURVEILLANCE_DATA) {
-        final AppLoop patientLoop = new AppLoop(new ArrayList<String>() {{
-            add(MEDICATION_DATA);
-            add(medicationDispenserModule);
-            add(patientGatewayModule);
-            add(patientFogModule);
-            add(cloudModule);
-        }});
+    private static List<AppLoop> generateAppLoops(List<List<String>> loops) {
+        List<AppLoop> appLoops = new ArrayList<>();
 
-        final AppLoop facilityLoop = new AppLoop(new ArrayList<String>() {{
-            add(SURVEILLANCE_DATA);
-            add(surveillanceModule);
-            add(facilityGatewayModule);
-            add(facilityFogModule);
-            add(cloudModule);
-        }});
+        for(List<String> loop : loops) {
+            AppLoop appLoop = new AppLoop(loop);
 
-        List<AppLoop> loops = new ArrayList<AppLoop>() {{
-            add(patientLoop);
-            add(facilityLoop);
-        }};
-        return loops;
+            appLoops.add(appLoop);
+        }
+
+        return appLoops;
     }
 }
