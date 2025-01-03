@@ -11,6 +11,7 @@ import com.extensions.vdcreation.core.VirtualDeviceFactory;
 import com.extensions.vdcreation.models.ThingDescription;
 import com.extensions.vdcreation.parsers.ThingDescriptionParser;
 import com.extensions.vdcreation.parsers.VirtualDeviceConfigParser;
+import com.extensions.vdcreation.validation.VirtualDeviceValidationManager;
 import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.core.CloudSim;
 import org.fog.application.AppEdge;
@@ -18,7 +19,13 @@ import org.fog.application.AppLoop;
 import org.fog.application.Application;
 import org.fog.application.selectivity.FractionalSelectivity;
 import org.fog.entities.*;
+import org.fog.placement.Controller;
+import org.fog.placement.ModuleMapping;
+import org.fog.placement.ModulePlacementEdgewards;
+import org.fog.placement.ModulePlacementMapping;
+import org.fog.utils.TimeKeeper;
 
+import javax.naming.ldap.Control;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -120,7 +127,12 @@ public class SmartHealthCareFacility {
                         thingDescription,
                         null
                 );
+
                 // Validate VD HERE
+                VirtualDeviceValidationManager validationManager = new VirtualDeviceValidationManager(vd);
+
+                validationManager.validateVirtualDevice();
+
                 virtualDevices.add(vd);
             }
 
@@ -132,10 +144,43 @@ public class SmartHealthCareFacility {
             // Create the physical topology for the fog devices
             createPhysicalTopology();
 
+            Controller controller = null;
+
+            ModuleMapping moduleMapping = ModuleMapping.createModuleMapping();
+
+            // DO MODULE MAPPINGS
+
+            addAllSensorsAndActuators();
+
+            controller = new Controller("master-controller", fogDevices, sensors, actuators);
+
+            controller.submitApplication(application,
+                    (CLOUD) ? (new ModulePlacementMapping(fogDevices, application, moduleMapping))
+                            : (new ModulePlacementEdgewards(fogDevices, sensors, actuators, application, moduleMapping))
+            );
+
             //////////////////////////////// SIMULATION ////////////////////////////////
+
+            TimeKeeper.getInstance().setSimulationStartTime(Calendar.getInstance().getTimeInMillis());
+
+            CloudSim.startSimulation();
+
+            CloudSim.stopSimulation();
 
         } catch (Exception e) {
             Log.printLine(e.getMessage());
+        }
+    }
+
+    private static void addAllSensorsAndActuators() {
+        for(VirtualDevice virtualDevice : virtualDevices) {
+            if(!virtualDevice.getSensorProperties().isEmpty()) {
+                sensors.addAll(virtualDevice.getSensorProperties());
+            }
+
+            if(!virtualDevice.getActuatorActions().isEmpty()) {
+                actuators.addAll(virtualDevice.getActuatorActions());
+            }
         }
     }
 
