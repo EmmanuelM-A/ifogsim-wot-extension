@@ -9,7 +9,7 @@ import java.util.List;
  * thing description (TD).
  */
 public class FunctionalValidator extends Validator {
-    public FunctionalValidator(List<VirtualDevice> virtualDevice) {
+    public FunctionalValidator(VirtualDevice virtualDevice) {
         super(virtualDevice);
     }
 

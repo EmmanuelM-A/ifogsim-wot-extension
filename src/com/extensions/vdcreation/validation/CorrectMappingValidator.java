@@ -9,11 +9,11 @@ import java.util.List;
 import java.util.Map;
 
 public class CorrectMappingValidator extends Validator {
-    public CorrectMappingValidator(List<VirtualDevice> virtualDevices) {super(virtualDevices);}
+    public CorrectMappingValidator(VirtualDevice virtualDevice) {super(virtualDevice);}
 
     @Override
     public boolean validate() {
-        for(VirtualDevice virtualDevice : virtualDevices) {
+        /*for(VirtualDevice virtualDevice : virtualDevices) {
             // Validate property mappings
             Map<String, Property> thingDescriptionProperties = virtualDevice.getThingDescription().getProperties();
 
@@ -33,7 +33,7 @@ public class CorrectMappingValidator extends Validator {
                     return false;
                 }
             }
-        }
+        }*/
         return true;
     }
 }

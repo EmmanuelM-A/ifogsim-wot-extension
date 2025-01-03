@@ -6,27 +6,24 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class VirtualDeviceValidationManager {
-    /*private final List<Validator> validators;
+    private final List<Validator> validators;
 
-    private final List<VirtualDevice> virtualDevices;
+    //private final ValidationReport report;
 
-    private final ValidationReport report;
-
-    public VirtualDeviceValidationManager(List<VirtualDevice> virtualDevices) {
+    public VirtualDeviceValidationManager(VirtualDevice virtualDevice) {
         this.validators = new ArrayList<>();
-        this.virtualDevices = virtualDevices;
         //this.report = new ValidationReport();
 
         // Add you VD validators here as needed
-        validators.add(new FunctionalValidator(virtualDevices));
+        validators.add(new FunctionalValidator(virtualDevice));
         //validators.add(new EventActionValidator(virtualDevices));
         //validators.add(new DataValidator(virtualDevices));
     }
 
-    public boolean validateVirtualDevices() {
+    public boolean validateVirtualDevice() {
         for (Validator validator : validators) {
             if(!validator.validate()) return false;
         }
         return true;
-    }*/
+    }
 }
