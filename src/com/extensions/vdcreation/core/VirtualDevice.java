@@ -97,4 +97,56 @@ public class VirtualDevice {
         }
         return null;
     }
+
+    /**
+     * Prints the data of the Virtual Device (VD).
+     * This static method accesses the fields of a VD and outputs their data.
+     *
+     * @param virtualDevice the instance of VirtualDevice to print its data
+     */
+    public static void printVirtualDeviceData(VirtualDevice virtualDevice) {
+        System.out.println("-----------------------------------------------------------------");
+        if (virtualDevice == null) {
+            System.out.println("Virtual Device is null");
+            return;
+        }
+
+        // Print FogDevice data (assuming FogDevice has a meaningful toString method)
+        if (virtualDevice.getFogDevice() != null) {
+            System.out.println("FogDevice: " + virtualDevice.getFogDevice().getName());
+        } else {
+            System.out.println("FogDevice: Not available");
+        }
+
+        // Print sensor properties
+        System.out.println("Sensor Properties:");
+        if (virtualDevice.getSensorProperties() != null && !virtualDevice.getSensorProperties().isEmpty()) {
+            for (Sensor sensor : virtualDevice.getSensorProperties()) {
+                System.out.println("- " + sensor.getName()); // Assuming Sensor has a meaningful toString method
+            }
+        } else {
+            System.out.println("No sensor properties available");
+        }
+
+        // Print actuator actions
+        System.out.println("Actuator Actions:");
+        if (virtualDevice.getActuatorActions() != null && !virtualDevice.getActuatorActions().isEmpty()) {
+            for (Actuator actuator : virtualDevice.getActuatorActions()) {
+                System.out.println("- " + actuator.getName()); // Assuming Actuator has a meaningful toString method
+            }
+        } else {
+            System.out.println("No actuator actions available");
+        }
+
+        // Print events
+        /*System.out.println("Events:");
+        if (virtualDevice.events != null && !virtualDevice.events.isEmpty()) {
+            for (EventTrigger event : virtualDevice.events) {
+                System.out.println("- " + event); // Assuming EventTrigger has a meaningful toString method
+            }
+        } else {
+            System.out.println("No events available");
+        }*/
+        System.out.println("-----------------------------------------------------------------");
+    }
 }
