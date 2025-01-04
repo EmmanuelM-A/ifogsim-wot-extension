@@ -1,0 +1,53 @@
+{
+  "@context": "https://www.w3.org/2022/wot/td/v1.1",
+  "id": "urn:uuid:7821fbe7-a290-4d5c-9b89-045d6573a1d0",
+  "@type": "Thing",
+  "title": "AirQualitySensor",
+  "description": "TD for an Air Quality Sensor Thing",
+  "securityDefinitions": {
+	"basic_sc": {
+	  "scheme": "basic",
+	  "in": "header"
+	}
+  },
+  "security": "basic_sc",
+  "properties": {
+	"pm2_5": {
+	  "type": "number",
+	  "forms": [
+		{
+		  "href": "https://airqualitysensor.example.com/pm2_5"
+		}
+	  ]
+	},
+	"pm10": {
+	  "type": "number",
+	  "forms": [
+		{
+		  "href": "https://airqualitysensor.example.com/pm10"
+		}
+	  ]
+	}
+  },
+  "actions": {
+	"reset": {
+	  "forms": [
+		{
+		  "href": "https://airqualitysensor.example.com/reset"
+		}
+	  ]
+	}
+  },
+  "events": {
+	"airQualityAlert": {
+	  "data": {
+		"type": "string"
+	  },
+	  "forms": [
+		{
+		  "href": "https://airqualitysensor.example.com/alert"
+		}
+	  ]
+	}
+  }
+}

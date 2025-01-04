@@ -1,0 +1,53 @@
+{
+  "@context": "https://www.w3.org/2022/wot/td/v1.1",
+  "id": "urn:uuid:22fd5b99-3a87-413e-9a5a-5d78cabc5e0f",
+  "@type": "Thing",
+  "title": "EnvironmentalSensor",
+  "description": "TD for an Environmental Sensor Thing",
+  "securityDefinitions": {
+	"basic_sc": {
+	  "scheme": "basic",
+	  "in": "header"
+	}
+  },
+  "security": "basic_sc",
+  "properties": {
+	"temperature": {
+	  "type": "number",
+	  "forms": [
+		{
+		  "href": "https://envsensor.example.com/temperature"
+		}
+	  ]
+	},
+	"humidity": {
+	  "type": "number",
+	  "forms": [
+		{
+		  "href": "https://envsensor.example.com/humidity"
+		}
+	  ]
+	}
+  },
+  "actions": {
+	"calibrate": {
+	  "forms": [
+		{
+		  "href": "https://envsensor.example.com/calibrate"
+		}
+	  ]
+	}
+  },
+  "events": {
+	"sensorError": {
+	  "data": {
+		"type": "string"
+	  },
+	  "forms": [
+		{
+		  "href": "https://envsensor.example.com/sensorError"
+		}
+	  ]
+	}
+  }
+}

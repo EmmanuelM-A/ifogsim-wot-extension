@@ -1,0 +1,53 @@
+{
+  "@context": "https://www.w3.org/2022/wot/td/v1.1",
+  "id": "urn:uuid:1f35d1c7-20ca-4596-903f-89caa3c5ffaf",
+  "@type": "Thing",
+  "title": "WearableHealthMonitor",
+  "description": "TD for a Wearable Health Monitor Thing",
+  "securityDefinitions": {
+	"basic_sc": {
+	  "scheme": "basic",
+	  "in": "header"
+	}
+  },
+  "security": "basic_sc",
+  "properties": {
+	"heartRate": {
+	  "type": "number",
+	  "forms": [
+		{
+		  "href": "https://wearablehealthmonitor.example.com/heartRate"
+		}
+	  ]
+	},
+	"steps": {
+	  "type": "integer",
+	  "forms": [
+		{
+		  "href": "https://wearablehealthmonitor.example.com/steps"
+		}
+	  ]
+	}
+  },
+  "actions": {
+	"syncData": {
+	  "forms": [
+		{
+		  "href": "https://wearablehealthmonitor.example.com/syncData"
+		}
+	  ]
+	}
+  },
+  "events": {
+	"heartRateAlert": {
+	  "data": {
+		"type": "string"
+	  },
+	  "forms": [
+		{
+		  "href": "https://wearablehealthmonitor.example.com/heartRateAlert"
+		}
+	  ]
+	}
+  }
+}

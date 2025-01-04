@@ -132,6 +132,7 @@ public class SmartHealthCareFacility {
                 VirtualDeviceValidationManager validationManager = new VirtualDeviceValidationManager(vd);
 
                 validationManager.validateVirtualDevice();
+                //
 
                 virtualDevices.add(vd);
             }
@@ -148,7 +149,10 @@ public class SmartHealthCareFacility {
 
             ModuleMapping moduleMapping = ModuleMapping.createModuleMapping();
 
-            // DO MODULE MAPPINGS
+            // DO MODULE MAPPINGS & CREATE TD FOR EACH VD
+            if(CLOUD) {
+
+            }
 
             addAllSensorsAndActuators();
 

@@ -1,0 +1,53 @@
+{
+  "@context": "https://www.w3.org/2022/wot/td/v1.1",
+  "id": "urn:uuid:1c587234-d879-4322-9e83-6b0b32cc3e8b",
+  "@type": "Thing",
+  "title": "MedicationDispenser",
+  "description": "TD for a Medication Dispenser Thing",
+  "securityDefinitions": {
+	"basic_sc": {
+	  "scheme": "basic",
+	  "in": "header"
+	}
+  },
+  "security": "basic_sc",
+  "properties": {
+	"status": {
+	  "type": "string",
+	  "forms": [
+		{
+		  "href": "https://meddispenser.example.com/status"
+		}
+	  ]
+	},
+	"medicationLevel": {
+	  "type": "integer",
+	  "forms": [
+		{
+		  "href": "https://meddispenser.example.com/medicationLevel"
+		}
+	  ]
+	}
+  },
+  "actions": {
+	"dispense": {
+	  "forms": [
+		{
+		  "href": "https://meddispenser.example.com/dispense"
+		}
+	  ]
+	}
+  },
+  "events": {
+	"medicationLow": {
+	  "data": {
+		"type": "string"
+	  },
+	  "forms": [
+		{
+		  "href": "https://meddispenser.example.com/medicationLow"
+		}
+	  ]
+	}
+  }
+}

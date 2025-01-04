@@ -1,0 +1,53 @@
+{
+  "@context": "https://www.w3.org/2022/wot/td/v1.1",
+  "id": "urn:uuid:cb63f23b-fdf7-4f5c-a9f1-3c68c6f75b61",
+  "@type": "Thing",
+  "title": "SmartBed",
+  "description": "TD for a Smart Bed Thing",
+  "securityDefinitions": {
+	"basic_sc": {
+	  "scheme": "basic",
+	  "in": "header"
+	}
+  },
+  "security": "basic_sc",
+  "properties": {
+	"bedPosition": {
+	  "type": "string",
+	  "forms": [
+		{
+		  "href": "https://smartbed.example.com/position"
+		}
+	  ]
+	},
+	"temperature": {
+	  "type": "number",
+	  "forms": [
+		{
+		  "href": "https://smartbed.example.com/temperature"
+		}
+	  ]
+	}
+  },
+  "actions": {
+	"adjustPosition": {
+	  "forms": [
+		{
+		  "href": "https://smartbed.example.com/adjustPosition"
+		}
+	  ]
+	}
+  },
+  "events": {
+	"sleepDetected": {
+	  "data": {
+		"type": "string"
+	  },
+	  "forms": [
+		{
+		  "href": "https://smartbed.example.com/sleepDetected"
+		}
+	  ]
+	}
+  }
+}

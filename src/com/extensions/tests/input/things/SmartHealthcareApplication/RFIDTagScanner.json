@@ -1,0 +1,53 @@
+{
+  "@context": "https://www.w3.org/2022/wot/td/v1.1",
+  "id": "urn:uuid:7742b99c-5786-423a-8e68-507e60acb405",
+  "@type": "Thing",
+  "title": "RFIDTagScanner",
+  "description": "TD for an RFID Tag Scanner Thing",
+  "securityDefinitions": {
+	"basic_sc": {
+	  "scheme": "basic",
+	  "in": "header"
+	}
+  },
+  "security": "basic_sc",
+  "properties": {
+	"scanStatus": {
+	  "type": "string",
+	  "forms": [
+		{
+		  "href": "https://rfidscanner.example.com/scanStatus"
+		}
+	  ]
+	},
+	"lastScanTime": {
+	  "type": "string",
+	  "forms": [
+		{
+		  "href": "https://rfidscanner.example.com/lastScanTime"
+		}
+	  ]
+	}
+  },
+  "actions": {
+	"startScan": {
+	  "forms": [
+		{
+		  "href": "https://rfidscanner.example.com/startScan"
+		}
+	  ]
+	}
+  },
+  "events": {
+	"scanComplete": {
+	  "data": {
+		"type": "string"
+	  },
+	  "forms": [
+		{
+		  "href": "https://rfidscanner.example.com/scanComplete"
+		}
+	  ]
+	}
+  }
+}
