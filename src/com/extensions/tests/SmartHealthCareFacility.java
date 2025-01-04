@@ -117,9 +117,13 @@ public class SmartHealthCareFacility {
                     new ThingDescriptionParser()
             );
 
+            for(ThingDescription td : thingDescriptions) {
+                ThingDescription.printData(td);
+            }
+
             // Set up the VD factory to create VDs with the appropriate presets
             VirtualDeviceFactory virtualDeviceFactory = new VirtualDeviceFactory(broker.getId(), appId, FogDevicePreset.DEFAULT, SensorPreset.DEFAULT, ActuatorPreset.DEFAULT);
-            VirtualDeviceConfigParser vdConfigParser = new VirtualDeviceConfigParser();
+            //VirtualDeviceConfigParser vdConfigParser = new VirtualDeviceConfigParser();
 
             // Create the virtual devices using the thing descriptions and factory method
             for(ThingDescription thingDescription : thingDescriptions) {
@@ -129,9 +133,9 @@ public class SmartHealthCareFacility {
                 );
 
                 // Validate VD HERE
-                VirtualDeviceValidationManager validationManager = new VirtualDeviceValidationManager(vd);
+                //VirtualDeviceValidationManager validationManager = new VirtualDeviceValidationManager(vd);
 
-                validationManager.validateVirtualDevice();
+                //validationManager.validateVirtualDevice();
                 //
 
                 virtualDevices.add(vd);
@@ -149,9 +153,21 @@ public class SmartHealthCareFacility {
 
             ModuleMapping moduleMapping = ModuleMapping.createModuleMapping();
 
-            // DO MODULE MAPPINGS & CREATE TD FOR EACH VD
+            // DO MODULE MAPPINGS
             if(CLOUD) {
+                // Assign specific application modules to the cloud
+                moduleMapping.addModuleToDevice("patient_data_processor", "cloud");
+                moduleMapping.addModuleToDevice("facility_data_processor", "cloud");
+            } else {
+                for(FogDevice device : fogDevices) {
+                    if (device.getName().equals("SmartBed")) {
+                        moduleMapping.addModuleToDevice("smart_bed_control", device.getName());
+                    }
 
+                    if (device.getName().equals("WearableHealthMonitor")) {
+                        moduleMapping.addModuleToDevice("wearable_sensor_data", device.getName());
+                    }
+                }
             }
 
             addAllSensorsAndActuators();
@@ -318,8 +334,8 @@ public class SmartHealthCareFacility {
         application.addAppEdge(PATIENT_DATA_PROCESSOR, CLOUD, 5000, 500, AGGREGATED_PATIENT_DATA, Tuple.UP, AppEdge.MODULE);
         application.addAppEdge(FACILITY_DATA_PROCESSOR, CLOUD, 5000, 500, AGGREGATED_FACILITY_DATA, Tuple.UP, AppEdge.MODULE);
 
-        application.addAppEdge(CLOUD, PATIENT_DATA_PROCESSOR, 2000, 500, "CLOUD_PATIENT_COMMAND", Tuple.DOWN, AppEdge.MODULE);
-        application.addAppEdge(CLOUD, FACILITY_DATA_PROCESSOR, 2000, 500, "CLOUD_FACILITY_COMMAND", Tuple.DOWN, AppEdge.MODULE);
+        //application.addAppEdge(CLOUD, PATIENT_DATA_PROCESSOR, 2000, 500, "CLOUD_PATIENT_COMMAND", Tuple.DOWN, AppEdge.MODULE);
+        //application.addAppEdge(CLOUD, FACILITY_DATA_PROCESSOR, 2000, 500, "CLOUD_FACILITY_COMMAND", Tuple.DOWN, AppEdge.MODULE);
 
         /*
          * Defining the input-output relationships (represented by selectivity) of the application modules
