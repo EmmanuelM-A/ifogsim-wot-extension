@@ -1,6 +1,6 @@
 {
   "@context": "https://www.w3.org/2022/wot/td/v1.1",
-  "id": "urn:uuid:bde3b69f-e5e1-4720-a3b0-07f4c6de6d78",
+  "id": "urn:uuid:52c7086b-c56f-4660-9f09-2a0b9e7b153b",
   "@type": "Thing",
   "title": "SmartLightingSystem",
   "description": "TD for a Smart Lighting System",
@@ -12,10 +12,16 @@
   },
   "security": "basic_sc",
   "properties": {
+	"lightStatus": {
+	  "type": "string",
+	  "forms": [
+		{
+		  "href": "https://smartlightingsystem.example.com/lightStatus"
+		}
+	  ]
+	},
 	"brightness": {
 	  "type": "integer",
-	  "minimum": 0,
-	  "maximum": 100,
 	  "forms": [
 		{
 		  "href": "https://smartlightingsystem.example.com/brightness"
@@ -24,22 +30,29 @@
 	}
   },
   "actions": {
-	"setBrightness": {
+	"turnOn": {
 	  "forms": [
 		{
-		  "href": "https://smartlightingsystem.example.com/setBrightness"
+		  "href": "https://smartlightingsystem.example.com/turnOn"
+		}
+	  ]
+	},
+	"turnOff": {
+	  "forms": [
+		{
+		  "href": "https://smartlightingsystem.example.com/turnOff"
 		}
 	  ]
 	}
   },
   "events": {
-	"brightnessChanged": {
+	"lightStatusChanged": {
 	  "data": {
-		"type": "integer"
+		"type": "string"
 	  },
 	  "forms": [
 		{
-		  "href": "https://smartlightingsystem.example.com/brightnessChanged"
+		  "href": "https://smartlightingsystem.example.com/lightStatusChanged"
 		}
 	  ]
 	}

@@ -1,9 +1,9 @@
 {
   "@context": "https://www.w3.org/2022/wot/td/v1.1",
-  "id": "urn:uuid:7f8c8b67-b56a-42f4-9f9c-9d43b6a7b905",
+  "id": "urn:uuid:efcb0f8c-e0fe-4773-8c8e-43d56ab87c43",
   "@type": "Thing",
   "title": "SmartDoorLock",
-  "description": "TD for a Smart Door Lock device",
+  "description": "TD for a Smart Door Lock",
   "securityDefinitions": {
 	"basic_sc": {
 	  "scheme": "basic",
@@ -14,7 +14,6 @@
   "properties": {
 	"lockStatus": {
 	  "type": "string",
-	  "enum": ["locked", "unlocked"],
 	  "forms": [
 		{
 		  "href": "https://smartdoorlock.example.com/lockStatus"
@@ -23,23 +22,29 @@
 	}
   },
   "actions": {
-	"toggleLock": {
+	"lockDoor": {
 	  "forms": [
 		{
-		  "href": "https://smartdoorlock.example.com/toggleLock"
+		  "href": "https://smartdoorlock.example.com/lock"
+		}
+	  ]
+	},
+	"unlockDoor": {
+	  "forms": [
+		{
+		  "href": "https://smartdoorlock.example.com/unlock"
 		}
 	  ]
 	}
   },
   "events": {
-	"lockStatusChanged": {
+	"unauthorizedAccess": {
 	  "data": {
-		"type": "string",
-		"enum": ["locked", "unlocked"]
+		"type": "string"
 	  },
 	  "forms": [
 		{
-		  "href": "https://smartdoorlock.example.com/lockStatusChanged"
+		  "href": "https://smartdoorlock.example.com/unauthorizedAccess"
 		}
 	  ]
 	}
