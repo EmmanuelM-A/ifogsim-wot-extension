@@ -1,0 +1,47 @@
+{
+  "@context": "https://www.w3.org/2022/wot/td/v1.1",
+  "id": "urn:uuid:bde3b69f-e5e1-4720-a3b0-07f4c6de6d78",
+  "@type": "Thing",
+  "title": "SmartLightingSystem",
+  "description": "TD for a Smart Lighting System",
+  "securityDefinitions": {
+	"basic_sc": {
+	  "scheme": "basic",
+	  "in": "header"
+	}
+  },
+  "security": "basic_sc",
+  "properties": {
+	"brightness": {
+	  "type": "integer",
+	  "minimum": 0,
+	  "maximum": 100,
+	  "forms": [
+		{
+		  "href": "https://smartlightingsystem.example.com/brightness"
+		}
+	  ]
+	}
+  },
+  "actions": {
+	"setBrightness": {
+	  "forms": [
+		{
+		  "href": "https://smartlightingsystem.example.com/setBrightness"
+		}
+	  ]
+	}
+  },
+  "events": {
+	"brightnessChanged": {
+	  "data": {
+		"type": "integer"
+	  },
+	  "forms": [
+		{
+		  "href": "https://smartlightingsystem.example.com/brightnessChanged"
+		}
+	  ]
+	}
+  }
+}

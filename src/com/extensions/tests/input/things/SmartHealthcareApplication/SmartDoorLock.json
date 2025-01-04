@@ -1,0 +1,47 @@
+{
+  "@context": "https://www.w3.org/2022/wot/td/v1.1",
+  "id": "urn:uuid:7f8c8b67-b56a-42f4-9f9c-9d43b6a7b905",
+  "@type": "Thing",
+  "title": "SmartDoorLock",
+  "description": "TD for a Smart Door Lock device",
+  "securityDefinitions": {
+	"basic_sc": {
+	  "scheme": "basic",
+	  "in": "header"
+	}
+  },
+  "security": "basic_sc",
+  "properties": {
+	"lockStatus": {
+	  "type": "string",
+	  "enum": ["locked", "unlocked"],
+	  "forms": [
+		{
+		  "href": "https://smartdoorlock.example.com/lockStatus"
+		}
+	  ]
+	}
+  },
+  "actions": {
+	"toggleLock": {
+	  "forms": [
+		{
+		  "href": "https://smartdoorlock.example.com/toggleLock"
+		}
+	  ]
+	}
+  },
+  "events": {
+	"lockStatusChanged": {
+	  "data": {
+		"type": "string",
+		"enum": ["locked", "unlocked"]
+	  },
+	  "forms": [
+		{
+		  "href": "https://smartdoorlock.example.com/lockStatusChanged"
+		}
+	  ]
+	}
+  }
+}
