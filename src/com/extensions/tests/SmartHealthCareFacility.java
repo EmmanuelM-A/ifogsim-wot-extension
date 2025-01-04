@@ -113,7 +113,7 @@ public class SmartHealthCareFacility {
 
             // Extract the metadata from the TDs
             List<ThingDescription> thingDescriptions = JsonFileProcessor.processJsonFiles(
-                    "src/com/extensions/input/things/healthcare",
+                    "src/com/extensions/tests/input/things/SmartHealthcareApplication",
                     new ThingDescriptionParser()
             );
 

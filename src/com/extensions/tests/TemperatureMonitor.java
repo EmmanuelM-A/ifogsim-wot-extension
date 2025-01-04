@@ -72,7 +72,7 @@ public class TemperatureMonitor {
             // Extract metadata for the TD
             ThingDescriptionParser tdParser = new ThingDescriptionParser();
 
-            ThingDescription tempSensorTD = tdParser.process(new File("src/com/extensions/input/things/MyTemperatureSensor.json"));
+            ThingDescription tempSensorTD = tdParser.process(new File("src/com/extensions/tests/input/things/TemperatureMonitorApplication/MyTemperatureSensor.json"));
 
             //ThingDescription.printData(tempSensorTD);
 
@@ -84,7 +84,7 @@ public class TemperatureMonitor {
 
             VirtualDevice temperatureSensorVD = virtualDeviceFactory.createVirtualDevice(
                     tempSensorTD,
-                    vdConfigParser.process(new File("src/com/extensions/input/configs/TestConfig.json"))
+                    vdConfigParser.process(new File("src/com/extensions/tests/input/configs/TestConfig.json"))
             );
 
             // Create Temperature Monitoring application
