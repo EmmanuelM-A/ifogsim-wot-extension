@@ -16,6 +16,7 @@ public class Action {
     /** 
      * Schema defining the input parameters for the action. 
      */
+    @JsonProperty("input")
     private InputSchema inputSchema;
 
     /** 

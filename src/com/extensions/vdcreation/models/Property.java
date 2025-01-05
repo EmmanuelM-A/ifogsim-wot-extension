@@ -8,21 +8,19 @@ import com.fasterxml.jackson.annotation.JsonProperty;
  * Represents a property of the Thing which can be read or written.
  */
 public class Property {
-    private String name;
-
-    @JsonProperty("type")
+    /**
+     * Determines the property type like number, string, boolean, etc
+     */
     private String type;
 
-    @JsonProperty("description")
+    /**
+     *
+     */
     private String description;
-
-    @JsonProperty("forms")
-    private List<Form> forms;
 
     /**
      * Determines if the property is observable/readable
      */
-    @JsonProperty("observable")
     private boolean observable;
 
     private boolean writeable;
@@ -31,15 +29,12 @@ public class Property {
 
     private boolean writeOnly;
 
-    /////////////////////////// Getters and Setters ///////////////////////////
-    
-    public String getName() {
-        return name;
-    }
+    @JsonProperty("enum")
+    private List<String> propertyEnum;
 
-    public void setName(String name) {
-        this.name = name;
-    }
+    private List<Form> forms;
+
+    /////////////////////////// Getters and Setters ///////////////////////////
     
     public String getType() {
         return type;
@@ -95,5 +90,13 @@ public class Property {
 
     public void setWriteOnly(boolean writeOnly) {
         this.writeOnly = writeOnly;
+    }
+
+    public List<String> getPropertyEnum() {
+        return propertyEnum;
+    }
+
+    public void setPropertyEnum(List<String> propertyEnum) {
+        this.propertyEnum = propertyEnum;
     }
 }
