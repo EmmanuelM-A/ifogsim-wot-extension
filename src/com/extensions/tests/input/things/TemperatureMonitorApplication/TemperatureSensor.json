@@ -1,0 +1,162 @@
+{
+  "@context": "https://www.w3.org/2019/wot/td/v1",
+  "id": "urn:dev:wot:com:example:temp-sensor-001",
+  "title": "TemperatureSensor",
+  "description": "A temperature sensor that provides readings, supports calibration, and monitors environmental conditions.",
+  "securityDefinitions": {
+	"noSec": {
+	  "scheme": "nosec"
+	}
+  },
+  "security": ["noSec"],
+  "properties": {
+	"temperature": {
+	  "type": "number",
+	  "description": "Current temperature reading in Celsius.",
+	  "readOnly": true,
+	  "observable": true,
+	  "forms": [
+		{
+		  "href": "https://example.com/temp-sensor/properties/temperature",
+		  "contentType": "application/json",
+		  "op": ["readproperty", "observeproperty"]
+		}
+	  ]
+	},
+	"humidity": {
+	  "type": "number",
+	  "description": "Current humidity percentage.",
+	  "readOnly": true,
+	  "observable": true,
+	  "forms": [
+		{
+		  "href": "https://example.com/temp-sensor/properties/humidity",
+		  "contentType": "application/json",
+		  "op": ["readproperty", "observeproperty"]
+		}
+	  ]
+	},
+	"batteryLevel": {
+	  "type": "number",
+	  "description": "Current battery level of the sensor as a percentage.",
+	  "readOnly": true,
+	  "observable": false,
+	  "forms": [
+		{
+		  "href": "https://example.com/temp-sensor/properties/batteryLevel",
+		  "contentType": "application/json",
+		  "op": ["readproperty"]
+		}
+	  ]
+	},
+	"status": {
+	  "type": "string",
+	  "description": "Status of the sensor (e.g., 'active', 'inactive', 'error').",
+	  "readOnly": true,
+	  "observable": false,
+	  "forms": [
+		{
+		  "href": "https://example.com/temp-sensor/properties/status",
+		  "contentType": "application/json",
+		  "op": ["readproperty"]
+		}
+	  ]
+	}
+  },
+  "actions": {
+	"reset": {
+	  "description": "Resets the temperature sensor to its default state.",
+	  "input": {
+		"type": "null"
+	  },
+	  "forms": [
+		{
+		  "href": "https://example.com/temp-sensor/actions/reset",
+		  "contentType": "application/json",
+		  "op": ["invokeaction"]
+		}
+	  ]
+	},
+	"calibrate": {
+	  "description": "Calibrates the temperature sensor.",
+	  "input": {
+		"type": "object",
+		"properties": {
+		  "calibrationValue": {
+			"type": "number",
+			"description": "Calibration offset value in Celsius."
+		  }
+		},
+		"required": ["calibrationValue"]
+	  },
+	  "forms": [
+		{
+		  "href": "https://example.com/temp-sensor/actions/calibrate",
+		  "contentType": "application/json",
+		  "op": ["invokeaction"]
+		}
+	  ]
+	},
+	"setThreshold": {
+	  "description": "Sets a temperature threshold for triggering the overheat event.",
+	  "input": {
+		"type": "object",
+		"properties": {
+		  "threshold": {
+			"type": "number",
+			"description": "Temperature threshold in Celsius."
+		  }
+		},
+		"required": ["threshold"]
+	  },
+	  "forms": [
+		{
+		  "href": "https://example.com/temp-sensor/actions/setThreshold",
+		  "contentType": "application/json",
+		  "op": ["invokeaction"]
+		}
+	  ]
+	}
+  },
+  "events": {
+	"overheat": {
+	  "description": "Triggered when the temperature exceeds the set threshold.",
+	  "data": {
+		"type": "number"
+	  },
+	  "forms": [
+		{
+		  "href": "https://example.com/temp-sensor/events/overheat",
+		  "contentType": "application/json",
+		  "op": ["subscribeevent"]
+		}
+	  ]
+	},
+	"lowBattery": {
+	  "description": "Triggered when the battery level falls below 10%.",
+	  "data": {
+		"type": "number"
+	  },
+	  "forms": [
+		{
+		  "href": "https://example.com/temp-sensor/events/lowBattery",
+		  "contentType": "application/json",
+		  "op": ["subscribeevent"]
+		}
+	  ]
+	},
+	"statusChange": {
+	  "description": "Triggered when the sensor's status changes.",
+	  "data": {
+		"type": "string"
+	  },
+	  "forms": [
+		{
+		  "href": "https://example.com/temp-sensor/events/statusChange",
+		  "contentType": "application/json",
+		  "op": ["subscribeevent"]
+		}
+	  ]
+	}
+  }
+}

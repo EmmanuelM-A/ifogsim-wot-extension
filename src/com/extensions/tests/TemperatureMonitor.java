@@ -213,7 +213,7 @@ public class TemperatureMonitor {
 
         String rawTempProcessor = "temperature_sensor";
         String dataProcessor = "data_processor";
-        String TEMP_SENSOR = "temperature"; // THE TUPLE TYPE OF THE EDGE NEEDS TO MATCH THE TUPLE TYPE OF THE CORRESPONDING SENSOR
+        String TEMP_SENSOR = "temperature"; // THE TUPLE TYPE OF THE EDGE DEVICE NEEDS TO MATCH THE TUPLE TYPE OF THE CORRESPONDING SENSOR
 
         /*
          * Adding modules (vertices) to the application model (directed graph).

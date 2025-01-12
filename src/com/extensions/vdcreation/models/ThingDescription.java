@@ -219,7 +219,8 @@ public class ThingDescription {
 
         System.out.print(title + ": [");
         for (String attributeName : map.keySet()) {
-            System.out.print(" - " + attributeName);
+            System.out.print(attributeName + ", ");
+
         }
         System.out.print("]");
         System.out.println();

@@ -117,10 +117,6 @@ public class SmartHealthCareFacility {
                     new ThingDescriptionParser()
             );
 
-            for(ThingDescription td : thingDescriptions) {
-                ThingDescription.printData(td);
-            }
-
             // Set up the VD factory to create VDs with the appropriate presets
             VirtualDeviceFactory virtualDeviceFactory = new VirtualDeviceFactory(broker.getId(), appId, FogDevicePreset.DEFAULT, SensorPreset.DEFAULT, ActuatorPreset.DEFAULT);
             //VirtualDeviceConfigParser vdConfigParser = new VirtualDeviceConfigParser();
@@ -139,7 +135,10 @@ public class SmartHealthCareFacility {
                 //
 
                 virtualDevices.add(vd);
+
+                VirtualDevice.printVirtualDeviceData(vd);
             }
+
 
             //////////////////////////////// APPLICATION SETUP ////////////////////////////////
 
@@ -159,24 +158,25 @@ public class SmartHealthCareFacility {
                 moduleMapping.addModuleToDevice("patient_data_processor", "cloud");
                 moduleMapping.addModuleToDevice("facility_data_processor", "cloud");
             } else {
-                for(FogDevice device : fogDevices) {
+                /*for(FogDevice device : fogDevices) {
                     if (device.getName().equals("SmartBed")) {
-                        moduleMapping.addModuleToDevice("smart_bed_control", device.getName());
+                        System.out.println("FOUR1");
+                        moduleMapping.addModuleToDevice("adjustPosition", device.getName());
                     }
 
                     if (device.getName().equals("WearableHealthMonitor")) {
                         moduleMapping.addModuleToDevice("wearable_sensor_data", device.getName());
                     }
-                }
+                }*/
             }
 
             addAllSensorsAndActuators();
 
             controller = new Controller("master-controller", fogDevices, sensors, actuators);
 
-            controller.submitApplication(application,
-                    (CLOUD) ? (new ModulePlacementMapping(fogDevices, application, moduleMapping))
-                            : (new ModulePlacementEdgewards(fogDevices, sensors, actuators, application, moduleMapping))
+            controller.submitApplication(application, 0,
+                    ((CLOUD) ? (new ModulePlacementMapping(fogDevices, application, moduleMapping))
+                            : (new ModulePlacementEdgewards(fogDevices, sensors, actuators, application, moduleMapping)))
             );
 
             //////////////////////////////// SIMULATION ////////////////////////////////
@@ -188,7 +188,7 @@ public class SmartHealthCareFacility {
             CloudSim.stopSimulation();
 
         } catch (Exception e) {
-            Log.printLine(e.getMessage());
+            e.printStackTrace();
         }
     }
 
@@ -237,7 +237,7 @@ public class SmartHealthCareFacility {
         }
 
         // Create the facility fog gateway
-        FogDevice facilityGateway = FogDeviceFactory.createFogDevice("patient-gateway", FogDevicePreset.DEFAULT);
+        FogDevice facilityGateway = FogDeviceFactory.createFogDevice("facility-gateway", FogDevicePreset.DEFAULT);
         if(facilityGateway != null) {
             if(patientFog != null) facilityGateway.setParentId(patientFog.getId());
             facilityGateway.setUplinkLatency(50);
@@ -266,6 +266,7 @@ public class SmartHealthCareFacility {
                 FogDevice VDFogDevice = virtualDevice.getFogDevice();
                 if(gateway != null) VDFogDevice.setParentId(gateway.getId());
                 VDFogDevice.setUplinkLatency(10);
+                fogDevices.add(VDFogDevice);
             }
         }
     }
@@ -278,26 +279,26 @@ public class SmartHealthCareFacility {
         String CLOUD = "cloud";
         String PATIENT_GATEWAY = "patient_gateway";
         String FACILITY_GATEWAY = "facility_gateway";
-        String DISPENSE_CONTROL = "medication_dispenser";
-        String BED_CONTROL = "smart_bed_control";
-        String LIGHTING_CONTROL = "lighting_control";
-        String DOOR_LOCK_CONTROL = "door_lock_control";
+        String DISPENSE_CONTROL = "dispense";
+        String BED_CONTROL = "adjustPosition";
+        String LIGHTING_CONTROL = "turnOn";
+        String DOOR_LOCK_CONTROL = "lockDoor";
 
         // Define modules
         String PATIENT_DATA_PROCESSOR = "patient_data_processor";
         String FACILITY_DATA_PROCESSOR = "facility_data_processor";
 
-        // Define tuple types for data flow
-        String MED_DISPENSER_DATA = "medication_data";
-        String ENV_SENSOR_DATA = "environmental_data";
-        String AQ_SENSOR_DATA = "air_quality_data";
-        String SMART_BED_DATA = "smart_bed_data";
-        String WEARABLE_SENSOR_DATA = "wearable_data";
+        // Define tuple types for data flow ****NOTE WILL NEED TO MAKE AN APP EDGE FOR ALL SENSORS AND ACTUATORS
+        String MED_DISPENSER_DATA = "medicationLevel";
+        String ENV_SENSOR_DATA = "temperature";
+        String AQ_SENSOR_DATA = "pm10";
+        String SMART_BED_DATA = "bedPosition";
+        String WEARABLE_SENSOR_DATA = "heartRate";
 
-        String SURVEILLANCE_DATA = "surveillance_data";
-        String RFID_DATA = "rfid_data";
-        String DOOR_LOCK_DATA = "door_lock_data";
-        String LIGHTING_SYS_DATA = "lighting_system_data";
+        String SURVEILLANCE_DATA = "recording";
+        String RFID_DATA = "scanStatus";
+        String DOOR_LOCK_DATA = "lockStatus";
+        String LIGHTING_SYS_DATA = "lightStatus";
 
         String AGGREGATED_FACILITY_DATA = "aggregated_facility_data";
         String AGGREGATED_PATIENT_DATA = "aggregated_patient_data";
@@ -368,6 +369,8 @@ public class SmartHealthCareFacility {
         List<AppLoop> loops = generateAppLoops(definedLoops);
 
         application.setLoops(loops);
+
+        System.out.println("HERE!");
 
         return application;
     }
