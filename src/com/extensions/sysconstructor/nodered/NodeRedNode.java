@@ -39,4 +39,16 @@ public class NodeRedNode {
     public List<String> getConnections() {
         return connections;
     }
+
+    public String getEvent() {
+        return null;
+    }
+
+    public String getAction() {
+        return null;
+    }
+
+    public String getProperty() {
+        return null;
+    }
 }

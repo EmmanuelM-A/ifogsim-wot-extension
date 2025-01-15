@@ -1,0 +1,317 @@
+[
+    {
+        "id": "c67c52abcd33a56a",
+        "type": "tab",
+        "label": "Smart Coffe Machine Application",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "c6a08fa4396ec325",
+        "type": "invoke-action",
+        "z": "c67c52abcd33a56a",
+        "name": "makeDrink()",
+        "topic": "",
+        "thing": "28de068b74624cd3",
+        "action": "makeDrink",
+        "uriVariables": "{\"drinkId\":\"latte\",\"size\":\"s\",\"quantity\":5}",
+        "x": 390,
+        "y": 120,
+        "wires": [
+            [
+                "441fd7dce7344e28"
+            ]
+        ]
+    },
+    {
+        "id": "faaaaed23c2c0536",
+        "type": "inject",
+        "z": "c67c52abcd33a56a",
+        "name": "N secs",
+        "props": [
+            {
+                "p": "isDataFlow",
+                "v": "true",
+                "vt": "bool"
+            }
+        ],
+        "repeat": "5",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 160,
+        "y": 120,
+        "wires": [
+            [
+                "c6a08fa4396ec325"
+            ]
+        ]
+    },
+    {
+        "id": "441fd7dce7344e28",
+        "type": "debug",
+        "z": "c67c52abcd33a56a",
+        "name": "msg",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 590,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "0c301723eff9ab3a",
+        "type": "subscribe-event",
+        "z": "c67c52abcd33a56a",
+        "name": "onOutOfResourceEvent",
+        "topic": "",
+        "thing": "28de068b74624cd3",
+        "event": "outOfResource",
+        "x": 180,
+        "y": 520,
+        "wires": [
+            [
+                "e73df346f73fa9c4",
+                "64e6d3e05dca91ed"
+            ]
+        ]
+    },
+    {
+        "id": "dc4c6699844b12f4",
+        "type": "comment",
+        "z": "c67c52abcd33a56a",
+        "name": "Simulates users selecting drinks",
+        "info": "MakeDrink() is called every 10secs to\nsimulate data flowing into the smart coffee\nmachine. It also increments servedCounter.",
+        "x": 210,
+        "y": 80,
+        "wires": []
+    },
+    {
+        "id": "64e6d3e05dca91ed",
+        "type": "debug",
+        "z": "c67c52abcd33a56a",
+        "name": "debug 20",
+        "active": false,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "payload",
+        "targetType": "msg",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 420,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "8ca2a36495a831a7",
+        "type": "read-property",
+        "z": "c67c52abcd33a56a",
+        "name": "isMaintenceNeeded",
+        "topic": "",
+        "thing": "28de068b74624cd3",
+        "property": "maintenanceNeeded",
+        "uriVariables": "",
+        "observe": true,
+        "x": 180,
+        "y": 300,
+        "wires": [
+            [
+                "5e3e83117f82c9d7"
+            ]
+        ]
+    },
+    {
+        "id": "4ad18fbfe3ab0b36",
+        "type": "write-property",
+        "z": "c67c52abcd33a56a",
+        "name": "setServedCounter()",
+        "topic": "",
+        "thing": "28de068b74624cd3",
+        "property": "servedCounter",
+        "uriVariables": "",
+        "x": 670,
+        "y": 300,
+        "wires": []
+    },
+    {
+        "id": "610c72f3fb35c1da",
+        "type": "comment",
+        "z": "c67c52abcd33a56a",
+        "name": "Maintenance Management",
+        "info": "When the servedCounter exceeds 1000, the \nmaintenanceNeeded property is set to true, \nindicating that maintenance is required. \nUpon completion of maintenance, reset both \nservedCounter and maintenanceNeeded to their \ndefault values.",
+        "x": 190,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "e73df346f73fa9c4",
+        "type": "function",
+        "z": "c67c52abcd33a56a",
+        "name": "Top up resources",
+        "func": "msg.payload = 1;\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 450,
+        "y": 580,
+        "wires": [
+            [
+                "366b26769196e5f6",
+                "6e15b5a7b335702c",
+                "a36b087f5ef4c827",
+                "f1722dd48e39a420",
+                "f110622ce9a87313"
+            ]
+        ]
+    },
+    {
+        "id": "366b26769196e5f6",
+        "type": "write-property",
+        "z": "c67c52abcd33a56a",
+        "name": "setAvailableResourceLevel(water)",
+        "topic": "",
+        "thing": "28de068b74624cd3",
+        "property": "availableResourceLevel",
+        "uriVariables": "{\"id\": \"water\"}",
+        "x": 780,
+        "y": 560,
+        "wires": []
+    },
+    {
+        "id": "20b3ae1b40a42464",
+        "type": "comment",
+        "z": "c67c52abcd33a56a",
+        "name": "Top up resources when event occurs",
+        "info": "When the outOfResource event occurs, a\nfunction will be called to top up the\nresources.",
+        "x": 220,
+        "y": 460,
+        "wires": []
+    },
+    {
+        "id": "6e15b5a7b335702c",
+        "type": "write-property",
+        "z": "c67c52abcd33a56a",
+        "name": "setAvailableResourceLevel(milk)",
+        "topic": "",
+        "thing": "28de068b74624cd3",
+        "property": "availableResourceLevel",
+        "uriVariables": "{\"id\": \"milk\"}",
+        "x": 770,
+        "y": 620,
+        "wires": []
+    },
+    {
+        "id": "a36b087f5ef4c827",
+        "type": "write-property",
+        "z": "c67c52abcd33a56a",
+        "name": "setAvailableResourceLevel(chocolate)",
+        "topic": "",
+        "thing": "28de068b74624cd3",
+        "property": "availableResourceLevel",
+        "uriVariables": "{\"id\": \"chocolate\"}",
+        "x": 790,
+        "y": 680,
+        "wires": []
+    },
+    {
+        "id": "f1722dd48e39a420",
+        "type": "write-property",
+        "z": "c67c52abcd33a56a",
+        "name": "setAvailableResourceLevel(coffeeBeans)",
+        "topic": "",
+        "thing": "28de068b74624cd3",
+        "property": "availableResourceLevel",
+        "uriVariables": "{\"id\": \"coffeeBeans\"}",
+        "x": 800,
+        "y": 740,
+        "wires": []
+    },
+    {
+        "id": "1499b0fb20de1f5a",
+        "type": "debug",
+        "z": "c67c52abcd33a56a",
+        "name": "debug 24",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "\"Maintainence Complete - servedCounter reset!\"",
+        "targetType": "jsonata",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 640,
+        "y": 360,
+        "wires": []
+    },
+    {
+        "id": "f110622ce9a87313",
+        "type": "debug",
+        "z": "c67c52abcd33a56a",
+        "name": "debug 25",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "\"Resources topped up!\"",
+        "targetType": "jsonata",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 700,
+        "y": 800,
+        "wires": []
+    },
+    {
+        "id": "5e3e83117f82c9d7",
+        "type": "change",
+        "z": "c67c52abcd33a56a",
+        "name": "",
+        "rules": [
+            {
+                "t": "set",
+                "p": "payload",
+                "pt": "msg",
+                "to": "950",
+                "tot": "num"
+            }
+        ],
+        "action": "",
+        "property": "",
+        "from": "",
+        "to": "",
+        "reg": false,
+        "x": 420,
+        "y": 300,
+        "wires": [
+            [
+                "4ad18fbfe3ab0b36",
+                "1499b0fb20de1f5a"
+            ]
+        ]
+    },
+    {
+        "id": "28de068b74624cd3",
+        "type": "consumed-thing",
+        "tdLink": "http://10.32.156.87:8081/smart-coffee-machine",
+        "td": "{\"@context\":[\"https://www.w3.org/2019/wot/td/v1\",{\"@language\":\"en\"}],\"@type\":\"Thing\",\"title\":\"Smart-Coffee-Machine\",\"securityDefinitions\":{\"nosec\":{\"scheme\":\"nosec\"}},\"security\":[\"nosec\"],\"properties\":{\"allAvailableResources\":{\"type\":\"object\",\"description\":\"Current level of all available resources given as their respective unit measurements.\",\"readOnly\":true,\"observable\":true,\"properties\":{\"water\":{\"type\":\"number\",\"minimum\":0,\"maximum\":5},\"milk\":{\"type\":\"number\",\"minimum\":0,\"maximum\":5},\"chocolate\":{\"type\":\"number\",\"minimum\":0,\"maximum\":2},\"coffeeBeans\":{\"type\":\"number\",\"minimum\":0,\"maximum\":3}},\"forms\":[{\"href\":\"http://10.32.156.87:8081/smart-coffee-machine/properties/allAvailableResources\",\"contentType\":\"application/json\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"},{\"href\":\"http://10.32.156.87:8081/smart-coffee-machine/properties/allAvailableResources/observable\",\"contentType\":\"application/json\",\"op\":[\"observeproperty\",\"unobserveproperty\"],\"subprotocol\":\"longpoll\"},{\"href\":\"http://10.32.156.87:8081/smart-coffee-machine/properties/allAvailableResources\",\"contentType\":\"application/cbor\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"},{\"href\":\"http://10.32.156.87:8081/smart-coffee-machine/properties/allAvailableResources/observable\",\"contentType\":\"application/cbor\",\"op\":[\"observeproperty\",\"unobserveproperty\"],\"subprotocol\":\"longpoll\"}],\"writeOnly\":false},\"availableResourceLevel\":{\"type\":\"number\",\"description\":\"Current level of a particular resource. Requires resource id variable as uriVariables.\",\"uriVariables\":{\"id\":{\"type\":\"string\",\"enum\":[\"water\",\"milk\",\"chocolate\",\"coffeeBeans\"]}},\"forms\":[{\"href\":\"http://10.32.156.87:8081/smart-coffee-machine/properties/availableResourceLevel{?id}\",\"contentType\":\"application/json\",\"op\":[\"readproperty\",\"writeproperty\"]},{\"href\":\"http://10.32.156.87:8081/smart-coffee-machine/properties/availableResourceLevel{?id}\",\"contentType\":\"application/cbor\",\"op\":[\"readproperty\",\"writeproperty\"]}],\"readOnly\":false,\"writeOnly\":false,\"observable\":false},\"possibleDrinks\":{\"type\":\"array\",\"description\":\"The list of possible drinks in general. Doesn't depend on the available resources.\",\"readOnly\":true,\"items\":{\"type\":\"string\"},\"forms\":[{\"href\":\"http://10.32.156.87:8081/smart-coffee-machine/properties/possibleDrinks\",\"contentType\":\"application/json\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"},{\"href\":\"http://10.32.156.87:8081/smart-coffee-machine/properties/possibleDrinks\",\"contentType\":\"application/cbor\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"}],\"writeOnly\":false,\"observable\":false},\"servedCounter\":{\"type\":\"integer\",\"description\":\"The total number of served beverages.\",\"minimum\":0,\"forms\":[{\"href\":\"http://10.32.156.87:8081/smart-coffee-machine/properties/servedCounter\",\"contentType\":\"application/json\",\"op\":[\"readproperty\",\"writeproperty\"]},{\"href\":\"http://10.32.156.87:8081/smart-coffee-machine/properties/servedCounter\",\"contentType\":\"application/cbor\",\"op\":[\"readproperty\",\"writeproperty\"]}],\"readOnly\":false,\"writeOnly\":false,\"observable\":false},\"maintenanceNeeded\":{\"type\":\"boolean\",\"description\":\"Shows whether a maintenance is needed. The property is observable. Automatically set to true when the servedCounter property exceeds 1000.\",\"observable\":true,\"forms\":[{\"href\":\"http://10.32.156.87:8081/smart-coffee-machine/properties/maintenanceNeeded\",\"contentType\":\"application/json\",\"op\":[\"readproperty\",\"writeproperty\"]},{\"href\":\"http://10.32.156.87:8081/smart-coffee-machine/properties/maintenanceNeeded/observable\",\"contentType\":\"application/json\",\"op\":[\"observeproperty\",\"unobserveproperty\"],\"subprotocol\":\"longpoll\"},{\"href\":\"http://10.32.156.87:8081/smart-coffee-machine/properties/maintenanceNeeded\",\"contentType\":\"application/cbor\",\"op\":[\"readproperty\",\"writeproperty\"]},{\"href\":\"http://10.32.156.87:8081/smart-coffee-machine/properties/maintenanceNeeded/observable\",\"contentType\":\"application/cbor\",\"op\":[\"observeproperty\",\"unobserveproperty\"],\"subprotocol\":\"longpoll\"}],\"readOnly\":false,\"writeOnly\":false},\"schedules\":{\"type\":\"array\",\"description\":\"The list of scheduled tasks.\",\"readOnly\":true,\"items\":{\"type\":\"object\",\"properties\":{\"drinkId\":{\"type\":\"string\",\"description\":\"Defines what drink to make, drinkId is one of possibleDrinks property values, e.g. latte.\"},\"size\":{\"type\":\"string\",\"description\":\"Defines the size of a drink, s = small, m = medium, l = large.\",\"enum\":[\"s\",\"m\",\"l\"]},\"quantity\":{\"type\":\"integer\",\"description\":\"Defines how many drinks to make, ranging from 1 to 5.\",\"minimum\":1,\"maximum\":5},\"time\":{\"type\":\"string\",\"description\":\"Defines the time of the scheduled task in 24h format, e.g. 10:00 or 21:00.\"},\"mode\":{\"type\":\"string\",\"description\":\"Defines the mode of the scheduled task, e.g. once or everyday. All the possible values are given in the enum field of this Thing Description.\",\"enum\":[\"once\",\"everyday\",\"everyMo\",\"everyTu\",\"everyWe\",\"everyTh\",\"everyFr\",\"everySat\",\"everySun\"]}}},\"forms\":[{\"href\":\"http://10.32.156.87:8081/smart-coffee-machine/properties/schedules\",\"contentType\":\"application/json\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"},{\"href\":\"http://10.32.156.87:8081/smart-coffee-machine/properties/schedules\",\"contentType\":\"application/cbor\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"}],\"writeOnly\":false,\"observable\":false}},\"actions\":{\"makeDrink\":{\"description\":\"Make a drink from available list of beverages. Accepts drink id, size and quantity as uriVariables. Brews one medium americano if no uriVariables are specified.\",\"uriVariables\":{\"drinkId\":{\"type\":\"string\",\"description\":\"Defines what drink to make, drinkId is one of possibleDrinks property values, e.g. latte.\"},\"size\":{\"type\":\"string\",\"description\":\"Defines the size of a drink, s = small, m = medium, l = large.\",\"enum\":[\"s\",\"m\",\"l\"]},\"quantity\":{\"type\":\"integer\",\"description\":\"Defines how many drinks to make, ranging from 1 to 5.\",\"minimum\":1,\"maximum\":5}},\"output\":{\"type\":\"object\",\"description\":\"Returns true/false and a message when all invoked promises are resolved (asynchronous).\",\"properties\":{\"result\":{\"type\":\"boolean\"},\"message\":{\"type\":\"string\"}}},\"forms\":[{\"href\":\"http://10.32.156.87:8081/smart-coffee-machine/actions/makeDrink{?drinkId,size,quantity}\",\"contentType\":\"application/json\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"},{\"href\":\"http://10.32.156.87:8081/smart-coffee-machine/actions/makeDrink{?drinkId,size,quantity}\",\"contentType\":\"application/cbor\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"}],\"safe\":false,\"idempotent\":false},\"setSchedule\":{\"description\":\"Add a scheduled task to the schedules property. Accepts drink id, size, quantity, time and mode as body of a request.\\n    Assumes one medium americano if not specified, but time and mode are mandatory fields.\",\"input\":{\"type\":\"object\",\"properties\":{\"drinkId\":{\"type\":\"string\",\"description\":\"Defines what drink to make, drinkId is one of possibleDrinks property values, e.g. latte.\"},\"size\":{\"type\":\"string\",\"description\":\"Defines the size of a drink, s = small, m = medium, l = large.\",\"enum\":[\"s\",\"m\",\"l\"]},\"quantity\":{\"type\":\"integer\",\"description\":\"Defines how many drinks to make, ranging from 1 to 5.\",\"minimum\":1,\"maximum\":5},\"time\":{\"type\":\"string\",\"description\":\"Defines the time of the scheduled task in 24h format, e.g. 10:00 or 21:00.\"},\"mode\":{\"type\":\"string\",\"description\":\"Defines the mode of the scheduled task, e.g. once or everyday. All the possible values are given in the enum field of this Thing Description.\",\"enum\":[\"once\",\"everyday\",\"everyMo\",\"everyTu\",\"everyWe\",\"everyTh\",\"everyFr\",\"everySat\",\"everySun\"]}},\"required\":[\"time\",\"mode\"]},\"output\":{\"type\":\"object\",\"description\":\"Returns true/false and a message when all invoked promises are resolved (asynchronous).\",\"properties\":{\"result\":{\"type\":\"boolean\"},\"message\":{\"type\":\"string\"}}},\"forms\":[{\"href\":\"http://10.32.156.87:8081/smart-coffee-machine/actions/setSchedule\",\"contentType\":\"application/json\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"},{\"href\":\"http://10.32.156.87:8081/smart-coffee-machine/actions/setSchedule\",\"contentType\":\"application/cbor\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"}],\"safe\":false,\"idempotent\":false}},\"events\":{\"outOfResource\":{\"description\":\"Out of resource event. Emitted when the available resource level is not sufficient for a desired drink.\",\"data\":{\"type\":\"string\"},\"forms\":[{\"href\":\"http://10.32.156.87:8081/smart-coffee-machine/events/outOfResource\",\"contentType\":\"application/json\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]},{\"href\":\"http://10.32.156.87:8081/smart-coffee-machine/events/outOfResource\",\"contentType\":\"application/cbor\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]}]}},\"id\":\"urn:uuid:b1e473b8-32d9-416c-9bf6-3ab0d308ead2\",\"description\":\"A smart coffee machine with a range of capabilities.\",\"support\":\"https://github.com/eclipse-thingweb/node-wot/\",\"forms\":[{\"href\":\"http://10.32.156.87:8081/smart-coffee-machine/properties\",\"contentType\":\"application/json\",\"op\":[\"readallproperties\",\"readmultipleproperties\",\"writeallproperties\",\"writemultipleproperties\"]},{\"href\":\"http://10.32.156.87:8081/smart-coffee-machine/properties\",\"contentType\":\"application/cbor\",\"op\":[\"readallproperties\",\"readmultipleproperties\",\"writeallproperties\",\"writemultipleproperties\"]}]}",
+        "http": true,
+        "ws": false,
+        "coap": false,
+        "mqtt": false,
+        "opcua": false,
+        "modbus": false,
+        "basicAuth": false,
+        "username": "",
+        "password": ""
+    }
+]

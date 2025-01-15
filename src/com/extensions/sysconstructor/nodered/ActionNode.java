@@ -9,6 +9,7 @@ public class ActionNode extends NodeRedNode {
         this.action = action;
     }
 
+    @Override
     public String getAction() {
         return action;
     }

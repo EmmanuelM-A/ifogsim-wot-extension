@@ -9,6 +9,7 @@ public class EventNode extends NodeRedNode {
         this.event = event;
     }
 
+    @Override
     public String getEvent() {
         return event;
     }

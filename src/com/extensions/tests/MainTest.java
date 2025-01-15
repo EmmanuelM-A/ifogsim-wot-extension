@@ -11,8 +11,8 @@ public class MainTest {
         // Extract metadata for the TD
         ThingDescriptionParser tdParser = new ThingDescriptionParser();
 
-        ThingDescription tempSensorTD = tdParser.process(new File("src/com/extensions/tests/input/things/TemperatureMonitorApplication/TemperatureSensor.json"));
+        ThingDescription td = tdParser.process(new File("src/com/extensions/tests/input/things/smartCoffeeMachine/SmartCoffeeMachine.json"));
 
-        ThingDescription.printData(tempSensorTD);
+        ThingDescription.printData(td);
     }
 }

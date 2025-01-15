@@ -9,6 +9,7 @@ public class PropertyNode extends NodeRedNode {
         this.property = property;
     }
 
+    @Override
     public String getProperty() {
         return property;
     }
