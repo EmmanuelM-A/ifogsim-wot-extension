@@ -41,26 +41,32 @@ public class NodeRedJSONGenerator {
     private ArrayNode generateThings(ObjectMapper mapper) {
         ArrayNode thingsArray = mapper.createArrayNode();
         for (NodeRedNode node : nodes) {
-            ObjectNode thing = mapper.createObjectNode();
-            thing.put("id", node.getId());
-            thing.put("name", node.getName());
-            thing.put("type", node.getType());
-            thingsArray.add(thing);
+            if(node.getType().equals("consumed-thing")) {
+                ObjectNode thing = mapper.createObjectNode();
+                thing.put("id", node.getId());
+                thing.put("name", node.getName());
+                thing.put("type", node.getType());
+                thingsArray.add(thing);
+                return thingsArray;
+            }
         }
-        return thingsArray;
+        return null;
     }
 
     private ArrayNode generateNodes(ObjectMapper mapper) {
         ArrayNode nodesArray = mapper.createArrayNode();
         for (NodeRedNode node : nodes) {
+            if(node.getType().equals("consumed-thing")) continue;
+            if(node.getType().equals("tab")) continue;
             ObjectNode jsonNode = mapper.createObjectNode();
             jsonNode.put("id", node.getId());
             jsonNode.put("name", node.getName());
             jsonNode.put("type", node.getType());
+            jsonNode.put("thing", node.getThingID());
             switch (node.getType()) {
-                case "invoke-action" -> jsonNode.put("action", node.getAction());
-                case "subscribe-event" -> jsonNode.put("event", node.getEvent());
-                case "read-property", "write-property" -> jsonNode.put("property", node.getProperty());
+                case "invoke-action" -> jsonNode.put("action", node.getUniqueAttribute());
+                case "subscribe-event" -> jsonNode.put("event", node.getUniqueAttribute());
+                case "read-property", "write-property" -> jsonNode.put("property", node.getUniqueAttribute());
             }
             nodesArray.add(jsonNode);
         }
@@ -70,6 +76,7 @@ public class NodeRedJSONGenerator {
     private ArrayNode generateConnections(ObjectMapper mapper) {
         ArrayNode wiresArray = mapper.createArrayNode();
         for (NodeRedNode node : nodes) {
+            if(node.getConnections() == null) continue;
             for (String wire : node.getConnections()) {
                 ObjectNode wireJson = mapper.createObjectNode();
                 wireJson.put("source", node.getId());
@@ -103,7 +110,7 @@ public class NodeRedJSONGenerator {
             if (node.getType().toLowerCase().contains("event")) {
                 ObjectNode event = mapper.createObjectNode();
                 event.put("id", node.getId());
-                event.put("name", node.getName());
+                event.put("name", node.getUniqueAttribute());
                 eventsArray.add(event);
             }
         }

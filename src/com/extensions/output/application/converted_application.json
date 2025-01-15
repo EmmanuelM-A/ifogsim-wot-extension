@@ -1,8 +1,119 @@
 {
-  "applicationDetails" : null,
-  "things" : [ ],
-  "nodes" : [ ],
-  "connections" : [ ],
-  "dataFlows" : [ ],
-  "events" : [ ]
+  "applicationDetails" : {
+    "title" : "Smart Coffee Machine Application"
+  },
+  "things" : [ {
+    "id" : "28de068b74624cd3",
+    "name" : "Unknown Thing",
+    "type" : "consumed-thing"
+  } ],
+  "nodes" : [ {
+    "id" : "c6a08fa4396ec325",
+    "name" : "makeDrink()",
+    "type" : "invoke-action",
+    "thing" : "28de068b74624cd3",
+    "action" : "makeDrink"
+  }, {
+    "id" : "faaaaed23c2c0536",
+    "name" : "N secs",
+    "type" : "inject",
+    "thing" : null
+  }, {
+    "id" : "0c301723eff9ab3a",
+    "name" : "onOutOfResourceEvent",
+    "type" : "subscribe-event",
+    "thing" : "28de068b74624cd3",
+    "event" : "outOfResource"
+  }, {
+    "id" : "8ca2a36495a831a7",
+    "name" : "isMaintenceNeeded",
+    "type" : "read-property",
+    "thing" : "28de068b74624cd3",
+    "property" : "maintenanceNeeded"
+  }, {
+    "id" : "4ad18fbfe3ab0b36",
+    "name" : "setServedCounter()",
+    "type" : "write-property",
+    "thing" : "28de068b74624cd3",
+    "property" : "servedCounter"
+  }, {
+    "id" : "e73df346f73fa9c4",
+    "name" : "Top up resources",
+    "type" : "function",
+    "thing" : null
+  }, {
+    "id" : "366b26769196e5f6",
+    "name" : "setAvailableResourceLevel(water)",
+    "type" : "write-property",
+    "thing" : "28de068b74624cd3",
+    "property" : "availableResourceLevel"
+  }, {
+    "id" : "6e15b5a7b335702c",
+    "name" : "setAvailableResourceLevel(milk)",
+    "type" : "write-property",
+    "thing" : "28de068b74624cd3",
+    "property" : "availableResourceLevel"
+  }, {
+    "id" : "a36b087f5ef4c827",
+    "name" : "setAvailableResourceLevel(chocolate)",
+    "type" : "write-property",
+    "thing" : "28de068b74624cd3",
+    "property" : "availableResourceLevel"
+  }, {
+    "id" : "f1722dd48e39a420",
+    "name" : "setAvailableResourceLevel(coffeeBeans)",
+    "type" : "write-property",
+    "thing" : "28de068b74624cd3",
+    "property" : "availableResourceLevel"
+  }, {
+    "id" : "5e3e83117f82c9d7",
+    "name" : "",
+    "type" : "change",
+    "thing" : null
+  } ],
+  "connections" : [ {
+    "source" : "c6a08fa4396ec325",
+    "destination" : "441fd7dce7344e28"
+  }, {
+    "source" : "faaaaed23c2c0536",
+    "destination" : "c6a08fa4396ec325"
+  }, {
+    "source" : "0c301723eff9ab3a",
+    "destination" : "e73df346f73fa9c4"
+  }, {
+    "source" : "0c301723eff9ab3a",
+    "destination" : "64e6d3e05dca91ed"
+  }, {
+    "source" : "8ca2a36495a831a7",
+    "destination" : "5e3e83117f82c9d7"
+  }, {
+    "source" : "e73df346f73fa9c4",
+    "destination" : "366b26769196e5f6"
+  }, {
+    "source" : "e73df346f73fa9c4",
+    "destination" : "6e15b5a7b335702c"
+  }, {
+    "source" : "e73df346f73fa9c4",
+    "destination" : "a36b087f5ef4c827"
+  }, {
+    "source" : "e73df346f73fa9c4",
+    "destination" : "f1722dd48e39a420"
+  }, {
+    "source" : "e73df346f73fa9c4",
+    "destination" : "f110622ce9a87313"
+  }, {
+    "source" : "5e3e83117f82c9d7",
+    "destination" : "4ad18fbfe3ab0b36"
+  }, {
+    "source" : "5e3e83117f82c9d7",
+    "destination" : "1499b0fb20de1f5a"
+  } ],
+  "dataFlows" : [ {
+    "source" : "faaaaed23c2c0536",
+    "targets" : [ "c6a08fa4396ec325" ]
+  } ],
+  "events" : [ {
+    "id" : "0c301723eff9ab3a",
+    "name" : "outOfResource"
+  } ]
 }

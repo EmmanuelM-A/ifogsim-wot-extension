@@ -10,13 +10,15 @@ public class NodeRedNode {
     private final String type;
     private final String name;
     private final String thingID;
+    private final String uniqueAttribute;
     private final List<String> connections;
 
-    public NodeRedNode(String id, String type, String name, String thingId, List<String> connections) {
+    public NodeRedNode(String id, String type, String name, String thingId, String uniqueAttribute, List<String> connections) {
         this.id = id;
         this.type = type;
         this.name = name;
         this.thingID = thingId;
+        this.uniqueAttribute = uniqueAttribute;
         this.connections = connections;
     }
 
@@ -40,15 +42,7 @@ public class NodeRedNode {
         return connections;
     }
 
-    public String getEvent() {
-        return null;
-    }
-
-    public String getAction() {
-        return null;
-    }
-
-    public String getProperty() {
-        return null;
+    public String getUniqueAttribute() {
+        return uniqueAttribute;
     }
 }
