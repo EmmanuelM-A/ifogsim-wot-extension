@@ -58,7 +58,7 @@ public class NodeRedJSONParser implements FileProcessor<List<NodeRedNode>> {
                 if(type == null) continue;
 
                 //if(!nodeTypesToParseFor.contains(type)) continue;
-                if(nodeTypesToIgnore.contains(type)) continue;
+                //if(nodeTypesToIgnore.contains(type)) continue;
 
                 NodeRedNode nodeRedNode = switch (type) {
                     case "tab" -> {
@@ -99,7 +99,7 @@ public class NodeRedJSONParser implements FileProcessor<List<NodeRedNode>> {
         try {
             ObjectMapper mapper = new ObjectMapper();
             JsonNode tdJson = mapper.readTree(td);
-            return tdJson.has("title") ? tdJson.get("title").asText("Unknown Thing") : "Unknown Thing";
+            return tdJson.has("\"title\"") ? tdJson.get("\"title\"").asText("Unknown Thing") : "Unknown Thing";
         } catch (IOException e) {
             // If the TD cannot be parsed, return a default value
             return "Unknown Thing";

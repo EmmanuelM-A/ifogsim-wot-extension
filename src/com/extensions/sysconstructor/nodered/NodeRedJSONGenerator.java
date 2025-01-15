@@ -7,10 +7,12 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class NodeRedJSONGenerator {
-    private final List<NodeRedNode> nodes;
+    private List<NodeRedNode> nodes;
+    private List<Tree> trees;
 
-    public NodeRedJSONGenerator(List<NodeRedNode> nodes) {
+    public NodeRedJSONGenerator(List<NodeRedNode> nodes, List<Tree> trees) {
         this.nodes = nodes;
+        this.trees = trees;
     }
 
     public ObjectNode generate() {
@@ -20,6 +22,7 @@ public class NodeRedJSONGenerator {
         outputJson.set("applicationDetails", generateApplicationName(mapper));
         outputJson.set("things", generateThings(mapper));
         outputJson.set("nodes", generateNodes(mapper));
+        //outputJson.set("subFlows", generateTreeTopology(mapper)); // Trees
         outputJson.set("connections", generateConnections(mapper));
         outputJson.set("dataFlows", generateDataFlows(mapper));
         outputJson.set("events", generateEvents(mapper));
@@ -72,6 +75,38 @@ public class NodeRedJSONGenerator {
         }
         return nodesArray;
     }
+
+    private ArrayNode generateTreeTopology(ObjectMapper mapper) {
+        ArrayNode nodeTrees = mapper.createArrayNode(); // Array for all trees
+
+        for (Tree tree : trees) {
+            ObjectNode nodeTree = mapper.createObjectNode(); // JSON object for each tree
+            nodeTree.put("treeId", tree.getTreeId());
+
+            // Generate nodes for the current tree
+            ArrayNode jsonNodes = mapper.createArrayNode();
+            for (NodeRedNode node : tree.getNodes()) {
+                ObjectNode jsonNode = mapper.createObjectNode();
+                jsonNode.put("id", node.getId());
+                jsonNode.put("name", node.getName());
+                jsonNode.put("type", node.getType());
+
+                // Add type-specific details (similar to generateNodes)
+                switch (node.getType()) {
+                    case "invoke-action" -> jsonNode.put("action", node.getUniqueAttribute());
+                    case "subscribe-event" -> jsonNode.put("event", node.getUniqueAttribute());
+                    case "read-property", "write-property" -> jsonNode.put("property", node.getUniqueAttribute());
+                }
+                jsonNodes.add(jsonNode); // Add the node to the nodes array
+            }
+
+            nodeTree.set("nodes", jsonNodes); // Attach nodes to the tree
+            nodeTrees.add(nodeTree);          // Add the tree to the trees array
+        }
+
+        return nodeTrees;
+    }
+
 
     private ArrayNode generateConnections(ObjectMapper mapper) {
         ArrayNode wiresArray = mapper.createArrayNode();

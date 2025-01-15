@@ -16,8 +16,12 @@ public class NodeRedTranslator {
             NodeRedJSONParser parser = new NodeRedJSONParser();
             List<NodeRedNode> nodes = parser.process(nodeRedApplicationJsonFile);
 
+            // Tree grouping for nodes
+            TreeGrouping treeGrouper = new TreeGrouping(nodes);
+            List<Tree> trees = treeGrouper.groupNodesIntoTrees();
+
             // Generate JSON with Things, Nodes, Wires, Data Flows, and Events
-            NodeRedJSONGenerator generator = new NodeRedJSONGenerator(nodes);
+            NodeRedJSONGenerator generator = new NodeRedJSONGenerator(nodes, trees);
             ObjectNode outputJson = generator.generate();
 
             // Write to file using Jackson's ObjectMapper
