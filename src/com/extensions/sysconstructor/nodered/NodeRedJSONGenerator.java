@@ -7,8 +7,8 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class NodeRedJSONGenerator {
-    private List<NodeRedNode> nodes;
-    private List<Tree> trees;
+    private final List<NodeRedNode> nodes;
+    private final List<Tree> trees;
 
     public NodeRedJSONGenerator(List<NodeRedNode> nodes, List<Tree> trees) {
         this.nodes = nodes;
@@ -33,7 +33,7 @@ public class NodeRedJSONGenerator {
     private ObjectNode generateApplicationName(ObjectMapper mapper) {
         ObjectNode title = mapper.createObjectNode();
         for (NodeRedNode node : nodes) {
-            if (node.getType().equals("tab")) {
+            if (node.getType().equals(NodeRedJSONParser.TYPE_TAB)) {
                 title.put("title", node.getName());
                 return title;
             }
@@ -44,7 +44,7 @@ public class NodeRedJSONGenerator {
     private ArrayNode generateThings(ObjectMapper mapper) {
         ArrayNode thingsArray = mapper.createArrayNode();
         for (NodeRedNode node : nodes) {
-            if(node.getType().equals("consumed-thing")) {
+            if(node.getType().equals(NodeRedJSONParser.TYPE_CONSUMED_THING)) {
                 ObjectNode thing = mapper.createObjectNode();
                 thing.put("id", node.getId());
                 thing.put("name", node.getName());
@@ -59,17 +59,17 @@ public class NodeRedJSONGenerator {
     private ArrayNode generateNodes(ObjectMapper mapper) {
         ArrayNode nodesArray = mapper.createArrayNode();
         for (NodeRedNode node : nodes) {
-            if(node.getType().equals("consumed-thing")) continue;
-            if(node.getType().equals("tab")) continue;
+            if(node.getType().equals(NodeRedJSONParser.TYPE_CONSUMED_THING)) continue;
+            if(node.getType().equals(NodeRedJSONParser.TYPE_TAB)) continue;
             ObjectNode jsonNode = mapper.createObjectNode();
             jsonNode.put("id", node.getId());
             jsonNode.put("name", node.getName());
             jsonNode.put("type", node.getType());
             jsonNode.put("thing", node.getThingID());
             switch (node.getType()) {
-                case "invoke-action" -> jsonNode.put("action", node.getUniqueAttribute());
-                case "subscribe-event" -> jsonNode.put("event", node.getUniqueAttribute());
-                case "read-property", "write-property" -> jsonNode.put("property", node.getUniqueAttribute());
+                case NodeRedJSONParser.TYPE_INVOKE_ACTION -> jsonNode.put("action", node.getUniqueAttribute());
+                case NodeRedJSONParser.TYPE_SUBSCRIBE_EVENT -> jsonNode.put("event", node.getUniqueAttribute());
+                case NodeRedJSONParser.TYPE_READ_PROPERTY, NodeRedJSONParser.TYPE_WRITE_PROPERTY -> jsonNode.put("property", node.getUniqueAttribute());
             }
             nodesArray.add(jsonNode);
         }
@@ -93,9 +93,9 @@ public class NodeRedJSONGenerator {
 
                 // Add type-specific details (similar to generateNodes)
                 switch (node.getType()) {
-                    case "invoke-action" -> jsonNode.put("action", node.getUniqueAttribute());
-                    case "subscribe-event" -> jsonNode.put("event", node.getUniqueAttribute());
-                    case "read-property", "write-property" -> jsonNode.put("property", node.getUniqueAttribute());
+                    case NodeRedJSONParser.TYPE_INVOKE_ACTION -> jsonNode.put("action", node.getUniqueAttribute());
+                    case NodeRedJSONParser.TYPE_SUBSCRIBE_EVENT -> jsonNode.put("event", node.getUniqueAttribute());
+                    case NodeRedJSONParser.TYPE_READ_PROPERTY, NodeRedJSONParser.TYPE_WRITE_PROPERTY -> jsonNode.put("property", node.getUniqueAttribute());
                 }
                 jsonNodes.add(jsonNode); // Add the node to the nodes array
             }
@@ -125,7 +125,7 @@ public class NodeRedJSONGenerator {
     private ArrayNode generateDataFlows(ObjectMapper mapper) {
         ArrayNode dataFlowsArray = mapper.createArrayNode();
         for (NodeRedNode node : nodes) {
-            if (node.getType().equals("inject")) {
+            if (node.getType().equals(NodeRedJSONParser.TYPE_INJECT)) {
                 ObjectNode dataFlow = mapper.createObjectNode();
                 dataFlow.put("source", node.getId());
                 ArrayNode targets = mapper.createArrayNode();

@@ -1,15 +1,8 @@
 package com.extensions.utils;
 
-public enum FilePaths {
-    JSON_THINGS_REPO("src/com/extensions/input/things");
+public class FilePaths {
+    public static String JSON_THINGS_REPO = "";
 
-    private final String filepath;
+    public static String NODE_RED_APPLICATION_JSON = "src/com/extensions/output/application/application_topology.json";
 
-    FilePaths(String filepath) {
-        this.filepath = filepath;
-    }
-
-    public String getFilepath() {
-        return filepath;
-    }
 }

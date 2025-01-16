@@ -1,5 +1,6 @@
 package com.extensions.sysconstructor.nodered;
 
+import com.extensions.utils.FilePaths;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -27,7 +28,7 @@ public class NodeRedTranslator {
             // Write to file using Jackson's ObjectMapper
             ObjectMapper mapper = new ObjectMapper();
             mapper.writerWithDefaultPrettyPrinter()
-                    .writeValue(new File("src/com/extensions/output/application/converted_application.json"), outputJson);
+                    .writeValue(new File(FilePaths.NODE_RED_APPLICATION_JSON), outputJson);
 
             System.out.println("JSON file generated successfully!");
 

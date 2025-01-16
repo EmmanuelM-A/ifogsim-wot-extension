@@ -19,6 +19,14 @@ import java.util.regex.Pattern;
 public class NodeRedJSONParser implements FileProcessor<List<NodeRedNode>> {
     private final ObjectMapper objectMapper;
 
+    public final static String TYPE_INVOKE_ACTION = "invoke-action";
+    public final static String TYPE_SUBSCRIBE_EVENT = "subscribe-event";
+    public final static String TYPE_READ_PROPERTY = "read-property";
+    public final static String TYPE_WRITE_PROPERTY = "write-property";
+    public final static String TYPE_CONSUMED_THING = "consumed-thing";
+    public final static String TYPE_TAB = "tab";
+    public final static String TYPE_INJECT = "inject";
+
     public NodeRedJSONParser() {
         this.objectMapper = new ObjectMapper();
         objectMapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
@@ -53,25 +61,25 @@ public class NodeRedJSONParser implements FileProcessor<List<NodeRedNode>> {
                 if(type == null) continue;
 
                 NodeRedNode nodeRedNode = switch (type) {
-                    case "tab" -> {
+                    case TYPE_TAB -> {
                         String title = cleanString(node.has("label") ? String.valueOf(node.get("label")) : "Unknown Application");
                         yield new NodeRedNode(null, type, title, null, null, null);
                     }
-                    case "consumed-thing" -> {
+                    case TYPE_CONSUMED_THING -> {
                         String td = node.get("td").asText();
                         JsonNode tdNode = objectMapper.readTree(td);
                         String title = tdNode.get("title").asText();
                         yield new NodeRedNode(id, type, title, null, null, null);
                     }
-                    case "invoke-action" -> {
+                    case TYPE_INVOKE_ACTION -> {
                         String action = cleanString(node.has("action") ? String.valueOf(node.get("action")) : null);
                         yield new NodeRedNode(id, type, name, thingId, action, wires);
                     }
-                    case "subscribe-event" -> {
+                    case TYPE_SUBSCRIBE_EVENT -> {
                         String event = cleanString(node.has("event") ? String.valueOf(node.get("event")) : null);
                         yield new NodeRedNode(id, type, name, thingId, event, wires);
                     }
-                    case "read-property", "write-property" -> {
+                    case TYPE_READ_PROPERTY, TYPE_WRITE_PROPERTY -> {
                         String property = cleanString(node.has("property") ? String.valueOf(node.get("property")) : null);
                         yield new NodeRedNode(id, type, name, thingId, property, wires);
                     }
