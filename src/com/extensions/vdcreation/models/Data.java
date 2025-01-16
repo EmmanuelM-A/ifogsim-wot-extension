@@ -1,5 +1,15 @@
 package com.extensions.vdcreation.models;
 
-public class Data extends BaseEntity {
+import java.util.Map;
 
+public class Data extends BaseEntity {
+    private Map<String, InternalProperty> properties;
+
+    public Map<String, InternalProperty> getProperties() {
+        return properties;
+    }
+
+    public void setProperties(Map<String, InternalProperty> properties) {
+        this.properties = properties;
+    }
 }

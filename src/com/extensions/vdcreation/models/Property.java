@@ -16,16 +16,16 @@ public class Property extends BaseEntity {
 
     private Map<String, UriVariable> uriVariables;
 
-    private Map<String, Item> items;
+    private Item item;
 
     /////////////////////////// Getters and Setters ///////////////////////////
 
-    public Map<String, Item> getItems() {
-        return items;
+    public Item getItem() {
+        return item;
     }
 
-    public void setItems(Map<String, Item> items) {
-        this.items = items;
+    public void setItems(Item item) {
+        this.item = item;
     }
 
     public List<String> getPropertyEnum() {

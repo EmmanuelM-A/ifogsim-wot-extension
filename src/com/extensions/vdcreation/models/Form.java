@@ -7,7 +7,7 @@ import java.util.List;
 /**
  * Represents a form, specifying an interaction endpoint.
  */
-public class Form {
+public class Form extends BaseEntity {
     /** URL of the endpoint */
     private String href;
 

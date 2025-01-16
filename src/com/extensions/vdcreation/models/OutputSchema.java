@@ -2,7 +2,7 @@ package com.extensions.vdcreation.models;
 
 import java.util.Map;
 
-public class Item extends BaseEntity {
+public class OutputSchema extends BaseEntity {
     private Map<String, InternalProperty> properties;
 
     public Map<String, InternalProperty> getProperties() {

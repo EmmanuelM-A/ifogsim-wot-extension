@@ -14,7 +14,7 @@ public class ThingDescription extends BaseEntity {
      * JSON-LD context
      */
     @JsonProperty("@context")
-    private String context;
+    private Object context;
 
     /**
      * The base URL used as the prefix for all forms in this Thing.
@@ -58,11 +58,11 @@ public class ThingDescription extends BaseEntity {
 
     /////////////////////////// Getters and Setters ///////////////////////////
 
-    public String getContext() {
+    public Object getContext() {
         return this.context;
     }
 
-    public void setContext(String context) {
+    public void setContext(Object context) {
         this.context = context;
     }
 
