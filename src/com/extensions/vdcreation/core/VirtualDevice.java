@@ -2,7 +2,6 @@ package com.extensions.vdcreation.core;
 
 import com.extensions.customfog.FogDeviceFactory;
 import com.extensions.utils.presets.FogDevicePreset;
-import com.extensions.vdcreation.EventTrigger;
 import com.extensions.vdcreation.models.ThingDescription;
 import org.fog.entities.Actuator;
 import org.fog.entities.FogDevice;
@@ -33,7 +32,7 @@ public class VirtualDevice {
     /**
      * Represents events in the TD.
      */
-    private final List<EventTrigger> events;
+    //private final List<EventTrigger> events;
 
     /**
      * Represents the TD used to create this virtual device.
@@ -44,7 +43,7 @@ public class VirtualDevice {
         this.fogDevice = FogDeviceFactory.createFogDevice(name, preset);
         this.sensorProperties = new ArrayList<>();
         this.actuatorActions = new ArrayList<>();
-        this.events = new ArrayList<>();
+        //this.events = new ArrayList<>();
         this.thingDescription = null;
     }
 
@@ -52,7 +51,7 @@ public class VirtualDevice {
         this.fogDevice = FogDeviceFactory.createFogDevice(name, preset, config);
         this.sensorProperties = new ArrayList<>();
         this.actuatorActions = new ArrayList<>();
-        this.events = new ArrayList<>();
+        //this.events = new ArrayList<>();
         this.thingDescription = null;
     }
 
@@ -72,9 +71,9 @@ public class VirtualDevice {
         return actuatorActions;
     }
 
-    public List<EventTrigger> getEvents() {
+    /*public List<EventTrigger> getEvents() {
         return events;
-    }
+    }*/
 
     public ThingDescription getThingDescription() {
         return thingDescription;

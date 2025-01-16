@@ -5,7 +5,6 @@ import java.util.Map;
 
 import com.extensions.customfog.ActuatorAction;
 import com.extensions.customfog.SensorProperty;
-import com.extensions.utils.FogEntityPrefixes;
 import com.extensions.utils.presets.ActuatorPreset;
 import com.extensions.utils.presets.FogDevicePreset;
 import com.extensions.utils.presets.SensorPreset;
@@ -81,7 +80,7 @@ public class VirtualDeviceFactory {
             actuatorAction.setLatency(actuatorPreset.LATENCY);
         }
 
-        // Create event triggers for the events (Create a Trigger class and an EventTrigger class)
+        // Create event for the events
         /*for(Map.Entry<String, Event> eventEntry : thingDescription.getEvents().entrySet()) {
             // Extract entry data
             String eventName = eventEntry.getKey();

@@ -17,29 +17,13 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class NodeRedJSONParser implements FileProcessor<List<NodeRedNode>> {
-    private final List<String> nodeTypesToParseFor;
-    private final List<String> nodeTypesToIgnore;
-
     private final ObjectMapper objectMapper;
 
     public NodeRedJSONParser() {
-        this.nodeTypesToParseFor = new ArrayList<>();
-        this.nodeTypesToIgnore = new ArrayList<>();
-
         this.objectMapper = new ObjectMapper();
         objectMapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
         //objectMapper.enable(StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION);
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-
-        nodeTypesToParseFor.add("invoke-action");
-        nodeTypesToParseFor.add("subscribe-event");
-        nodeTypesToParseFor.add("read-property");
-        nodeTypesToParseFor.add("write-property");
-        nodeTypesToParseFor.add("inject");
-        nodeTypesToParseFor.add("consumed-thing");
-
-        nodeTypesToIgnore.add("debug");
-        nodeTypesToIgnore.add("comment");
     }
 
     @Override
@@ -67,9 +51,6 @@ public class NodeRedJSONParser implements FileProcessor<List<NodeRedNode>> {
                 }
 
                 if(type == null) continue;
-
-                //if(!nodeTypesToParseFor.contains(type)) continue;
-                //if(nodeTypesToIgnore.contains(type)) continue;
 
                 NodeRedNode nodeRedNode = switch (type) {
                     case "tab" -> {
