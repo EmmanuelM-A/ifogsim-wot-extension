@@ -1,5 +1,6 @@
 package com.extensions.sysconstructor.topology;
 
+import com.extensions.sysconstructor.nodered.NodeRedJSONParser;
 import com.extensions.utils.processors.FileProcessor;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -19,14 +20,17 @@ public class ApplicationTopologyParser implements FileProcessor<JsonNode> {
     private final List<String> topologyNodeTypesToInclude;
 
     public ApplicationTopologyParser(File applicationTopologyFile) throws IOException {
-        // Create and configure object instance
         this.objectMapper = new ObjectMapper();
-        this.topologyNodeTypesToInclude = new ArrayList<>();
-        topologyNodeTypesToInclude.add("invoke-action");
-
-
         objectMapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+
+        this.topologyNodeTypesToInclude = new ArrayList<>();
+
+        topologyNodeTypesToInclude.add(NodeRedJSONParser.TYPE_INVOKE_ACTION);
+        topologyNodeTypesToInclude.add(NodeRedJSONParser.TYPE_READ_PROPERTY);
+        topologyNodeTypesToInclude.add(NodeRedJSONParser.TYPE_WRITE_PROPERTY);
+        topologyNodeTypesToInclude.add(NodeRedJSONParser.TYPE_SUBSCRIBE_EVENT);
+        topologyNodeTypesToInclude.add(NodeRedJSONParser.TYPE_INJECT);
 
         this.applicationTopology = process(applicationTopologyFile);
     }
@@ -39,9 +43,7 @@ public class ApplicationTopologyParser implements FileProcessor<JsonNode> {
     public List<TopologyNodeConnection> parseTopologyConnections() throws JsonProcessingException {
         List<TopologyNodeConnection> nodeConnections = new ArrayList<>();
 
-        String connectionsNode = applicationTopology.get("connections").asText();
-
-        JsonNode connections = objectMapper.readTree(connectionsNode);
+        JsonNode connections = applicationTopology.get("connections");
 
         for(JsonNode connection : connections) {
             String src = connection.get("source").asText();
@@ -51,7 +53,6 @@ public class ApplicationTopologyParser implements FileProcessor<JsonNode> {
 
             nodeConnections.add(nodeConnection);
         }
-
         return nodeConnections;
     }
 
@@ -65,8 +66,10 @@ public class ApplicationTopologyParser implements FileProcessor<JsonNode> {
                 String id = node.path("id").asText();
                 String name = node.path("name").asText();
                 String type = node.path("type").asText();
-                String thing = node.path("thing").asText();
+                String thing = node.path("thing").asText(null);
                 String uniqueAttribute = null;
+
+                if(!topologyNodeTypesToInclude.contains(type)) continue;
 
                 if(thing != null) uniqueAttribute = node.path(type).asText();
 
@@ -75,6 +78,6 @@ public class ApplicationTopologyParser implements FileProcessor<JsonNode> {
             }
         }
 
-
+        return nodes;
     }
 }

@@ -3,7 +3,7 @@ package com.extensions.sysconstructor.topology;
 import java.util.*;
 
 public class TopologyNodeConnectionChecker {
-    private Map<String, Set<String>> adjacencyList;
+    private final Map<String, Set<String>> adjacencyList;
 
     public TopologyNodeConnectionChecker(List<TopologyNodeConnection> connections) {
         this.adjacencyList = new HashMap<>();
