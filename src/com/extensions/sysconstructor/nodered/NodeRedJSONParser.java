@@ -1,6 +1,9 @@
 package com.extensions.sysconstructor.nodered;
 
 import com.extensions.utils.processors.FileProcessor;
+import com.extensions.vdcreation.models.ThingDescription;
+import com.extensions.vdcreation.parsers.ThingDescriptionParser;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -10,14 +13,23 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class NodeRedJSONParser implements FileProcessor<List<NodeRedNode>> {
     private final List<String> nodeTypesToParseFor;
     private final List<String> nodeTypesToIgnore;
 
+    private final ObjectMapper objectMapper;
+
     public NodeRedJSONParser() {
         this.nodeTypesToParseFor = new ArrayList<>();
         this.nodeTypesToIgnore = new ArrayList<>();
+
+        this.objectMapper = new ObjectMapper();
+        objectMapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
+        //objectMapper.enable(StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION);
+        objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
 
         nodeTypesToParseFor.add("invoke-action");
         nodeTypesToParseFor.add("subscribe-event");
@@ -32,8 +44,7 @@ public class NodeRedJSONParser implements FileProcessor<List<NodeRedNode>> {
 
     @Override
     public List<NodeRedNode> process(File file) throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        JsonNode rootNode = mapper.readTree(file);
+        JsonNode rootNode = objectMapper.readTree(file);
 
         List<NodeRedNode> nodes = new ArrayList<>();
 
@@ -66,8 +77,10 @@ public class NodeRedJSONParser implements FileProcessor<List<NodeRedNode>> {
                         yield new NodeRedNode(null, type, title, null, null, null);
                     }
                     case "consumed-thing" -> {
-                        String td = cleanString(node.has("td") ? String.valueOf(node.get("td")) : null);
-                        yield new NodeRedNode(id, type, extractThingName(td), null, null, null);
+                        String td = node.get("td").asText();
+                        JsonNode tdNode = objectMapper.readTree(td);
+                        String title = tdNode.get("title").asText();
+                        yield new NodeRedNode(id, type, title, null, null, null);
                     }
                     case "invoke-action" -> {
                         String action = cleanString(node.has("action") ? String.valueOf(node.get("action")) : null);
@@ -89,21 +102,6 @@ public class NodeRedJSONParser implements FileProcessor<List<NodeRedNode>> {
         }
 
         return nodes;
-    }
-
-    private String extractThingName(String td) {
-        if (td == null || td.isEmpty()) {
-            return "Unknown Thing";
-        }
-
-        try {
-            ObjectMapper mapper = new ObjectMapper();
-            JsonNode tdJson = mapper.readTree(td);
-            return tdJson.has("\"title\"") ? tdJson.get("\"title\"").asText("Unknown Thing") : "Unknown Thing";
-        } catch (IOException e) {
-            // If the TD cannot be parsed, return a default value
-            return "Unknown Thing";
-        }
     }
 
     private String cleanString(String value) {
