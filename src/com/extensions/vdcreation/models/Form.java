@@ -1,5 +1,7 @@
 package com.extensions.vdcreation.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.List;
 
 /**
@@ -19,6 +21,9 @@ public class Form {
     private List<String> security;
 
     private String subprotocol;
+
+    @JsonProperty("htv:methodName")
+    private String methodName;
 
     private Response response;
 
@@ -68,5 +73,13 @@ public class Form {
 
     public void setResponse(Response response) {
         this.response = response;
+    }
+
+    public String getMethodName() {
+        return methodName;
+    }
+
+    public void setMethodName(String methodName) {
+        this.methodName = methodName;
     }
 }

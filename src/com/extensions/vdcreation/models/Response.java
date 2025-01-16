@@ -3,7 +3,7 @@ package com.extensions.vdcreation.models;
 /**
  * Represents a response for an action form in a Thing Description.
  */
-public class Response {
+public class Response extends BaseEntity {
     /**
      * The content type of the response (e.g. "image/jpeg")
      */

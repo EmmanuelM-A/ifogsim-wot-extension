@@ -19,11 +19,26 @@
     "type" : "inject",
     "thing" : null
   }, {
+    "id" : "441fd7dce7344e28",
+    "name" : "msg",
+    "type" : "debug",
+    "thing" : null
+  }, {
     "id" : "0c301723eff9ab3a",
     "name" : "onOutOfResourceEvent",
     "type" : "subscribe-event",
     "thing" : "28de068b74624cd3",
     "event" : "outOfResource"
+  }, {
+    "id" : "dc4c6699844b12f4",
+    "name" : "Simulates users selecting drinks",
+    "type" : "comment",
+    "thing" : null
+  }, {
+    "id" : "64e6d3e05dca91ed",
+    "name" : "debug 20",
+    "type" : "debug",
+    "thing" : null
   }, {
     "id" : "8ca2a36495a831a7",
     "name" : "isMaintenceNeeded",
@@ -37,6 +52,11 @@
     "thing" : "28de068b74624cd3",
     "property" : "servedCounter"
   }, {
+    "id" : "610c72f3fb35c1da",
+    "name" : "Maintenance Management",
+    "type" : "comment",
+    "thing" : null
+  }, {
     "id" : "e73df346f73fa9c4",
     "name" : "Top up resources",
     "type" : "function",
@@ -47,6 +67,11 @@
     "type" : "write-property",
     "thing" : "28de068b74624cd3",
     "property" : "availableResourceLevel"
+  }, {
+    "id" : "20b3ae1b40a42464",
+    "name" : "Top up resources when event occurs",
+    "type" : "comment",
+    "thing" : null
   }, {
     "id" : "6e15b5a7b335702c",
     "name" : "setAvailableResourceLevel(milk)",
@@ -65,6 +90,16 @@
     "type" : "write-property",
     "thing" : "28de068b74624cd3",
     "property" : "availableResourceLevel"
+  }, {
+    "id" : "1499b0fb20de1f5a",
+    "name" : "debug 24",
+    "type" : "debug",
+    "thing" : null
+  }, {
+    "id" : "f110622ce9a87313",
+    "name" : "debug 25",
+    "type" : "debug",
+    "thing" : null
   }, {
     "id" : "5e3e83117f82c9d7",
     "name" : "",

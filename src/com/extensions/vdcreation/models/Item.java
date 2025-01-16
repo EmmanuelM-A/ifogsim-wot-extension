@@ -1,5 +1,4 @@
 package com.extensions.vdcreation.models;
 
-public class Data extends BaseEntity {
-
+public class Item extends BaseEntity {
 }

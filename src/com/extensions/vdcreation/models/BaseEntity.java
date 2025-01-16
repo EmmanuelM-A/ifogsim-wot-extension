@@ -5,8 +5,23 @@ import java.util.List;
 /**
  * Represents a base entity in the Thing Description model.
  * This class contains common attributes shared across various entities,
- * such as properties, actions, and events. The attributes it contains are as followed: id, title, description,
- * type, unit, required, minimum, maximum, observable, readOnly, writeOnly, security
+ * such as properties, actions, and events.
+ *
+ * <p>The attributes it contains are as follows:</p>
+ * <ul>
+ *     <li><b>id</b>: A unique identifier for the entity.</li>
+ *     <li><b>title</b>: A human-readable title or name for the entity.</li>
+ *     <li><b>description</b>: A brief textual description of the entity.</li>
+ *     <li><b>type</b>: The type or semantic category of the entity.</li>
+ *     <li><b>unit</b>: The unit of measurement associated with the entity's data or values.</li>
+ *     <li><b>required</b>: A list of required attributes or fields for this entity.</li>
+ *     <li><b>minimum</b>: The minimum allowable value for numeric attributes of the entity.</li>
+ *     <li><b>maximum</b>: The maximum allowable value for numeric attributes of the entity.</li>
+ *     <li><b>observable</b>: Indicates whether the entity supports observation for real-time updates.</li>
+ *     <li><b>readOnly</b>: Indicates whether the entity is read-only.</li>
+ *     <li><b>writeOnly</b>: Indicates whether the entity is write-only.</li>
+ *     <li><b>security</b>: A list of security mechanisms or schemes associated with the entity.</li>
+ * </ul>
  */
 public class BaseEntity {
     /**
@@ -58,6 +73,8 @@ public class BaseEntity {
      * Indicates whether the entity supports observation for real-time updates.
      */
     private boolean observable;
+
+    private boolean writeable;
 
     /**
      * Indicates whether the entity is read-only.
@@ -215,6 +232,14 @@ public class BaseEntity {
      */
     public void setObservable(boolean observable) {
         this.observable = observable;
+    }
+
+    public boolean isWriteable() {
+        return writeable;
+    }
+
+    public void setIsWriteable(boolean writeable) {
+        this.writeable = writeable;
     }
     /**
      * Checks if the entity is read-only.

@@ -9,7 +9,7 @@ import java.util.List;
 /**
  * Represents a Thing Description for a WoT-compliant device.
  */
-public class ThingDescription {
+public class ThingDescription extends BaseEntity {
     /**
      * JSON-LD context
      */
@@ -17,30 +17,9 @@ public class ThingDescription {
     private String context;
 
     /**
-     * The unique identifier for the Thing.
-     */
-    private String id;
-
-    /**
-     * Semantic type of the Thing.
-     */
-    @JsonProperty("@type")
-    private String type;
-
-    /**
      * The base URL used as the prefix for all forms in this Thing.
      */
     private String base;
-
-    /**
-     * Title of the Thing.
-     */
-    private String title;
-
-    /**
-     * Description of the Thing, providing additional information.
-     */
-    private String description;
 
     /**
      * Version information for this Thing Description.
@@ -56,11 +35,6 @@ public class ThingDescription {
      * Security schemes available for accessing the Thing's properties, actions and events.
      */
     private Map<String, SecurityScheme> securityDefinitions;
-
-    /**
-     * List of security requirements to interact with this Thing.
-     */
-    private List<String> security;
 
     /**
      * Properties available on this Thing paired with the name of the property.
@@ -92,44 +66,12 @@ public class ThingDescription {
         this.context = context;
     }
 
-    public String getId() {
-        return this.id;
-    }
-
-    public void setId(String id) {
-        this.id = id;
-    }
-
-    public String getType() {
-        return this.type;
-    }
-
-    public void setType(String type) {
-        this.type = type;
-    }
-
     public String getBase() {
         return this.base;
     }
 
     public void setBase(String base) {
         this.base = base;
-    }
-
-    public String getTitle() {
-        return this.title;
-    }
-
-    public void setTitle(String title) {
-        this.title = title;
-    }
-
-    public String getDescription() {
-        return this.description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
     }
 
     public VersionInfo getVersionInfo() {
@@ -154,14 +96,6 @@ public class ThingDescription {
 
     public void setSecurityDefinitions(Map<String, SecurityScheme> securityDefinitions) {
         this.securityDefinitions = securityDefinitions;
-    }
-
-    public List<String> getSecurity() {
-        return this.security;
-    }
-
-    public void setSecurity(List<String> security) {
-        this.security = security;
     }
 
     public Map<String, Property> getProperties() {

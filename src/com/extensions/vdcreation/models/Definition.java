@@ -3,17 +3,8 @@ package com.extensions.vdcreation.models;
 /**
  * Represents a data schema definition for reusable types in the Thing
  */
-public class Definition {
-    private String dataType;
+public class Definition extends BaseEntity {
     private String scale;
-
-    public String getDataType() {
-        return this.dataType;
-    }
-
-    public void setDataType(String dataType) {
-        this.dataType = dataType;
-    }
 
     public String getScale() {
         return this.scale;
