@@ -1,103 +1,479 @@
-/*{
-  "@context": [ "https://www.w3.org/2019/wot/td/v1", { "@language": "en" } ],
+{
+  "@context": [
+	"https://www.w3.org/2019/wot/td/v1",
+	{
+	  "@language": "en"
+	}
+  ],
   "@type": "Thing",
   "title": "Smart-Coffee-Machine",
-  "securityDefinitions": { "nosec": { "scheme": "nosec" } },
-  security: [ 'nosec' ],
-  properties: {
-	allAvailableResources: {
-	  type: 'object',
-	  description: "Current level of all available resources given as an integer percentage for each particular resource.",
-	  readOnly: true,
-	  properties: ["Object"],
-	  forms: ["Array"],
-	  writeOnly: false,
-	  observable: false
-	},
-	availableResourceLevel: {
-	  type: 'number',
-	  description: 'Current level of a particular resource. Requires resource id variable as uriVariables.',
-	  uriVariables: [Object],
-	  forms: [Array],
-	  readOnly: false,
-	  writeOnly: false,
-	  observable: false
-	},
-	possibleDrinks: {
-	  type: 'array',
-	  description: "The list of possible drinks in general. Doesn't depend on the available resources.",
-	  readOnly: true,
-	  items: [Object],
-	  forms: [Array],
-	  writeOnly: false,
-	  observable: false
-	},
-	servedCounter: {
-	  type: 'integer',
-	  description: 'The total number of served beverages.',
-	  minimum: 0,
-	  forms: [Array],
-	  readOnly: false,
-	  writeOnly: false,
-	  observable: false
-	},
-	maintenanceNeeded: {
-	  type: 'boolean',
-	  description: 'Shows whether a maintenance is needed. The property is observable. Automatically set to true when the servedCounter property exceeds 1000.',
-	  observable: true,
-	  forms: [Array],
-	  readOnly: false,
-	  writeOnly: false
-	},
-	schedules: {
-	  type: 'array',
-	  description: 'The list of scheduled tasks.',
-	  readOnly: true,
-	  items: [Object],
-	  forms: [Array],
-	  writeOnly: false,
-	  observable: false
+  "securityDefinitions": {
+	"nosec": {
+	  "scheme": "nosec"
 	}
   },
-  actions: {
-	makeDrink: {
-	  description: 'Make a drink from available list of beverages. Accepts drink id, size and quantity as uriVariables. Brews one medium americano if no uriVariables are specified.',
-	  uriVariables: [Object],
-	  output: [Object],
-	  forms: [Array],
-	  safe: false,
-	  idempotent: false
+  "security": [
+	"nosec"
+  ],
+  "properties": {
+	"allAvailableResources": {
+	  "type": "object",
+	  "description": "Current level of all available resources given as their respective unit measurements.",
+	  "readOnly": true,
+	  "observable": true,
+	  "properties": {
+		"water": {
+		  "type": "number",
+		  "minimum": 0,
+		  "maximum": 5
+		},
+		"milk": {
+		  "type": "number",
+		  "minimum": 0,
+		  "maximum": 5
+		},
+		"chocolate": {
+		  "type": "number",
+		  "minimum": 0,
+		  "maximum": 2
+		},
+		"coffeeBeans": {
+		  "type": "number",
+		  "minimum": 0,
+		  "maximum": 3
+		}
+	  },
+	  "forms": [
+		{
+		  "href": "http://10.32.149.227:8081/smart-coffee-machine/properties/allAvailableResources",
+		  "contentType": "application/json",
+		  "op": [
+			"readproperty"
+		  ],
+		  "htv:methodName": "GET"
+		},
+		{
+		  "href": "http://10.32.149.227:8081/smart-coffee-machine/properties/allAvailableResources/observable",
+		  "contentType": "application/json",
+		  "op": [
+			"observeproperty",
+			"unobserveproperty"
+		  ],
+		  "subprotocol": "longpoll"
+		},
+		{
+		  "href": "http://10.32.149.227:8081/smart-coffee-machine/properties/allAvailableResources",
+		  "contentType": "application/cbor",
+		  "op": [
+			"readproperty"
+		  ],
+		  "htv:methodName": "GET"
+		},
+		{
+		  "href": "http://10.32.149.227:8081/smart-coffee-machine/properties/allAvailableResources/observable",
+		  "contentType": "application/cbor",
+		  "op": [
+			"observeproperty",
+			"unobserveproperty"
+		  ],
+		  "subprotocol": "longpoll"
+		}
+	  ],
+	  "writeOnly": false
 	},
-	setSchedule: {
-	  description: 'Add a scheduled task to the schedules property. Accepts drink id, size, quantity, time and mode as body of a request.\n' +
-	  '    Assumes one medium americano if not specified, but time and mode are mandatory fields.',
-	  input: [Object],
-	  output: [Object],
-	  forms: [Array],
-	  safe: false,
-	  idempotent: false
+	"availableResourceLevel": {
+	  "type": "number",
+	  "description": "Current level of a particular resource. Requires resource id variable as uriVariables.",
+	  "uriVariables": {
+		"id": {
+		  "type": "string",
+		  "enum": [
+			"water",
+			"milk",
+			"chocolate",
+			"coffeeBeans"
+		  ]
+		}
+	  },
+	  "forms": [
+		{
+		  "href": "http://10.32.149.227:8081/smart-coffee-machine/properties/availableResourceLevel{?id}",
+		  "contentType": "application/json",
+		  "op": [
+			"readproperty",
+			"writeproperty"
+		  ]
+		},
+		{
+		  "href": "http://10.32.149.227:8081/smart-coffee-machine/properties/availableResourceLevel{?id}",
+		  "contentType": "application/cbor",
+		  "op": [
+			"readproperty",
+			"writeproperty"
+		  ]
+		}
+	  ],
+	  "readOnly": false,
+	  "writeOnly": false,
+	  "observable": false
+	},
+	"possibleDrinks": {
+	  "type": "array",
+	  "description": "The list of possible drinks in general. Doesn't depend on the available resources.",
+	  "readOnly": true,
+	  "items": {
+		"type": "string"
+	  },
+	  "forms": [
+		{
+		  "href": "http://10.32.149.227:8081/smart-coffee-machine/properties/possibleDrinks",
+		  "contentType": "application/json",
+		  "op": [
+			"readproperty"
+		  ],
+		  "htv:methodName": "GET"
+		},
+		{
+		  "href": "http://10.32.149.227:8081/smart-coffee-machine/properties/possibleDrinks",
+		  "contentType": "application/cbor",
+		  "op": [
+			"readproperty"
+		  ],
+		  "htv:methodName": "GET"
+		}
+	  ],
+	  "writeOnly": false,
+	  "observable": false
+	},
+	"servedCounter": {
+	  "type": "integer",
+	  "description": "The total number of served beverages.",
+	  "minimum": 0,
+	  "forms": [
+		{
+		  "href": "http://10.32.149.227:8081/smart-coffee-machine/properties/servedCounter",
+		  "contentType": "application/json",
+		  "op": [
+			"readproperty",
+			"writeproperty"
+		  ]
+		},
+		{
+		  "href": "http://10.32.149.227:8081/smart-coffee-machine/properties/servedCounter",
+		  "contentType": "application/cbor",
+		  "op": [
+			"readproperty",
+			"writeproperty"
+		  ]
+		}
+	  ],
+	  "readOnly": false,
+	  "writeOnly": false,
+	  "observable": false
+	},
+	"maintenanceNeeded": {
+	  "type": "boolean",
+	  "description": "Shows whether a maintenance is needed. The property is observable. Automatically set to true when the servedCounter property exceeds 1000.",
+	  "observable": true,
+	  "forms": [
+		{
+		  "href": "http://10.32.149.227:8081/smart-coffee-machine/properties/maintenanceNeeded",
+		  "contentType": "application/json",
+		  "op": [
+			"readproperty",
+			"writeproperty"
+		  ]
+		},
+		{
+		  "href": "http://10.32.149.227:8081/smart-coffee-machine/properties/maintenanceNeeded/observable",
+		  "contentType": "application/json",
+		  "op": [
+			"observeproperty",
+			"unobserveproperty"
+		  ],
+		  "subprotocol": "longpoll"
+		},
+		{
+		  "href": "http://10.32.149.227:8081/smart-coffee-machine/properties/maintenanceNeeded",
+		  "contentType": "application/cbor",
+		  "op": [
+			"readproperty",
+			"writeproperty"
+		  ]
+		},
+		{
+		  "href": "http://10.32.149.227:8081/smart-coffee-machine/properties/maintenanceNeeded/observable",
+		  "contentType": "application/cbor",
+		  "op": [
+			"observeproperty",
+			"unobserveproperty"
+		  ],
+		  "subprotocol": "longpoll"
+		}
+	  ],
+	  "readOnly": false,
+	  "writeOnly": false
+	},
+	"schedules": {
+	  "type": "array",
+	  "description": "The list of scheduled tasks.",
+	  "readOnly": true,
+	  "items": {
+		"type": "object",
+		"properties": {
+		  "drinkId": {
+			"type": "string",
+			"description": "Defines what drink to make, drinkId is one of possibleDrinks property values, e.g. latte."
+		  },
+		  "size": {
+			"type": "string",
+			"description": "Defines the size of a drink, s = small, m = medium, l = large.",
+			"enum": [
+			  "s",
+			  "m",
+			  "l"
+			]
+		  },
+		  "quantity": {
+			"type": "integer",
+			"description": "Defines how many drinks to make, ranging from 1 to 5.",
+			"minimum": 1,
+			"maximum": 5
+		  },
+		  "time": {
+			"type": "string",
+			"description": "Defines the time of the scheduled task in 24h format, e.g. 10:00 or 21:00."
+		  },
+		  "mode": {
+			"type": "string",
+			"description": "Defines the mode of the scheduled task, e.g. once or everyday. All the possible values are given in the enum field of this Thing Description.",
+			"enum": [
+			  "once",
+			  "everyday",
+			  "everyMo",
+			  "everyTu",
+			  "everyWe",
+			  "everyTh",
+			  "everyFr",
+			  "everySat",
+			  "everySun"
+			]
+		  }
+		}
+	  },
+	  "forms": [
+		{
+		  "href": "http://10.32.149.227:8081/smart-coffee-machine/properties/schedules",
+		  "contentType": "application/json",
+		  "op": [
+			"readproperty"
+		  ],
+		  "htv:methodName": "GET"
+		},
+		{
+		  "href": "http://10.32.149.227:8081/smart-coffee-machine/properties/schedules",
+		  "contentType": "application/cbor",
+		  "op": [
+			"readproperty"
+		  ],
+		  "htv:methodName": "GET"
+		}
+	  ],
+	  "writeOnly": false,
+	  "observable": false
 	}
   },
-  events: {
-	outOfResource: {
-	  description: 'Out of resource event. Emitted when the available resource level is not sufficient for a desired drink.',
-	  data: [Object],
-	  forms: [Array]
+  "actions": {
+	"makeDrink": {
+	  "description": "Make a drink from available list of beverages. Accepts drink id, size and quantity as uriVariables. Brews one medium americano if no uriVariables are specified.",
+	  "uriVariables": {
+		"drinkId": {
+		  "type": "string",
+		  "description": "Defines what drink to make, drinkId is one of possibleDrinks property values, e.g. latte."
+		},
+		"size": {
+		  "type": "string",
+		  "description": "Defines the size of a drink, s = small, m = medium, l = large.",
+		  "enum": [
+			"s",
+			"m",
+			"l"
+		  ]
+		},
+		"quantity": {
+		  "type": "integer",
+		  "description": "Defines how many drinks to make, ranging from 1 to 5.",
+		  "minimum": 1,
+		  "maximum": 5
+		}
+	  },
+	  "output": {
+		"type": "object",
+		"description": "Returns true/false and a message when all invoked promises are resolved (asynchronous).",
+		"properties": {
+		  "result": {
+			"type": "boolean"
+		  },
+		  "message": {
+			"type": "string"
+		  }
+		}
+	  },
+	  "forms": [
+		{
+		  "href": "http://10.32.149.227:8081/smart-coffee-machine/actions/makeDrink{?drinkId,size,quantity}",
+		  "contentType": "application/json",
+		  "op": [
+			"invokeaction"
+		  ],
+		  "htv:methodName": "POST"
+		},
+		{
+		  "href": "http://10.32.149.227:8081/smart-coffee-machine/actions/makeDrink{?drinkId,size,quantity}",
+		  "contentType": "application/cbor",
+		  "op": [
+			"invokeaction"
+		  ],
+		  "htv:methodName": "POST"
+		}
+	  ],
+	  "safe": false,
+	  "idempotent": false
+	},
+	"setSchedule": {
+	  "description": "Add a scheduled task to the schedules property. Accepts drink id, size, quantity, time and mode as body of a request.\n    Assumes one medium americano if not specified, but time and mode are mandatory fields.",
+	  "input": {
+		"type": "object",
+		"properties": {
+		  "drinkId": {
+			"type": "string",
+			"description": "Defines what drink to make, drinkId is one of possibleDrinks property values, e.g. latte."
+		  },
+		  "size": {
+			"type": "string",
+			"description": "Defines the size of a drink, s = small, m = medium, l = large.",
+			"enum": [
+			  "s",
+			  "m",
+			  "l"
+			]
+		  },
+		  "quantity": {
+			"type": "integer",
+			"description": "Defines how many drinks to make, ranging from 1 to 5.",
+			"minimum": 1,
+			"maximum": 5
+		  },
+		  "time": {
+			"type": "string",
+			"description": "Defines the time of the scheduled task in 24h format, e.g. 10:00 or 21:00."
+		  },
+		  "mode": {
+			"type": "string",
+			"description": "Defines the mode of the scheduled task, e.g. once or everyday. All the possible values are given in the enum field of this Thing Description.",
+			"enum": [
+			  "once",
+			  "everyday",
+			  "everyMo",
+			  "everyTu",
+			  "everyWe",
+			  "everyTh",
+			  "everyFr",
+			  "everySat",
+			  "everySun"
+			]
+		  }
+		},
+		"required": [
+		  "time",
+		  "mode"
+		]
+	  },
+	  "output": {
+		"type": "object",
+		"description": "Returns true/false and a message when all invoked promises are resolved (asynchronous).",
+		"properties": {
+		  "result": {
+			"type": "boolean"
+		  },
+		  "message": {
+			"type": "string"
+		  }
+		}
+	  },
+	  "forms": [
+		{
+		  "href": "http://10.32.149.227:8081/smart-coffee-machine/actions/setSchedule",
+		  "contentType": "application/json",
+		  "op": [
+			"invokeaction"
+		  ],
+		  "htv:methodName": "POST"
+		},
+		{
+		  "href": "http://10.32.149.227:8081/smart-coffee-machine/actions/setSchedule",
+		  "contentType": "application/cbor",
+		  "op": [
+			"invokeaction"
+		  ],
+		  "htv:methodName": "POST"
+		}
+	  ],
+	  "safe": false,
+	  "idempotent": false
 	}
   },
-  id: 'urn:uuid:afa7096e-846a-482a-80ab-9bc485da23aa',
-  description: 'A smart coffee machine with a range of capabilities.',
-  support: 'https://github.com/eclipse-thingweb/node-wot/',
-  forms: [
+  "events": {
+	"outOfResource": {
+	  "description": "Out of resource event. Emitted when the available resource level is not sufficient for a desired drink.",
+	  "data": {
+		"type": "string"
+	  },
+	  "forms": [
+		{
+		  "href": "http://10.32.149.227:8081/smart-coffee-machine/events/outOfResource",
+		  "contentType": "application/json",
+		  "subprotocol": "longpoll",
+		  "op": [
+			"subscribeevent",
+			"unsubscribeevent"
+		  ]
+		},
+		{
+		  "href": "http://10.32.149.227:8081/smart-coffee-machine/events/outOfResource",
+		  "contentType": "application/cbor",
+		  "subprotocol": "longpoll",
+		  "op": [
+			"subscribeevent",
+			"unsubscribeevent"
+		  ]
+		}
+	  ]
+	}
+  },
+  "id": "urn:uuid:33af8352-49ba-49dc-86d3-e7054fbaec2b",
+  "description": "A smart coffee machine with a range of capabilities.",
+  "support": "https://github.com/eclipse-thingweb/node-wot/",
+  "forms": [
 	{
-	  href: 'http://192.168.1.175:8081/smart-coffee-machine/properties',
-	  contentType: 'application/json',
-	  op: [Array]
+	  "href": "http://10.32.149.227:8081/smart-coffee-machine/properties",
+	  "contentType": "application/json",
+	  "op": [
+		"readallproperties",
+		"readmultipleproperties",
+		"writeallproperties",
+		"writemultipleproperties"
+	  ]
 	},
 	{
-	  href: 'http://192.168.1.175:8081/smart-coffee-machine/properties',
-	  contentType: 'application/cbor',
-	  op: [Array]
+	  "href": "http://10.32.149.227:8081/smart-coffee-machine/properties",
+	  "contentType": "application/cbor",
+	  "op": [
+		"readallproperties",
+		"readmultipleproperties",
+		"writeallproperties",
+		"writemultipleproperties"
+	  ]
 	}
   ]
-}*/
+}

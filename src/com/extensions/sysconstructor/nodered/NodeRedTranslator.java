@@ -22,7 +22,7 @@ public class NodeRedTranslator {
             NodeRedJSONParser parser = new NodeRedJSONParser();
             List<NodeRedNode> nodes = parser.process(nodeRedApplicationJsonFile);
 
-            // Tree grouping for nodes
+            // Tree grouping for nodes - TODO SORT OUT TREE GROUPING LATER ONCE PROJECT COMPLETED
             TreeGrouping treeGrouper = new TreeGrouping(nodes);
             List<Tree> trees = treeGrouper.groupNodesIntoTrees();
 
@@ -33,37 +33,9 @@ public class NodeRedTranslator {
             // Write to file using Jackson's ObjectMapper
             ObjectMapper mapper = new ObjectMapper();
             mapper.writerWithDefaultPrettyPrinter()
-                    .writeValue(new File(FilePaths.NODE_RED_APPLICATION_JSON), outputJson);
+                    .writeValue(new File(FilePaths.APPLICATION_TOPOLOGY), outputJson);
 
-            System.out.println("JSON file generated successfully!");
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public static void main(String[] args) {
-        //nodeRedToInputJson(new File("src/com/extensions/input/application/smart-coffee-machine-application.json"));
-
-        try {
-            ApplicationTopologyParser applicationTopologyParser = new ApplicationTopologyParser(new File(FilePaths.NODE_RED_APPLICATION_JSON));
-
-            List<TopologyNode> topologyNodes = applicationTopologyParser.parseTopologyNodes("nodes");
-
-            List<TopologyNodeConnection> topologyNodeConnections = applicationTopologyParser.parseTopologyConnections();
-
-            System.out.println("Application Topology Parsed Successfully!");
-
-            TopologyNodeConnectionChecker connectionChecker = new TopologyNodeConnectionChecker(topologyNodeConnections);
-
-            String isMaintenceNeeded = Utility.getTopologyNodeIdByName(topologyNodes, "isMaintenceNeeded");
-            String writeProp = Utility.getTopologyNodeIdByType(topologyNodes, NodeRedJSONParser.TYPE_WRITE_PROPERTY);
-
-            if(connectionChecker.areNodesConnected(isMaintenceNeeded, writeProp)) {
-                System.out.println(isMaintenceNeeded + " is connected to " + writeProp);
-            } else {
-                System.out.println(isMaintenceNeeded + " is not connected to " + writeProp);
-            }
+            System.out.println("Node Red Application Parsed Successfully!");
         } catch (IOException e) {
             e.printStackTrace();
         }
