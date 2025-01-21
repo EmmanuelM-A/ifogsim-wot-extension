@@ -1,5 +1,6 @@
 package com.extensions;
 
+import com.extensions.sysconstructor.topology.ApplicationTopologyParser;
 import com.extensions.utils.FilePaths;
 import com.extensions.utils.presets.ActuatorPreset;
 import com.extensions.utils.presets.FogDevicePreset;
@@ -21,6 +22,9 @@ import java.util.Calendar;
 import java.util.List;
 
 public final class App {
+    private static boolean CLOUD = false;
+
+    private static List<VirtualDevice> virtualDevices = new ArrayList<>();
     public static void main(String[] args) {
         // Determines if the application deployment is cloud-based.
         boolean CLOUD = false;
@@ -30,6 +34,8 @@ public final class App {
         Log.printLine("Starting Simulation...");
 
         try {
+            ApplicationTopologyParser applicationTopologyParser = new ApplicationTopologyParser(new File(FilePaths.APPLICATION_TOPOLOGY));
+
             Log.disable();
 
             //////////////////////////////// INITIAL SETUP ////////////////////////////////
@@ -47,7 +53,8 @@ public final class App {
             CloudSim.init(numUsers, calendar, traceFlag);
 
             // Assigns a unique identifier to the application being simulated. This ID is used to manage the application's components and operations.
-            String appId = "";
+            String applicationTitle = applicationTopologyParser.parseApplicationTitle();
+            String appId = applicationTitle != null ? applicationTitle: "Default";
 
             // Initializes a FogBroker, which manages application modules and coordinates communication between them in the simulation.
             FogBroker broker = new FogBroker("broker");

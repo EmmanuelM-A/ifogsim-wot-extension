@@ -40,6 +40,14 @@ public class ApplicationTopologyParser implements FileProcessor<JsonNode> {
         return objectMapper.readTree(file);
     }
 
+    public String parseApplicationTitle() throws JsonProcessingException {
+        JsonNode applicationDetails = applicationTopology.get("applicationDetails");
+
+        if(applicationDetails == null || !applicationDetails.has("title")) return null;
+
+        return applicationDetails.get("title").asText(null);
+    }
+
     public List<TopologyNodeConnection> parseTopologyConnections() throws JsonProcessingException {
         List<TopologyNodeConnection> nodeConnections = new ArrayList<>();
 
