@@ -44,6 +44,7 @@ public class NodeRedJSONParser implements FileProcessor<List<NodeRedNode>> {
             for(JsonNode node : rootNode) {
                 String id = cleanString(node.has("id") ? String.valueOf(node.get("id")) : null);
                 String name = cleanString(node.has("name") ? String.valueOf(node.get("name")) : null);
+                String topic = cleanString(node.has("topic") ? String.valueOf(node.get("topic")) : null);
                 String type = cleanString(node.has("type") ? String.valueOf(node.get("type")) : null);
                 String thingId = cleanString(node.has("thing") ? String.valueOf(node.get("thing")) : null);
 
@@ -63,27 +64,27 @@ public class NodeRedJSONParser implements FileProcessor<List<NodeRedNode>> {
                 NodeRedNode nodeRedNode = switch (type) {
                     case TYPE_TAB -> {
                         String title = cleanString(node.has("label") ? String.valueOf(node.get("label")) : "Unknown Application");
-                        yield new NodeRedNode(null, type, title, null, null, null);
+                        yield new NodeRedNode(null, type, title, topic, null, null, null);
                     }
                     case TYPE_CONSUMED_THING -> {
                         String td = node.get("td").asText();
                         JsonNode tdNode = objectMapper.readTree(td);
                         String title = tdNode.get("title").asText();
-                        yield new NodeRedNode(id, type, title, null, null, null);
+                        yield new NodeRedNode(id, type, title, topic, null, null, null);
                     }
                     case TYPE_INVOKE_ACTION -> {
                         String action = cleanString(node.has("action") ? String.valueOf(node.get("action")) : null);
-                        yield new NodeRedNode(id, type, name, thingId, action, wires);
+                        yield new NodeRedNode(id, type, name, topic, thingId, action, wires);
                     }
                     case TYPE_SUBSCRIBE_EVENT -> {
                         String event = cleanString(node.has("event") ? String.valueOf(node.get("event")) : null);
-                        yield new NodeRedNode(id, type, name, thingId, event, wires);
+                        yield new NodeRedNode(id, type, name, topic, thingId, event, wires);
                     }
                     case TYPE_READ_PROPERTY, TYPE_WRITE_PROPERTY -> {
                         String property = cleanString(node.has("property") ? String.valueOf(node.get("property")) : null);
-                        yield new NodeRedNode(id, type, name, thingId, property, wires);
+                        yield new NodeRedNode(id, type, name, topic, thingId, property, wires);
                     }
-                    default -> new NodeRedNode(id, type, name, thingId, null, wires);
+                    default -> new NodeRedNode(id, type, name, topic, thingId, null, wires);
                 };
 
                 nodes.add(nodeRedNode);

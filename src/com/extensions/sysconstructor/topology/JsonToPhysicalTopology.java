@@ -14,9 +14,10 @@ public class JsonToPhysicalTopology extends JsonToTopology {
         * Parse the application topology json
         * Get the VDs
         * Connect devices according to the topology JSON
-        * INJECT - REPRESENTS DATA FLOW ONLY
-        * READ-PROP =
+        * INJECT, SUB-EVENTS = REPRESENTS DATA FLOW ONLY (IGNORE)
+        * READ-PROP = SENSORS
         * INVOKE-ACTION, WRITE-PROP = ACTUATORS
+        * READ-PROP search for
         * */
 
         try {
@@ -28,6 +29,13 @@ public class JsonToPhysicalTopology extends JsonToTopology {
             List<TopologyNodeConnection> topologyNodeConnections = applicationTopologyParser.parseTopologyConnections();
 
             System.out.println("Application Topology Parsed Successfully!");
+
+            // Create the cloud node
+
+            // Create the edge nodes
+
+
+
 
 
         } catch(Exception e) {
