@@ -8,6 +8,7 @@ import com.extensions.customfog.SensorProperty;
 import com.extensions.utils.presets.ActuatorPreset;
 import com.extensions.utils.presets.FogDevicePreset;
 import com.extensions.utils.presets.SensorPreset;
+import com.extensions.vdcreation.models.Event;
 import com.extensions.vdcreation.models.Property;
 import com.extensions.vdcreation.models.ThingDescription;
 import com.extensions.vdcreation.models.Action;
@@ -41,6 +42,8 @@ public class VirtualDeviceFactory {
     public VirtualDevice createVirtualDevice(ThingDescription thingDescription, List<VirtualDeviceConfig> configs) {
         // Instantiate a virtual device with no sensors or actuators
         VirtualDevice virtualDevice = defineVirtualDevice(thingDescription, configs);
+
+        // TODO ENSURE WRITE-PROPERTIES ARE ADDED AS ACTUATORS - REMEMBER
 
         // Create the sensors for the TD properties
         for(Map.Entry<String, Property> propertyEntry : thingDescription.getProperties().entrySet()) {
@@ -81,16 +84,17 @@ public class VirtualDeviceFactory {
         }
 
         // Create event for the events
-        /*for(Map.Entry<String, Event> eventEntry : thingDescription.getEvents().entrySet()) {
+        for(Map.Entry<String, Event> eventEntry : thingDescription.getEvents().entrySet()) {
             // Extract entry data
             String eventName = eventEntry.getKey();
             Event event = eventEntry.getValue();
 
-            // Map action to an ActuatorAction
+            // Set event name
+            event.setTitle(eventName);
 
-
-            // Add actuator action to the virtual device
-        }*/
+            // Add event to virtual device
+            virtualDevice.getEvents().add(event);
+        }
 
         return virtualDevice;
     }
