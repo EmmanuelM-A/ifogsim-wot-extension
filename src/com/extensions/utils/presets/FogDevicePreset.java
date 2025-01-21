@@ -13,11 +13,10 @@ public enum FogDevicePreset {
             10000,
             2,
             0.01,
-            null,
             10000,
             150.00,
             50.00
-    );
+    ),
 
     /*ASU_PERFECT(
             0, 0, 0, 0, 0, 0, 0, 0
@@ -35,14 +34,13 @@ public enum FogDevicePreset {
     public final double DOWNLINK_BW;
     public final double UPLINK_LATENCY;
     public final double RATE_PER_MIPS;
-    public final VmAllocationPolicy VM_ALC_POLICY;
     public final long BANDWIDTH;
     public final double BUSY_POWER;
     public final double IDLE_POWER;
 
     FogDevicePreset(
             int mips, int ram, long storage, long schedulingInterval, double uplinkBandwidth, double downlinkBandwidth,
-            double uplinkLatency, double ratePerMips, VmAllocationPolicy vmAllocationPolicy, long bandwidth,
+            double uplinkLatency, double ratePerMips, long bandwidth,
             double busyPower, double idlePower
     ) {
         this.MIPS = mips;
@@ -53,7 +51,6 @@ public enum FogDevicePreset {
         this.DOWNLINK_BW = downlinkBandwidth;
         this.UPLINK_LATENCY = uplinkLatency;
         this.RATE_PER_MIPS = ratePerMips;
-        this.VM_ALC_POLICY = vmAllocationPolicy;
         this.BANDWIDTH = bandwidth;
         this.BUSY_POWER = busyPower;
         this.IDLE_POWER = idlePower;

@@ -22,9 +22,6 @@ import java.util.Calendar;
 import java.util.List;
 
 public final class App {
-    private static boolean CLOUD = false;
-
-    private static List<VirtualDevice> virtualDevices = new ArrayList<>();
     public static void main(String[] args) {
         // Determines if the application deployment is cloud-based.
         boolean CLOUD = false;
@@ -63,7 +60,7 @@ public final class App {
 
             // Extract the metadata from the TDs
             List<ThingDescription> thingDescriptions = JsonFileProcessor.processJsonFiles(
-                    "", // SET THINGS REPO HERE
+                    FilePaths.JSON_THINGS_REPO, // SET THINGS REPO HERE
                     new ThingDescriptionParser()
             );
 
@@ -75,7 +72,7 @@ public final class App {
             for(ThingDescription thingDescription : thingDescriptions) {
                 VirtualDevice vd = virtualDeviceFactory.createVirtualDevice(
                         thingDescription,
-                        vdConfigParser.process(new File("")) // SET VD'S CONFIG FILE HERE
+                        vdConfigParser.process(new File(FilePaths.VD_CONFIG_FILE)) // SET VD'S CONFIG FILE HERE
                 );
                 // Validate VD HERE
                 virtualDevices.add(vd);

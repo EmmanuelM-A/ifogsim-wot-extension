@@ -1,10 +1,12 @@
 package com.extensions.sysconstructor.topology;
 
+import com.extensions.customfog.FogDeviceFactory;
 import com.extensions.sysconstructor.core.ApplicationPhysicalTopology;
 import com.extensions.sysconstructor.nodered.NodeRedTranslator;
 import com.extensions.utils.FilePaths;
 import com.extensions.vdcreation.core.VirtualDevice;
 import org.fog.application.Application;
+import org.fog.entities.FogDevice;
 import org.fog.utils.JsonToTopology;
 
 import java.io.File;
@@ -20,17 +22,15 @@ import java.util.List;
  * READ-PROP search for
  * */
 
-public class JsonToPhysicalTopology extends JsonToTopology {
+public class JsonToPhysicalTopology {
     public static ApplicationPhysicalTopology createPhysicalTopology(int userId, String appId, File nodeRedApplicationJsonFile, List<VirtualDevice> virtualDevices) {
+        ApplicationPhysicalTopology applicationPhysicalTopology = new ApplicationPhysicalTopology();
         try {
             // Generate the application topology from the node red application design
             NodeRedTranslator.nodeRedToInputJson(nodeRedApplicationJsonFile);
 
             // Parse the application topology json
             ApplicationTopologyParser applicationTopologyParser = new ApplicationTopologyParser(new File(FilePaths.APPLICATION_TOPOLOGY));
-
-            // Extract application details (Title)
-            //ApplicationDetails applicationDetails;
 
             // Extract all the topology nodes
             List<TopologyNode> topologyNodes = applicationTopologyParser.parseTopologyNodes("nodes");
@@ -40,9 +40,15 @@ public class JsonToPhysicalTopology extends JsonToTopology {
 
             System.out.println("Application Topology Parsed Successfully!");
 
-            System.out.println(topologyNodes.getFirst().toString());
+            //System.out.println(topologyNodes.getFirst().toString()); // COME BACK TO THIS
 
-            // Create the cloud node
+            // Create the cloud device at the top of the hierarchy
+            FogDevice cloud = FogDeviceFactory.createFogDevice("cloud", 50000, 40000, 100, 10000, 0, 0.01, 16*103, 16*83.25);
+
+            // Cloud has no parent, it is the root of the hierarchy
+            cloud.setParentId(-1);
+
+
 
             // Create the edge nodes
 
@@ -58,7 +64,12 @@ public class JsonToPhysicalTopology extends JsonToTopology {
     }
 
     public static void main(String[] args) {
-        //createPhysicalTopology(null, null, FilePaths.NODE_RED_APPLICATION_JSON)
+        createPhysicalTopology(
+                0,
+                null,
+                new File("src/com/extensions/input/application/smart-coffee-machine-application.json"),
+                null
+        );
     }
 
     public static Application createApplicationDataMappings() {
