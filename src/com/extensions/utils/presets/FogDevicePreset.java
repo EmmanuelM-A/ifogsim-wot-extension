@@ -16,7 +16,7 @@ public enum FogDevicePreset {
             10000,
             150.00,
             50.00
-    ),
+    );
 
     /*ASU_PERFECT(
             0, 0, 0, 0, 0, 0, 0, 0

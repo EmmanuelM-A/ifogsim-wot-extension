@@ -1,154 +1,194 @@
 {
   "applicationDetails" : {
-    "title" : "Smart Coffee Machine Application"
+    "title" : "Door Security Application"
   },
   "things" : [ {
-    "id" : "28de068b74624cd3",
-    "name" : "Smart-Coffee-Machine",
+    "id" : "263d2ff2376b823c",
+    "name" : "Smart Door Lock",
+    "type" : "consumed-thing"
+  }, {
+    "id" : "60ec5509eed581fd",
+    "name" : "Alarm",
+    "type" : "consumed-thing"
+  }, {
+    "id" : "b7c9cdf5487520a3",
+    "name" : "Smart Camera",
     "type" : "consumed-thing"
   } ],
   "nodes" : [ {
-    "id" : "c6a08fa4396ec325",
-    "name" : "makeDrink()",
-    "type" : "invoke-action",
-    "thing" : "28de068b74624cd3",
-    "action" : "makeDrink"
+    "id" : "7dc05fc03d04eb19",
+    "name" : "",
+    "type" : "subscribe-event",
+    "thing" : "263d2ff2376b823c",
+    "event" : "tamperAlert"
   }, {
-    "id" : "faaaaed23c2c0536",
-    "name" : "N secs",
+    "id" : "811007e7de142df3",
+    "name" : "activateAlarm()",
+    "type" : "invoke-action",
+    "thing" : "60ec5509eed581fd",
+    "action" : "activate"
+  }, {
+    "id" : "e71e1a3a8c3ddb12",
+    "name" : "",
+    "type" : "read-property",
+    "thing" : "263d2ff2376b823c",
+    "property" : "lockState"
+  }, {
+    "id" : "a8c8f083bec09a17",
+    "name" : "",
+    "type" : "switch",
+    "thing" : null
+  }, {
+    "id" : "4e6c5aa1ba22f0d1",
+    "name" : "",
+    "type" : "subscribe-event",
+    "thing" : "b7c9cdf5487520a3",
+    "event" : "snapshotTaken"
+  }, {
+    "id" : "8b1ee9ea5a20f2e6",
+    "name" : "takePhoto()",
+    "type" : "invoke-action",
+    "thing" : "b7c9cdf5487520a3",
+    "action" : "takeSnapshot"
+  }, {
+    "id" : "dbc3efe6f3419e28",
+    "name" : "",
+    "type" : "read-property",
+    "thing" : "b7c9cdf5487520a3",
+    "property" : "streamURL"
+  }, {
+    "id" : "47b63b8b65c089a4",
+    "name" : "",
+    "type" : "read-property",
+    "thing" : "b7c9cdf5487520a3",
+    "property" : "lastSnapshot"
+  }, {
+    "id" : "22f77c5ca9e63f2b",
+    "name" : "debug 1",
+    "type" : "debug",
+    "thing" : null
+  }, {
+    "id" : "1906557932e9df1b",
+    "name" : "debug 2",
+    "type" : "debug",
+    "thing" : null
+  }, {
+    "id" : "e50ed524fca2d656",
+    "name" : "",
+    "type" : "invoke-action",
+    "thing" : "263d2ff2376b823c",
+    "action" : "lockDoor"
+  }, {
+    "id" : "353fcfb8d1b86ba3",
+    "name" : "Auto lcok door if unlocked",
+    "type" : "comment",
+    "thing" : null
+  }, {
+    "id" : "7654e8590e2bfb72",
+    "name" : "activate alarm and cameras if door is tampered with",
+    "type" : "comment",
+    "thing" : null
+  }, {
+    "id" : "2ac85a9f7e265d33",
+    "name" : "Send photos and video recording",
+    "type" : "comment",
+    "thing" : null
+  }, {
+    "id" : "735dd081c0022339",
+    "name" : "",
+    "type" : "invoke-action",
+    "thing" : "263d2ff2376b823c",
+    "action" : "unlockDoor"
+  }, {
+    "id" : "6858b7c20ddbdd2a",
+    "name" : "",
     "type" : "inject",
     "thing" : null
   }, {
-    "id" : "441fd7dce7344e28",
-    "name" : "msg",
-    "type" : "debug",
-    "thing" : null
-  }, {
-    "id" : "0c301723eff9ab3a",
-    "name" : "onOutOfResourceEvent",
-    "type" : "subscribe-event",
-    "thing" : "28de068b74624cd3",
-    "event" : "outOfResource"
-  }, {
-    "id" : "dc4c6699844b12f4",
-    "name" : "Simulates users selecting drinks",
+    "id" : "d6da315cd118870d",
+    "name" : "Simulates the user opening the door",
     "type" : "comment",
     "thing" : null
   }, {
-    "id" : "64e6d3e05dca91ed",
-    "name" : "debug 20",
-    "type" : "debug",
-    "thing" : null
-  }, {
-    "id" : "8ca2a36495a831a7",
-    "name" : "isMaintenceNeeded",
-    "type" : "read-property",
-    "thing" : "28de068b74624cd3",
-    "property" : "maintenanceNeeded"
-  }, {
-    "id" : "4ad18fbfe3ab0b36",
-    "name" : "setServedCounter()",
-    "type" : "write-property",
-    "thing" : "28de068b74624cd3",
-    "property" : "servedCounter"
-  }, {
-    "id" : "610c72f3fb35c1da",
-    "name" : "Maintenance Management",
-    "type" : "comment",
-    "thing" : null
-  }, {
-    "id" : "e73df346f73fa9c4",
-    "name" : "Top up resources",
-    "type" : "function",
-    "thing" : null
-  }, {
-    "id" : "366b26769196e5f6",
-    "name" : "setAvailableResourceLevel(water)",
-    "type" : "write-property",
-    "thing" : "28de068b74624cd3",
-    "property" : "availableResourceLevel"
-  }, {
-    "id" : "20b3ae1b40a42464",
-    "name" : "Top up resources when event occurs",
-    "type" : "comment",
-    "thing" : null
-  }, {
-    "id" : "6e15b5a7b335702c",
-    "name" : "setAvailableResourceLevel(milk)",
-    "type" : "write-property",
-    "thing" : "28de068b74624cd3",
-    "property" : "availableResourceLevel"
-  }, {
-    "id" : "a36b087f5ef4c827",
-    "name" : "setAvailableResourceLevel(chocolate)",
-    "type" : "write-property",
-    "thing" : "28de068b74624cd3",
-    "property" : "availableResourceLevel"
-  }, {
-    "id" : "f1722dd48e39a420",
-    "name" : "setAvailableResourceLevel(coffeeBeans)",
-    "type" : "write-property",
-    "thing" : "28de068b74624cd3",
-    "property" : "availableResourceLevel"
-  }, {
-    "id" : "1499b0fb20de1f5a",
-    "name" : "debug 24",
-    "type" : "debug",
-    "thing" : null
-  }, {
-    "id" : "f110622ce9a87313",
-    "name" : "debug 25",
-    "type" : "debug",
-    "thing" : null
-  }, {
-    "id" : "5e3e83117f82c9d7",
+    "id" : "2ea19533e07f909e",
     "name" : "",
-    "type" : "change",
+    "type" : "subscribe-event",
+    "thing" : "60ec5509eed581fd",
+    "event" : "alarmTriggered"
+  }, {
+    "id" : "de53fa7bbb7f45aa",
+    "name" : "debug 4",
+    "type" : "debug",
+    "thing" : null
+  }, {
+    "id" : "e6fdcebd87c8d46c",
+    "name" : "debug 5",
+    "type" : "debug",
+    "thing" : null
+  }, {
+    "id" : "9320959b2f9e0a2c",
+    "name" : "",
+    "type" : "subscribe-event",
+    "thing" : "263d2ff2376b823c",
+    "event" : "doorLocked"
+  }, {
+    "id" : "240b2f5964fcd7da",
+    "name" : "debug 6",
+    "type" : "debug",
     "thing" : null
   } ],
   "connections" : [ {
-    "source" : "c6a08fa4396ec325",
-    "destination" : "441fd7dce7344e28"
+    "source" : "7dc05fc03d04eb19",
+    "destination" : "811007e7de142df3"
   }, {
-    "source" : "faaaaed23c2c0536",
-    "destination" : "c6a08fa4396ec325"
+    "source" : "7dc05fc03d04eb19",
+    "destination" : "8b1ee9ea5a20f2e6"
   }, {
-    "source" : "0c301723eff9ab3a",
-    "destination" : "e73df346f73fa9c4"
+    "source" : "e71e1a3a8c3ddb12",
+    "destination" : "a8c8f083bec09a17"
   }, {
-    "source" : "0c301723eff9ab3a",
-    "destination" : "64e6d3e05dca91ed"
+    "source" : "a8c8f083bec09a17",
+    "destination" : "e50ed524fca2d656"
   }, {
-    "source" : "8ca2a36495a831a7",
-    "destination" : "5e3e83117f82c9d7"
+    "source" : "a8c8f083bec09a17",
+    "destination" : "e6fdcebd87c8d46c"
   }, {
-    "source" : "e73df346f73fa9c4",
-    "destination" : "366b26769196e5f6"
+    "source" : "4e6c5aa1ba22f0d1",
+    "destination" : "dbc3efe6f3419e28"
   }, {
-    "source" : "e73df346f73fa9c4",
-    "destination" : "6e15b5a7b335702c"
+    "source" : "4e6c5aa1ba22f0d1",
+    "destination" : "47b63b8b65c089a4"
   }, {
-    "source" : "e73df346f73fa9c4",
-    "destination" : "a36b087f5ef4c827"
+    "source" : "dbc3efe6f3419e28",
+    "destination" : "22f77c5ca9e63f2b"
   }, {
-    "source" : "e73df346f73fa9c4",
-    "destination" : "f1722dd48e39a420"
+    "source" : "47b63b8b65c089a4",
+    "destination" : "1906557932e9df1b"
   }, {
-    "source" : "e73df346f73fa9c4",
-    "destination" : "f110622ce9a87313"
+    "source" : "6858b7c20ddbdd2a",
+    "destination" : "735dd081c0022339"
   }, {
-    "source" : "5e3e83117f82c9d7",
-    "destination" : "4ad18fbfe3ab0b36"
+    "source" : "2ea19533e07f909e",
+    "destination" : "de53fa7bbb7f45aa"
   }, {
-    "source" : "5e3e83117f82c9d7",
-    "destination" : "1499b0fb20de1f5a"
+    "source" : "9320959b2f9e0a2c",
+    "destination" : "240b2f5964fcd7da"
   } ],
   "dataFlows" : [ {
-    "source" : "faaaaed23c2c0536",
-    "targets" : [ "c6a08fa4396ec325" ]
+    "source" : "6858b7c20ddbdd2a",
+    "targets" : [ "735dd081c0022339" ]
   } ],
   "events" : [ {
-    "id" : "0c301723eff9ab3a",
-    "name" : "outOfResource"
+    "id" : "7dc05fc03d04eb19",
+    "name" : "tamperAlert"
+  }, {
+    "id" : "4e6c5aa1ba22f0d1",
+    "name" : "snapshotTaken"
+  }, {
+    "id" : "2ea19533e07f909e",
+    "name" : "alarmTriggered"
+  }, {
+    "id" : "9320959b2f9e0a2c",
+    "name" : "doorLocked"
   } ]
 }

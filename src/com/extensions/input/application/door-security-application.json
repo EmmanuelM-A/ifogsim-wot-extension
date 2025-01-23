@@ -1,0 +1,406 @@
+[
+    {
+        "id": "508b454421862916",
+        "type": "tab",
+        "label": "Door Security Application",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "7dc05fc03d04eb19",
+        "type": "subscribe-event",
+        "z": "508b454421862916",
+        "name": "",
+        "topic": "",
+        "thing": "263d2ff2376b823c",
+        "event": "tamperAlert",
+        "x": 330,
+        "y": 1040,
+        "wires": [
+            [
+                "811007e7de142df3",
+                "8b1ee9ea5a20f2e6"
+            ]
+        ]
+    },
+    {
+        "id": "811007e7de142df3",
+        "type": "invoke-action",
+        "z": "508b454421862916",
+        "name": "activateAlarm()",
+        "topic": "",
+        "thing": "60ec5509eed581fd",
+        "action": "activate",
+        "uriVariables": "",
+        "x": 720,
+        "y": 1040,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "e71e1a3a8c3ddb12",
+        "type": "read-property",
+        "z": "508b454421862916",
+        "name": "",
+        "topic": "",
+        "thing": "263d2ff2376b823c",
+        "property": "lockState",
+        "uriVariables": "",
+        "observe": true,
+        "x": 330,
+        "y": 740,
+        "wires": [
+            [
+                "a8c8f083bec09a17"
+            ]
+        ]
+    },
+    {
+        "id": "a8c8f083bec09a17",
+        "type": "switch",
+        "z": "508b454421862916",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "locked",
+                "vt": "str"
+            },
+            {
+                "t": "eq",
+                "v": "unlocked",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 570,
+        "y": 740,
+        "wires": [
+            [],
+            [
+                "e50ed524fca2d656",
+                "e6fdcebd87c8d46c"
+            ]
+        ]
+    },
+    {
+        "id": "4e6c5aa1ba22f0d1",
+        "type": "subscribe-event",
+        "z": "508b454421862916",
+        "name": "",
+        "topic": "",
+        "thing": "b7c9cdf5487520a3",
+        "event": "snapshotTaken",
+        "x": 340,
+        "y": 1280,
+        "wires": [
+            [
+                "dbc3efe6f3419e28",
+                "47b63b8b65c089a4"
+            ]
+        ]
+    },
+    {
+        "id": "8b1ee9ea5a20f2e6",
+        "type": "invoke-action",
+        "z": "508b454421862916",
+        "name": "takePhoto()",
+        "topic": "",
+        "thing": "b7c9cdf5487520a3",
+        "action": "takeSnapshot",
+        "uriVariables": "",
+        "x": 710,
+        "y": 1140,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "dbc3efe6f3419e28",
+        "type": "read-property",
+        "z": "508b454421862916",
+        "name": "",
+        "topic": "",
+        "thing": "b7c9cdf5487520a3",
+        "property": "streamURL",
+        "uriVariables": "",
+        "observe": false,
+        "x": 700,
+        "y": 1280,
+        "wires": [
+            [
+                "22f77c5ca9e63f2b"
+            ]
+        ]
+    },
+    {
+        "id": "47b63b8b65c089a4",
+        "type": "read-property",
+        "z": "508b454421862916",
+        "name": "",
+        "topic": "",
+        "thing": "b7c9cdf5487520a3",
+        "property": "lastSnapshot",
+        "uriVariables": "",
+        "observe": false,
+        "x": 700,
+        "y": 1360,
+        "wires": [
+            [
+                "1906557932e9df1b"
+            ]
+        ]
+    },
+    {
+        "id": "22f77c5ca9e63f2b",
+        "type": "debug",
+        "z": "508b454421862916",
+        "name": "debug 1",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 980,
+        "y": 1280,
+        "wires": []
+    },
+    {
+        "id": "1906557932e9df1b",
+        "type": "debug",
+        "z": "508b454421862916",
+        "name": "debug 2",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 990,
+        "y": 1360,
+        "wires": []
+    },
+    {
+        "id": "e50ed524fca2d656",
+        "type": "invoke-action",
+        "z": "508b454421862916",
+        "name": "",
+        "topic": "",
+        "thing": "263d2ff2376b823c",
+        "action": "lockDoor",
+        "uriVariables": "",
+        "x": 800,
+        "y": 780,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "353fcfb8d1b86ba3",
+        "type": "comment",
+        "z": "508b454421862916",
+        "name": "Auto lcok door if unlocked",
+        "info": "",
+        "x": 350,
+        "y": 680,
+        "wires": []
+    },
+    {
+        "id": "7654e8590e2bfb72",
+        "type": "comment",
+        "z": "508b454421862916",
+        "name": "activate alarm and cameras if door is tampered with",
+        "info": "",
+        "x": 430,
+        "y": 980,
+        "wires": []
+    },
+    {
+        "id": "2ac85a9f7e265d33",
+        "type": "comment",
+        "z": "508b454421862916",
+        "name": "Send photos and video recording ",
+        "info": "",
+        "x": 370,
+        "y": 1220,
+        "wires": []
+    },
+    {
+        "id": "735dd081c0022339",
+        "type": "invoke-action",
+        "z": "508b454421862916",
+        "name": "",
+        "topic": "",
+        "thing": "263d2ff2376b823c",
+        "action": "unlockDoor",
+        "uriVariables": "",
+        "x": 530,
+        "y": 580,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "6858b7c20ddbdd2a",
+        "type": "inject",
+        "z": "508b454421862916",
+        "name": "",
+        "props": [],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 310,
+        "y": 580,
+        "wires": [
+            [
+                "735dd081c0022339"
+            ]
+        ]
+    },
+    {
+        "id": "d6da315cd118870d",
+        "type": "comment",
+        "z": "508b454421862916",
+        "name": "Simulates the user opening the door",
+        "info": "",
+        "x": 400,
+        "y": 520,
+        "wires": []
+    },
+    {
+        "id": "2ea19533e07f909e",
+        "type": "subscribe-event",
+        "z": "508b454421862916",
+        "name": "",
+        "topic": "",
+        "thing": "60ec5509eed581fd",
+        "event": "alarmTriggered",
+        "x": 340,
+        "y": 1480,
+        "wires": [
+            [
+                "de53fa7bbb7f45aa"
+            ]
+        ]
+    },
+    {
+        "id": "de53fa7bbb7f45aa",
+        "type": "debug",
+        "z": "508b454421862916",
+        "name": "debug 4",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 550,
+        "y": 1480,
+        "wires": []
+    },
+    {
+        "id": "e6fdcebd87c8d46c",
+        "type": "debug",
+        "z": "508b454421862916",
+        "name": "debug 5",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 780,
+        "y": 720,
+        "wires": []
+    },
+    {
+        "id": "9320959b2f9e0a2c",
+        "type": "subscribe-event",
+        "z": "508b454421862916",
+        "name": "",
+        "topic": "",
+        "thing": "263d2ff2376b823c",
+        "event": "doorLocked",
+        "x": 330,
+        "y": 880,
+        "wires": [
+            [
+                "240b2f5964fcd7da"
+            ]
+        ]
+    },
+    {
+        "id": "240b2f5964fcd7da",
+        "type": "debug",
+        "z": "508b454421862916",
+        "name": "debug 6",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 570,
+        "y": 880,
+        "wires": []
+    },
+    {
+        "id": "263d2ff2376b823c",
+        "type": "consumed-thing",
+        "tdLink": "http://10.32.154.144:8081/smart-door-lock",
+        "td": "{\"@context\":[\"https://www.w3.org/2019/wot/td/v1\",{\"@language\":\"en\"}],\"@type\":\"Thing\",\"title\":\"Smart Door Lock\",\"securityDefinitions\":{\"nosec\":{\"scheme\":\"nosec\"}},\"security\":[\"nosec\"],\"properties\":{\"lockState\":{\"type\":\"string\",\"enum\":[\"locked\",\"unlocked\"],\"description\":\"The current state of the door lock.\",\"observable\":true,\"forms\":[{\"href\":\"http://10.32.154.144:8081/smart-door-lock/properties/lockState\",\"contentType\":\"application/json\",\"op\":[\"readproperty\",\"writeproperty\"]},{\"href\":\"http://10.32.154.144:8081/smart-door-lock/properties/lockState/observable\",\"contentType\":\"application/json\",\"op\":[\"observeproperty\",\"unobserveproperty\"],\"subprotocol\":\"longpoll\"},{\"href\":\"http://10.32.154.144:8081/smart-door-lock/properties/lockState\",\"contentType\":\"application/cbor\",\"op\":[\"readproperty\",\"writeproperty\"]},{\"href\":\"http://10.32.154.144:8081/smart-door-lock/properties/lockState/observable\",\"contentType\":\"application/cbor\",\"op\":[\"observeproperty\",\"unobserveproperty\"],\"subprotocol\":\"longpoll\"}],\"readOnly\":false,\"writeOnly\":false},\"batteryLevel\":{\"type\":\"number\",\"description\":\"The current battery level percentage.\",\"readOnly\":true,\"forms\":[{\"href\":\"http://10.32.154.144:8081/smart-door-lock/properties/batteryLevel\",\"contentType\":\"application/json\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"},{\"href\":\"http://10.32.154.144:8081/smart-door-lock/properties/batteryLevel\",\"contentType\":\"application/cbor\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"}],\"writeOnly\":false,\"observable\":false},\"status\":{\"type\":\"string\",\"enum\":[\"active\",\"inactive\",\"error\"],\"description\":\"The current status of the door lock.\",\"forms\":[{\"href\":\"http://10.32.154.144:8081/smart-door-lock/properties/status\",\"contentType\":\"application/json\",\"op\":[\"readproperty\",\"writeproperty\"]},{\"href\":\"http://10.32.154.144:8081/smart-door-lock/properties/status\",\"contentType\":\"application/cbor\",\"op\":[\"readproperty\",\"writeproperty\"]}],\"readOnly\":false,\"writeOnly\":false,\"observable\":false}},\"actions\":{\"lockDoor\":{\"description\":\"Locks the door.\",\"forms\":[{\"href\":\"http://10.32.154.144:8081/smart-door-lock/actions/lockDoor\",\"contentType\":\"application/json\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"},{\"href\":\"http://10.32.154.144:8081/smart-door-lock/actions/lockDoor\",\"contentType\":\"application/cbor\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"}],\"safe\":false,\"idempotent\":false},\"unlockDoor\":{\"description\":\"Unlocks the door.\",\"forms\":[{\"href\":\"http://10.32.154.144:8081/smart-door-lock/actions/unlockDoor\",\"contentType\":\"application/json\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"},{\"href\":\"http://10.32.154.144:8081/smart-door-lock/actions/unlockDoor\",\"contentType\":\"application/cbor\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"}],\"safe\":false,\"idempotent\":false}},\"events\":{\"doorLocked\":{\"description\":\"Triggered when the door is locked.\",\"data\":{\"type\":\"string\"},\"forms\":[{\"href\":\"http://10.32.154.144:8081/smart-door-lock/events/doorLocked\",\"contentType\":\"application/json\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]},{\"href\":\"http://10.32.154.144:8081/smart-door-lock/events/doorLocked\",\"contentType\":\"application/cbor\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]}]},\"doorUnlocked\":{\"description\":\"Triggered when the door is unlocked.\",\"data\":{\"type\":\"string\"},\"forms\":[{\"href\":\"http://10.32.154.144:8081/smart-door-lock/events/doorUnlocked\",\"contentType\":\"application/json\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]},{\"href\":\"http://10.32.154.144:8081/smart-door-lock/events/doorUnlocked\",\"contentType\":\"application/cbor\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]}]},\"lowBattery\":{\"description\":\"Triggered when the battery level falls below 10%.\",\"data\":{\"type\":\"string\"},\"forms\":[{\"href\":\"http://10.32.154.144:8081/smart-door-lock/events/lowBattery\",\"contentType\":\"application/json\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]},{\"href\":\"http://10.32.154.144:8081/smart-door-lock/events/lowBattery\",\"contentType\":\"application/cbor\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]}]},\"tamperAlert\":{\"description\":\"Triggered if tampering is detected.\",\"data\":{\"type\":\"string\"},\"forms\":[{\"href\":\"http://10.32.154.144:8081/smart-door-lock/events/tamperAlert\",\"contentType\":\"application/json\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]},{\"href\":\"http://10.32.154.144:8081/smart-door-lock/events/tamperAlert\",\"contentType\":\"application/cbor\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]}]}},\"id\":\"urn:uuid:faad9ec1-43f3-4d7f-a0da-27c80f6dd959\",\"description\":\"A smart door lock that can be remotely locked and unlocked.\",\"forms\":[{\"href\":\"http://10.32.154.144:8081/smart-door-lock/properties\",\"contentType\":\"application/json\",\"op\":[\"readallproperties\",\"readmultipleproperties\",\"writeallproperties\",\"writemultipleproperties\"]},{\"href\":\"http://10.32.154.144:8081/smart-door-lock/properties\",\"contentType\":\"application/cbor\",\"op\":[\"readallproperties\",\"readmultipleproperties\",\"writeallproperties\",\"writemultipleproperties\"]}]}",
+        "http": true,
+        "ws": false,
+        "coap": false,
+        "mqtt": false,
+        "opcua": false,
+        "modbus": false,
+        "basicAuth": false,
+        "username": "",
+        "password": ""
+    },
+    {
+        "id": "60ec5509eed581fd",
+        "type": "consumed-thing",
+        "tdLink": "http://10.32.154.144:8081/alarm",
+        "td": "{\"@context\":[\"https://www.w3.org/2019/wot/td/v1\",{\"@language\":\"en\"}],\"@type\":\"Thing\",\"title\":\"Alarm\",\"securityDefinitions\":{\"nosec\":{\"scheme\":\"nosec\"}},\"security\":[\"nosec\"],\"properties\":{\"status\":{\"type\":\"string\",\"enum\":[\"on\",\"off\"],\"description\":\"The current status of the alarm.\",\"observable\":true,\"forms\":[{\"href\":\"http://10.32.154.144:8081/alarm/properties/status\",\"contentType\":\"application/json\",\"op\":[\"readproperty\",\"writeproperty\"]},{\"href\":\"http://10.32.154.144:8081/alarm/properties/status/observable\",\"contentType\":\"application/json\",\"op\":[\"observeproperty\",\"unobserveproperty\"],\"subprotocol\":\"longpoll\"},{\"href\":\"http://10.32.154.144:8081/alarm/properties/status\",\"contentType\":\"application/cbor\",\"op\":[\"readproperty\",\"writeproperty\"]},{\"href\":\"http://10.32.154.144:8081/alarm/properties/status/observable\",\"contentType\":\"application/cbor\",\"op\":[\"observeproperty\",\"unobserveproperty\"],\"subprotocol\":\"longpoll\"}],\"readOnly\":false,\"writeOnly\":false},\"batteryLevel\":{\"type\":\"number\",\"description\":\"The current battery level percentage.\",\"readOnly\":true,\"forms\":[{\"href\":\"http://10.32.154.144:8081/alarm/properties/batteryLevel\",\"contentType\":\"application/json\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"},{\"href\":\"http://10.32.154.144:8081/alarm/properties/batteryLevel\",\"contentType\":\"application/cbor\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"}],\"writeOnly\":false,\"observable\":false}},\"actions\":{\"activate\":{\"description\":\"Activates the alarm.\",\"forms\":[{\"href\":\"http://10.32.154.144:8081/alarm/actions/activate\",\"contentType\":\"application/json\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"},{\"href\":\"http://10.32.154.144:8081/alarm/actions/activate\",\"contentType\":\"application/cbor\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"}],\"safe\":false,\"idempotent\":false},\"deactivate\":{\"description\":\"Deactivates the alarm.\",\"forms\":[{\"href\":\"http://10.32.154.144:8081/alarm/actions/deactivate\",\"contentType\":\"application/json\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"},{\"href\":\"http://10.32.154.144:8081/alarm/actions/deactivate\",\"contentType\":\"application/cbor\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"}],\"safe\":false,\"idempotent\":false}},\"events\":{\"alarmTriggered\":{\"description\":\"Triggered when the alarm is activated.\",\"data\":{\"type\":\"string\"},\"forms\":[{\"href\":\"http://10.32.154.144:8081/alarm/events/alarmTriggered\",\"contentType\":\"application/json\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]},{\"href\":\"http://10.32.154.144:8081/alarm/events/alarmTriggered\",\"contentType\":\"application/cbor\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]}]},\"lowBattery\":{\"description\":\"Triggered when the battery level falls below 10%.\",\"data\":{\"type\":\"string\"},\"forms\":[{\"href\":\"http://10.32.154.144:8081/alarm/events/lowBattery\",\"contentType\":\"application/json\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]},{\"href\":\"http://10.32.154.144:8081/alarm/events/lowBattery\",\"contentType\":\"application/cbor\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]}]}},\"id\":\"urn:uuid:742a6d3f-1b98-401f-ad5a-a071f96b326a\",\"description\":\"A security alarm system.\",\"forms\":[{\"href\":\"http://10.32.154.144:8081/alarm/properties\",\"contentType\":\"application/json\",\"op\":[\"readallproperties\",\"readmultipleproperties\",\"writeallproperties\",\"writemultipleproperties\"]},{\"href\":\"http://10.32.154.144:8081/alarm/properties\",\"contentType\":\"application/cbor\",\"op\":[\"readallproperties\",\"readmultipleproperties\",\"writeallproperties\",\"writemultipleproperties\"]}]}",
+        "http": true,
+        "ws": false,
+        "coap": false,
+        "mqtt": false,
+        "opcua": false,
+        "modbus": false,
+        "basicAuth": false,
+        "username": "",
+        "password": ""
+    },
+    {
+        "id": "b7c9cdf5487520a3",
+        "type": "consumed-thing",
+        "tdLink": "http://10.32.154.144:8081/smart-camera",
+        "td": "{\"@context\":[\"https://www.w3.org/2019/wot/td/v1\",{\"@language\":\"en\"}],\"@type\":\"Thing\",\"title\":\"Smart Camera\",\"securityDefinitions\":{\"nosec\":{\"scheme\":\"nosec\"}},\"security\":[\"nosec\"],\"properties\":{\"streamURL\":{\"type\":\"string\",\"description\":\"The URL of the video stream.\",\"readOnly\":true,\"forms\":[{\"href\":\"http://10.32.154.144:8081/smart-camera/properties/streamURL\",\"contentType\":\"application/json\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"},{\"href\":\"http://10.32.154.144:8081/smart-camera/properties/streamURL\",\"contentType\":\"application/cbor\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"}],\"writeOnly\":false,\"observable\":false},\"lastSnapshot\":{\"type\":\"string\",\"description\":\"Base64 encoded image of the last snapshot.\",\"readOnly\":true,\"forms\":[{\"href\":\"http://10.32.154.144:8081/smart-camera/properties/lastSnapshot\",\"contentType\":\"application/json\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"},{\"href\":\"http://10.32.154.144:8081/smart-camera/properties/lastSnapshot\",\"contentType\":\"application/cbor\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"}],\"writeOnly\":false,\"observable\":false}},\"actions\":{\"takeSnapshot\":{\"description\":\"Captures a snapshot from the camera.\",\"forms\":[{\"href\":\"http://10.32.154.144:8081/smart-camera/actions/takeSnapshot\",\"contentType\":\"application/json\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"},{\"href\":\"http://10.32.154.144:8081/smart-camera/actions/takeSnapshot\",\"contentType\":\"application/cbor\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"}],\"safe\":false,\"idempotent\":false}},\"events\":{\"snapshotTaken\":{\"description\":\"Triggered when a snapshot is taken.\",\"data\":{\"type\":\"boolean\"},\"forms\":[{\"href\":\"http://10.32.154.144:8081/smart-camera/events/snapshotTaken\",\"contentType\":\"application/json\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]},{\"href\":\"http://10.32.154.144:8081/smart-camera/events/snapshotTaken\",\"contentType\":\"application/cbor\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]}]}},\"id\":\"urn:uuid:02c12332-8ff3-4136-8b2c-8a21874e5799\",\"description\":\"A camera that streams video and captures snapshots.\",\"support\":\"\",\"forms\":[{\"href\":\"http://10.32.154.144:8081/smart-camera/properties\",\"contentType\":\"application/json\",\"op\":[\"readallproperties\",\"readmultipleproperties\"]},{\"href\":\"http://10.32.154.144:8081/smart-camera/properties\",\"contentType\":\"application/cbor\",\"op\":[\"readallproperties\",\"readmultipleproperties\"]}]}",
+        "http": true,
+        "ws": false,
+        "coap": false,
+        "mqtt": false,
+        "opcua": false,
+        "modbus": false,
+        "basicAuth": false,
+        "username": "",
+        "password": ""
+    }
+]

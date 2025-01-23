@@ -40,13 +40,13 @@ public class JsonToPhysicalTopology {
 
             System.out.println("Application Topology Parsed Successfully!");
 
-            //System.out.println(topologyNodes.getFirst().toString()); // COME BACK TO THIS
+            //System.out.println(topologyNodes.getFirst().toString()); // TODO COME BACK TO THIS
 
             // Create the cloud device at the top of the hierarchy
-            FogDevice cloud = FogDeviceFactory.createFogDevice("cloud", 50000, 40000, 100, 10000, 0, 0.01, 16*103, 16*83.25);
+            //FogDevice cloud = FogDeviceFactory.createFogDevice("cloud", 50000, 40000, 100, 10000, 0, 0.01, 16*103, 16*83.25);
 
             // Cloud has no parent, it is the root of the hierarchy
-            cloud.setParentId(-1);
+            //cloud.setParentId(-1);
 
 
 
@@ -67,7 +67,7 @@ public class JsonToPhysicalTopology {
         createPhysicalTopology(
                 0,
                 null,
-                new File("src/com/extensions/input/application/smart-coffee-machine-application.json"),
+                new File("src/com/extensions/input/application/door-security-application.json"),
                 null
         );
     }

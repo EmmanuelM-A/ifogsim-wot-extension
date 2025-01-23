@@ -23,11 +23,11 @@ public class NodeRedTranslator {
             List<NodeRedNode> nodes = parser.process(nodeRedApplicationJsonFile);
 
             // Tree grouping for nodes - TODO SORT OUT TREE GROUPING LATER ONCE PROJECT COMPLETED
-            TreeGrouping treeGrouper = new TreeGrouping(nodes);
-            List<Tree> trees = treeGrouper.groupNodesIntoTrees();
+            //TreeGrouping treeGrouper = new TreeGrouping(nodes);
+            //List<Tree> trees = treeGrouper.groupNodesIntoTrees();
 
             // Generate JSON with Things, Nodes, Wires, Data Flows, and Events
-            NodeRedJSONGenerator generator = new NodeRedJSONGenerator(nodes, trees);
+            NodeRedJSONGenerator generator = new NodeRedJSONGenerator(nodes);
             ObjectNode outputJson = generator.generate();
 
             // Write to file using Jackson's ObjectMapper

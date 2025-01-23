@@ -15,12 +15,18 @@ public class NodeRedJSONGenerator {
         this.trees = trees;
     }
 
+    public NodeRedJSONGenerator(List<NodeRedNode> nodes) {
+        this.nodes = nodes;
+        trees = null;
+    }
+
     public ObjectNode generate() {
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode outputJson = mapper.createObjectNode();
 
         outputJson.set("applicationDetails", generateApplicationName(mapper));
         outputJson.set("things", generateThings(mapper));
+        // TODO ADD TOPICS JSON ARRAY
         outputJson.set("nodes", generateNodes(mapper));
         //outputJson.set("subFlows", generateTreeTopology(mapper)); // Trees
         outputJson.set("connections", generateConnections(mapper));
@@ -50,10 +56,9 @@ public class NodeRedJSONGenerator {
                 thing.put("name", node.getName());
                 thing.put("type", node.getType());
                 thingsArray.add(thing);
-                return thingsArray;
             }
         }
-        return null;
+        return thingsArray;
     }
 
     private ArrayNode generateNodes(ObjectMapper mapper) {
