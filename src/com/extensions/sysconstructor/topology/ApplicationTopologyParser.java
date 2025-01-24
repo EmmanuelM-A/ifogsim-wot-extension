@@ -48,6 +48,20 @@ public class ApplicationTopologyParser implements FileProcessor<JsonNode> {
         return applicationDetails.get("title").asText(null);
     }
 
+    public List<String> parseTopologyNodeTopics() {
+        List<String> nodeTopics = new ArrayList<>();
+
+        JsonNode topics = applicationTopology.get("topics");
+
+        if (topics != null && topics.isArray()) {
+            for (JsonNode topicNode : topics) {
+                nodeTopics.add(topicNode.asText());
+            }
+        }
+
+        return nodeTopics;
+    }
+
     public List<TopologyNodeConnection> parseTopologyConnections() throws JsonProcessingException {
         List<TopologyNodeConnection> nodeConnections = new ArrayList<>();
 
@@ -71,16 +85,16 @@ public class ApplicationTopologyParser implements FileProcessor<JsonNode> {
 
         if(listOfNodes.isArray()) {
             for(JsonNode node : listOfNodes) {
-                String id = node.path("id").asText();
-                String name = node.path("name").asText();
-                String topic = node.path("name").asText();
-                String type = node.path("type").asText();
+                String id = node.path("id").asText(null);
+                String name = node.path("name").asText(null);
+                String topic = node.path("name").asText(null);
+                String type = node.path("type").asText(null);
                 String thing = node.path("thing").asText(null);
                 String uniqueAttribute = null;
 
                 if(!topologyNodeTypesToInclude.contains(type)) continue;
 
-                if(thing != null) uniqueAttribute = node.path(type).asText();
+                if(thing != null) uniqueAttribute = node.path(type).asText(null);
 
                 TopologyNode topologyNode = new TopologyNode(id, name, topic, type, thing, uniqueAttribute);
                 nodes.add(topologyNode);

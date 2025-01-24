@@ -42,15 +42,13 @@ import java.util.List;
  *                         | - Smart Beds
  *                         | - Wearable Health Monitors (Heart Rate, Oxygen saturation)
  *                        /
- *                   GATEWAY (@Patient)
- *                 /
+ *                       /
  *               FOG1 (Patient Monitoring Aggregator)
  *             /
  *          CLOUD
  *             \
  *               FOG2 (Facility Management Aggregator)
- *                 \
- *                   GATEWAY (@Facility)
+ *                       \
  *                        \
  *                        | - Surveillance Cameras
  *                        | - RFID Tag Scanners
