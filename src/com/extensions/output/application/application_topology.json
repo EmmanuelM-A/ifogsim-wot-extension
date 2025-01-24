@@ -15,6 +15,7 @@
     "name" : "Smart Camera",
     "type" : "consumed-thing"
   } ],
+  "topics" : [ ],
   "nodes" : [ {
     "id" : "7dc05fc03d04eb19",
     "name" : "",

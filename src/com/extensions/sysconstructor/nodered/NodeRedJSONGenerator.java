@@ -26,7 +26,7 @@ public class NodeRedJSONGenerator {
 
         outputJson.set("applicationDetails", generateApplicationName(mapper));
         outputJson.set("things", generateThings(mapper));
-        // TODO ADD TOPICS JSON ARRAY
+        outputJson.set("topics", generateNodeTopics(mapper));
         outputJson.set("nodes", generateNodes(mapper));
         //outputJson.set("subFlows", generateTreeTopology(mapper)); // Trees
         outputJson.set("connections", generateConnections(mapper));
@@ -77,6 +77,16 @@ public class NodeRedJSONGenerator {
                 case NodeRedJSONParser.TYPE_READ_PROPERTY, NodeRedJSONParser.TYPE_WRITE_PROPERTY -> jsonNode.put("property", node.getUniqueAttribute());
             }
             nodesArray.add(jsonNode);
+        }
+        return nodesArray;
+    }
+
+    private ArrayNode generateNodeTopics(ObjectMapper mapper) {
+        ArrayNode nodesArray = mapper.createArrayNode();
+        for (NodeRedNode node : nodes) {
+            if(node.getTopic() != null && !node.getTopic().isEmpty()) {
+                nodesArray.add(node.getTopic());
+            }
         }
         return nodesArray;
     }
