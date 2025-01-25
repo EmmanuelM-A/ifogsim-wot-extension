@@ -1,6 +1,7 @@
 package com.extensions.tests;
 
 import com.extensions.sysconstructor.core.ApplicationPhysicalTopology;
+import com.extensions.sysconstructor.nodered.NodeRedTranslator;
 import com.extensions.sysconstructor.topology.JsonToApplication;
 import com.extensions.utils.FilePaths;
 import com.extensions.utils.presets.*;
@@ -28,11 +29,13 @@ public class MainTest {
 
         ThingDescription.printData(td);*/
 
-        JsonToApplication jsonToApplication = new JsonToApplication(CloudNodePreset.DEFAULT, EdgeNodePreset.DEFAULT);
+        /*JsonToApplication jsonToApplication = new JsonToApplication(CloudNodePreset.DEFAULT, EdgeNodePreset.DEFAULT);
 
         ApplicationPhysicalTopology applicationPhysicalTopology = jsonToApplication.createPhysicalTopology(
                 new File("src/com/extensions/input/application/door-security-application.json"),
                 null
-        );
+        );*/
+
+        NodeRedTranslator.nodeRedToInputJson(new File("src/com/extensions/input/application/door-security-application.json"));
     }
 }

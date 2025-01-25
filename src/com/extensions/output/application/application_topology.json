@@ -15,181 +15,203 @@
     "name" : "Smart Camera",
     "type" : "consumed-thing"
   } ],
-  "topics" : [ ],
+  "topics" : [ "access-control", "security-monitoring" ],
   "nodes" : [ {
-    "id" : "7dc05fc03d04eb19",
+    "id" : "0df687eaf78a49d5",
     "name" : "",
     "type" : "subscribe-event",
+    "topic" : "access-control",
     "thing" : "263d2ff2376b823c",
     "event" : "tamperAlert"
   }, {
-    "id" : "811007e7de142df3",
+    "id" : "3cf9152ea1a0f438",
     "name" : "activateAlarm()",
     "type" : "invoke-action",
+    "topic" : "security-monitoring",
     "thing" : "60ec5509eed581fd",
     "action" : "activate"
   }, {
-    "id" : "e71e1a3a8c3ddb12",
+    "id" : "5672a7b79222ebb5",
     "name" : "",
     "type" : "read-property",
+    "topic" : "access-control",
     "thing" : "263d2ff2376b823c",
     "property" : "lockState"
   }, {
-    "id" : "a8c8f083bec09a17",
+    "id" : "7f50cd20a278e460",
     "name" : "",
     "type" : "switch",
+    "topic" : null,
     "thing" : null
   }, {
-    "id" : "4e6c5aa1ba22f0d1",
+    "id" : "cfce2b4ef69e60c2",
     "name" : "",
     "type" : "subscribe-event",
+    "topic" : "security-monitoring",
     "thing" : "b7c9cdf5487520a3",
     "event" : "snapshotTaken"
   }, {
-    "id" : "8b1ee9ea5a20f2e6",
+    "id" : "1c17e9e063c4e324",
     "name" : "takePhoto()",
     "type" : "invoke-action",
+    "topic" : "security-monitoring",
     "thing" : "b7c9cdf5487520a3",
     "action" : "takeSnapshot"
   }, {
-    "id" : "dbc3efe6f3419e28",
+    "id" : "f97a30cc48074f57",
     "name" : "",
     "type" : "read-property",
+    "topic" : "security-monitoring",
     "thing" : "b7c9cdf5487520a3",
     "property" : "streamURL"
   }, {
-    "id" : "47b63b8b65c089a4",
+    "id" : "614d67869d5e3e26",
     "name" : "",
     "type" : "read-property",
+    "topic" : "security-monitoring",
     "thing" : "b7c9cdf5487520a3",
     "property" : "lastSnapshot"
   }, {
-    "id" : "22f77c5ca9e63f2b",
+    "id" : "f4652feba07b5c6c",
     "name" : "debug 1",
     "type" : "debug",
+    "topic" : null,
     "thing" : null
   }, {
-    "id" : "1906557932e9df1b",
+    "id" : "ae3ea1663205f2b2",
     "name" : "debug 2",
     "type" : "debug",
+    "topic" : null,
     "thing" : null
   }, {
-    "id" : "e50ed524fca2d656",
+    "id" : "aa21445813262e15",
     "name" : "",
     "type" : "invoke-action",
+    "topic" : "access-control",
     "thing" : "263d2ff2376b823c",
     "action" : "lockDoor"
   }, {
-    "id" : "353fcfb8d1b86ba3",
+    "id" : "1e5b73e603170a88",
     "name" : "Auto lcok door if unlocked",
     "type" : "comment",
+    "topic" : null,
     "thing" : null
   }, {
-    "id" : "7654e8590e2bfb72",
+    "id" : "2213fef1b36af2e5",
     "name" : "activate alarm and cameras if door is tampered with",
     "type" : "comment",
+    "topic" : null,
     "thing" : null
   }, {
-    "id" : "2ac85a9f7e265d33",
+    "id" : "5265f1e13608cbfc",
     "name" : "Send photos and video recording",
     "type" : "comment",
+    "topic" : null,
     "thing" : null
   }, {
-    "id" : "735dd081c0022339",
+    "id" : "030ca93a106529df",
     "name" : "",
     "type" : "invoke-action",
+    "topic" : "access-control",
     "thing" : "263d2ff2376b823c",
     "action" : "unlockDoor"
   }, {
-    "id" : "6858b7c20ddbdd2a",
+    "id" : "26d68214f3b55423",
     "name" : "",
     "type" : "inject",
+    "topic" : "",
     "thing" : null
   }, {
-    "id" : "d6da315cd118870d",
+    "id" : "c4d410a159722b04",
     "name" : "Simulates the user opening the door",
     "type" : "comment",
+    "topic" : null,
     "thing" : null
   }, {
-    "id" : "2ea19533e07f909e",
+    "id" : "214c1604a6f11f68",
     "name" : "",
     "type" : "subscribe-event",
+    "topic" : "security-monitoring",
     "thing" : "60ec5509eed581fd",
     "event" : "alarmTriggered"
   }, {
-    "id" : "de53fa7bbb7f45aa",
+    "id" : "5c93feb3cd579218",
     "name" : "debug 4",
     "type" : "debug",
+    "topic" : null,
     "thing" : null
   }, {
-    "id" : "e6fdcebd87c8d46c",
+    "id" : "fded3e31159f472d",
     "name" : "debug 5",
     "type" : "debug",
+    "topic" : null,
     "thing" : null
   }, {
-    "id" : "9320959b2f9e0a2c",
+    "id" : "d94ac48d5b1babbc",
     "name" : "",
     "type" : "subscribe-event",
+    "topic" : "access-control",
     "thing" : "263d2ff2376b823c",
     "event" : "doorLocked"
   }, {
-    "id" : "240b2f5964fcd7da",
+    "id" : "f752d71334f00c40",
     "name" : "debug 6",
     "type" : "debug",
+    "topic" : null,
     "thing" : null
   } ],
   "connections" : [ {
-    "source" : "7dc05fc03d04eb19",
-    "destination" : "811007e7de142df3"
+    "source" : "0df687eaf78a49d5",
+    "destination" : "3cf9152ea1a0f438"
   }, {
-    "source" : "7dc05fc03d04eb19",
-    "destination" : "8b1ee9ea5a20f2e6"
+    "source" : "0df687eaf78a49d5",
+    "destination" : "1c17e9e063c4e324"
   }, {
-    "source" : "e71e1a3a8c3ddb12",
-    "destination" : "a8c8f083bec09a17"
+    "source" : "5672a7b79222ebb5",
+    "destination" : "7f50cd20a278e460"
   }, {
-    "source" : "a8c8f083bec09a17",
-    "destination" : "e50ed524fca2d656"
+    "source" : "7f50cd20a278e460",
+    "destination" : "aa21445813262e15"
   }, {
-    "source" : "a8c8f083bec09a17",
-    "destination" : "e6fdcebd87c8d46c"
+    "source" : "7f50cd20a278e460",
+    "destination" : "fded3e31159f472d"
   }, {
-    "source" : "4e6c5aa1ba22f0d1",
-    "destination" : "dbc3efe6f3419e28"
+    "source" : "cfce2b4ef69e60c2",
+    "destination" : "f97a30cc48074f57"
   }, {
-    "source" : "4e6c5aa1ba22f0d1",
-    "destination" : "47b63b8b65c089a4"
+    "source" : "cfce2b4ef69e60c2",
+    "destination" : "614d67869d5e3e26"
   }, {
-    "source" : "dbc3efe6f3419e28",
-    "destination" : "22f77c5ca9e63f2b"
+    "source" : "f97a30cc48074f57",
+    "destination" : "f4652feba07b5c6c"
   }, {
-    "source" : "47b63b8b65c089a4",
-    "destination" : "1906557932e9df1b"
+    "source" : "614d67869d5e3e26",
+    "destination" : "ae3ea1663205f2b2"
   }, {
-    "source" : "6858b7c20ddbdd2a",
-    "destination" : "735dd081c0022339"
+    "source" : "26d68214f3b55423",
+    "destination" : "030ca93a106529df"
   }, {
-    "source" : "2ea19533e07f909e",
-    "destination" : "de53fa7bbb7f45aa"
+    "source" : "214c1604a6f11f68",
+    "destination" : "5c93feb3cd579218"
   }, {
-    "source" : "9320959b2f9e0a2c",
-    "destination" : "240b2f5964fcd7da"
+    "source" : "d94ac48d5b1babbc",
+    "destination" : "f752d71334f00c40"
   } ],
   "dataFlows" : [ {
-    "source" : "6858b7c20ddbdd2a",
-    "targets" : [ "735dd081c0022339" ]
+    "source" : "26d68214f3b55423",
+    "targets" : [ "030ca93a106529df" ]
   } ],
   "events" : [ {
-    "id" : "7dc05fc03d04eb19",
+    "id" : "0df687eaf78a49d5",
     "name" : "tamperAlert"
   }, {
-    "id" : "4e6c5aa1ba22f0d1",
+    "id" : "cfce2b4ef69e60c2",
     "name" : "snapshotTaken"
   }, {
-    "id" : "2ea19533e07f909e",
+    "id" : "214c1604a6f11f68",
     "name" : "alarmTriggered"
   }, {
-    "id" : "9320959b2f9e0a2c",
+    "id" : "d94ac48d5b1babbc",
     "name" : "doorLocked"
   } ]
 }

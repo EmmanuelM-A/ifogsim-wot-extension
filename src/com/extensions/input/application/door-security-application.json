@@ -1,6 +1,6 @@
 [
     {
-        "id": "508b454421862916",
+        "id": "a7476951e1de8d34",
         "type": "tab",
         "label": "Door Security Application",
         "disabled": false,
@@ -8,28 +8,28 @@
         "env": []
     },
     {
-        "id": "7dc05fc03d04eb19",
+        "id": "0df687eaf78a49d5",
         "type": "subscribe-event",
-        "z": "508b454421862916",
+        "z": "a7476951e1de8d34",
         "name": "",
-        "topic": "",
+        "topic": "access-control",
         "thing": "263d2ff2376b823c",
         "event": "tamperAlert",
         "x": 330,
         "y": 1040,
         "wires": [
             [
-                "811007e7de142df3",
-                "8b1ee9ea5a20f2e6"
+                "3cf9152ea1a0f438",
+                "1c17e9e063c4e324"
             ]
         ]
     },
     {
-        "id": "811007e7de142df3",
+        "id": "3cf9152ea1a0f438",
         "type": "invoke-action",
-        "z": "508b454421862916",
+        "z": "a7476951e1de8d34",
         "name": "activateAlarm()",
-        "topic": "",
+        "topic": "security-monitoring",
         "thing": "60ec5509eed581fd",
         "action": "activate",
         "uriVariables": "",
@@ -40,11 +40,11 @@
         ]
     },
     {
-        "id": "e71e1a3a8c3ddb12",
+        "id": "5672a7b79222ebb5",
         "type": "read-property",
-        "z": "508b454421862916",
+        "z": "a7476951e1de8d34",
         "name": "",
-        "topic": "",
+        "topic": "access-control",
         "thing": "263d2ff2376b823c",
         "property": "lockState",
         "uriVariables": "",
@@ -53,14 +53,14 @@
         "y": 740,
         "wires": [
             [
-                "a8c8f083bec09a17"
+                "7f50cd20a278e460"
             ]
         ]
     },
     {
-        "id": "a8c8f083bec09a17",
+        "id": "7f50cd20a278e460",
         "type": "switch",
-        "z": "508b454421862916",
+        "z": "a7476951e1de8d34",
         "name": "",
         "property": "payload",
         "propertyType": "msg",
@@ -84,34 +84,34 @@
         "wires": [
             [],
             [
-                "e50ed524fca2d656",
-                "e6fdcebd87c8d46c"
+                "aa21445813262e15",
+                "fded3e31159f472d"
             ]
         ]
     },
     {
-        "id": "4e6c5aa1ba22f0d1",
+        "id": "cfce2b4ef69e60c2",
         "type": "subscribe-event",
-        "z": "508b454421862916",
+        "z": "a7476951e1de8d34",
         "name": "",
-        "topic": "",
+        "topic": "security-monitoring",
         "thing": "b7c9cdf5487520a3",
         "event": "snapshotTaken",
         "x": 340,
         "y": 1280,
         "wires": [
             [
-                "dbc3efe6f3419e28",
-                "47b63b8b65c089a4"
+                "f97a30cc48074f57",
+                "614d67869d5e3e26"
             ]
         ]
     },
     {
-        "id": "8b1ee9ea5a20f2e6",
+        "id": "1c17e9e063c4e324",
         "type": "invoke-action",
-        "z": "508b454421862916",
+        "z": "a7476951e1de8d34",
         "name": "takePhoto()",
-        "topic": "",
+        "topic": "security-monitoring",
         "thing": "b7c9cdf5487520a3",
         "action": "takeSnapshot",
         "uriVariables": "",
@@ -122,11 +122,11 @@
         ]
     },
     {
-        "id": "dbc3efe6f3419e28",
+        "id": "f97a30cc48074f57",
         "type": "read-property",
-        "z": "508b454421862916",
+        "z": "a7476951e1de8d34",
         "name": "",
-        "topic": "",
+        "topic": "security-monitoring",
         "thing": "b7c9cdf5487520a3",
         "property": "streamURL",
         "uriVariables": "",
@@ -135,16 +135,16 @@
         "y": 1280,
         "wires": [
             [
-                "22f77c5ca9e63f2b"
+                "f4652feba07b5c6c"
             ]
         ]
     },
     {
-        "id": "47b63b8b65c089a4",
+        "id": "614d67869d5e3e26",
         "type": "read-property",
-        "z": "508b454421862916",
+        "z": "a7476951e1de8d34",
         "name": "",
-        "topic": "",
+        "topic": "security-monitoring",
         "thing": "b7c9cdf5487520a3",
         "property": "lastSnapshot",
         "uriVariables": "",
@@ -153,14 +153,14 @@
         "y": 1360,
         "wires": [
             [
-                "1906557932e9df1b"
+                "ae3ea1663205f2b2"
             ]
         ]
     },
     {
-        "id": "22f77c5ca9e63f2b",
+        "id": "f4652feba07b5c6c",
         "type": "debug",
-        "z": "508b454421862916",
+        "z": "a7476951e1de8d34",
         "name": "debug 1",
         "active": true,
         "tosidebar": true,
@@ -174,9 +174,9 @@
         "wires": []
     },
     {
-        "id": "1906557932e9df1b",
+        "id": "ae3ea1663205f2b2",
         "type": "debug",
-        "z": "508b454421862916",
+        "z": "a7476951e1de8d34",
         "name": "debug 2",
         "active": true,
         "tosidebar": true,
@@ -190,11 +190,11 @@
         "wires": []
     },
     {
-        "id": "e50ed524fca2d656",
+        "id": "aa21445813262e15",
         "type": "invoke-action",
-        "z": "508b454421862916",
+        "z": "a7476951e1de8d34",
         "name": "",
-        "topic": "",
+        "topic": "access-control",
         "thing": "263d2ff2376b823c",
         "action": "lockDoor",
         "uriVariables": "",
@@ -205,9 +205,9 @@
         ]
     },
     {
-        "id": "353fcfb8d1b86ba3",
+        "id": "1e5b73e603170a88",
         "type": "comment",
-        "z": "508b454421862916",
+        "z": "a7476951e1de8d34",
         "name": "Auto lcok door if unlocked",
         "info": "",
         "x": 350,
@@ -215,9 +215,9 @@
         "wires": []
     },
     {
-        "id": "7654e8590e2bfb72",
+        "id": "2213fef1b36af2e5",
         "type": "comment",
-        "z": "508b454421862916",
+        "z": "a7476951e1de8d34",
         "name": "activate alarm and cameras if door is tampered with",
         "info": "",
         "x": 430,
@@ -225,9 +225,9 @@
         "wires": []
     },
     {
-        "id": "2ac85a9f7e265d33",
+        "id": "5265f1e13608cbfc",
         "type": "comment",
-        "z": "508b454421862916",
+        "z": "a7476951e1de8d34",
         "name": "Send photos and video recording ",
         "info": "",
         "x": 370,
@@ -235,11 +235,11 @@
         "wires": []
     },
     {
-        "id": "735dd081c0022339",
+        "id": "030ca93a106529df",
         "type": "invoke-action",
-        "z": "508b454421862916",
+        "z": "a7476951e1de8d34",
         "name": "",
-        "topic": "",
+        "topic": "access-control",
         "thing": "263d2ff2376b823c",
         "action": "unlockDoor",
         "uriVariables": "",
@@ -250,9 +250,9 @@
         ]
     },
     {
-        "id": "6858b7c20ddbdd2a",
+        "id": "26d68214f3b55423",
         "type": "inject",
-        "z": "508b454421862916",
+        "z": "a7476951e1de8d34",
         "name": "",
         "props": [],
         "repeat": "",
@@ -264,14 +264,14 @@
         "y": 580,
         "wires": [
             [
-                "735dd081c0022339"
+                "030ca93a106529df"
             ]
         ]
     },
     {
-        "id": "d6da315cd118870d",
+        "id": "c4d410a159722b04",
         "type": "comment",
-        "z": "508b454421862916",
+        "z": "a7476951e1de8d34",
         "name": "Simulates the user opening the door",
         "info": "",
         "x": 400,
@@ -279,25 +279,25 @@
         "wires": []
     },
     {
-        "id": "2ea19533e07f909e",
+        "id": "214c1604a6f11f68",
         "type": "subscribe-event",
-        "z": "508b454421862916",
+        "z": "a7476951e1de8d34",
         "name": "",
-        "topic": "",
+        "topic": "security-monitoring",
         "thing": "60ec5509eed581fd",
         "event": "alarmTriggered",
         "x": 340,
         "y": 1480,
         "wires": [
             [
-                "de53fa7bbb7f45aa"
+                "5c93feb3cd579218"
             ]
         ]
     },
     {
-        "id": "de53fa7bbb7f45aa",
+        "id": "5c93feb3cd579218",
         "type": "debug",
-        "z": "508b454421862916",
+        "z": "a7476951e1de8d34",
         "name": "debug 4",
         "active": true,
         "tosidebar": true,
@@ -311,9 +311,9 @@
         "wires": []
     },
     {
-        "id": "e6fdcebd87c8d46c",
+        "id": "fded3e31159f472d",
         "type": "debug",
-        "z": "508b454421862916",
+        "z": "a7476951e1de8d34",
         "name": "debug 5",
         "active": true,
         "tosidebar": true,
@@ -327,25 +327,25 @@
         "wires": []
     },
     {
-        "id": "9320959b2f9e0a2c",
+        "id": "d94ac48d5b1babbc",
         "type": "subscribe-event",
-        "z": "508b454421862916",
+        "z": "a7476951e1de8d34",
         "name": "",
-        "topic": "",
+        "topic": "access-control",
         "thing": "263d2ff2376b823c",
         "event": "doorLocked",
         "x": 330,
         "y": 880,
         "wires": [
             [
-                "240b2f5964fcd7da"
+                "f752d71334f00c40"
             ]
         ]
     },
     {
-        "id": "240b2f5964fcd7da",
+        "id": "f752d71334f00c40",
         "type": "debug",
-        "z": "508b454421862916",
+        "z": "a7476951e1de8d34",
         "name": "debug 6",
         "active": true,
         "tosidebar": true,

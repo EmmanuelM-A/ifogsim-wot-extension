@@ -1,6 +1,8 @@
 package com.extensions.sysconstructor.nodered;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
@@ -70,6 +72,7 @@ public class NodeRedJSONGenerator {
             jsonNode.put("id", node.getId());
             jsonNode.put("name", node.getName());
             jsonNode.put("type", node.getType());
+            jsonNode.put("topic", node.getTopic());
             jsonNode.put("thing", node.getThingID());
             switch (node.getType()) {
                 case NodeRedJSONParser.TYPE_INVOKE_ACTION -> jsonNode.put("action", node.getUniqueAttribute());
@@ -83,11 +86,15 @@ public class NodeRedJSONGenerator {
 
     private ArrayNode generateNodeTopics(ObjectMapper mapper) {
         ArrayNode nodesArray = mapper.createArrayNode();
+        Set<String> uniqueTopics = new HashSet<>(); // Use a Set to track unique topics
+
         for (NodeRedNode node : nodes) {
-            if(node.getTopic() != null && !node.getTopic().isEmpty()) {
+            if (node.getTopic() != null && !node.getTopic().isEmpty() && uniqueTopics.add(node.getTopic())) {
+                // Add the topic to the ArrayNode only if it's not already in the Set
                 nodesArray.add(node.getTopic());
             }
         }
+
         return nodesArray;
     }
 
