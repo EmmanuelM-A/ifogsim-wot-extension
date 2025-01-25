@@ -36,19 +36,26 @@ public class JsonToApplication {
     private final CloudNodePreset cloudNodePreset;
     private final EdgeNodePreset edgeNodePreset;
     private final ApplicationTopologyParser applicationTopologyParser;
+    private final List<FogDevice> fogDevices;
+    private final List<Sensor> sensors;
+    private final List<Actuator> actuators;
+    private final List<FogDevice> edgeNodes;
+
+    private final int UPLINK_LATENCY_EDGE_TO_CLOUD = 100;
+
+    private final int UPLINK_LATENCY_VD_TO_EDGE = 10;
 
     public JsonToApplication(CloudNodePreset cloudNodePreset, EdgeNodePreset edgeNodePreset) throws IOException {
         this.cloudNodePreset = cloudNodePreset;
         this.edgeNodePreset = edgeNodePreset;
         this.applicationTopologyParser = new ApplicationTopologyParser(new File(FilePaths.APPLICATION_TOPOLOGY));
+        this.fogDevices = new ArrayList<>();
+        this.sensors = new ArrayList<>();
+        this.actuators = new ArrayList<>();
+        this.edgeNodes = new ArrayList<>();
     }
 
-    public ApplicationPhysicalTopology createPhysicalTopology(int userId, String appId, File nodeRedApplicationJsonFile, List<VirtualDevice> virtualDevices) {
-        List<FogDevice> fogDevices = new ArrayList<>();
-        List<Sensor> sensors = new ArrayList<>();
-        List<Actuator> actuators = new ArrayList<>();
-        List<FogDevice> edgeNodes = new ArrayList<>();
-
+    public ApplicationPhysicalTopology createPhysicalTopology(File nodeRedApplicationJsonFile, List<VirtualDevice> virtualDevices) {
         try {
             // Generate the application topology from the node red application design
             NodeRedTranslator.nodeRedToInputJson(nodeRedApplicationJsonFile);
@@ -103,17 +110,21 @@ public class JsonToApplication {
 
                     // Link the edge node to the cloud
                     edgeNode.setParentId(cloud.getId());
-                    edgeNode.setUplinkLatency(100); // CHANGE TO A GENERIC VALUE
+                    edgeNode.setUplinkLatency(UPLINK_LATENCY_EDGE_TO_CLOUD);
                     fogDevices.add(edgeNode);
                     edgeNodes.add(edgeNode);
 
                     // Connect all VDs to this edge node based on the topic
                     for(VirtualDevice virtualDevice : selectedVirtualDevices) {
-                        FogDevice vdFogDevice = getVirtualDeviceWithMatchingTopic(topologyNodes, things, virtualDevice, topic).getFogDevice();
+                        VirtualDevice vd = getVirtualDeviceWithMatchingTopic(topologyNodes, things, virtualDevice, topic);
+
+                        FogDevice vdFogDevice = null;
+
+                        if(vd != null) vdFogDevice = vd.getFogDevice();
 
                         if(vdFogDevice != null) {
                             vdFogDevice.setParentId(edgeNode.getId());
-                            vdFogDevice.setUplinkLatency(10); // CHANGE TO GENERIC VALUE
+                            vdFogDevice.setUplinkLatency(UPLINK_LATENCY_VD_TO_EDGE);
                             fogDevices.add(vdFogDevice);
                         }
                     }
@@ -128,22 +139,107 @@ public class JsonToApplication {
                 * distributeVDsAmongstEdgeNodes(edgeNodes, virtualDevices)
                 *
                 * */
+
+                int maxNoVDsForOneEdgeNode = 6;
+
+                // Calculate the number of edge nodes needed
+                int numberOfEdgeNodes = Math.max(1, calculateNoOfEdgeNodes(virtualDevices.size(), maxNoVDsForOneEdgeNode));
+
+                // Create a list of edge nodes (each edge node is represented as a list of VDs)
+                List<List<VirtualDevice>> edgeNodeList = new ArrayList<>();
+
+                // Distribute virtual devices among edge nodes
+                for (int i = 0; i < numberOfEdgeNodes; i++) {
+                    edgeNodeList.add(new ArrayList<>());
+                }
+
+                for (int i = 0; i < virtualDevices.size(); i++) {
+                    // Assign each virtual device to an edge node in a round-robin manner
+                    edgeNodeList.get(i % numberOfEdgeNodes).add(virtualDevices.get(i));
+                }
+
+                // Connect the VDs to the edge nodes
+                for(int index = 0; index < edgeNodeList.size(); index++) {
+                    // Create the edge node
+                    FogDevice edgeNode = createEdgeNode(String.valueOf(index));
+
+                    // Link the edge node to the cloud
+                    edgeNode.setParentId(cloud.getId());
+                    edgeNode.setUplinkLatency(UPLINK_LATENCY_EDGE_TO_CLOUD);
+                    fogDevices.add(edgeNode);
+                    edgeNodes.add(edgeNode);
+
+                    // Connect the VDs to the edge node
+                    for(VirtualDevice virtualDevice : edgeNodeList.get(index)) {
+                        FogDevice vdFogDevice = virtualDevice.getFogDevice();
+
+                        vdFogDevice.setParentId(edgeNode.getId());
+
+                        vdFogDevice.setUplinkLatency(UPLINK_LATENCY_VD_TO_EDGE);
+
+                        fogDevices.add(vdFogDevice);
+                    }
+                }
             }
 
+            System.out.println("Application physical topology formed!");
+            // MIGHT HAVE TO ADD ONLY THE SENSORS AND ACTUATORS USED IN APPLICATION
+
             // Add all fog nodes, sensors and actuators to ApplicationPhysTopology
+            addAllSensorsAndActuators(selectedVirtualDevices);
 
+            ApplicationPhysicalTopology applicationPhysicalTopology = new ApplicationPhysicalTopology();
 
+            applicationPhysicalTopology.setFogDevices(fogDevices);
+            applicationPhysicalTopology.setSensors(sensors);
+            applicationPhysicalTopology.setActuators(actuators);
+            applicationPhysicalTopology.setEdgeNodes(edgeNodes);
 
+            return applicationPhysicalTopology;
         } catch(Exception e) {
             e.printStackTrace();
         }
-
         return null;
     }
 
+    public Application createApplicationDataMappings() {
+        return null;
+    }
 
+    /*private List<String> getAllSensorsUsedIn(List<TopologyNode> nodes, String typeMatch) {
+        List<String> nodeAttributes = new ArrayList<>();
 
-    public List<VirtualDevice> getSelectedVirtualDevices(List<VirtualDevice> virtualDevices, List<TopologyNode> things) {
+        for(TopologyNode node : nodes) {
+            if(node.type().equals(typeMatch)) {
+                nodeAttributes.add(node.uniqueAttribute());
+            }
+        }
+
+        for(VirtualDevice virtualDevice : virtualDevices) {
+            if(!virtualDevice.getSensorProperties().isEmpty()) {
+                sensors.addAll(virtualDevice.getSensorProperties());
+            }
+        }
+    }*/
+
+    private void addAllSensorsAndActuators(List<VirtualDevice> virtualDevices) {
+        for(VirtualDevice virtualDevice : virtualDevices) {
+            if(!virtualDevice.getSensorProperties().isEmpty()) {
+                sensors.addAll(virtualDevice.getSensorProperties());
+            }
+
+            if(!virtualDevice.getActuatorActions().isEmpty()) {
+                actuators.addAll(virtualDevice.getActuatorActions());
+            }
+        }
+    }
+
+    private int calculateNoOfEdgeNodes(int numberOfVDs, int maxNoVDsForOneEdgeNode) {
+        // CHANGE FORMULA AS YOU SEE FIT
+        return (int)(numberOfVDs - maxNoVDsForOneEdgeNode) / 2;
+    }
+
+    private List<VirtualDevice> getSelectedVirtualDevices(List<VirtualDevice> virtualDevices, List<TopologyNode> things) {
         List<VirtualDevice> selectedVirtualDevices = new ArrayList<>();
 
         for(VirtualDevice virtualDevice : virtualDevices) {
@@ -159,7 +255,7 @@ public class JsonToApplication {
         return selectedVirtualDevices;
     }
 
-    public FogDevice createEdgeNode(String identifier) {
+    private FogDevice createEdgeNode(String identifier) {
         return FogDeviceFactory.createFogDevice(
                 "edgeNode-" + identifier,
                 edgeNodePreset.MIPS,
@@ -173,13 +269,13 @@ public class JsonToApplication {
         );
     }
 
-    public VirtualDevice getVirtualDeviceWithMatchingTopic(List<TopologyNode> nodes, List<TopologyNode> things, VirtualDevice virtualDevice, String targetTopic) {
+    private VirtualDevice getVirtualDeviceWithMatchingTopic(List<TopologyNode> nodes, List<TopologyNode> things, VirtualDevice virtualDevice, String targetTopic) {
         if(targetTopic.isEmpty()) {
             System.out.println("Topic must not be empty!");
             return null;
         }
 
-        // TODO IMPROVE TIME COMPLEXITY - CURRENTLY N^4 TOO LONG!!!!
+        // TODO IMPROVE TIME COMPLEXITY - CURRENTLY N^4 TOO HIGH!!!!
 
         // If a topology node's thing and topic are set (not null or empty) and the topology node is an
         // action or read-property node, then using the thing attribute get the thing referenced, and from that
@@ -198,13 +294,5 @@ public class JsonToApplication {
         }
 
         return null;
-    }
-
-    public Application createApplicationDataMappings() {
-        return null;
-    }
-
-    public void connectNodesToEdgeNodes(List<FogDevice> edgdeNodes, List<VirtualDevice> selectedVirtualDevices) {
-
     }
 }
