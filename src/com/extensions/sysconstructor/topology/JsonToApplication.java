@@ -18,9 +18,8 @@ import org.fog.entities.Sensor;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /*
  * Parse the application topology json
@@ -37,8 +36,6 @@ public class JsonToApplication {
     private final EdgeNodePreset edgeNodePreset;
     private final ApplicationTopologyParser applicationTopologyParser;
     private final List<FogDevice> fogDevices;
-    private final List<Sensor> sensors;
-    private final List<Actuator> actuators;
     private final List<FogDevice> edgeNodes;
 
     private final int UPLINK_LATENCY_EDGE_TO_CLOUD = 100;
@@ -50,8 +47,6 @@ public class JsonToApplication {
         this.edgeNodePreset = edgeNodePreset;
         this.applicationTopologyParser = new ApplicationTopologyParser(new File(FilePaths.APPLICATION_TOPOLOGY));
         this.fogDevices = new ArrayList<>();
-        this.sensors = new ArrayList<>();
-        this.actuators = new ArrayList<>();
         this.edgeNodes = new ArrayList<>();
     }
 
@@ -59,9 +54,6 @@ public class JsonToApplication {
         try {
             // Generate the application topology from the node red application design
             NodeRedTranslator.nodeRedToInputJson(nodeRedApplicationJsonFile);
-
-            // Parse the application topology json
-            ApplicationTopologyParser applicationTopologyParser = new ApplicationTopologyParser(new File(FilePaths.APPLICATION_TOPOLOGY));
 
             // Extract all the thing nodes
             List<TopologyNode> things = applicationTopologyParser.parseTopologyNodes("things");
@@ -81,6 +73,32 @@ public class JsonToApplication {
 
             // Search for selected VDs based on things list
             List<VirtualDevice> selectedVirtualDevices = getSelectedVirtualDevices(virtualDevices, things);
+
+            /*
+            * Get all used sensors and actuators
+            *
+            * Get a list of all sensors and actuators connected to all VDs from that list filter the sensors
+            * and actuators based on name.
+            *
+            * */
+
+            List<String> sensorsAndActuatorsUsed = getAllSensorsAndActuatorsUsed(topologyNodes);
+
+            List<Sensor> allSensorsFromVD = new ArrayList<>();
+            for(VirtualDevice virtualDevice : selectedVirtualDevices) {
+                allSensorsFromVD.addAll(getAllSensorsFrom(virtualDevice));
+            }
+
+            List<Actuator> allActuatorsFromVD = new ArrayList<>();
+            for(VirtualDevice virtualDevice : selectedVirtualDevices) {
+                allActuatorsFromVD.addAll(getAllActuatorsFrom(virtualDevice));
+            }
+
+            List<Sensor> allSensorsUsedInApplication = getAllSensorsUsed(allSensorsFromVD, sensorsAndActuatorsUsed);
+
+            List<Actuator> allActuatorsUsedInApplication = getAllActuatorsUsed(allActuatorsFromVD, sensorsAndActuatorsUsed);
+
+
 
             // Create cloud node
             FogDevice cloud = FogDeviceFactory.createFogDevice(
@@ -183,16 +201,12 @@ public class JsonToApplication {
             }
 
             System.out.println("Application physical topology formed!");
-            // MIGHT HAVE TO ADD ONLY THE SENSORS AND ACTUATORS USED IN APPLICATION
-
-            // Add all fog nodes, sensors and actuators to ApplicationPhysTopology
-            addAllSensorsAndActuators(selectedVirtualDevices);
 
             ApplicationPhysicalTopology applicationPhysicalTopology = new ApplicationPhysicalTopology();
 
             applicationPhysicalTopology.setFogDevices(fogDevices);
-            applicationPhysicalTopology.setSensors(sensors);
-            applicationPhysicalTopology.setActuators(actuators);
+            applicationPhysicalTopology.setSensors(allSensorsUsedInApplication);
+            applicationPhysicalTopology.setActuators(allActuatorsUsedInApplication);
             applicationPhysicalTopology.setEdgeNodes(edgeNodes);
 
             return applicationPhysicalTopology;
@@ -203,7 +217,57 @@ public class JsonToApplication {
     }
 
     public Application createApplicationDataMappings() {
+
+
+
         return null;
+    }
+
+    private List<Sensor> getAllSensorsUsed(List<Sensor> sensors, List<String> allComponentsUsed) {
+        List<Sensor> allSensorsUsed = new ArrayList<>();
+        for (Sensor sensor : sensors) {
+            if (allComponentsUsed.contains(sensor.getName())) allSensorsUsed.add(sensor);
+        }
+        return allSensorsUsed;
+    }
+
+    private List<Actuator> getAllActuatorsUsed(List<Actuator> actuators, List<String> allComponentsUsed) {
+        List<Actuator> allActuatorsUsed = new ArrayList<>();
+        for (Actuator actuator : actuators) {
+            if (allComponentsUsed.contains(actuator.getName())) allActuatorsUsed.add(actuator);
+        }
+        return allActuatorsUsed;
+    }
+
+    private List<String> getAllSensorsAndActuatorsUsed(List<TopologyNode> nodes) {
+        List<String> attributeNames = new ArrayList<>();
+        List<String> includeTypes = new ArrayList<>(){{add("read-property"); add("invoke-action");}}; // Consider including write-props
+
+        for(TopologyNode node : nodes) {
+            if(includeTypes.contains(node.type())) attributeNames.add(node.uniqueAttribute());
+        }
+
+        return attributeNames;
+    }
+
+    private List<Sensor> getAllSensorsFrom(VirtualDevice virtualDevice) {
+        List<Sensor> sensorsFromVD = new ArrayList<>();
+
+        if(!virtualDevice.getSensorProperties().isEmpty()) {
+            sensorsFromVD.addAll(virtualDevice.getSensorProperties());
+        }
+
+        return sensorsFromVD;
+    }
+
+    private List<Actuator> getAllActuatorsFrom(VirtualDevice virtualDevice) {
+        List<Actuator> actuatorsFromVD = new ArrayList<>();
+
+        if(!virtualDevice.getSensorProperties().isEmpty()) {
+            actuatorsFromVD.addAll(virtualDevice.getActuatorActions());
+        }
+
+        return actuatorsFromVD;
     }
 
     /*private List<String> getAllSensorsUsedIn(List<TopologyNode> nodes, String typeMatch) {
@@ -221,18 +285,6 @@ public class JsonToApplication {
             }
         }
     }*/
-
-    private void addAllSensorsAndActuators(List<VirtualDevice> virtualDevices) {
-        for(VirtualDevice virtualDevice : virtualDevices) {
-            if(!virtualDevice.getSensorProperties().isEmpty()) {
-                sensors.addAll(virtualDevice.getSensorProperties());
-            }
-
-            if(!virtualDevice.getActuatorActions().isEmpty()) {
-                actuators.addAll(virtualDevice.getActuatorActions());
-            }
-        }
-    }
 
     private int calculateNoOfEdgeNodes(int numberOfVDs, int maxNoVDsForOneEdgeNode) {
         // CHANGE FORMULA AS YOU SEE FIT

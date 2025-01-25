@@ -1,13 +1,19 @@
 package com.extensions.tests;
 
+import com.extensions.sysconstructor.core.ApplicationPhysicalTopology;
 import com.extensions.sysconstructor.topology.JsonToApplication;
-import com.extensions.utils.presets.CloudNodePreset;
-import com.extensions.utils.presets.EdgeNodePreset;
+import com.extensions.utils.FilePaths;
+import com.extensions.utils.presets.*;
+import com.extensions.vdcreation.core.JsonFileProcessor;
+import com.extensions.vdcreation.core.VirtualDevice;
+import com.extensions.vdcreation.core.VirtualDeviceFactory;
 import com.extensions.vdcreation.models.ThingDescription;
 import com.extensions.vdcreation.parsers.ThingDescriptionParser;
+import com.extensions.vdcreation.parsers.VirtualDeviceConfigParser;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 public class MainTest {
     public static void main(String[] args) throws IOException {
@@ -24,9 +30,7 @@ public class MainTest {
 
         JsonToApplication jsonToApplication = new JsonToApplication(CloudNodePreset.DEFAULT, EdgeNodePreset.DEFAULT);
 
-        jsonToApplication.createPhysicalTopology(
-                0,
-                null,
+        ApplicationPhysicalTopology applicationPhysicalTopology = jsonToApplication.createPhysicalTopology(
                 new File("src/com/extensions/input/application/door-security-application.json"),
                 null
         );
