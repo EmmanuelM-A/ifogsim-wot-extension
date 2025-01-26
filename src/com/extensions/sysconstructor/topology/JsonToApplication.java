@@ -1,16 +1,13 @@
 package com.extensions.sysconstructor.topology;
 
 import com.extensions.customfog.FogDeviceFactory;
-import com.extensions.customfog.SensorProperty;
 import com.extensions.sysconstructor.core.ApplicationPhysicalTopology;
 import com.extensions.sysconstructor.nodered.NodeRedJSONParser;
 import com.extensions.sysconstructor.nodered.NodeRedTranslator;
 import com.extensions.utils.FilePaths;
-import com.extensions.utils.Utility;
 import com.extensions.utils.presets.CloudNodePreset;
 import com.extensions.utils.presets.EdgeNodePreset;
 import com.extensions.vdcreation.core.VirtualDevice;
-import jdk.jshell.execution.Util;
 import org.fog.application.Application;
 import org.fog.entities.Actuator;
 import org.fog.entities.FogDevice;
@@ -19,7 +16,6 @@ import org.fog.entities.Sensor;
 import java.io.File;
 import java.io.IOException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 /*
  * Parse the application topology json
@@ -34,73 +30,83 @@ import java.util.stream.Collectors;
 public class JsonToApplication {
     private final CloudNodePreset cloudNodePreset;
     private final EdgeNodePreset edgeNodePreset;
-    private final ApplicationTopologyParser applicationTopologyParser;
     private final List<FogDevice> fogDevices;
     private final List<FogDevice> edgeNodes;
+
+    private final List<TopologyNode> things;
+
+    private final List<String> nodeTopics;
+
+    private final List<TopologyNode> topologyNodes;
+
+    private final List<TopologyNodeConnection> nodeConnections;
+
+    private final List<TopologyDataFlow> dataFlows;
+
+    private final List<TopologyNode> events;
 
     private final int UPLINK_LATENCY_EDGE_TO_CLOUD = 100;
 
     private final int UPLINK_LATENCY_VD_TO_EDGE = 10;
 
-    public JsonToApplication(CloudNodePreset cloudNodePreset, EdgeNodePreset edgeNodePreset) throws IOException {
+    public JsonToApplication(File nodeRedApplicationJsonFile, CloudNodePreset cloudNodePreset, EdgeNodePreset edgeNodePreset) throws IOException {
         this.cloudNodePreset = cloudNodePreset;
         this.edgeNodePreset = edgeNodePreset;
-        this.applicationTopologyParser = new ApplicationTopologyParser(new File(FilePaths.APPLICATION_TOPOLOGY));
         this.fogDevices = new ArrayList<>();
         this.edgeNodes = new ArrayList<>();
+
+        // Generate the application topology from the node red application design
+        NodeRedTranslator.nodeRedToInputJson(nodeRedApplicationJsonFile);
+
+        // Set up the parser for the application
+       ApplicationTopologyParser applicationTopologyParser = new ApplicationTopologyParser(new File(FilePaths.APPLICATION_TOPOLOGY));
+
+        // Extract all the thing nodes
+        this.things = applicationTopologyParser.parseTopologyNodes("things");
+
+        // Extract all the topics
+        this.nodeTopics = applicationTopologyParser.parseTopologyNodeTopics();
+
+        // Extract all the topology nodes
+        this.topologyNodes = applicationTopologyParser.parseTopologyNodes("nodes");
+
+        // Extract all the connections between nodes
+        this.nodeConnections = applicationTopologyParser.parseTopologyConnections();
+
+        // Extract all the data flows
+        this.dataFlows = applicationTopologyParser.parseTopologyDataFlows();
+
+        // Extract all events used
+        this.events = applicationTopologyParser.parseTopologyNodes("events");
+
+        System.out.println("Application Topology Parsed Successfully!");
     }
 
-    public ApplicationPhysicalTopology createPhysicalTopology(File nodeRedApplicationJsonFile, List<VirtualDevice> virtualDevices) {
+    public ApplicationPhysicalTopology createPhysicalTopology(List<VirtualDevice> virtualDevices) {
         try {
-            // Generate the application topology from the node red application design
-            NodeRedTranslator.nodeRedToInputJson(nodeRedApplicationJsonFile);
-
-            // Extract all the thing nodes
-            List<TopologyNode> things = applicationTopologyParser.parseTopologyNodes("things");
-
-            // Extract all the topics - USED FOR EDGE NODE AND DEVICE GROUPING
-            List<String> nodeTopics = applicationTopologyParser.parseTopologyNodeTopics();
-
-            // Extract all the topology nodes
-            List<TopologyNode> topologyNodes = applicationTopologyParser.parseTopologyNodes("nodes");
-
-            // Extract all the connections between nodes
-            List<TopologyNodeConnection> topologyNodeConnections = applicationTopologyParser.parseTopologyConnections();
-
-            System.out.println("Application Topology Parsed Successfully!");
-
-            //System.out.println(topologyNodes.getFirst().toString()); // TODO COME BACK TO THIS
-
             // Search for selected VDs based on things list
             List<VirtualDevice> selectedVirtualDevices = getSelectedVirtualDevices(virtualDevices, things);
 
-            /*
-            * Get all used sensors and actuators
-            *
-            * Get a list of all sensors and actuators connected to all VDs from that list filter the sensors
-            * and actuators based on name.
-            *
-            * */
-
+            // Get the name of all sensors and actuators used in the application
             List<String> sensorsAndActuatorsUsed = getAllSensorsAndActuatorsUsed(topologyNodes);
 
+            // Get all sensors used from selected VDs
             List<Sensor> allSensorsFromVD = new ArrayList<>();
             for(VirtualDevice virtualDevice : selectedVirtualDevices) {
                 allSensorsFromVD.addAll(getAllSensorsFrom(virtualDevice));
             }
 
+            // Get all actuators used from selected VDs
             List<Actuator> allActuatorsFromVD = new ArrayList<>();
             for(VirtualDevice virtualDevice : selectedVirtualDevices) {
                 allActuatorsFromVD.addAll(getAllActuatorsFrom(virtualDevice));
             }
 
+            // Get all sensors and actuators used from the application
             List<Sensor> allSensorsUsedInApplication = getAllSensorsUsed(allSensorsFromVD, sensorsAndActuatorsUsed);
-
             List<Actuator> allActuatorsUsedInApplication = getAllActuatorsUsed(allActuatorsFromVD, sensorsAndActuatorsUsed);
 
-
-
-            // Create cloud node
+            // Create cloud node/device at the top of the hierarchy
             FogDevice cloud = FogDeviceFactory.createFogDevice(
                     "cloud",
                     cloudNodePreset.MIPS,
@@ -116,12 +122,8 @@ public class JsonToApplication {
             // Cloud has no parent, it is the root of the hierarchy
             cloud.setParentId(-1);
 
-            // If there are topics - assign VD to edge nodes based on topics else
-                // Create the edge nodes using formula E = Int((D - 6) / 2) where D > 6
-
-                // connectNodesToEdgeNodes()
-
-            if(!nodeTopics.isEmpty()) {
+            if(!nodeTopics.isEmpty()) { // If the topics array is set
+                // Assign VDs to edge nodes based on topics
                 for(String topic : nodeTopics) {
                     // Create the edge node for that topic
                     FogDevice edgeNode = createEdgeNode(topic);
@@ -147,17 +149,7 @@ public class JsonToApplication {
                         }
                     }
                 }
-            } else {
-                /*
-                * Generate the number of edge nodes based on the number VDs (IoT devices) for example the
-                * No. Edge Nodes = Int((No. VDs - 6) / 2) where No. VDs > 6, so the MAX_VD_FOR_ONE_EDGE_NODE = 6
-                *
-                * Distribute the VDs eqaully amongst the edge nodes so each edge node has up to 6
-                *
-                * distributeVDsAmongstEdgeNodes(edgeNodes, virtualDevices)
-                *
-                * */
-
+            } else { // If the topics array is not set, distribute nodes normally
                 int maxNoVDsForOneEdgeNode = 6;
 
                 // Calculate the number of edge nodes needed
@@ -200,7 +192,7 @@ public class JsonToApplication {
                 }
             }
 
-            System.out.println("Application physical topology formed!");
+            System.out.println("Application's physical topology formed!");
 
             ApplicationPhysicalTopology applicationPhysicalTopology = new ApplicationPhysicalTopology();
 
@@ -216,7 +208,18 @@ public class JsonToApplication {
         return null;
     }
 
-    public Application createApplicationDataMappings() {
+    public Application createApplication(String appId, int userId) {
+        /*
+        * create application
+        *
+        * Create modules -> mapped from node-red connections
+        * */
+
+        Application application = Application.createApplication(appId, userId);
+
+        Map<String, String> moduleMap = new HashMap<>();
+
+
 
 
 
@@ -269,22 +272,6 @@ public class JsonToApplication {
 
         return actuatorsFromVD;
     }
-
-    /*private List<String> getAllSensorsUsedIn(List<TopologyNode> nodes, String typeMatch) {
-        List<String> nodeAttributes = new ArrayList<>();
-
-        for(TopologyNode node : nodes) {
-            if(node.type().equals(typeMatch)) {
-                nodeAttributes.add(node.uniqueAttribute());
-            }
-        }
-
-        for(VirtualDevice virtualDevice : virtualDevices) {
-            if(!virtualDevice.getSensorProperties().isEmpty()) {
-                sensors.addAll(virtualDevice.getSensorProperties());
-            }
-        }
-    }*/
 
     private int calculateNoOfEdgeNodes(int numberOfVDs, int maxNoVDsForOneEdgeNode) {
         // CHANGE FORMULA AS YOU SEE FIT

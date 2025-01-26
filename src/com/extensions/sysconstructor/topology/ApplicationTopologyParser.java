@@ -87,7 +87,7 @@ public class ApplicationTopologyParser implements FileProcessor<JsonNode> {
             for(JsonNode node : listOfNodes) {
                 String id = node.path("id").asText(null);
                 String name = node.path("name").asText(null);
-                String topic = node.path("name").asText(null);
+                String topic = node.path("topic").asText(null);
                 String type = node.path("type").asText(null);
                 String thing = node.path("thing").asText(null);
                 String uniqueAttribute = null;
@@ -103,4 +103,27 @@ public class ApplicationTopologyParser implements FileProcessor<JsonNode> {
 
         return nodes;
     }
+
+    public List<TopologyDataFlow> parseTopologyDataFlows() {
+        List<TopologyDataFlow> dataFlows = new ArrayList<>();
+
+        JsonNode dataFlowsNode = applicationTopology.get("dataFlows");
+        if (dataFlowsNode != null && dataFlowsNode.isArray()) {
+            for (JsonNode dataFlowNode : dataFlowsNode) {
+                String source = dataFlowNode.get("source").asText();
+                List<String> targets = new ArrayList<>();
+                JsonNode targetsNode = dataFlowNode.get("targets");
+                if (targetsNode != null && targetsNode.isArray()) {
+                    for (JsonNode targetNode : targetsNode) {
+                        targets.add(targetNode.asText());
+                    }
+                }
+                dataFlows.add(new TopologyDataFlow(source, targets));
+            }
+        }
+
+        return dataFlows;
+    }
+
+
 }
