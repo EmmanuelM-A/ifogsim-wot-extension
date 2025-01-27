@@ -209,18 +209,38 @@ public class JsonToApplication {
     }
 
     public Application createApplication(String appId, int userId) {
-        /*
-        * create application
-        *
-        * Create modules -> mapped from node-red connections
-        * */
-
-        Application application = Application.createApplication(appId, userId);
-
-        Map<String, String> moduleMap = new HashMap<>();
-
-
-
+        //
+        // create application
+        //
+        // Create modules:
+        // - Faux (or a better name) module represents an imaginary module that handles some undefined processing or data transmission to other modules.
+        //
+        // - client module that represents user input or user-based tuple transmission
+        //
+        // - Modules for any read-prop, write-prop or invoke-action node given the sub-flow does not start with a sub-event node
+        //
+        // Add app edges
+        // - Modules connected based on node-red connections, so if a read-prop node is connected (directly or indirectly) to a write-prop, their
+        // module counterparts will be connected as such.
+        //      - The tuple type is the name of the property of the read-prop so the Property: lockState would be TUPLE_LOCK_STATE
+        //      - Direction: determineDirection(src, dst)
+        //      - edgeType: props as sensors and actions as actuators, everything else is a module
+        //      - keep track of module connections and module inputs in a D.S (ModuleConnections)
+        //
+        // Define tuple mappings:
+        // - use ModuleConnection class
+        //
+        //
+        // Define app loops
+        // - createAppLoops()
+        //
+        //
+        // Define events
+        // - Extend fogDevices to handle events
+        // -
+        //
+        //
+        // */
 
 
         return null;
