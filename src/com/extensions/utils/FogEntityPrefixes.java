@@ -1,6 +1,6 @@
 package com.extensions.utils;
 
 public class FogEntityPrefixes {
-    public static final String SENSOR_PREFIX = "Sn-";
-    public static final String ACTUATOR_PREFIX = "Au-";
+    public static final String EVENT_TUPLE_PREFIX = "EVENT_TUPLE_";
+    public static final String NORM_TUPLE_PREFIX = "";
 }

@@ -2,6 +2,7 @@ package com.extensions.sysconstructor.topology;
 
 import com.extensions.customfog.FogDeviceFactory;
 import com.extensions.sysconstructor.core.ApplicationPhysicalTopology;
+import com.extensions.sysconstructor.eventdriver.EventDrivenApplication;
 import com.extensions.sysconstructor.nodered.NodeRedJSONParser;
 import com.extensions.sysconstructor.nodered.NodeRedTranslator;
 import com.extensions.utils.FilePaths;
@@ -211,9 +212,11 @@ public class JsonToApplication {
     public Application createApplication(String appId, int userId) {
         //
         // create application
-        //
+        EventDrivenApplication application = new EventDrivenApplication(appId, userId);
+
+
         // Create modules:
-        // - Faux (or a better name) module represents an imaginary module that handles some undefined processing or data transmission to other modules.
+        // - DefaultModule (or a better name) module represents an imaginary module that handles some undefined processing or data transmission to other modules.
         //
         // - client module that represents user input or user-based tuple transmission
         //
@@ -235,10 +238,14 @@ public class JsonToApplication {
         // - createAppLoops()
         //
         //
-        // Define events
+        // Define events => setApplicationEvents() // Will handle all the event setting up and configurations to allow for event transmission and processing
         // - Extend fogDevices to handle events
-        // -
-        //
+        // - The fog node emits a tuple type of the event-node to all other fog nodes which will process it and act accordingly
+        // - Sensors and actuators (stored in VD) will process incoming event_tuples and emit tuples of their own type, so the invoke-action
+        // node: activateAlarm() will emit a tuple type of TUPLE_activateAlarm to some endpoint, after receiving a tuple of type EVENT_TUPLE_tamperAlert
+        // - Define event tuple flows transmission Map<Event_tuple, List<Nodes> components (like sensors or actuators)> and a response would the node
+        // emitting a tuple to some destination.
+        // - extend controller or application
         //
         // */
 

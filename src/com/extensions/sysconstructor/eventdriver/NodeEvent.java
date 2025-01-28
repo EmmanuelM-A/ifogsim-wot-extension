@@ -1,4 +1,4 @@
-package com.extensions.sysconstructor.architecture;
+package com.extensions.sysconstructor.eventdriver;
 
 import java.util.List;
 
