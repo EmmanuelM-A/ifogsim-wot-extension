@@ -6,6 +6,8 @@ import com.extensions.sysconstructor.eventdriver.EventDrivenApplication;
 import com.extensions.sysconstructor.nodered.NodeRedJSONParser;
 import com.extensions.sysconstructor.nodered.NodeRedTranslator;
 import com.extensions.utils.FilePaths;
+import com.extensions.utils.Utility;
+import com.extensions.utils.presets.ApplicationPreset;
 import com.extensions.utils.presets.CloudNodePreset;
 import com.extensions.utils.presets.EdgeNodePreset;
 import com.extensions.vdcreation.core.VirtualDevice;
@@ -46,6 +48,8 @@ public class JsonToApplication {
 
     private final List<TopologyNode> events;
 
+    private final TopologyNodeConnectionChecker nodeConnectionChecker;
+
     private final int UPLINK_LATENCY_EDGE_TO_CLOUD = 100;
 
     private final int UPLINK_LATENCY_VD_TO_EDGE = 10;
@@ -73,6 +77,9 @@ public class JsonToApplication {
 
         // Extract all the connections between nodes
         this.nodeConnections = applicationTopologyParser.parseTopologyConnections();
+
+        // Initialise node connection checker
+        this.nodeConnectionChecker = new TopologyNodeConnectionChecker(this.nodeConnections);
 
         // Extract all the data flows
         this.dataFlows = applicationTopologyParser.parseTopologyDataFlows();
@@ -212,7 +219,10 @@ public class JsonToApplication {
     public Application createApplication(String appId, int userId) {
         //
         // create application
-        EventDrivenApplication application = new EventDrivenApplication(appId, userId);
+        EventDrivenApplication application = new EventDrivenApplication(appId, userId, ApplicationPreset.DEFAULT);
+
+        // Add the rest of the modules
+        //setApplicationModules()
 
 
         // Create modules:
@@ -251,6 +261,39 @@ public class JsonToApplication {
 
 
         return null;
+    }
+
+    private void setApplicationModules(EventDrivenApplication application) {
+        // Default module represents any explicitly undefined computation that may or may not occur with data
+        application.addAppModule("default-module", 10);
+
+        // Client module represents any computation that involves user data (its processing, arrival or emission)
+        application.addAppModule("client", 10);
+
+        // Search for nodes of type read-prop, write-prop, invoke-action and inject given they are not connected to an event node. If so
+        // create a module for each node with the same attribute name.
+        List<String> nodeTypesToSearchFor = new ArrayList<>(){{
+            add("read-property");
+            add("write-property");
+            add("invoke-action");
+        }};
+
+        // TODO CHANGE CONNECTION CHECKER TO CHECK FOR CONNECTIONS BY NAME, TYPE AND ID, TOPIC, ATTR, ETC.
+        // TODO ADD NodeConnectionStatus class: isThereAConnection: boolean, isDirectConnection
+
+        // INJECT NODE DONE OUTSIDE FOR LOOP
+
+        for(String nodeType : nodeTypesToSearchFor) {
+            // Get the nodes of a singular type
+            List<TopologyNode> nodes = Utility.getTopologyNodesByType(topologyNodes, nodeType);
+
+            // Check if the node is not connected to a sub-event node
+            for(TopologyNode node : nodes) {
+                if(!nodeConnectionChecker.areNodesConnected()) {
+                    application
+                }
+            }
+        }
     }
 
     private List<Sensor> getAllSensorsUsed(List<Sensor> sensors, List<String> allComponentsUsed) {

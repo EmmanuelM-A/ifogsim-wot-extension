@@ -3,6 +3,7 @@ package com.extensions.utils;
 import com.extensions.sysconstructor.topology.TopologyNode;
 import com.extensions.vdcreation.core.VirtualDevice;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Utility {
@@ -25,5 +26,13 @@ public class Utility {
             if(topologyNode.type().equals(type)) return topologyNode.id();
         }
         return null;
+    }
+
+    public static List<TopologyNode> getTopologyNodesByType(List<TopologyNode> topologyNodes, String type) {
+        List<TopologyNode> nodes = new ArrayList<>();
+        for(TopologyNode topologyNode : topologyNodes) {
+            if(topologyNode.type().equals(type)) nodes.add(topologyNode);
+        }
+        return nodes;
     }
 }

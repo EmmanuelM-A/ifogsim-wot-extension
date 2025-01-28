@@ -1,5 +1,6 @@
 package com.extensions.sysconstructor.eventdriver;
 
+import com.extensions.utils.presets.ApplicationPreset;
 import org.fog.application.Application;
 
 import java.util.HashMap;
@@ -8,8 +9,10 @@ import java.util.Map;
 
 public class EventDrivenApplication extends Application {
     private final Map<String, NodeEvent> eventMap = new HashMap<>();
-    public EventDrivenApplication(String appId, int userId) {
+    private final ApplicationPreset appliationPreset;
+    public EventDrivenApplication(String appId, int userId, ApplicationPreset applicationPreset) {
         super(appId, userId);
+        this.appliationPreset = applicationPreset;
     }
 
     public void setEvents(List<NodeEvent> nodeEventList) {
@@ -22,6 +25,7 @@ public class EventDrivenApplication extends Application {
         return eventMap.get(eventType);
     }
 
-
-
+    public void addAppModule(String moduleName) {
+        super.addAppModule(moduleName, appliationPreset.APP_MODULE_RAM);
+    }
 }
