@@ -30,7 +30,6 @@ public class NodeRedJSONParser implements FileProcessor<List<NodeRedNode>> {
     public NodeRedJSONParser() {
         this.objectMapper = new ObjectMapper();
         objectMapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
-        //objectMapper.enable(StreamReadFeature.INCLUDE_SOURCE_IN_LOCATION);
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 

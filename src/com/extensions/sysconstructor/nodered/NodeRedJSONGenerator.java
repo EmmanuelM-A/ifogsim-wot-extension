@@ -4,22 +4,16 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 public class NodeRedJSONGenerator {
     private final List<NodeRedNode> nodes;
-    private final List<Tree> trees;
-
-    public NodeRedJSONGenerator(List<NodeRedNode> nodes, List<Tree> trees) {
-        this.nodes = nodes;
-        this.trees = trees;
-    }
 
     public NodeRedJSONGenerator(List<NodeRedNode> nodes) {
         this.nodes = nodes;
-        trees = null;
     }
 
     public ObjectNode generate() {
@@ -30,7 +24,7 @@ public class NodeRedJSONGenerator {
         outputJson.set("things", generateThings(mapper));
         outputJson.set("topics", generateNodeTopics(mapper));
         outputJson.set("nodes", generateNodes(mapper));
-        //outputJson.set("subFlows", generateTreeTopology(mapper)); // Trees
+        outputJson.set("subFlows", generateSubFlowTrees(mapper));
         outputJson.set("connections", generateConnections(mapper));
         outputJson.set("dataFlows", generateDataFlows(mapper));
         outputJson.set("events", generateEvents(mapper));
@@ -68,17 +62,7 @@ public class NodeRedJSONGenerator {
         for (NodeRedNode node : nodes) {
             if(node.getType().equals(NodeRedJSONParser.TYPE_CONSUMED_THING)) continue;
             if(node.getType().equals(NodeRedJSONParser.TYPE_TAB)) continue;
-            ObjectNode jsonNode = mapper.createObjectNode();
-            jsonNode.put("id", node.getId());
-            jsonNode.put("name", node.getName());
-            jsonNode.put("type", node.getType());
-            jsonNode.put("topic", node.getTopic());
-            jsonNode.put("thing", node.getThingID());
-            switch (node.getType()) {
-                case NodeRedJSONParser.TYPE_INVOKE_ACTION -> jsonNode.put("action", node.getUniqueAttribute());
-                case NodeRedJSONParser.TYPE_SUBSCRIBE_EVENT -> jsonNode.put("event", node.getUniqueAttribute());
-                case NodeRedJSONParser.TYPE_READ_PROPERTY, NodeRedJSONParser.TYPE_WRITE_PROPERTY -> jsonNode.put("property", node.getUniqueAttribute());
-            }
+            ObjectNode jsonNode = createTopologyNode(mapper, node);
             nodesArray.add(jsonNode);
         }
         return nodesArray;
@@ -98,37 +82,50 @@ public class NodeRedJSONGenerator {
         return nodesArray;
     }
 
-    private ArrayNode generateTreeTopology(ObjectMapper mapper) {
-        ArrayNode nodeTrees = mapper.createArrayNode(); // Array for all trees
+    private ArrayNode generateSubFlowTrees(ObjectMapper mapper) {
+        ArrayNode subFlowTrees = mapper.createArrayNode();
 
-        for (Tree tree : trees) {
-            ObjectNode nodeTree = mapper.createObjectNode(); // JSON object for each tree
-            nodeTree.put("treeId", tree.getTreeId());
+        // Group the nodes into tree like sub-flows
+        List<SubFlowTree> trees = SubFlowTreeGrouper.groupNodesIntoSubFlowTree(nodes);
 
-            // Generate nodes for the current tree
-            ArrayNode jsonNodes = mapper.createArrayNode();
-            for (NodeRedNode node : tree.getNodes()) {
-                ObjectNode jsonNode = mapper.createObjectNode();
-                jsonNode.put("id", node.getId());
-                jsonNode.put("name", node.getName());
-                jsonNode.put("type", node.getType());
+        for (int index = 0; index < trees.size(); index++) {
+            ObjectNode subFlowTree = mapper.createObjectNode(); // JSON object for each sub flow
 
-                // Add type-specific details (similar to generateNodes)
-                switch (node.getType()) {
-                    case NodeRedJSONParser.TYPE_INVOKE_ACTION -> jsonNode.put("action", node.getUniqueAttribute());
-                    case NodeRedJSONParser.TYPE_SUBSCRIBE_EVENT -> jsonNode.put("event", node.getUniqueAttribute());
-                    case NodeRedJSONParser.TYPE_READ_PROPERTY, NodeRedJSONParser.TYPE_WRITE_PROPERTY -> jsonNode.put("property", node.getUniqueAttribute());
+            // Set root node
+            JsonNode rootNode = createTopologyNode(mapper, trees.get(index).getRootNode());
+            subFlowTree.set("rootNode" + index, rootNode);
+
+            // Set the branches
+            ObjectNode branchesJson = mapper.createObjectNode();
+            for (TreeBranch branch : trees.get(index).getBranches()) {
+                ArrayNode branchArray = mapper.createArrayNode();
+                for (NodeRedNode node : branch.nodes()) {
+                    branchArray.add(createTopologyNode(mapper, node));
                 }
-                jsonNodes.add(jsonNode); // Add the node to the nodes array
+                branchesJson.set("branch-" + index, branchArray); // Add the branch array to the branch
             }
 
-            nodeTree.set("nodes", jsonNodes); // Attach nodes to the tree
-            nodeTrees.add(nodeTree);          // Add the tree to the trees array
+            subFlowTree.set("branches", branchesJson); // Set the branches array
+            subFlowTrees.add(subFlowTree); // Add the sub flow tree to the subFlowTrees ArrayNode
         }
 
-        return nodeTrees;
+        return subFlowTrees;
     }
 
+    private ObjectNode createTopologyNode(ObjectMapper mapper, NodeRedNode node) {
+        ObjectNode topologyNode = mapper.createObjectNode();
+        topologyNode.put("id", node.getId());
+        topologyNode.put("name", node.getName());
+        topologyNode.put("type", node.getType());
+        topologyNode.put("topic", node.getTopic());
+        topologyNode.put("thing", node.getThingID());
+        switch (node.getType()) {
+            case NodeRedJSONParser.TYPE_INVOKE_ACTION -> topologyNode.put("action", node.getUniqueAttribute());
+            case NodeRedJSONParser.TYPE_SUBSCRIBE_EVENT -> topologyNode.put("event", node.getUniqueAttribute());
+            case NodeRedJSONParser.TYPE_READ_PROPERTY, NodeRedJSONParser.TYPE_WRITE_PROPERTY -> topologyNode.put("property", node.getUniqueAttribute());
+        }
+        return topologyNode;
+    }
 
     private ArrayNode generateConnections(ObjectMapper mapper) {
         ArrayNode wiresArray = mapper.createArrayNode();

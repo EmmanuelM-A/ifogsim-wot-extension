@@ -22,11 +22,7 @@ public class NodeRedTranslator {
             NodeRedJSONParser parser = new NodeRedJSONParser();
             List<NodeRedNode> nodes = parser.process(nodeRedApplicationJsonFile);
 
-            // Tree grouping for nodes - TODO SORT OUT TREE GROUPING LATER ONCE PROJECT COMPLETED
-            //TreeGrouping treeGrouper = new TreeGrouping(nodes);
-            //List<Tree> trees = treeGrouper.groupNodesIntoTrees();
-
-            // Generate JSON with Things, Nodes, Wires, Data Flows, and Events
+            // Generate the output JSON with the correct format
             NodeRedJSONGenerator generator = new NodeRedJSONGenerator(nodes);
             ObjectNode outputJson = generator.generate();
 

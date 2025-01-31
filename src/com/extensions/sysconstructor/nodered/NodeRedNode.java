@@ -3,7 +3,7 @@ package com.extensions.sysconstructor.nodered;
 import java.util.List;
 
 /**
- * Represents a node
+ * Represents a node from node red
  */
 public class NodeRedNode {
     private final String id;
