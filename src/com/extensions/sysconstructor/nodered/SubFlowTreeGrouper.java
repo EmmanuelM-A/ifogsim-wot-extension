@@ -18,6 +18,7 @@ public class SubFlowTreeGrouper {
         add("debug");
         add("tab");
         add("comment");
+        add("consumed-thing");
     }};
 
     /**

@@ -20,10 +20,10 @@ public class NodeRedTranslator {
         try {
             // Parse Node-RED JSON into Nodes
             NodeRedJSONParser parser = new NodeRedJSONParser();
-            List<NodeRedNode> nodes = parser.process(nodeRedApplicationJsonFile);
+            List<NodeRedNode> rawNodes = parser.process(nodeRedApplicationJsonFile);
 
             // Generate the output JSON with the correct format
-            NodeRedJSONGenerator generator = new NodeRedJSONGenerator(nodes);
+            NodeRedJSONGenerator generator = new NodeRedJSONGenerator(rawNodes);
             ObjectNode outputJson = generator.generate();
 
             // Write to file using Jackson's ObjectMapper

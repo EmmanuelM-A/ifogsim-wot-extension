@@ -24,7 +24,7 @@ public class NodeRedJSONGenerator {
         outputJson.set("things", generateThings(mapper));
         outputJson.set("topics", generateNodeTopics(mapper));
         outputJson.set("nodes", generateNodes(mapper));
-        outputJson.set("subFlows", generateSubFlowTrees(mapper));
+        //outputJson.set("subFlows", generateSubFlowTrees(mapper));
         outputJson.set("connections", generateConnections(mapper));
         outputJson.set("dataFlows", generateDataFlows(mapper));
         outputJson.set("events", generateEvents(mapper));
@@ -82,8 +82,8 @@ public class NodeRedJSONGenerator {
         return nodesArray;
     }
 
-    private ArrayNode generateSubFlowTrees(ObjectMapper mapper) {
-        ArrayNode subFlowTrees = mapper.createArrayNode();
+    private ObjectNode generateSubFlowTrees(ObjectMapper mapper) {
+        ObjectNode subFlowTrees = mapper.createObjectNode();
 
         // Group the nodes into tree like sub-flows
         List<SubFlowTree> trees = SubFlowTreeGrouper.groupNodesIntoSubFlowTree(nodes);
@@ -93,7 +93,7 @@ public class NodeRedJSONGenerator {
 
             // Set root node
             JsonNode rootNode = createTopologyNode(mapper, trees.get(index).getRootNode());
-            subFlowTree.set("rootNode" + index, rootNode);
+            subFlowTree.set("rootNode", rootNode);
 
             // Set the branches
             ObjectNode branchesJson = mapper.createObjectNode();
@@ -106,7 +106,7 @@ public class NodeRedJSONGenerator {
             }
 
             subFlowTree.set("branches", branchesJson); // Set the branches array
-            subFlowTrees.add(subFlowTree); // Add the sub flow tree to the subFlowTrees ArrayNode
+            subFlowTrees.set("subFlow-" + index, subFlowTree); // Add the sub flow tree to the subFlowTrees ArrayNode
         }
 
         return subFlowTrees;

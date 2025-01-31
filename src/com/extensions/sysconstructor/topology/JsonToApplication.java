@@ -12,11 +12,13 @@ import com.extensions.utils.presets.ApplicationPreset;
 import com.extensions.utils.presets.CloudNodePreset;
 import com.extensions.utils.presets.EdgeNodePreset;
 import com.extensions.vdcreation.core.VirtualDevice;
+import org.fog.application.AppEdge;
 import org.fog.application.AppModule;
 import org.fog.application.Application;
 import org.fog.entities.Actuator;
 import org.fog.entities.FogDevice;
 import org.fog.entities.Sensor;
+import org.fog.entities.Tuple;
 
 import java.io.File;
 import java.io.IOException;
@@ -35,6 +37,7 @@ import java.util.*;
 public class JsonToApplication {
     private final CloudNodePreset cloudNodePreset;
     private final EdgeNodePreset edgeNodePreset;
+    private final ApplicationPreset applicationPreset;
     private final List<FogDevice> fogDevices;
     private final List<FogDevice> edgeNodes;
 
@@ -42,6 +45,9 @@ public class JsonToApplication {
 
     private final List<String> nodeTopics;
 
+    /**
+     * A list of all topology nodes of the required types: read-property, write-property, subscribe-event, inject and invoke-action
+     */
     private final List<TopologyNode> topologyNodes;
 
     private final List<TopologyNodeConnection> nodeConnections;
@@ -58,9 +64,10 @@ public class JsonToApplication {
 
     private final int UPLINK_LATENCY_VD_TO_EDGE = 10;
 
-    public JsonToApplication(File nodeRedApplicationJsonFile, CloudNodePreset cloudNodePreset, EdgeNodePreset edgeNodePreset) throws IOException {
+    public JsonToApplication(File nodeRedApplicationJsonFile, CloudNodePreset cloudNodePreset, EdgeNodePreset edgeNodePreset, ApplicationPreset applicationPreset) throws IOException {
         this.cloudNodePreset = cloudNodePreset;
         this.edgeNodePreset = edgeNodePreset;
+        this.applicationPreset = applicationPreset;
         this.fogDevices = new ArrayList<>();
         this.edgeNodes = new ArrayList<>();
         this.nodeModules = new HashMap<>();
@@ -224,14 +231,14 @@ public class JsonToApplication {
     public Application createApplication(String appId, int userId) {
         //
         // create application
-        EventDrivenApplication application = new EventDrivenApplication(appId, userId, ApplicationPreset.DEFAULT);
+        EventDrivenApplication application = new EventDrivenApplication(appId, userId, applicationPreset);
 
         // Add the rest of the modules
-        //setApplicationModules()
+        setApplicationModules(application);
 
 
         // Create modules:
-        // - DefaultModule (or a better name) module represents an imaginary module that handles some undefined processing or data transmission to other modules.
+        // - DefaultModule module represents an imaginary module that handles some undefined processing or data transmission to other modules.
         //
         // - client module that represents user input or user-based tuple transmission
         //
@@ -268,21 +275,8 @@ public class JsonToApplication {
         return null;
     }
 
-
-    /*
-     * Loop through nodes:
-     *   if node is an RP/WP/IA node:
-     *       if node is not connected to an event-node
-     *           create a module for the node
-     *           map.put(node name, module)
-     *           for all nodes connected to that node -> convert to
-     *
-     * Loop through
-     *
-     * */
-
     private void setApplicationModules(EventDrivenApplication application) {
-        // Default module represents any explicitly undefined computation that may or may not occur with data
+        // Default module represents any computation that may or may not occur with data
         application.addAppModule("default-module", 10);
         nodeModules.put("default-module", new NodeModule(application.getModuleByName("default-module")));
 
@@ -290,53 +284,17 @@ public class JsonToApplication {
         application.addAppModule("client", 10);
         nodeModules.put("client", new NodeModule(application.getModuleByName("client")));
 
-        // Search for nodes of type read-prop, write-prop, invoke-action and inject given they are not connected to an event node. If so
-        // create a module for each node with the same attribute name.
         List<String> nodeTypesToSearchFor = new ArrayList<>(){{
             add("read-property");
             add("write-property");
             add("invoke-action");
         }};
 
-        List<TopologyNode> visited = new ArrayList<>();
-
-        // Look for all nodes (of the required types) and convert it into a node module
+        // Look for all nodes (of the required types) and convert them into node modules
         List<TopologyNode> injectNodes = Utility.getTopologyNodesByType(topologyNodes, NodeRedJSONParser.TYPE_INJECT);
 
-        // Iterate through all node types: READ-PROPERTY, WRITE-PROPERTY and INVOKE-ACTION
-        for(String nodeType : nodeTypesToSearchFor) {
-
-            // Check if the RP/WP/IA nodes are connected to an inject node
-            for(TopologyNode node : injectNodes) {
-                TopologyNodeConnectionStatus connectionStatus = nodeConnectionChecker.areNodesConnected(node.type(), nodeType, "type");
-
-                if(connectionStatus.isThereAConnection()) { // If there exists some connection to an inject node
-                    // Get the node of the required type
-                    TopologyNode requiredNode = null;
-
-                    requiredNode = Utility.getTopologyNode(topologyNodes, nodeType);
-
-                    /* TODO REDO THIS BLOCK OF CODE -
-                        SEARCH FOR ALL NODES (OF REQUIRED TYPES)
-                            AND CHECK IF THEY ARE CONNECTED TO AN INJECT NODE,
-                                IF SO FIRST CHECK IF A MODULE OF THAT NODE ALREADY EXISTS,
-                                    IF NOT CREATE A NODE MODULE FOR THAT NODE
-                    */
-
-
-                    if(requiredNode != null) {
-                        // Create the app module for the node
-                        NodeModule nodeModule = new NodeModule(application.addAppModule(requiredNode.uniqueAttribute()));
-
-                        // Add it to the node modules map
-                        nodeModules.put(requiredNode.uniqueAttribute(), nodeModule);
-                    }
-                }
-            }
-        }
-
-        // Iterate through all node types: READ-PROPERTY, WRITE-PROPERTY and INVOKE-ACTION
-        for(String nodeType : nodeTypesToSearchFor) {
+        // Iterate through all node types: READ-PROPERTY, WRITE-PROPERTY, and INVOKE-ACTION
+        for (String nodeType : nodeTypesToSearchFor) {
             // Get the nodes of a singular type
             List<TopologyNode> nodes = Utility.getTopologyNodesByType(topologyNodes, nodeType);
 
@@ -352,8 +310,86 @@ public class JsonToApplication {
                     nodeModules.put(node.uniqueAttribute(), nodeModule);
                 }
             }
+
+            // Get all nodes of the required type
+            List<TopologyNode> requiredNodes = Utility.getTopologyNodesByType(topologyNodes, nodeType);
+
+            for (TopologyNode requiredNode : requiredNodes) {
+                // Check if the required node is connected to an inject node
+                for (TopologyNode injectNode : injectNodes) {
+                    TopologyNodeConnectionStatus connectionStatus = nodeConnectionChecker.areNodesConnected(injectNode.id(), requiredNode.id(), "id");
+
+                    if (connectionStatus.isThereAConnection()) { // If there exists some connection to an inject node
+                        // Check if a module for this node already exists
+                        if (!nodeModules.containsKey(requiredNode.uniqueAttribute())) {
+                            // Create the app module for the node
+                            NodeModule nodeModule = new NodeModule(application.addAppModule(requiredNode.uniqueAttribute()));
+
+                            nodeModule.setOutputTupleType(requiredNode.uniqueAttribute());
+
+                            // Add it to the node modules map
+                            nodeModules.put(requiredNode.uniqueAttribute(), nodeModule);
+                        }
+                    }
+                }
+            }
         }
     }
+
+    private void setApplicationEdges(EventDrivenApplication application) {
+        for (TopologyNode srcNode : topologyNodes) {
+            for (TopologyNode dstNode : topologyNodes) {
+                TopologyNodeConnectionStatus connectionStatus = nodeConnectionChecker.areNodesConnected(srcNode.id(), dstNode.id(), "id");
+
+                if (connectionStatus.isThereAConnection()) {
+                    // Retrieve the module names from nodeModules
+                    NodeModule srcModule = nodeModules.get(srcNode.uniqueAttribute());
+                    NodeModule dstModule = nodeModules.get(dstNode.uniqueAttribute());
+
+                    if (srcModule != null && dstModule != null) {
+                        String tupleType = srcNode.uniqueAttribute();
+                        int edgeDirection = determineDirection(srcNode, dstNode);
+                        int edgeType = determineEdgeType(srcNode, dstNode);
+
+
+
+                        application.addAppEdge(
+                                srcModule.getModule().getName(),
+                                dstModule.getModule().getName(),
+                                applicationPreset.APP_EDGE_TUPLE_CPU_LENGTH,  // Processing latency (adjust as needed)
+                                applicationPreset.APP_EDGE_TUPLE_NW_LENGTH,    // Transmission latency (adjust as needed)
+                                tupleType,
+                                edgeDirection,
+                                edgeType
+                        );
+                    }
+                }
+            }
+        }
+    }
+
+    private int determineDirection(TopologyNode src, TopologyNode dst) {
+        // Assume upward tuple flow for sensors and downward for actuators
+        if (src.type().equals(NodeRedJSONParser.TYPE_READ_PROPERTY)) {
+            return Tuple.UP;
+        } else if (dst.type().equals(NodeRedJSONParser.TYPE_INVOKE_ACTION) || dst.type().equals(NodeRedJSONParser.TYPE_WRITE_PROPERTY)) {
+            return Tuple.DOWN;
+        } else {
+            return Tuple.UP;  // Default for other module connections
+        }
+    }
+
+    private int determineEdgeType(TopologyNode src, TopologyNode dst) {
+        if (src.type().equals(NodeRedJSONParser.TYPE_READ_PROPERTY)) {
+            return AppEdge.SENSOR;
+        } else if (dst.type().equals(NodeRedJSONParser.TYPE_INVOKE_ACTION) || dst.type().equals(NodeRedJSONParser.TYPE_WRITE_PROPERTY)) {
+            return AppEdge.ACTUATOR;
+        } else {
+            return AppEdge.MODULE;
+        }
+    }
+
+
 
     private List<Sensor> getAllSensorsUsed(List<Sensor> sensors, List<String> allComponentsUsed) {
         List<Sensor> allSensorsUsed = new ArrayList<>();

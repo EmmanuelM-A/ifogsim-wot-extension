@@ -36,6 +36,15 @@ public class MainTest {
                 null
         );*/
 
-        NodeRedTranslator.nodeRedToInputJson(new File("src/com/extensions/input/application/door-security-application.json"));
+        //NodeRedTranslator.nodeRedToInputJson(new File("src/com/extensions/input/application/door-security-application.json"));
+
+        JsonToApplication jsonToApplication = new JsonToApplication(
+                new File("src/com/extensions/input/application/door-security-application.json"),
+                CloudNodePreset.DEFAULT,
+                EdgeNodePreset.DEFAULT,
+                ApplicationPreset.DEFAULT
+        );
+
+        jsonToApplication.createApplication("test", 0);
     }
 }
