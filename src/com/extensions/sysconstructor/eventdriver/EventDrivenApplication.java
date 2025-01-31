@@ -1,6 +1,7 @@
 package com.extensions.sysconstructor.eventdriver;
 
 import com.extensions.utils.presets.ApplicationPreset;
+import org.fog.application.AppModule;
 import org.fog.application.Application;
 
 import java.util.HashMap;
@@ -25,7 +26,8 @@ public class EventDrivenApplication extends Application {
         return eventMap.get(eventType);
     }
 
-    public void addAppModule(String moduleName) {
+    public AppModule addAppModule(String moduleName) {
         super.addAppModule(moduleName, appliationPreset.APP_MODULE_RAM);
+        return super.getModuleByName(moduleName);
     }
 }

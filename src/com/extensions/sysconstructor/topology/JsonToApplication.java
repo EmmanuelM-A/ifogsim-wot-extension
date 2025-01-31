@@ -2,6 +2,7 @@ package com.extensions.sysconstructor.topology;
 
 import com.extensions.customfog.FogDeviceFactory;
 import com.extensions.sysconstructor.core.ApplicationPhysicalTopology;
+import com.extensions.sysconstructor.core.NodeModule;
 import com.extensions.sysconstructor.eventdriver.EventDrivenApplication;
 import com.extensions.sysconstructor.nodered.NodeRedJSONParser;
 import com.extensions.sysconstructor.nodered.NodeRedTranslator;
@@ -11,6 +12,7 @@ import com.extensions.utils.presets.ApplicationPreset;
 import com.extensions.utils.presets.CloudNodePreset;
 import com.extensions.utils.presets.EdgeNodePreset;
 import com.extensions.vdcreation.core.VirtualDevice;
+import org.fog.application.AppModule;
 import org.fog.application.Application;
 import org.fog.entities.Actuator;
 import org.fog.entities.FogDevice;
@@ -48,6 +50,8 @@ public class JsonToApplication {
 
     private final List<TopologyNode> events;
 
+    private final Map<String, NodeModule> nodeModules;
+
     private final TopologyNodeConnectionChecker nodeConnectionChecker;
 
     private final int UPLINK_LATENCY_EDGE_TO_CLOUD = 100;
@@ -59,6 +63,7 @@ public class JsonToApplication {
         this.edgeNodePreset = edgeNodePreset;
         this.fogDevices = new ArrayList<>();
         this.edgeNodes = new ArrayList<>();
+        this.nodeModules = new HashMap<>();
 
         // Generate the application topology from the node red application design
         NodeRedTranslator.nodeRedToInputJson(nodeRedApplicationJsonFile);
@@ -79,7 +84,7 @@ public class JsonToApplication {
         this.nodeConnections = applicationTopologyParser.parseTopologyConnections();
 
         // Initialise node connection checker
-        this.nodeConnectionChecker = new TopologyNodeConnectionChecker(this.nodeConnections);
+        this.nodeConnectionChecker = new TopologyNodeConnectionChecker(this.nodeConnections, this.topologyNodes);
 
         // Extract all the data flows
         this.dataFlows = applicationTopologyParser.parseTopologyDataFlows();
@@ -263,12 +268,27 @@ public class JsonToApplication {
         return null;
     }
 
+
+    /*
+     * Loop through nodes:
+     *   if node is an RP/WP/IA node:
+     *       if node is not connected to an event-node
+     *           create a module for the node
+     *           map.put(node name, module)
+     *           for all nodes connected to that node -> convert to
+     *
+     * Loop through
+     *
+     * */
+
     private void setApplicationModules(EventDrivenApplication application) {
         // Default module represents any explicitly undefined computation that may or may not occur with data
         application.addAppModule("default-module", 10);
+        nodeModules.put("default-module", new NodeModule(application.getModuleByName("default-module")));
 
         // Client module represents any computation that involves user data (its processing, arrival or emission)
         application.addAppModule("client", 10);
+        nodeModules.put("client", new NodeModule(application.getModuleByName("client")));
 
         // Search for nodes of type read-prop, write-prop, invoke-action and inject given they are not connected to an event node. If so
         // create a module for each node with the same attribute name.
@@ -278,19 +298,58 @@ public class JsonToApplication {
             add("invoke-action");
         }};
 
-        // TODO CHANGE CONNECTION CHECKER TO CHECK FOR CONNECTIONS BY NAME, TYPE AND ID, TOPIC, ATTR, ETC.
-        // TODO ADD NodeConnectionStatus class: isThereAConnection: boolean, isDirectConnection
+        List<TopologyNode> visited = new ArrayList<>();
 
-        // INJECT NODE DONE OUTSIDE FOR LOOP
+        // Look for all nodes (of the required types) and convert it into a node module
+        List<TopologyNode> injectNodes = Utility.getTopologyNodesByType(topologyNodes, NodeRedJSONParser.TYPE_INJECT);
 
+        // Iterate through all node types: READ-PROPERTY, WRITE-PROPERTY and INVOKE-ACTION
+        for(String nodeType : nodeTypesToSearchFor) {
+
+            // Check if the RP/WP/IA nodes are connected to an inject node
+            for(TopologyNode node : injectNodes) {
+                TopologyNodeConnectionStatus connectionStatus = nodeConnectionChecker.areNodesConnected(node.type(), nodeType, "type");
+
+                if(connectionStatus.isThereAConnection()) { // If there exists some connection to an inject node
+                    // Get the node of the required type
+                    TopologyNode requiredNode = null;
+
+                    requiredNode = Utility.getTopologyNode(topologyNodes, nodeType);
+
+                    /* TODO REDO THIS BLOCK OF CODE -
+                        SEARCH FOR ALL NODES (OF REQUIRED TYPES)
+                            AND CHECK IF THEY ARE CONNECTED TO AN INJECT NODE,
+                                IF SO FIRST CHECK IF A MODULE OF THAT NODE ALREADY EXISTS,
+                                    IF NOT CREATE A NODE MODULE FOR THAT NODE
+                    */
+
+
+                    if(requiredNode != null) {
+                        // Create the app module for the node
+                        NodeModule nodeModule = new NodeModule(application.addAppModule(requiredNode.uniqueAttribute()));
+
+                        // Add it to the node modules map
+                        nodeModules.put(requiredNode.uniqueAttribute(), nodeModule);
+                    }
+                }
+            }
+        }
+
+        // Iterate through all node types: READ-PROPERTY, WRITE-PROPERTY and INVOKE-ACTION
         for(String nodeType : nodeTypesToSearchFor) {
             // Get the nodes of a singular type
             List<TopologyNode> nodes = Utility.getTopologyNodesByType(topologyNodes, nodeType);
 
-            // Check if the node is not connected to a sub-event node
+            // Check if the nodes are not connected to a sub-event node
             for(TopologyNode node : nodes) {
-                if(!nodeConnectionChecker.areNodesConnected()) {
-                    application
+                TopologyNodeConnectionStatus connectionStatus = nodeConnectionChecker.areNodesConnected(NodeRedJSONParser.TYPE_SUBSCRIBE_EVENT, node.type(), "type");
+
+                if(!connectionStatus.isThereAConnection()) { // If the node is not connected to a sub-event node
+                    // Create the app module for the node
+                    NodeModule nodeModule = new NodeModule(application.addAppModule(node.uniqueAttribute()));
+
+                    // Add it to the node modules map
+                    nodeModules.put(node.uniqueAttribute(), nodeModule);
                 }
             }
         }

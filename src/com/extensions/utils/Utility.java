@@ -35,4 +35,11 @@ public class Utility {
         }
         return nodes;
     }
+
+    public static TopologyNode getTopologyNode(List<TopologyNode> topologyNodes, String nodeName) {
+        for(TopologyNode node : topologyNodes) {
+            if(node.name().equals(nodeName)) return node;
+        }
+        return null;
+    }
 }
