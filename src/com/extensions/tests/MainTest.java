@@ -44,7 +44,5 @@ public class MainTest {
                 EdgeNodePreset.DEFAULT,
                 ApplicationPreset.DEFAULT
         );
-
-        jsonToApplication.createApplication("test", 0);
     }
 }

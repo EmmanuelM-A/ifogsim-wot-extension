@@ -2,6 +2,7 @@ package com.extensions.sysconstructor.topology;
 
 import com.extensions.customfog.FogDeviceFactory;
 import com.extensions.sysconstructor.core.ApplicationPhysicalTopology;
+import com.extensions.sysconstructor.core.MultiOutputNodeModule;
 import com.extensions.sysconstructor.core.NodeModule;
 import com.extensions.sysconstructor.eventdriver.EventDrivenApplication;
 import com.extensions.sysconstructor.nodered.NodeRedJSONParser;
@@ -15,6 +16,7 @@ import com.extensions.vdcreation.core.VirtualDevice;
 import org.fog.application.AppEdge;
 import org.fog.application.AppModule;
 import org.fog.application.Application;
+import org.fog.application.selectivity.FractionalSelectivity;
 import org.fog.entities.Actuator;
 import org.fog.entities.FogDevice;
 import org.fog.entities.Sensor;
@@ -228,13 +230,21 @@ public class JsonToApplication {
         return null;
     }
 
-    public Application createApplication(String appId, int userId) {
+    public Application createApplicationModel(String appId, int userId) {
         //
         // create application
         EventDrivenApplication application = new EventDrivenApplication(appId, userId, applicationPreset);
 
         // Add the rest of the modules
         setApplicationModules(application);
+
+        setApplicationEdges(application);
+
+        setApplicationTupleMappings(application);
+
+        setApplicationLoops(application);
+
+        setApplicationEvents(application);
 
 
         // Create modules:
@@ -347,11 +357,19 @@ public class JsonToApplication {
                     NodeModule dstModule = nodeModules.get(dstNode.uniqueAttribute());
 
                     if (srcModule != null && dstModule != null) {
-                        String tupleType = srcNode.uniqueAttribute();
+                        String tupleType = determineTupleType(srcNode, dstNode);
                         int edgeDirection = determineDirection(srcNode, dstNode);
                         int edgeType = determineEdgeType(srcNode, dstNode);
 
+                        // Set node module variables
+                        srcModule.setNextModule(dstModule);
+                        srcModule.setOutputTupleType(tupleType);
+                        dstModule.setInputTupleType(tupleType);
 
+                        // Add tuple to multi-output modules
+                        if (srcModule instanceof MultiOutputNodeModule multiModule) {
+                            multiModule.addOutputTuple(tupleType);
+                        }
 
                         application.addAppEdge(
                                 srcModule.getModule().getName(),
@@ -367,6 +385,48 @@ public class JsonToApplication {
             }
         }
     }
+
+    private void setApplicationTupleMappings(EventDrivenApplication application) {
+        for (Map.Entry<String, NodeModule> entry : nodeModules.entrySet()) {
+            NodeModule module = entry.getValue();
+
+            String moduleName = module.getModule().getName();
+            String inputTuple = module.getInputTupleType();
+            String outputTuple = module.getOutputTupleType();
+
+            // Ensure valid mappings exist
+            if (inputTuple != null && outputTuple != null) {
+                application.addTupleMapping(moduleName, inputTuple, outputTuple, new FractionalSelectivity(1.0));
+            }
+
+            // Handle multiple output tuples (e.g., "classifier" having "CLASSIFICATION" and "HISTORY")
+            if (module instanceof MultiOutputNodeModule multiModule) {  // A subclass supporting multiple outputs
+                for (String extraOutput : multiModule.getAdditionalOutputTuples()) {
+                    application.addTupleMapping(moduleName, inputTuple, extraOutput, new FractionalSelectivity(1.0));  // Adjust selectivity as needed
+                }
+            }
+        }
+    }
+
+
+    private void setApplicationLoops(EventDrivenApplication application) {
+
+    }
+
+    private void setApplicationEvents(EventDrivenApplication application) {
+
+    }
+
+    private String determineTupleType(TopologyNode src, TopologyNode dst) {
+        if (src.type().equals("read-property")) {
+            return src.uniqueAttribute();  // Use property name as tuple
+        } else if (dst.type().equals("invoke-action") || dst.type().equals("write-property")) {
+            return "ACTUATOR_" + dst.uniqueAttribute();  // Action-related tuple
+        } else {
+            return src.uniqueAttribute() + "_PROCESSED";  // Generic processing tuple
+        }
+    }
+
 
     private int determineDirection(TopologyNode src, TopologyNode dst) {
         // Assume upward tuple flow for sensors and downward for actuators
