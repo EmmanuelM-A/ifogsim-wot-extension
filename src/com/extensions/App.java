@@ -1,10 +1,10 @@
 package com.extensions;
 
-import com.extensions.sysconstructor.core.ApplicationTopologyParser;
+import com.extensions.customfog.SensorProperty;
+import com.extensions.sysconstructor.core.*;
+import com.extensions.sysconstructor.eventdriver.EventDrivenApplication;
 import com.extensions.utils.FilePaths;
-import com.extensions.utils.presets.ActuatorPreset;
-import com.extensions.utils.presets.FogDevicePreset;
-import com.extensions.utils.presets.SensorPreset;
+import com.extensions.utils.presets.*;
 import com.extensions.vdcreation.core.JsonFileProcessor;
 import com.extensions.vdcreation.core.VirtualDevice;
 import com.extensions.vdcreation.core.VirtualDeviceFactory;
@@ -13,7 +13,13 @@ import com.extensions.vdcreation.parsers.ThingDescriptionParser;
 import com.extensions.vdcreation.parsers.VirtualDeviceConfigParser;
 import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.core.CloudSim;
+import org.fog.entities.Actuator;
 import org.fog.entities.FogBroker;
+import org.fog.entities.Sensor;
+import org.fog.placement.Controller;
+import org.fog.placement.ModuleMapping;
+import org.fog.placement.ModulePlacementEdgewards;
+import org.fog.utils.TimeKeeper;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -23,15 +29,13 @@ import java.util.List;
 public final class App {
     public static void main(String[] args) {
         // Determines if the application deployment is cloud-based.
-        boolean CLOUD = false;
+        //boolean CLOUD = false;
 
         List<VirtualDevice> virtualDevices = new ArrayList<>();
 
         Log.printLine("Starting Simulation...");
 
         try {
-            ApplicationTopologyParser applicationTopologyParser = new ApplicationTopologyParser(new File(FilePaths.APPLICATION_TOPOLOGY));
-
             Log.disable();
 
             //////////////////////////////// INITIAL SETUP ////////////////////////////////
@@ -48,9 +52,11 @@ public final class App {
             // Initializes the CloudSim toolkit with the specified number of users, the calendar instance, and trace settings.
             CloudSim.init(numUsers, calendar, traceFlag);
 
-            // Assigns a unique identifier to the application being simulated. This ID is used to manage the application's components and operations.
-            String applicationTitle = applicationTopologyParser.parseApplicationTitle();
-            String appId = applicationTitle != null ? applicationTitle: "Default";
+            /*
+            * Assigns a unique identifier to the application being simulated.
+            * This ID is used to manage the application's components and operations.
+            * */
+            String appId = "Door-Security-Application"; // SET APPLICATION ID HERE
 
             // Initializes a FogBroker, which manages application modules and coordinates communication between them in the simulation.
             FogBroker broker = new FogBroker("broker");
@@ -64,14 +70,20 @@ public final class App {
             );
 
             // Set up the VD factory to create VDs with the appropriate presets
-            VirtualDeviceFactory virtualDeviceFactory = new VirtualDeviceFactory(broker.getId(), appId, FogDevicePreset.DEFAULT, SensorPreset.DEFAULT, ActuatorPreset.DEFAULT);
+            VirtualDeviceFactory virtualDeviceFactory = new VirtualDeviceFactory(
+                    broker.getId(),
+                    appId,
+                    FogDevicePreset.DEFAULT,
+                    SensorPreset.DEFAULT,
+                    ActuatorPreset.DEFAULT
+            );
             VirtualDeviceConfigParser vdConfigParser = new VirtualDeviceConfigParser();
 
             // Create the virtual devices using the thing descriptions and factory method
             for(ThingDescription thingDescription : thingDescriptions) {
                 VirtualDevice vd = virtualDeviceFactory.createVirtualDevice(
                         thingDescription,
-                        vdConfigParser.process(new File(FilePaths.VD_CONFIG_FILE)) // SET VD'S CONFIG FILE HERE
+                        null //vdConfigParser.process(new File(FilePaths.VD_CONFIG_FILE)) // SET VD'S CONFIG FILE HERE
                 );
                 // Validate VD HERE
                 virtualDevices.add(vd);
@@ -79,11 +91,72 @@ public final class App {
 
             //////////////////////////////// APPLICATION SETUP ////////////////////////////////
 
+            ApplicationContext applicationContext = new ApplicationContext(
+                    new File("src/com/extensions/output/application/application_topology.json"), // SET THE NODE RED APPLICATION JSON FILE PATH HERE
+                    CloudNodePreset.DEFAULT,
+                    EdgeNodePreset.DEFAULT,
+                    ApplicationPreset.DEFAULT
+            );
 
+
+            // Create the physical topology for the node red application
+            ApplicationPhysicalTopology physicalTopology = JsonToPhysicalTopology.createApplicationPhysicalTopology(
+                    virtualDevices,
+                    applicationContext
+            );
+
+            // Create the application model for the node red application
+            EventDrivenApplication application = JsonToApplicationModel.createApplicationModel(appId, broker.getId(), applicationContext);
+
+            // Set the application for VD's sensors and actuators
+            for(VirtualDevice virtualDevice : virtualDevices) {
+                for(Sensor sensorProperty : virtualDevice.getSensorProperties()) {
+                    sensorProperty.setApp(application);
+                }
+
+                for(Actuator actuatorAction : virtualDevice.getActuatorActions()) {
+                    actuatorAction.setApp(application);
+                }
+            }
+
+            // Create the controller for managing the simulation
+            assert physicalTopology != null;
+            Controller controller = new Controller(
+                    "master-controller",
+                    physicalTopology.getFogDevices(),
+                    physicalTopology.getSensors(),
+                    physicalTopology.getActuators()
+            );
+
+            // Submit the application to the controller with the appropriate placement strategy
+            controller.submitApplication(
+                    application,
+                    0,
+                    new ModulePlacementEdgewards(
+                            physicalTopology.getFogDevices(),
+                            physicalTopology.getSensors(),
+                            physicalTopology.getActuators(),
+                            application,
+                            ModuleMapping.createModuleMapping()
+                    )
+            );
 
             //////////////////////////////// SIMULATION ////////////////////////////////
+
+            // Set the simulation start time
+            TimeKeeper.getInstance().setSimulationStartTime(Calendar.getInstance().getTimeInMillis());
+
+            // Start the CloudSim simulation
+            CloudSim.startSimulation();
+
+            // Stop the simulation once it completes
+            CloudSim.stopSimulation();
+
+            Log.printLine("IoT Application simulation finished!");
+
         } catch(Exception e) {
             e.printStackTrace();
+            System.out.println(e.getMessage());
         }
     }
 }

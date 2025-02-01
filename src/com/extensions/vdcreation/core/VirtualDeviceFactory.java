@@ -54,14 +54,14 @@ public class VirtualDeviceFactory {
             // Map the property to a SensorProperty
             Sensor sensorProperty = new SensorProperty(propertyName, userId, appId, property, sensorPreset);
 
-            // Add sensor property to the virtual device
-            virtualDevice.getSensorProperties().add(sensorProperty);
-
             // Set the sensor's gateway device ID to the VD's ID
             sensorProperty.setGatewayDeviceId(virtualDevice.getFogDevice().getId());
 
             // Set the latency of the sensor communication
             sensorProperty.setLatency(sensorPreset.LATENCY);
+
+            // Add sensor property to the virtual device
+            virtualDevice.getSensorProperties().add(sensorProperty);
         }
 
         // Create actuators for the TD actions

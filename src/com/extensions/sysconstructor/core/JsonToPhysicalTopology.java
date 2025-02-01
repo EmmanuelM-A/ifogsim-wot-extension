@@ -1,6 +1,7 @@
 package com.extensions.sysconstructor.core;
 
 import com.extensions.customfog.FogDeviceFactory;
+import com.extensions.sysconstructor.eventdriver.EventDrivenApplication;
 import com.extensions.sysconstructor.nodered.NodeRedJSONParser;
 import com.extensions.sysconstructor.topology.TopologyNode;
 import com.extensions.vdcreation.core.VirtualDevice;
@@ -55,6 +56,8 @@ public class JsonToPhysicalTopology {
 
             // Cloud has no parent, it is the root of the hierarchy
             cloud.setParentId(-1);
+
+            applicationContext.fogDevices.add(cloud);
 
             if(!applicationContext.nodeTopics.isEmpty()) { // If the topics array is set
                 // Assign VDs to edge nodes based on topics

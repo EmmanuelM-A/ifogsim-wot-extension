@@ -150,9 +150,10 @@ public class FogDeviceFactory {
         );
 
         // Create and return the FogDevice instance
+        String fogDeviceName = name.replace(" ", "");
         try {
             return new FogDevice(
-                    name,
+                    fogDeviceName,
                     characteristics,
                     new AppModuleAllocationPolicy(hostList),
                     storageList,
@@ -164,7 +165,7 @@ public class FogDeviceFactory {
             );
         } catch(Exception e) {
             // Return null if the FogDevice could not be created
-            Log.printLine(e.getMessage());
+            e.printStackTrace();
             return null;
         }
     }

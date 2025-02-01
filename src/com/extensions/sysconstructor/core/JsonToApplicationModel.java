@@ -6,7 +6,6 @@ import com.extensions.sysconstructor.topology.*;
 import com.extensions.utils.Utility;
 import org.fog.application.AppEdge;
 import org.fog.application.AppLoop;
-import org.fog.application.Application;
 import org.fog.application.selectivity.FractionalSelectivity;
 import org.fog.entities.Tuple;
 
@@ -25,7 +24,7 @@ import java.util.*;
 public class JsonToApplicationModel {
     private static ApplicationContext applicationContext;
 
-    public static Application createApplicationModel(String appId, int userId, ApplicationContext context) {
+    public static EventDrivenApplication createApplicationModel(String appId, int userId, ApplicationContext context) {
         // Set the global variable
         applicationContext = context;
 
@@ -82,8 +81,10 @@ public class JsonToApplicationModel {
         //
         // */
 
+        System.out.println("Application Model formed!");
 
-        return null;
+
+        return application;
     }
 
     private static void setApplicationModules(EventDrivenApplication application) {
