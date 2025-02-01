@@ -93,10 +93,17 @@ public class ApplicationTopologyParser implements FileProcessor<JsonNode> {
                 String thing = node.path("thing").asText(null);
                 String uniqueAttribute = null;
 
+                // Only process node types that are relevant
                 if(!topologyNodeTypesToInclude.contains(type)) continue;
 
-                if(thing != null) uniqueAttribute = node.path(type).asText(null);
+                // Extract the correct unique attribute based on type
+                switch (type) {
+                    case NodeRedJSONParser.TYPE_INVOKE_ACTION -> uniqueAttribute = node.path("action").asText(null);
+                    case NodeRedJSONParser.TYPE_SUBSCRIBE_EVENT -> uniqueAttribute = node.path("event").asText(null);
+                    case NodeRedJSONParser.TYPE_READ_PROPERTY, NodeRedJSONParser.TYPE_WRITE_PROPERTY -> uniqueAttribute = node.path("property").asText(null);
+                }
 
+                // Create TopologyNode instance
                 TopologyNode topologyNode = new TopologyNode(id, name, topic, type, thing, uniqueAttribute);
                 nodes.add(topologyNode);
             }

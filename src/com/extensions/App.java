@@ -94,7 +94,7 @@ public final class App {
             //////////////////////////////// APPLICATION SETUP ////////////////////////////////
 
             ApplicationContext applicationContext = new ApplicationContext(
-                    new File("src/com/extensions/output/application/application_topology.json"), // SET THE NODE RED APPLICATION JSON FILE PATH HERE
+                    new File("src/com/extensions/input/application/door-security-application.json"), // SET THE NODE RED APPLICATION JSON FILE PATH HERE
                     CloudNodePreset.DEFAULT,
                     EdgeNodePreset.DEFAULT,
                     ApplicationPreset.DEFAULT

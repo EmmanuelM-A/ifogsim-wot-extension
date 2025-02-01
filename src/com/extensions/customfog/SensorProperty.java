@@ -35,7 +35,11 @@ public class SensorProperty extends Sensor {
             if(edge.getSource().equals(getTupleType()))
                 _edge = edge;
         }
-        assert _edge != null;
+        if (_edge == null) {
+            System.out.println("AppEdge is null in SensorProperty! Ensure it is initialized correctly.");
+        } else {
+            System.out.println("AppEdge is initialized correctly!");
+        }
         long cpuLength = (long) _edge.getTupleCpuLength();
         long nwLength = (long) _edge.getTupleNwLength();
 

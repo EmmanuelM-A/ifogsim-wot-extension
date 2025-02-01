@@ -42,4 +42,25 @@ public class Utility {
         }
         return null;
     }
+
+    public static void printNodes(List<TopologyNode> nodes) {
+        System.out.println("=== Topology Nodes ===");
+
+        if (nodes == null || nodes.isEmpty()) {
+            System.out.println("No nodes available");
+            return;
+        }
+
+        for (TopologyNode node : nodes) {
+            System.out.println("------------------------------");
+            System.out.println("ID: " + node.id());
+            System.out.println("Name: " + node.name());
+            System.out.println("Type: " + node.type());
+            System.out.println("Topic: " + node.topic());
+            System.out.println("Thing: " + node.thing());
+            System.out.println("Unique Attribute: " + node.uniqueAttribute());
+            System.out.println("------------------------------");
+        }
+    }
+
 }

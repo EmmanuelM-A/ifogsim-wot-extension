@@ -1,11 +1,14 @@
 package com.extensions.sysconstructor.core;
 
+import com.extensions.App;
 import com.extensions.sysconstructor.eventdriver.EventDrivenApplication;
 import com.extensions.sysconstructor.nodered.NodeRedJSONParser;
 import com.extensions.sysconstructor.topology.*;
 import com.extensions.utils.Utility;
+import jdk.jshell.execution.Util;
 import org.fog.application.AppEdge;
 import org.fog.application.AppLoop;
+import org.fog.application.AppModule;
 import org.fog.application.selectivity.FractionalSelectivity;
 import org.fog.entities.Tuple;
 
@@ -33,6 +36,10 @@ public class JsonToApplicationModel {
 
         // Create and set the application modules
         setApplicationModules(application);
+
+        for(AppModule appModule : application.getModules()) {
+            System.out.println(appModule.getName());
+        }
 
         // Set the app edges between modules
         setApplicationEdges(application);
@@ -87,66 +94,127 @@ public class JsonToApplicationModel {
         return application;
     }
 
-    private static void setApplicationModules(EventDrivenApplication application) {
-        // Default module represents any computation that may or may not occur with data
+    /*private static void setApplicationModules(EventDrivenApplication application) {
+        // Default module represents generic computations
         application.addAppModule("default-module", 10);
         applicationContext.nodeModules.put("default-module", new NodeModule(application.getModuleByName("default-module")));
 
-        // Client module represents any computation that involves user data (its processing, arrival or emission)
+        // Client module represents user-related computations
         application.addAppModule("client", 10);
         applicationContext.nodeModules.put("client", new NodeModule(application.getModuleByName("client")));
 
-        List<String> nodeTypesToSearchFor = new ArrayList<>(){{
+        List<String> nodeTypesToSearchFor = new ArrayList<>() {{
             add("read-property");
-            add("write-property");
             add("invoke-action");
         }};
 
-        // Look for all nodes (of the required types) and convert them into node modules
+        // Retrieve inject nodes separately
         List<TopologyNode> injectNodes = Utility.getTopologyNodesByType(applicationContext.topologyNodes, NodeRedJSONParser.TYPE_INJECT);
 
-        // Iterate through all node types: READ-PROPERTY, WRITE-PROPERTY, and INVOKE-ACTION
+        // Iterate through all WoT node types
         for (String nodeType : nodeTypesToSearchFor) {
-            // Get the nodes of a singular type
             List<TopologyNode> nodes = Utility.getTopologyNodesByType(applicationContext.topologyNodes, nodeType);
 
-            // Check if the nodes are not connected to a sub-event node
-            for(TopologyNode node : nodes) {
-                TopologyNodeConnectionStatus connectionStatus = applicationContext.nodeConnectionChecker.areNodesConnected(NodeRedJSONParser.TYPE_SUBSCRIBE_EVENT, node.type(), "type");
+            for (TopologyNode node : nodes) {
+                boolean isConnectedToEvent = applicationContext.nodeConnectionChecker.areNodesConnected(
+                        NodeRedJSONParser.TYPE_SUBSCRIBE_EVENT, node.type(), "type"
+                ).isThereAConnection();
 
-                if(!connectionStatus.isThereAConnection()) { // If the node is not connected to a sub-event node
-                    // Create the app module for the node
-                    NodeModule nodeModule = new NodeModule(application.addAppModule(node.uniqueAttribute()));
+                boolean isConnectedToInject = false;
+                for (TopologyNode injectNode : injectNodes) {
+                    if (applicationContext.nodeConnectionChecker.areNodesConnected(
+                            injectNode.id(), node.id(), "id"
+                    ).isThereAConnection()) {
+                        isConnectedToInject = true;
+                        break;
+                    }
+                }
 
-                    // Add it to the node modules map
-                    applicationContext.nodeModules.put(node.uniqueAttribute(), nodeModule);
+                // If node is NOT connected to an event subscription but starts a flow
+                if (!isConnectedToEvent || isConnectedToInject) {
+                    String moduleName = node.uniqueAttribute().replaceAll("\\s+", "_"); // Ensure valid module names
+                    AppModule appModule = application.addAppModule(moduleName);
+                    NodeModule nodeModule = new NodeModule(appModule);
+
+                    System.out.println("Adding node module: " + moduleName);
+
+                    applicationContext.nodeModules.put(moduleName, nodeModule);
+                } else {
+                    System.out.println("Skipping node: " + node.uniqueAttribute() + " (connected to event)");
+                }
+            }
+        }
+    }*/
+
+    private static void setApplicationModules(EventDrivenApplication application) {
+        // Default modules
+        application.addAppModule("default-module", 10);
+        applicationContext.nodeModules.put("default-module", new NodeModule(application.getModuleByName("default-module")));
+        application.addAppModule("client", 10);
+        applicationContext.nodeModules.put("client", new NodeModule(application.getModuleByName("client")));
+
+        // Define node types to process
+        List<String> nodeTypesToSearchFor = List.of("read-property", "invoke-action");
+
+        // Get all subflows
+        Map<String, List<TopologyNode>> subflows = Utility.getAllSubflows(applicationContext.topologyNodes);
+
+        // Determine how each subflow starts
+        Map<String, String> subflowStartTypes = new HashMap<>(); // subflowId -> "event" or "inject" or "none"
+
+        for (Map.Entry<String, List<TopologyNode>> entry : subflows.entrySet()) {
+            String subflowId = entry.getKey();
+            List<TopologyNode> subflowNodes = entry.getValue();
+
+            boolean hasEventStart = false;
+            boolean hasInjectStart = false;
+
+            for (TopologyNode node : subflowNodes) {
+                if (node.type().equals(NodeRedJSONParser.TYPE_SUBSCRIBE_EVENT)) {
+                    hasEventStart = true;
+                    break;
+                } else if (node.type().equals(NodeRedJSONParser.TYPE_INJECT)) {
+                    hasInjectStart = true;
                 }
             }
 
-            // Get all nodes of the required type
-            List<TopologyNode> requiredNodes = Utility.getTopologyNodesByType(applicationContext.topologyNodes, nodeType);
+            if (hasEventStart) {
+                subflowStartTypes.put(subflowId, "event");
+            } else if (hasInjectStart) {
+                subflowStartTypes.put(subflowId, "inject");
+            } else {
+                subflowStartTypes.put(subflowId, "none");
+            }
+        }
 
-            for (TopologyNode requiredNode : requiredNodes) {
-                // Check if the required node is connected to an inject node
-                for (TopologyNode injectNode : injectNodes) {
-                    TopologyNodeConnectionStatus connectionStatus = applicationContext.nodeConnectionChecker.areNodesConnected(injectNode.id(), requiredNode.id(), "id");
+        // Process WoT nodes
+        for (String nodeType : nodeTypesToSearchFor) {
+            List<TopologyNode> nodes = Utility.getTopologyNodesByType(applicationContext.topologyNodes, nodeType);
 
-                    if (connectionStatus.isThereAConnection()) { // If there exists some connection to an inject node
-                        // Check if a module for this node already exists
-                        if (!applicationContext.nodeModules.containsKey(requiredNode.uniqueAttribute())) {
-                            // Create the app module for the node
-                            NodeModule nodeModule = new NodeModule(application.addAppModule(requiredNode.uniqueAttribute()));
+            for (TopologyNode node : nodes) {
+                String subflowId = node.getSubflowId(); // Get the subflow the node belongs to
 
-                            nodeModule.setOutputTupleType(requiredNode.uniqueAttribute());
+                // Accept if:
+                // - It belongs to a subflow that starts with an inject node
+                // - It belongs to a subflow that has no event or inject node
+                if (subflowStartTypes.getOrDefault(subflowId, "event").equals("inject") ||
+                        subflowStartTypes.getOrDefault(subflowId, "event").equals("none")) {
 
-                            // Add it to the node modules map
-                            applicationContext.nodeModules.put(requiredNode.uniqueAttribute(), nodeModule);
-                        }
-                    }
+                    String moduleName = node.uniqueAttribute().replaceAll("\\s+", "_"); // Ensure valid names
+                    AppModule appModule = application.addAppModule(moduleName);
+                    NodeModule nodeModule = new NodeModule(appModule);
+
+                    System.out.println("Adding node module: " + moduleName);
+
+                    applicationContext.nodeModules.put(moduleName, nodeModule);
+                } else {
+                    System.out.println("Skipping node: " + node.uniqueAttribute() + " (belongs to event-driven subflow)");
                 }
             }
         }
     }
+
+
 
     private static void setApplicationEdges(EventDrivenApplication application) {
         for (TopologyNode srcNode : applicationContext.topologyNodes) {
