@@ -1,13 +1,14 @@
-package com.extensions.sysconstructor.topology;
+package com.extensions.sysconstructor.core;
 
 import com.extensions.sysconstructor.nodered.NodeRedJSONParser;
+import com.extensions.sysconstructor.topology.TopologyDataFlow;
+import com.extensions.sysconstructor.topology.TopologyNode;
+import com.extensions.sysconstructor.topology.TopologyNodeConnection;
 import com.extensions.utils.processors.FileProcessor;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ArrayNode;
-import org.json.simple.JSONArray;
 
 import java.io.File;
 import java.io.IOException;

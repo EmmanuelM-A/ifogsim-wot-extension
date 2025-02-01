@@ -1,20 +1,10 @@
 package com.extensions.tests;
 
-import com.extensions.sysconstructor.core.ApplicationPhysicalTopology;
-import com.extensions.sysconstructor.nodered.NodeRedTranslator;
-import com.extensions.sysconstructor.topology.JsonToApplication;
-import com.extensions.utils.FilePaths;
+import com.extensions.sysconstructor.core.JsonToApplicationModel;
 import com.extensions.utils.presets.*;
-import com.extensions.vdcreation.core.JsonFileProcessor;
-import com.extensions.vdcreation.core.VirtualDevice;
-import com.extensions.vdcreation.core.VirtualDeviceFactory;
-import com.extensions.vdcreation.models.ThingDescription;
-import com.extensions.vdcreation.parsers.ThingDescriptionParser;
-import com.extensions.vdcreation.parsers.VirtualDeviceConfigParser;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
 
 public class MainTest {
     public static void main(String[] args) throws IOException {
@@ -37,12 +27,5 @@ public class MainTest {
         );*/
 
         //NodeRedTranslator.nodeRedToInputJson(new File("src/com/extensions/input/application/door-security-application.json"));
-
-        JsonToApplication jsonToApplication = new JsonToApplication(
-                new File("src/com/extensions/input/application/door-security-application.json"),
-                CloudNodePreset.DEFAULT,
-                EdgeNodePreset.DEFAULT,
-                ApplicationPreset.DEFAULT
-        );
     }
 }

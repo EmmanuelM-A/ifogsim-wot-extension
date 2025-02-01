@@ -1,6 +1,6 @@
 package com.extensions;
 
-import com.extensions.sysconstructor.topology.ApplicationTopologyParser;
+import com.extensions.sysconstructor.core.ApplicationTopologyParser;
 import com.extensions.utils.FilePaths;
 import com.extensions.utils.presets.ActuatorPreset;
 import com.extensions.utils.presets.FogDevicePreset;
@@ -16,7 +16,6 @@ import org.cloudbus.cloudsim.core.CloudSim;
 import org.fog.entities.FogBroker;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
