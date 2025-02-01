@@ -1,6 +1,11 @@
 package com.extensions;
 
+import com.extensions.customfog.CustomController;
 import com.extensions.customfog.SensorProperty;
+import com.extensions.custommetrics.CustomMetricManager;
+import com.extensions.custommetrics.metrics.AverageTupleProcessingTimeMetric;
+import com.extensions.custommetrics.metrics.SystemEfficiencyMetric;
+import com.extensions.custommetrics.metrics.TaskCompletionCountMetric;
 import com.extensions.sysconstructor.core.*;
 import com.extensions.sysconstructor.eventdriver.EventDrivenApplication;
 import com.extensions.utils.FilePaths;
@@ -28,9 +33,6 @@ import java.util.List;
 
 public final class App {
     public static void main(String[] args) {
-        // Determines if the application deployment is cloud-based.
-        //boolean CLOUD = false;
-
         List<VirtualDevice> virtualDevices = new ArrayList<>();
 
         Log.printLine("Starting Simulation...");
@@ -121,7 +123,7 @@ public final class App {
 
             // Create the controller for managing the simulation
             assert physicalTopology != null;
-            Controller controller = new Controller(
+            CustomController controller = new CustomController(
                     "master-controller",
                     physicalTopology.getFogDevices(),
                     physicalTopology.getSensors(),
@@ -140,6 +142,14 @@ public final class App {
                             ModuleMapping.createModuleMapping()
                     )
             );
+
+            //////////////////////////////// REGISTER CUSTOM PERFORMANCE METRICS ////////////////////////////////
+
+            CustomMetricManager customMetricManager = controller.getCustomMetricManager();
+
+            customMetricManager.registerMetric(new AverageTupleProcessingTimeMetric());
+            customMetricManager.registerMetric(new SystemEfficiencyMetric());
+            customMetricManager.registerMetric(new TaskCompletionCountMetric());
 
             //////////////////////////////// SIMULATION ////////////////////////////////
 

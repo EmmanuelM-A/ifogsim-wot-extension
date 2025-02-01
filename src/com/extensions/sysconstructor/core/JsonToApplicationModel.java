@@ -37,7 +37,7 @@ public class JsonToApplicationModel {
         // Set the app edges between modules
         setApplicationEdges(application);
 
-        // Set the tuple mappings for  modules
+        // Set the tuple mappings for modules
         setApplicationTupleMappings(application);
 
         // Set the app loops
@@ -201,7 +201,7 @@ public class JsonToApplicationModel {
                 application.addTupleMapping(moduleName, inputTuple, outputTuple, new FractionalSelectivity(1.0));
             }
 
-            // Handle multiple output tuples (e.g., "classifier" having "CLASSIFICATION" and "HISTORY")
+            // Handle multiple output tuples
             if (module instanceof MultiOutputNodeModule multiModule) {  // A subclass supporting multiple outputs
                 for (String extraOutput : multiModule.getAdditionalOutputTuples()) {
                     application.addTupleMapping(moduleName, inputTuple, extraOutput, new FractionalSelectivity(1.0));  // Adjust selectivity as needed
@@ -283,9 +283,9 @@ public class JsonToApplicationModel {
         if (src.type().equals("read-property")) {
             return src.uniqueAttribute();  // Use property name as tuple
         } else if (dst.type().equals("invoke-action") || dst.type().equals("write-property")) {
-            return "ACTUATOR_" + dst.uniqueAttribute();  // Action-related tuple
+            return dst.uniqueAttribute();  // Action-related tuple
         } else {
-            return src.uniqueAttribute() + "_PROCESSED";  // Generic processing tuple
+            return src.uniqueAttribute();  // Generic processing tuple
         }
     }
 
