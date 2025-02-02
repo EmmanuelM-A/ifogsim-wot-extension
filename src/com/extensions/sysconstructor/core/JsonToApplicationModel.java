@@ -92,58 +92,6 @@ public class JsonToApplicationModel {
         return application;
     }
 
-    /*private static void setApplicationModules(EventDrivenApplication application) {
-        // Default module represents generic computations
-        application.addAppModule("default-module", 10);
-        applicationContext.nodeModules.put("default-module", new NodeModule(application.getModuleByName("default-module")));
-
-        // Client module represents user-related computations
-        application.addAppModule("client", 10);
-        applicationContext.nodeModules.put("client", new NodeModule(application.getModuleByName("client")));
-
-        List<String> nodeTypesToSearchFor = new ArrayList<>() {{
-            add("read-property");
-            add("invoke-action");
-        }};
-
-        // Retrieve inject nodes separately
-        List<TopologyNode> injectNodes = Utility.getTopologyNodesByType(applicationContext.topologyNodes, NodeRedJSONParser.TYPE_INJECT);
-
-        // Iterate through all WoT node types
-        for (String nodeType : nodeTypesToSearchFor) {
-            List<TopologyNode> nodes = Utility.getTopologyNodesByType(applicationContext.topologyNodes, nodeType);
-
-            for (TopologyNode node : nodes) {
-                boolean isConnectedToEvent = applicationContext.nodeConnectionChecker.areNodesConnected(
-                        NodeRedJSONParser.TYPE_SUBSCRIBE_EVENT, node.type(), "type"
-                ).isThereAConnection();
-
-                boolean isConnectedToInject = false;
-                for (TopologyNode injectNode : injectNodes) {
-                    if (applicationContext.nodeConnectionChecker.areNodesConnected(
-                            injectNode.id(), node.id(), "id"
-                    ).isThereAConnection()) {
-                        isConnectedToInject = true;
-                        break;
-                    }
-                }
-
-                // If node is NOT connected to an event subscription but starts a flow
-                if (!isConnectedToEvent || isConnectedToInject) {
-                    String moduleName = node.uniqueAttribute().replaceAll("\\s+", "_"); // Ensure valid module names
-                    AppModule appModule = application.addAppModule(moduleName);
-                    NodeModule nodeModule = new NodeModule(appModule);
-
-                    System.out.println("Adding node module: " + moduleName);
-
-                    applicationContext.nodeModules.put(moduleName, nodeModule);
-                } else {
-                    System.out.println("Skipping node: " + node.uniqueAttribute() + " (connected to event)");
-                }
-            }
-        }
-    }*/
-
     private static void setApplicationModules(EventDrivenApplication application) {
         // Default module
         application.addAppModule("default-module", 10);
@@ -214,12 +162,15 @@ public class JsonToApplicationModel {
 
                     if(!nodeIds.contains(node.id())) {
                         String moduleName = node.uniqueAttribute().replaceAll("\\s+", "_"); // Ensure valid names
-                        AppModule appModule = application.addAppModule(moduleName);
-                        NodeModule nodeModule = new NodeModule(appModule);
+                        //AppModule appModule = application.addAppModule(moduleName);
+                        application.addAppModule(moduleName, 10);
+                        /*NodeModule nodeModule = new NodeModule(appModule);
 
                         System.out.println("Adding node module: " + moduleName);
 
-                        applicationContext.nodeModules.put(moduleName, nodeModule);
+                        applicationContext.nodeModules.put(moduleName, nodeModule);*/
+
+                        // TODO - SORT OUT THIS CLASS
 
                         nodeIds.add(node.id());
                     } else {
@@ -231,9 +182,6 @@ public class JsonToApplicationModel {
             }
         }
     }
-
-
-
 
     private static void setApplicationEdges(EventDrivenApplication application) {
         for (TopologyNode srcNode : applicationContext.topologyNodes) {
@@ -298,7 +246,7 @@ public class JsonToApplicationModel {
     }
 
 
-    private static void setApplicationLoops(EventDrivenApplication application) {
+    /*private static void setApplicationLoops(EventDrivenApplication application) {
         List<AppLoop> loops = new ArrayList<>();
         Map<String, List<String>> graph = new HashMap<>();
 
@@ -309,6 +257,68 @@ public class JsonToApplicationModel {
                 if (connectionStatus.isThereAConnection()) {
                     String srcModuleName = applicationContext.nodeModules.get(srcNode.uniqueAttribute()).getModule().getName();
                     String dstModuleName = applicationContext.nodeModules.get(dstNode.uniqueAttribute()).getModule().getName();
+
+                    String srcModuleName = nodeToModuleName.get(srcNode.uniqueAttribute());
+                    String dstModuleName = nodeToModuleName.get(dstNode.uniqueAttribute());
+
+                    if (srcModuleName == null || dstModuleName == null) {
+                        System.out.println("Warning: Missing module for node " +
+                                (srcModuleName == null ? srcNode.uniqueAttribute() : dstNode.uniqueAttribute()));
+                        continue; // Skip if any module is missing
+                    }
+
+                    graph.putIfAbsent(srcModuleName, new ArrayList<>());
+                    graph.get(srcModuleName).add(dstModuleName);
+                }
+            }
+        }
+
+        // Step 2: Find loops in the graph using DFS
+        Set<String> visited = new HashSet<>();
+        Stack<String> pathStack = new Stack<>();
+        Set<List<String>> detectedLoops = new HashSet<>();
+
+        for (String node : graph.keySet()) {
+            findLoopsDFS(node, graph, visited, pathStack, detectedLoops);
+        }
+
+        // Step 3: Convert detected loops into AppLoop objects
+        for (List<String> loopPath : detectedLoops) {
+            loops.add(new AppLoop(new ArrayList<>(loopPath)));
+        }
+
+        // Step 4: Assign loops to the application
+        application.setLoops(loops);
+    }*/
+
+    private static void setApplicationLoops(EventDrivenApplication application) {
+        List<AppLoop> loops = new ArrayList<>();
+        Map<String, List<String>> graph = new HashMap<>();
+
+        // Ensure all node modules are properly tracked
+        Map<String, String> nodeToModuleName = new HashMap<>();
+        for (Map.Entry<String, NodeModule> entry : applicationContext.nodeModules.entrySet()) {
+            nodeToModuleName.put(entry.getKey(), entry.getValue().getModule().getName());
+        }
+
+        // Step 1: Build a directed graph from application edges
+        for (TopologyNode srcNode : applicationContext.topologyNodes) {
+            for (TopologyNode dstNode : applicationContext.topologyNodes) {
+                TopologyNodeConnectionStatus connectionStatus =
+                        applicationContext.nodeConnectionChecker.areNodesConnected(srcNode.id(), dstNode.id(), "id");
+
+                if (connectionStatus.isThereAConnection()) {
+                    // Get module names safely
+                    String srcModuleName = nodeToModuleName.get(srcNode.uniqueAttribute());
+                    String dstModuleName = nodeToModuleName.get(dstNode.uniqueAttribute());
+
+                    if (srcModuleName == null || dstModuleName == null) {
+                        System.out.println("Warning: Missing module for node " +
+                                (srcModuleName == null ? srcNode.uniqueAttribute() : dstNode.uniqueAttribute()));
+                        continue; // Skip if any module is missing
+                    }
+
+                    //System.out.println("Module " + );
 
                     graph.putIfAbsent(srcModuleName, new ArrayList<>());
                     graph.get(srcModuleName).add(dstModuleName);
@@ -333,7 +343,6 @@ public class JsonToApplicationModel {
         // Step 4: Assign loops to the application
         application.setLoops(loops);
     }
-
 
     private static void setApplicationEvents(EventDrivenApplication application) {
 
