@@ -23,11 +23,11 @@ public class NodeRedJSONGenerator {
         outputJson.set("applicationDetails", generateApplicationName(mapper));
         outputJson.set("things", generateThings(mapper));
         outputJson.set("topics", generateNodeTopics(mapper));
-        outputJson.set("nodes", generateNodes(mapper));
-        //outputJson.set("subFlows", generateSubFlowTrees(mapper));
-        outputJson.set("connections", generateConnections(mapper));
-        outputJson.set("dataFlows", generateDataFlows(mapper));
-        outputJson.set("events", generateEvents(mapper));
+        //outputJson.set("nodes", generateNodes(mapper));
+        outputJson.set("subFlows", generateSubFlowTrees(mapper));
+        //outputJson.set("connections", generateConnections(mapper));
+        //outputJson.set("dataFlows", generateDataFlows(mapper));
+        //outputJson.set("events", generateEvents(mapper));
 
         return outputJson;
     }
@@ -97,12 +97,14 @@ public class NodeRedJSONGenerator {
 
             // Set the branches
             ObjectNode branchesJson = mapper.createObjectNode();
+            int branchIndex = 0;
             for (TreeBranch branch : trees.get(index).getBranches()) {
                 ArrayNode branchArray = mapper.createArrayNode();
                 for (NodeRedNode node : branch.nodes()) {
                     branchArray.add(createTopologyNode(mapper, node));
                 }
-                branchesJson.set("branch-" + index, branchArray); // Add the branch array to the branch
+                branchIndex++;
+                branchesJson.set("branch-" + branchIndex, branchArray); // Add the branch array to the branch
             }
 
             subFlowTree.set("branches", branchesJson); // Set the branches array

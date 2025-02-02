@@ -15,7 +15,7 @@ public class SubFlowTreeGrouper {
     private static List<NodeRedNode> nodes;
 
     private static final List<String> nodeTypesToIgnore = new ArrayList<>(){{
-        add("debug");
+        //add("debug");
         add("tab");
         add("comment");
         add("consumed-thing");
@@ -29,20 +29,29 @@ public class SubFlowTreeGrouper {
     public static List<SubFlowTree> groupNodesIntoSubFlowTree(List<NodeRedNode> nodeRedNodes) {
         // Assign the global variable
         nodes = nodeRedNodes;
-
-        // Create a list to represent all sub-flows in the application
         List<SubFlowTree> subFlowTrees = new ArrayList<>();
 
-        // Used to keep track of which nodes have been visited
-        Set<String> visited = new HashSet<>();
-
+        // 1. Identify potential root nodes (nodes with no incoming connections)
+        Set<String> allConnections = new HashSet<>();
         for (NodeRedNode node : nodes) {
-            if(nodeTypesToIgnore.contains(node.getType())) continue; // Skip
+            if (node.getConnections() != null) {
+                allConnections.addAll(node.getConnections());
+            }
+        }
+        List<NodeRedNode> potentialRoots = new ArrayList<>();
+        for (NodeRedNode node : nodes) {
+            if (!allConnections.contains(node.getId()) && !nodeTypesToIgnore.contains(node.getType())) {
+                potentialRoots.add(node);
+            }
+        }
 
-            if (!visited.contains(node.getId())) {
+        // 2. Build trees starting from the identified roots
+        Set<String> visited = new HashSet<>();
+        for (NodeRedNode root : potentialRoots) {
+            if (!visited.contains(root.getId())) {
                 List<TreeBranch> branches = new ArrayList<>();
-                traverseSubFlow(node, visited, branches, new ArrayList<>());
-                subFlowTrees.add(new SubFlowTree(node, branches));
+                traverseSubFlow(root, visited, branches, new ArrayList<>());
+                subFlowTrees.add(new SubFlowTree(root, branches));
             }
         }
 
