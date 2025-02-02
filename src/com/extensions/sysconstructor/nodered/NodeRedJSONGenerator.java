@@ -23,11 +23,11 @@ public class NodeRedJSONGenerator {
         outputJson.set("applicationDetails", generateApplicationName(mapper));
         outputJson.set("things", generateThings(mapper));
         outputJson.set("topics", generateNodeTopics(mapper));
-        //outputJson.set("nodes", generateNodes(mapper));
+        outputJson.set("nodes", generateNodes(mapper));
         outputJson.set("subFlows", generateSubFlowTrees(mapper));
-        //outputJson.set("connections", generateConnections(mapper));
-        //outputJson.set("dataFlows", generateDataFlows(mapper));
-        //outputJson.set("events", generateEvents(mapper));
+        outputJson.set("connections", generateConnections(mapper));
+        outputJson.set("dataFlows", generateDataFlows(mapper));
+        outputJson.set("events", generateEvents(mapper));
 
         return outputJson;
     }

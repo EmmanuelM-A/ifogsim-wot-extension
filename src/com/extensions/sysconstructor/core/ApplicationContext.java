@@ -28,6 +28,7 @@ public class ApplicationContext {
      * A list of all topology nodes of the required types: read-property, write-property, subscribe-event, inject and invoke-action
      */
     public final List<TopologyNode> topologyNodes;
+    public final List<TopologyNodeTree> topologyNodeTrees;
     public final List<TopologyNodeConnection> nodeConnections;
     public final List<TopologyDataFlow> dataFlows;
     public final List<TopologyNode> events;
@@ -64,9 +65,7 @@ public class ApplicationContext {
         // Extract all the topology nodes
         this.topologyNodes = applicationTopologyParser.parseTopologyNodes("nodes");
 
-        List<TopologyNodeTree> topologyNodeTrees = applicationTopologyParser.parseTopologyNodeTrees();
-
-        Utility.printTopologyNodeTrees(topologyNodeTrees);
+        this.topologyNodeTrees = applicationTopologyParser.parseTopologyNodeTrees();
 
         // Extract all the connections between nodes
         this.nodeConnections = applicationTopologyParser.parseTopologyConnections();

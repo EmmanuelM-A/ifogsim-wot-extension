@@ -84,4 +84,21 @@ public class Utility {
         }
     }
 
+    public static List<TopologyNode> getAllNodesFromTopology(List<TopologyNodeTree> topologyNodeTrees) {
+        List<TopologyNode> allNodes = new ArrayList<>();
+
+        for (TopologyNodeTree topologyNodeTree : topologyNodeTrees) {
+            // Add the root node
+            if (topologyNodeTree.rootNode() != null) {
+                allNodes.add(topologyNodeTree.rootNode());
+            }
+
+            // Add all nodes from branches
+            for (List<TopologyNode> branch : topologyNodeTree.branches()) {
+                allNodes.addAll(branch);
+            }
+        }
+
+        return allNodes;
+    }
 }

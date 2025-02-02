@@ -79,6 +79,7 @@ public class ApplicationTopologyParser implements FileProcessor<JsonNode> {
                 JsonNode subFlow = field.getValue();
 
                 TopologyNode rootNode = parseTopologyNode(subFlow.get("rootNode"));
+                String subFlowId = rootNode.id();
                 List<List<TopologyNode>> branches = new ArrayList<>();
 
                 JsonNode branchesNode = subFlow.get("branches");
@@ -93,7 +94,8 @@ public class ApplicationTopologyParser implements FileProcessor<JsonNode> {
                         if (branchArrayNode.isArray()) {
                             for (JsonNode nodeNode : branchArrayNode) {
                                 TopologyNode node = parseTopologyNode(nodeNode);
-                                branch.add(node);
+                                TopologyNode nodeWithRootSet = new TopologyNode(node.id(), node.name(), node.topic(), node.type(), node.thing(), node.uniqueAttribute(), subFlowId);
+                                branch.add(nodeWithRootSet);
                             }
                         }
                         branches.add(branch);
@@ -139,7 +141,7 @@ public class ApplicationTopologyParser implements FileProcessor<JsonNode> {
         }
 
         // Create TopologyNode instance
-        return new TopologyNode(id, name, topic, type, thing, uniqueAttribute);
+        return new TopologyNode(id, name, topic, type, thing, uniqueAttribute, null);
     }
 
     public List<TopologyNode> parseTopologyNodes(String nodeType) {
@@ -167,7 +169,7 @@ public class ApplicationTopologyParser implements FileProcessor<JsonNode> {
                 }
 
                 // Create TopologyNode instance
-                TopologyNode topologyNode = new TopologyNode(id, name, topic, type, thing, uniqueAttribute);
+                TopologyNode topologyNode = new TopologyNode(id, name, topic, type, thing, uniqueAttribute, null);
                 nodes.add(topologyNode);
             }
         }

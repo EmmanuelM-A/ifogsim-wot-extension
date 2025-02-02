@@ -1,6 +1,6 @@
 package com.extensions.sysconstructor.topology;
 
-public record TopologyNode(String id, String name, String topic, String type, String thing, String uniqueAttribute) {
+public record TopologyNode(String id, String name, String topic, String type, String thing, String uniqueAttribute, String subFlowId) {
     @Override
     public String toString() {
         return "{" +
