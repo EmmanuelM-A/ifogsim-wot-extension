@@ -2,6 +2,7 @@ package com.extensions.sysconstructor.core;
 
 import com.extensions.sysconstructor.eventdriver.EventDrivenApplication;
 import com.extensions.sysconstructor.nodered.NodeRedJSONParser;
+import com.extensions.sysconstructor.nodered.SubFlowTree;
 import com.extensions.sysconstructor.topology.*;
 import com.extensions.utils.Utility;
 import org.fog.application.AppEdge;
@@ -137,8 +138,10 @@ public class JsonToApplicationModel {
                 subFlowStartTypes.put(subFlowId, "event");
             } else if (hasInjectStart) {
                 subFlowStartTypes.put(subFlowId, "inject");
+                applicationContext.dataFlows.add(topologyNodeTree); // Add to dataflow sub flows
             } else {
                 subFlowStartTypes.put(subFlowId, "none");
+                applicationContext.dataFlows.add(topologyNodeTree); // Add to dataflow sub flows
             }
         }
 
@@ -161,16 +164,11 @@ public class JsonToApplicationModel {
                         subFlowStartTypes.getOrDefault(subFlowId, "event").equals("none")) {
 
                     if(!nodeIds.contains(node.id())) {
-                        String moduleName = node.uniqueAttribute().replaceAll("\\s+", "_"); // Ensure valid names
-                        //AppModule appModule = application.addAppModule(moduleName);
+                        String moduleName = node.uniqueAttribute() + "_" + node.id(); // Append ID to ensure uniqueness
                         application.addAppModule(moduleName, 10);
-                        /*NodeModule nodeModule = new NodeModule(appModule);
 
-                        System.out.println("Adding node module: " + moduleName);
-
-                        applicationContext.nodeModules.put(moduleName, nodeModule);*/
-
-                        // TODO - SORT OUT THIS CLASS
+                        // Store the app modules created <ID, MODULE>
+                        applicationContext.appModulesCreated.put(node.id(), application.getModuleByName(moduleName));
 
                         nodeIds.add(node.id());
                     } else {
@@ -182,6 +180,8 @@ public class JsonToApplicationModel {
             }
         }
     }
+
+
 
     private static void setApplicationEdges(EventDrivenApplication application) {
         for (TopologyNode srcNode : applicationContext.topologyNodes) {

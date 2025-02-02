@@ -8,6 +8,7 @@ import com.extensions.utils.presets.ApplicationPreset;
 import com.extensions.utils.presets.CloudNodePreset;
 import com.extensions.utils.presets.EdgeNodePreset;
 import org.fog.entities.FogDevice;
+import org.fog.application.AppModule;
 
 import java.io.File;
 import java.io.IOException;
@@ -30,8 +31,9 @@ public class ApplicationContext {
     public final List<TopologyNode> topologyNodes;
     public final List<TopologyNodeTree> topologyNodeTrees;
     public final List<TopologyNodeConnection> nodeConnections;
-    public final List<TopologyDataFlow> dataFlows;
+    public final List<TopologyNodeTree> dataFlows;
     public final List<TopologyNode> events;
+    public final Map<String, AppModule> appModulesCreated;
     public final Map<String, NodeModule> nodeModules;
     public final TopologyNodeConnectionChecker nodeConnectionChecker;
     public final int UPLINK_LATENCY_EDGE_TO_CLOUD = 100;
@@ -73,8 +75,10 @@ public class ApplicationContext {
         // Initialise node connection checker
         this.nodeConnectionChecker = new TopologyNodeConnectionChecker(this.nodeConnections, this.topologyNodes);
 
-        // Extract all the data flows
-        this.dataFlows = applicationTopologyParser.parseTopologyDataFlows();
+        // Store all the data flows
+        this.dataFlows = new ArrayList<>();
+
+        this.appModulesCreated = new HashMap<>();
 
         // Extract all events used
         this.events = applicationTopologyParser.parseTopologyNodes("events");
