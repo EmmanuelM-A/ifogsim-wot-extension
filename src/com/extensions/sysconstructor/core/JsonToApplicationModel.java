@@ -42,6 +42,8 @@ public class JsonToApplicationModel {
         // Set the app edges between modules
         setApplicationEdges(application);
 
+        Utility.printAppLoops(applicationContext.appLoops);
+
         // Set the tuple mappings for modules
         setApplicationTupleMappings(application);
 
@@ -157,11 +159,8 @@ public class JsonToApplicationModel {
                 String subFlowId = node.subFlowId(); // Get the sub flow the node belongs to
 
                 // Accept if:
-                // - It belongs to a sub flow that starts with an inject node
                 // - It belongs to a sub flow that has no event or inject node
-                if (subFlowStartTypes.getOrDefault(subFlowId, "event").equals("inject") ||
-                        subFlowStartTypes.getOrDefault(subFlowId, "event").equals("none")) {
-
+                if (subFlowStartTypes.getOrDefault(subFlowId, "event").equals("none")) {
                     if(!nodeIds.contains(node.id())) {
                         String moduleName = node.uniqueAttribute() + "_" + node.id(); // Append ID to ensure uniqueness
                         application.addAppModule(moduleName, 10);
@@ -174,12 +173,18 @@ public class JsonToApplicationModel {
                         System.out.println("Skipping node: " + node.uniqueAttribute() + " (node already added)");
                     }
                 } else {
-                    System.out.println("Skipping node: " + node.uniqueAttribute() + " (belongs to event-driven sub flow)");
+                    System.out.println("Skipping node: " + node.uniqueAttribute() + " (not a data flow)");
                 }
             }
         }
     }
+
     private static void setApplicationEdges(EventDrivenApplication application) {
+        // Default module
+        String dfm = application.getModuleByName("default-module").getName();
+
+        List<String> route = new ArrayList<>();
+
         for (TopologyNodeTree dataFlow : applicationContext.dataFlows) {
             // Get root node
             TopologyNode rootNode = dataFlow.rootNode();
@@ -212,11 +217,37 @@ public class JsonToApplicationModel {
                                 continue;
                             }
 
-                            // Create an app edge from src to dst
-                            addAppEdge(application, srcModule.getName(), dstModule.getName(), src);
+                            // Create an app edge from src ---> dfm ---> Dst
+                            addAppEdge(application, srcModule.getName(), dfm, src, dst);
+                            addAppEdge(application, dfm, dstModule.getName(), src, dst);
 
                             // Record the connection
-                            applicationContext.appEdges.put(srcModule, dstModule);
+
+                            //applicationContext.appEdges.put(srcModule, dstModule);
+
+                            // Set the route of the data flow (assuming some processing occurs at a dfm before heading to dst)
+                            if(applicationContext.appLoops.isEmpty()) {
+                                // First time, start with an empty list
+                                route.add(srcModule.getName());
+                                route.add(dfm);
+                                route.add(dstModule.getName());
+                                applicationContext.appLoops.add(route);
+                            } else {
+                                // Subsequent times, extend the LAST route in appLoops
+                                List<String> lastRoute = applicationContext.appLoops.getLast(); // Get the last route
+
+                                List<String> newRoute = new ArrayList<>(lastRoute); // Create a *copy*
+
+                                newRoute.removeLast(); // Remove the last element
+
+                                route.add(srcModule.getName());
+                                route.add(dfm);
+                                route.add(dstModule.getName());
+
+                                //newRoute.add(dstModule.getName()); // Add the new destination module
+
+                                applicationContext.appLoops.add(newRoute); // Add the extended route
+                            }
 
                             // Move ptr1 to the next valid node
                             ptr1 = ptr2;
@@ -235,10 +266,20 @@ public class JsonToApplicationModel {
     }
 
 
-    private static void addAppEdge(EventDrivenApplication application, String srcModuleName, String dstModuleName, TopologyNode node) {
-        String tupleType = determineTupleType(node);
-        int edgeDirection = determineDirection(node);
-        int edgeType = determineEdgeType(node);
+    private static void addAppEdge(EventDrivenApplication application, String srcModuleName, String dstModuleName, TopologyNode srcNode, TopologyNode dstNode) {
+        String tupleType = null;
+        int edgeDirection = 0;
+        int edgeType = 0;
+
+        if(srcModuleName.equals("default-module")) { // dfm ---> dst
+            tupleType = determineTupleType(srcNode); // Same as src
+            edgeDirection = Tuple.DOWN; //
+            edgeType = determineEdgeType(dstNode);
+        } else {
+            tupleType = determineTupleType(srcNode);
+            edgeDirection = determineDirection(srcNode);
+            edgeType = determineEdgeType(srcNode);
+        }
 
         application.addAppEdge(
                 srcModuleName,

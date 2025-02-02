@@ -101,4 +101,29 @@ public class Utility {
 
         return allNodes;
     }
+
+    public static void printAppLoops(List<List<String>> appLoops) {
+        if (appLoops == null || appLoops.isEmpty()) {
+            System.out.println("App loops are empty or null.");
+            return;
+        }
+
+        for (int i = 0; i < appLoops.size(); i++) {
+            List<String> route = appLoops.get(i);
+            System.out.print("Route " + (i + 1) + ": ");  // Or just "Route:" if you prefer
+
+            if (route.isEmpty()) {
+                System.out.println("[]"); // Print empty route representation
+            } else {
+                System.out.print("[");
+                for (int j = 0; j < route.size(); j++) {
+                    System.out.print(route.get(j));
+                    if (j < route.size() - 1) {
+                        System.out.print(", ");
+                    }
+                }
+                System.out.println("]");
+            }
+        }
+    }
 }
