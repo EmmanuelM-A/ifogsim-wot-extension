@@ -94,7 +94,7 @@ public class JsonToApplicationModel {
         return application;
     }
 
-    /*private static void setApplicationModules(EventDrivenApplication application) {
+    private static void setApplicationModules(EventDrivenApplication application) {
         // Default module represents generic computations
         application.addAppModule("default-module", 10);
         applicationContext.nodeModules.put("default-module", new NodeModule(application.getModuleByName("default-module")));
@@ -144,9 +144,9 @@ public class JsonToApplicationModel {
                 }
             }
         }
-    }*/
+    }
 
-    private static void setApplicationModules(EventDrivenApplication application) {
+    /*private static void setApplicationModules(EventDrivenApplication application) {
         // Default modules
         application.addAppModule("default-module", 10);
         applicationContext.nodeModules.put("default-module", new NodeModule(application.getModuleByName("default-module")));
@@ -157,7 +157,7 @@ public class JsonToApplicationModel {
         List<String> nodeTypesToSearchFor = List.of("read-property", "invoke-action");
 
         // Get all subflows
-        Map<String, List<TopologyNode>> subflows = Utility.getAllSubflows(applicationContext.topologyNodes);
+        //Map<String, List<TopologyNode>> subflows = Utility.getAllSubflows(applicationContext.topologyNodes);
 
         // Determine how each subflow starts
         Map<String, String> subflowStartTypes = new HashMap<>(); // subflowId -> "event" or "inject" or "none"
@@ -212,7 +212,7 @@ public class JsonToApplicationModel {
                 }
             }
         }
-    }
+    }*/
 
 
 

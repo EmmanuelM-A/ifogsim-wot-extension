@@ -1,6 +1,7 @@
 package com.extensions.tests;
 
 import com.extensions.sysconstructor.core.JsonToApplicationModel;
+import com.extensions.sysconstructor.nodered.NodeRedTranslator;
 import com.extensions.utils.presets.*;
 
 import java.io.File;
@@ -26,6 +27,6 @@ public class MainTest {
                 null
         );*/
 
-        //NodeRedTranslator.nodeRedToInputJson(new File("src/com/extensions/input/application/door-security-application.json"));
+        NodeRedTranslator.nodeRedToInputJson(new File("src/com/extensions/input/application/door-security-application.json"));
     }
 }

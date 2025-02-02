@@ -4,6 +4,7 @@ import com.extensions.sysconstructor.nodered.NodeRedJSONParser;
 import com.extensions.sysconstructor.topology.TopologyDataFlow;
 import com.extensions.sysconstructor.topology.TopologyNode;
 import com.extensions.sysconstructor.topology.TopologyNodeConnection;
+import com.extensions.sysconstructor.topology.TopologyNodeTree;
 import com.extensions.utils.processors.FileProcessor;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
@@ -13,7 +14,9 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 
 public class ApplicationTopologyParser implements FileProcessor<JsonNode> {
     private final ObjectMapper objectMapper;
@@ -63,6 +66,47 @@ public class ApplicationTopologyParser implements FileProcessor<JsonNode> {
         return nodeTopics;
     }
 
+    public List<TopologyNodeTree> parseTopologyNodeTrees() {
+        List<TopologyNodeTree> nodeTrees = new ArrayList<>();
+
+        JsonNode subFlows = applicationTopology.get("subFlows");
+
+        if (subFlows != null && subFlows.isObject()) {
+
+            Iterator<Map.Entry<String, JsonNode>> fields = subFlows.fields();
+            while (fields.hasNext()) {
+                Map.Entry<String, JsonNode> field = fields.next();
+                JsonNode subFlow = field.getValue();
+
+                TopologyNode rootNode = parseTopologyNode(subFlow.get("rootNode"));
+                List<List<TopologyNode>> branches = new ArrayList<>();
+
+                JsonNode branchesNode = subFlow.get("branches");
+                if (branchesNode != null && branchesNode.isObject()) {
+
+                    Iterator<Map.Entry<String, JsonNode>> branchFields = branchesNode.fields();
+                    while (branchFields.hasNext()) {
+                        Map.Entry<String, JsonNode> branchField = branchFields.next();
+                        JsonNode branchArrayNode = branchField.getValue();
+
+                        List<TopologyNode> branch = new ArrayList<>();
+                        if (branchArrayNode.isArray()) {
+                            for (JsonNode nodeNode : branchArrayNode) {
+                                TopologyNode node = parseTopologyNode(nodeNode);
+                                branch.add(node);
+                            }
+                        }
+                        branches.add(branch);
+                    }
+                }
+
+                nodeTrees.add(new TopologyNodeTree(rootNode, branches));
+            }
+        }
+
+        return nodeTrees;
+    }
+
     public List<TopologyNodeConnection> parseTopologyConnections() throws JsonProcessingException {
         List<TopologyNodeConnection> nodeConnections = new ArrayList<>();
 
@@ -77,6 +121,25 @@ public class ApplicationTopologyParser implements FileProcessor<JsonNode> {
             nodeConnections.add(nodeConnection);
         }
         return nodeConnections;
+    }
+
+    public TopologyNode parseTopologyNode(JsonNode node) {
+        String id = node.path("id").asText(null);
+        String name = node.path("name").asText(null);
+        String topic = node.path("topic").asText(null);
+        String type = node.path("type").asText(null);
+        String thing = node.path("thing").asText(null);
+        String uniqueAttribute = null;
+
+        // Extract the correct unique attribute based on type
+        switch (type) {
+            case NodeRedJSONParser.TYPE_INVOKE_ACTION -> uniqueAttribute = node.path("action").asText(null);
+            case NodeRedJSONParser.TYPE_SUBSCRIBE_EVENT -> uniqueAttribute = node.path("event").asText(null);
+            case NodeRedJSONParser.TYPE_READ_PROPERTY, NodeRedJSONParser.TYPE_WRITE_PROPERTY -> uniqueAttribute = node.path("property").asText(null);
+        }
+
+        // Create TopologyNode instance
+        return new TopologyNode(id, name, topic, type, thing, uniqueAttribute);
     }
 
     public List<TopologyNode> parseTopologyNodes(String nodeType) {

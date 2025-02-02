@@ -16,202 +16,232 @@
     "type" : "consumed-thing"
   } ],
   "topics" : [ "access-control", "security-monitoring" ],
-  "nodes" : [ {
-    "id" : "0df687eaf78a49d5",
-    "name" : "",
-    "type" : "subscribe-event",
-    "topic" : "access-control",
-    "thing" : "263d2ff2376b823c",
-    "event" : "tamperAlert"
-  }, {
-    "id" : "3cf9152ea1a0f438",
-    "name" : "activateAlarm()",
-    "type" : "invoke-action",
-    "topic" : "security-monitoring",
-    "thing" : "60ec5509eed581fd",
-    "action" : "activate"
-  }, {
-    "id" : "5672a7b79222ebb5",
-    "name" : "",
-    "type" : "read-property",
-    "topic" : "access-control",
-    "thing" : "263d2ff2376b823c",
-    "property" : "lockState"
-  }, {
-    "id" : "7f50cd20a278e460",
-    "name" : "",
-    "type" : "switch",
-    "topic" : null,
-    "thing" : null
-  }, {
-    "id" : "cfce2b4ef69e60c2",
-    "name" : "",
-    "type" : "subscribe-event",
-    "topic" : "security-monitoring",
-    "thing" : "b7c9cdf5487520a3",
-    "event" : "snapshotTaken"
-  }, {
-    "id" : "1c17e9e063c4e324",
-    "name" : "takePhoto()",
-    "type" : "invoke-action",
-    "topic" : "security-monitoring",
-    "thing" : "b7c9cdf5487520a3",
-    "action" : "takeSnapshot"
-  }, {
-    "id" : "f97a30cc48074f57",
-    "name" : "",
-    "type" : "read-property",
-    "topic" : "security-monitoring",
-    "thing" : "b7c9cdf5487520a3",
-    "property" : "streamURL"
-  }, {
-    "id" : "614d67869d5e3e26",
-    "name" : "",
-    "type" : "read-property",
-    "topic" : "security-monitoring",
-    "thing" : "b7c9cdf5487520a3",
-    "property" : "lastSnapshot"
-  }, {
-    "id" : "f4652feba07b5c6c",
-    "name" : "debug 1",
-    "type" : "debug",
-    "topic" : null,
-    "thing" : null
-  }, {
-    "id" : "ae3ea1663205f2b2",
-    "name" : "debug 2",
-    "type" : "debug",
-    "topic" : null,
-    "thing" : null
-  }, {
-    "id" : "aa21445813262e15",
-    "name" : "",
-    "type" : "invoke-action",
-    "topic" : "access-control",
-    "thing" : "263d2ff2376b823c",
-    "action" : "lockDoor"
-  }, {
-    "id" : "1e5b73e603170a88",
-    "name" : "Auto lcok door if unlocked",
-    "type" : "comment",
-    "topic" : null,
-    "thing" : null
-  }, {
-    "id" : "2213fef1b36af2e5",
-    "name" : "activate alarm and cameras if door is tampered with",
-    "type" : "comment",
-    "topic" : null,
-    "thing" : null
-  }, {
-    "id" : "5265f1e13608cbfc",
-    "name" : "Send photos and video recording",
-    "type" : "comment",
-    "topic" : null,
-    "thing" : null
-  }, {
-    "id" : "030ca93a106529df",
-    "name" : "",
-    "type" : "invoke-action",
-    "topic" : "access-control",
-    "thing" : "263d2ff2376b823c",
-    "action" : "unlockDoor"
-  }, {
-    "id" : "26d68214f3b55423",
-    "name" : "",
-    "type" : "inject",
-    "topic" : "",
-    "thing" : null
-  }, {
-    "id" : "c4d410a159722b04",
-    "name" : "Simulates the user opening the door",
-    "type" : "comment",
-    "topic" : null,
-    "thing" : null
-  }, {
-    "id" : "214c1604a6f11f68",
-    "name" : "",
-    "type" : "subscribe-event",
-    "topic" : "security-monitoring",
-    "thing" : "60ec5509eed581fd",
-    "event" : "alarmTriggered"
-  }, {
-    "id" : "5c93feb3cd579218",
-    "name" : "debug 4",
-    "type" : "debug",
-    "topic" : null,
-    "thing" : null
-  }, {
-    "id" : "fded3e31159f472d",
-    "name" : "debug 5",
-    "type" : "debug",
-    "topic" : null,
-    "thing" : null
-  }, {
-    "id" : "d94ac48d5b1babbc",
-    "name" : "",
-    "type" : "subscribe-event",
-    "topic" : "access-control",
-    "thing" : "263d2ff2376b823c",
-    "event" : "doorLocked"
-  }, {
-    "id" : "f752d71334f00c40",
-    "name" : "debug 6",
-    "type" : "debug",
-    "topic" : null,
-    "thing" : null
-  } ],
-  "connections" : [ {
-    "source" : "0df687eaf78a49d5",
-    "destination" : "3cf9152ea1a0f438"
-  }, {
-    "source" : "0df687eaf78a49d5",
-    "destination" : "1c17e9e063c4e324"
-  }, {
-    "source" : "5672a7b79222ebb5",
-    "destination" : "7f50cd20a278e460"
-  }, {
-    "source" : "7f50cd20a278e460",
-    "destination" : "aa21445813262e15"
-  }, {
-    "source" : "7f50cd20a278e460",
-    "destination" : "fded3e31159f472d"
-  }, {
-    "source" : "cfce2b4ef69e60c2",
-    "destination" : "f97a30cc48074f57"
-  }, {
-    "source" : "cfce2b4ef69e60c2",
-    "destination" : "614d67869d5e3e26"
-  }, {
-    "source" : "f97a30cc48074f57",
-    "destination" : "f4652feba07b5c6c"
-  }, {
-    "source" : "614d67869d5e3e26",
-    "destination" : "ae3ea1663205f2b2"
-  }, {
-    "source" : "26d68214f3b55423",
-    "destination" : "030ca93a106529df"
-  }, {
-    "source" : "214c1604a6f11f68",
-    "destination" : "5c93feb3cd579218"
-  }, {
-    "source" : "d94ac48d5b1babbc",
-    "destination" : "f752d71334f00c40"
-  } ],
-  "dataFlows" : [ {
-    "source" : "26d68214f3b55423",
-    "targets" : [ "030ca93a106529df" ]
-  } ],
-  "events" : [ {
-    "id" : "0df687eaf78a49d5",
-    "name" : "tamperAlert"
-  }, {
-    "id" : "cfce2b4ef69e60c2",
-    "name" : "snapshotTaken"
-  }, {
-    "id" : "214c1604a6f11f68",
-    "name" : "alarmTriggered"
-  }, {
-    "id" : "d94ac48d5b1babbc",
-    "name" : "doorLocked"
-  } ]
+  "subFlows" : {
+    "subFlow-0" : {
+      "rootNode" : {
+        "id" : "0df687eaf78a49d5",
+        "name" : "",
+        "type" : "subscribe-event",
+        "topic" : "access-control",
+        "thing" : "263d2ff2376b823c",
+        "event" : "tamperAlert"
+      },
+      "branches" : {
+        "branch-1" : [ {
+          "id" : "0df687eaf78a49d5",
+          "name" : "",
+          "type" : "subscribe-event",
+          "topic" : "access-control",
+          "thing" : "263d2ff2376b823c",
+          "event" : "tamperAlert"
+        }, {
+          "id" : "3cf9152ea1a0f438",
+          "name" : "activateAlarm()",
+          "type" : "invoke-action",
+          "topic" : "security-monitoring",
+          "thing" : "60ec5509eed581fd",
+          "action" : "activate"
+        } ],
+        "branch-2" : [ {
+          "id" : "0df687eaf78a49d5",
+          "name" : "",
+          "type" : "subscribe-event",
+          "topic" : "access-control",
+          "thing" : "263d2ff2376b823c",
+          "event" : "tamperAlert"
+        }, {
+          "id" : "1c17e9e063c4e324",
+          "name" : "takePhoto()",
+          "type" : "invoke-action",
+          "topic" : "security-monitoring",
+          "thing" : "b7c9cdf5487520a3",
+          "action" : "takeSnapshot"
+        } ]
+      }
+    },
+    "subFlow-1" : {
+      "rootNode" : {
+        "id" : "5672a7b79222ebb5",
+        "name" : "",
+        "type" : "read-property",
+        "topic" : "access-control",
+        "thing" : "263d2ff2376b823c",
+        "property" : "lockState"
+      },
+      "branches" : {
+        "branch-1" : [ {
+          "id" : "5672a7b79222ebb5",
+          "name" : "",
+          "type" : "read-property",
+          "topic" : "access-control",
+          "thing" : "263d2ff2376b823c",
+          "property" : "lockState"
+        }, {
+          "id" : "7f50cd20a278e460",
+          "name" : "",
+          "type" : "switch",
+          "topic" : null,
+          "thing" : null
+        }, {
+          "id" : "aa21445813262e15",
+          "name" : "",
+          "type" : "invoke-action",
+          "topic" : "access-control",
+          "thing" : "263d2ff2376b823c",
+          "action" : "lockDoor"
+        } ],
+        "branch-2" : [ {
+          "id" : "5672a7b79222ebb5",
+          "name" : "",
+          "type" : "read-property",
+          "topic" : "access-control",
+          "thing" : "263d2ff2376b823c",
+          "property" : "lockState"
+        }, {
+          "id" : "7f50cd20a278e460",
+          "name" : "",
+          "type" : "switch",
+          "topic" : null,
+          "thing" : null
+        }, {
+          "id" : "fded3e31159f472d",
+          "name" : "debug 5",
+          "type" : "debug",
+          "topic" : null,
+          "thing" : null
+        } ]
+      }
+    },
+    "subFlow-2" : {
+      "rootNode" : {
+        "id" : "cfce2b4ef69e60c2",
+        "name" : "",
+        "type" : "subscribe-event",
+        "topic" : "security-monitoring",
+        "thing" : "b7c9cdf5487520a3",
+        "event" : "snapshotTaken"
+      },
+      "branches" : {
+        "branch-1" : [ {
+          "id" : "cfce2b4ef69e60c2",
+          "name" : "",
+          "type" : "subscribe-event",
+          "topic" : "security-monitoring",
+          "thing" : "b7c9cdf5487520a3",
+          "event" : "snapshotTaken"
+        }, {
+          "id" : "f97a30cc48074f57",
+          "name" : "",
+          "type" : "read-property",
+          "topic" : "security-monitoring",
+          "thing" : "b7c9cdf5487520a3",
+          "property" : "streamURL"
+        }, {
+          "id" : "f4652feba07b5c6c",
+          "name" : "debug 1",
+          "type" : "debug",
+          "topic" : null,
+          "thing" : null
+        } ],
+        "branch-2" : [ {
+          "id" : "cfce2b4ef69e60c2",
+          "name" : "",
+          "type" : "subscribe-event",
+          "topic" : "security-monitoring",
+          "thing" : "b7c9cdf5487520a3",
+          "event" : "snapshotTaken"
+        }, {
+          "id" : "614d67869d5e3e26",
+          "name" : "",
+          "type" : "read-property",
+          "topic" : "security-monitoring",
+          "thing" : "b7c9cdf5487520a3",
+          "property" : "lastSnapshot"
+        }, {
+          "id" : "ae3ea1663205f2b2",
+          "name" : "debug 2",
+          "type" : "debug",
+          "topic" : null,
+          "thing" : null
+        } ]
+      }
+    },
+    "subFlow-3" : {
+      "rootNode" : {
+        "id" : "26d68214f3b55423",
+        "name" : "",
+        "type" : "inject",
+        "topic" : "",
+        "thing" : null
+      },
+      "branches" : {
+        "branch-1" : [ {
+          "id" : "26d68214f3b55423",
+          "name" : "",
+          "type" : "inject",
+          "topic" : "",
+          "thing" : null
+        }, {
+          "id" : "030ca93a106529df",
+          "name" : "",
+          "type" : "invoke-action",
+          "topic" : "access-control",
+          "thing" : "263d2ff2376b823c",
+          "action" : "unlockDoor"
+        } ]
+      }
+    },
+    "subFlow-4" : {
+      "rootNode" : {
+        "id" : "214c1604a6f11f68",
+        "name" : "",
+        "type" : "subscribe-event",
+        "topic" : "security-monitoring",
+        "thing" : "60ec5509eed581fd",
+        "event" : "alarmTriggered"
+      },
+      "branches" : {
+        "branch-1" : [ {
+          "id" : "214c1604a6f11f68",
+          "name" : "",
+          "type" : "subscribe-event",
+          "topic" : "security-monitoring",
+          "thing" : "60ec5509eed581fd",
+          "event" : "alarmTriggered"
+        }, {
+          "id" : "5c93feb3cd579218",
+          "name" : "debug 4",
+          "type" : "debug",
+          "topic" : null,
+          "thing" : null
+        } ]
+      }
+    },
+    "subFlow-5" : {
+      "rootNode" : {
+        "id" : "d94ac48d5b1babbc",
+        "name" : "",
+        "type" : "subscribe-event",
+        "topic" : "access-control",
+        "thing" : "263d2ff2376b823c",
+        "event" : "doorLocked"
+      },
+      "branches" : {
+        "branch-1" : [ {
+          "id" : "d94ac48d5b1babbc",
+          "name" : "",
+          "type" : "subscribe-event",
+          "topic" : "access-control",
+          "thing" : "263d2ff2376b823c",
+          "event" : "doorLocked"
+        }, {
+          "id" : "f752d71334f00c40",
+          "name" : "debug 6",
+          "type" : "debug",
+          "topic" : null,
+          "thing" : null
+        } ]
+      }
+    }
+  }
 }

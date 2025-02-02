@@ -1,10 +1,7 @@
 package com.extensions.sysconstructor.core;
 
 import com.extensions.sysconstructor.nodered.NodeRedTranslator;
-import com.extensions.sysconstructor.topology.TopologyDataFlow;
-import com.extensions.sysconstructor.topology.TopologyNode;
-import com.extensions.sysconstructor.topology.TopologyNodeConnection;
-import com.extensions.sysconstructor.topology.TopologyNodeConnectionChecker;
+import com.extensions.sysconstructor.topology.*;
 import com.extensions.utils.FilePaths;
 import com.extensions.utils.Utility;
 import com.extensions.utils.presets.ApplicationPreset;
@@ -66,6 +63,10 @@ public class ApplicationContext {
 
         // Extract all the topology nodes
         this.topologyNodes = applicationTopologyParser.parseTopologyNodes("nodes");
+
+        List<TopologyNodeTree> topologyNodeTrees = applicationTopologyParser.parseTopologyNodeTrees();
+
+        Utility.printTopologyNodeTrees(topologyNodeTrees);
 
         // Extract all the connections between nodes
         this.nodeConnections = applicationTopologyParser.parseTopologyConnections();

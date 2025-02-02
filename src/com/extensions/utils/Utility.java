@@ -1,6 +1,7 @@
 package com.extensions.utils;
 
 import com.extensions.sysconstructor.topology.TopologyNode;
+import com.extensions.sysconstructor.topology.TopologyNodeTree;
 import com.extensions.vdcreation.core.VirtualDevice;
 
 import java.util.ArrayList;
@@ -52,14 +53,34 @@ public class Utility {
         }
 
         for (TopologyNode node : nodes) {
-            System.out.println("------------------------------");
-            System.out.println("ID: " + node.id());
-            System.out.println("Name: " + node.name());
-            System.out.println("Type: " + node.type());
-            System.out.println("Topic: " + node.topic());
-            System.out.println("Thing: " + node.thing());
-            System.out.println("Unique Attribute: " + node.uniqueAttribute());
-            System.out.println("------------------------------");
+            printTopologyNode(node);
+        }
+    }
+
+    public static void printTopologyNode(TopologyNode node) {
+        System.out.println("------------------------------");
+        System.out.println("ID: " + node.id());
+        System.out.println("Name: " + node.name());
+        System.out.println("Type: " + node.type());
+        System.out.println("Topic: " + node.topic());
+        System.out.println("Thing: " + node.thing());
+        System.out.println("Unique Attribute: " + node.uniqueAttribute());
+        System.out.println("------------------------------");
+    }
+
+    public static void printTopologyNodeTrees(List<TopologyNodeTree> nodeTrees) {
+        for (TopologyNodeTree nodeTree : nodeTrees) {
+            System.out.println("Root Node:");
+            printTopologyNode(nodeTree.rootNode());
+
+            System.out.println("Branches:");
+            for (List<TopologyNode> branch : nodeTree.branches()) {
+                System.out.println("    Branch:");
+                for (TopologyNode node : branch) {
+                    printTopologyNode(node);
+                }
+            }
+            System.out.println("------------------------------------------------------");
         }
     }
 
