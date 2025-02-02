@@ -34,6 +34,9 @@ public class ApplicationContext {
     public final List<TopologyNodeTree> dataFlows;
     public final List<TopologyNode> events;
     public final Map<String, AppModule> appModulesCreated;
+
+    public final Map<AppModule, AppModule> appEdges;
+
     public final Map<String, NodeModule> nodeModules;
     public final TopologyNodeConnectionChecker nodeConnectionChecker;
     public final int UPLINK_LATENCY_EDGE_TO_CLOUD = 100;
@@ -79,6 +82,8 @@ public class ApplicationContext {
         this.dataFlows = new ArrayList<>();
 
         this.appModulesCreated = new HashMap<>();
+
+        this.appEdges = new HashMap<>();
 
         // Extract all events used
         this.events = applicationTopologyParser.parseTopologyNodes("events");

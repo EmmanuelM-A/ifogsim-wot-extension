@@ -145,11 +145,11 @@ public final class App {
 
             //////////////////////////////// REGISTER CUSTOM PERFORMANCE METRICS ////////////////////////////////
 
-            CustomMetricManager customMetricManager = controller.getCustomMetricManager();
+            /*CustomMetricManager customMetricManager = controller.getCustomMetricManager();
 
             customMetricManager.registerMetric(new AverageTupleProcessingTimeMetric());
             customMetricManager.registerMetric(new SystemEfficiencyMetric());
-            customMetricManager.registerMetric(new TaskCompletionCountMetric());
+            customMetricManager.registerMetric(new TaskCompletionCountMetric());*/
 
             //////////////////////////////// SIMULATION ////////////////////////////////
 

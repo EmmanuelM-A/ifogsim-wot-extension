@@ -2,7 +2,6 @@ package com.extensions.sysconstructor.core;
 
 import com.extensions.sysconstructor.eventdriver.EventDrivenApplication;
 import com.extensions.sysconstructor.nodered.NodeRedJSONParser;
-import com.extensions.sysconstructor.nodered.SubFlowTree;
 import com.extensions.sysconstructor.topology.*;
 import com.extensions.utils.Utility;
 import org.fog.application.AppEdge;
@@ -180,10 +179,85 @@ public class JsonToApplicationModel {
             }
         }
     }
-
-
-
     private static void setApplicationEdges(EventDrivenApplication application) {
+        for (TopologyNodeTree dataFlow : applicationContext.dataFlows) {
+            // Get root node
+            TopologyNode rootNode = dataFlow.rootNode();
+
+            // Get branches
+            List<List<TopologyNode>> branches = dataFlow.branches();
+
+            // If the data flow is NOT event-driven and does NOT start with an inject node
+            if (!rootNode.type().equals(NodeRedJSONParser.TYPE_SUBSCRIBE_EVENT) && !rootNode.type().equals(NodeRedJSONParser.TYPE_INJECT)) {
+                // Used to access the nodes in a branch
+                int ptr1 = 0, ptr2 = 1;
+
+                // Iterate through one branch at a time
+                for(List<TopologyNode> branch : branches) {
+                    while(ptr2 < branch.size()) {
+                        // Get the src node (Assuming it's a WoT node)
+                        TopologyNode src = branch.get(ptr1);
+
+                        // Get the dst node, checking if it's a WoT node
+                        if (isWoTNode(branch.get(ptr2))) {
+                            TopologyNode dst = branch.get(ptr2);
+
+                            // Retrieve module names, ensuring they exist
+                            AppModule srcModule = applicationContext.appModulesCreated.get(src.id());
+                            AppModule dstModule = applicationContext.appModulesCreated.get(dst.id());
+
+                            if (srcModule == null || dstModule == null) {
+                                System.out.println("Skipping edge: Missing module for Src: " + src.id() + ", Dst: " + dst.id());
+                                ptr2++;  // Continue checking next nodes
+                                continue;
+                            }
+
+                            // Create an app edge from src to dst
+                            addAppEdge(application, srcModule.getName(), dstModule.getName(), src);
+
+                            // Record the connection
+                            applicationContext.appEdges.put(srcModule, dstModule);
+
+                            // Move ptr1 to the next valid node
+                            ptr1 = ptr2;
+                            ptr2++;
+                        } else {
+                            ptr2++;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    private static boolean isWoTNode(TopologyNode node) {
+        return node.thing() != null && !node.thing().isEmpty();
+    }
+
+
+    private static void addAppEdge(EventDrivenApplication application, String srcModuleName, String dstModuleName, TopologyNode node) {
+        String tupleType = determineTupleType(node);
+        int edgeDirection = determineDirection(node);
+        int edgeType = determineEdgeType(node);
+
+        application.addAppEdge(
+                srcModuleName,
+                dstModuleName,
+                applicationContext.applicationPreset.APP_EDGE_TUPLE_CPU_LENGTH,  // Processing latency
+                applicationContext.applicationPreset.APP_EDGE_TUPLE_NW_LENGTH,   // Transmission latency
+                tupleType,
+                edgeDirection,
+                edgeType
+        );
+
+        System.out.println("Connected: " + srcModuleName + " --> " + dstModuleName);
+    }
+
+
+
+
+
+    /*private static void setApplicationEdges(EventDrivenApplication application) {
         for (TopologyNode srcNode : applicationContext.topologyNodes) {
             for (TopologyNode dstNode : applicationContext.topologyNodes) {
                 TopologyNodeConnectionStatus connectionStatus = applicationContext.nodeConnectionChecker.areNodesConnected(srcNode.id(), dstNode.id(), "id");
@@ -221,7 +295,7 @@ public class JsonToApplicationModel {
                 }
             }
         }
-    }
+    }*/
 
     private static void setApplicationTupleMappings(EventDrivenApplication application) {
         for (Map.Entry<String, NodeModule> entry : applicationContext.nodeModules.entrySet()) {
@@ -375,35 +449,35 @@ public class JsonToApplicationModel {
         pathStack.pop();
     }
 
-    private static String determineTupleType(TopologyNode src, TopologyNode dst) {
-        if (src.type().equals("read-property")) {
-            return src.uniqueAttribute();  // Use property name as tuple
-        } else if (dst.type().equals("invoke-action") || dst.type().equals("write-property")) {
-            return dst.uniqueAttribute();  // Action-related tuple
+    private static String determineTupleType(TopologyNode node) {
+        if (node.type().equals("read-property")) {
+            return node.uniqueAttribute();  // Use property name as tuple
+        } else if (node.type().equals("invoke-action") || node.type().equals("write-property")) {
+            return node.uniqueAttribute();  // Action-related tuple
         } else {
-            return src.uniqueAttribute();  // Generic processing tuple
+            return node.uniqueAttribute();  // Generic processing tuple
         }
     }
 
-
-    private static int determineDirection(TopologyNode src, TopologyNode dst) {
+    private static int determineDirection(TopologyNode node) {
         // Assume upward tuple flow for sensors and downward for actuators
-        if (src.type().equals(NodeRedJSONParser.TYPE_READ_PROPERTY)) {
+        if (node.type().equals(NodeRedJSONParser.TYPE_READ_PROPERTY)) {
             return Tuple.UP;
-        } else if (dst.type().equals(NodeRedJSONParser.TYPE_INVOKE_ACTION) || dst.type().equals(NodeRedJSONParser.TYPE_WRITE_PROPERTY)) {
+        } else if (node.type().equals(NodeRedJSONParser.TYPE_INVOKE_ACTION) || node.type().equals(NodeRedJSONParser.TYPE_WRITE_PROPERTY)) {
             return Tuple.DOWN;
         } else {
             return Tuple.UP;  // Default for other module connections
         }
     }
 
-    private static int determineEdgeType(TopologyNode src, TopologyNode dst) {
-        if (src.type().equals(NodeRedJSONParser.TYPE_READ_PROPERTY)) {
+    private static int determineEdgeType(TopologyNode node) {
+        if (node.type().equals(NodeRedJSONParser.TYPE_READ_PROPERTY)) {
             return AppEdge.SENSOR;
-        } else if (dst.type().equals(NodeRedJSONParser.TYPE_INVOKE_ACTION) || dst.type().equals(NodeRedJSONParser.TYPE_WRITE_PROPERTY)) {
+        } else if (node.type().equals(NodeRedJSONParser.TYPE_INVOKE_ACTION) || node.type().equals(NodeRedJSONParser.TYPE_WRITE_PROPERTY)) {
             return AppEdge.ACTUATOR;
         } else {
             return AppEdge.MODULE;
         }
     }
+
 }
