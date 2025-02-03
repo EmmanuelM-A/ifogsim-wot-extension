@@ -39,8 +39,18 @@ public final class App {
 
         Log.printLine("Starting Simulation...");
 
+
+
         try {
             Log.disable();
+
+            ApplicationContext applicationContext = new ApplicationContext(
+                    // SET THE NODE RED APPLICATION JSON FILE PATH HERE
+                    new File("src/com/extensions/input/application/smart-healthcare-facility.json"),
+                    CloudNodePreset.DEFAULT,
+                    EdgeNodePreset.DEFAULT,
+                    ApplicationPreset.DEFAULT
+            );
 
             //////////////////////////////// INITIAL SETUP ////////////////////////////////
 
@@ -60,7 +70,7 @@ public final class App {
             * Assigns a unique identifier to the application being simulated.
             * This ID is used to manage the application's components and operations.
             * */
-            String appId = "Door-Security-Application"; // SET APPLICATION ID HERE
+            String appId = applicationContext.applicationTopologyParser.parseApplicationTitle();
 
             // Initializes a FogBroker, which manages application modules and coordinates communication between them in the simulation.
             FogBroker broker = new FogBroker("broker");
@@ -94,13 +104,6 @@ public final class App {
             }
 
             //////////////////////////////// APPLICATION SETUP ////////////////////////////////
-
-            ApplicationContext applicationContext = new ApplicationContext(
-                    new File("src/com/extensions/input/application/smart-healthcare-facility.json"), // SET THE NODE RED APPLICATION JSON FILE PATH HERE
-                    CloudNodePreset.DEFAULT,
-                    EdgeNodePreset.DEFAULT,
-                    ApplicationPreset.DEFAULT
-            );
 
             // Create the physical topology for the node red application
             ApplicationPhysicalTopology physicalTopology = JsonToPhysicalTopology.createApplicationPhysicalTopology(

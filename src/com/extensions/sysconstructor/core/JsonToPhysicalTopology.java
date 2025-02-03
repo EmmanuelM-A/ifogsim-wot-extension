@@ -13,12 +13,13 @@ import javax.xml.transform.Source;
 import java.util.*;
 
 public class JsonToPhysicalTopology {
+    /**
+     * Stores all data required for the application
+     */
     private static ApplicationContext applicationContext;
     public static ApplicationPhysicalTopology createApplicationPhysicalTopology(List<VirtualDevice> virtualDevices, ApplicationContext context) {
         // Set the global variable
         applicationContext = context;
-
-        //System.out.println("Nodes: " + applicationContext.topologyNodes.size());
 
         try {
             // Search for selected VDs based on things list
@@ -75,7 +76,7 @@ public class JsonToPhysicalTopology {
 
                     // Link the edge node to the cloud
                     edgeNode.setParentId(cloud.getId());
-                    edgeNode.setUplinkLatency(applicationContext.UPLINK_LATENCY_EDGE_TO_CLOUD);
+                    edgeNode.setUplinkLatency(applicationContext.applicationPreset.UPLINK_LATENCY_EDGE_TO_CLOUD);
                     applicationContext.fogDevices.add(edgeNode);
                     applicationContext.edgeNodes.add(edgeNode);
 
@@ -89,16 +90,14 @@ public class JsonToPhysicalTopology {
 
                         if(vdFogDevice != null) {
                             vdFogDevice.setParentId(edgeNode.getId());
-                            vdFogDevice.setUplinkLatency(applicationContext.UPLINK_LATENCY_VD_TO_EDGE);
+                            vdFogDevice.setUplinkLatency(applicationContext.applicationPreset.UPLINK_LATENCY_VD_TO_EDGE);
                             applicationContext.fogDevices.add(vdFogDevice);
                         }
                     }
                 }
             } else { // If the topics array is not set, distribute nodes normally
-                int maxNoVDsForOneEdgeNode = 6;
-
                 // Calculate the number of edge nodes needed
-                int numberOfEdgeNodes = Math.max(1, calculateNoOfEdgeNodes(virtualDevices.size(), maxNoVDsForOneEdgeNode));
+                int numberOfEdgeNodes = Math.max(1, calculateNoOfEdgeNodes(virtualDevices.size(), applicationContext.applicationPreset.MAX_VDS_FOR_ONE_EDE_NODE));
 
                 // Create a list of edge nodes (each edge node is represented as a list of VDs)
                 List<List<VirtualDevice>> edgeNodeList = new ArrayList<>();
@@ -120,7 +119,7 @@ public class JsonToPhysicalTopology {
 
                     // Link the edge node to the cloud
                     edgeNode.setParentId(cloud.getId());
-                    edgeNode.setUplinkLatency(applicationContext.UPLINK_LATENCY_EDGE_TO_CLOUD);
+                    edgeNode.setUplinkLatency(applicationContext.applicationPreset.UPLINK_LATENCY_EDGE_TO_CLOUD);
                     applicationContext.fogDevices.add(edgeNode);
                     applicationContext.edgeNodes.add(edgeNode);
 
@@ -130,7 +129,7 @@ public class JsonToPhysicalTopology {
 
                         vdFogDevice.setParentId(edgeNode.getId());
 
-                        vdFogDevice.setUplinkLatency(applicationContext.UPLINK_LATENCY_VD_TO_EDGE);
+                        vdFogDevice.setUplinkLatency(applicationContext.applicationPreset.UPLINK_LATENCY_VD_TO_EDGE);
 
                         applicationContext.fogDevices.add(vdFogDevice);
                     }
@@ -153,22 +152,6 @@ public class JsonToPhysicalTopology {
         return null;
     }
 
-    private static List<Sensor> getAllSensorsUsed(List<Sensor> sensors, List<String> allComponentsUsed) {
-        List<Sensor> allSensorsUsed = new ArrayList<>();
-        for (Sensor sensor : sensors) {
-            if (allComponentsUsed.contains(sensor.getName())) allSensorsUsed.add(sensor);
-        }
-        return allSensorsUsed;
-    }
-
-    private static List<Actuator> getAllActuatorsUsed(List<Actuator> actuators, List<String> allComponentsUsed) {
-        List<Actuator> allActuatorsUsed = new ArrayList<>();
-        for (Actuator actuator : actuators) {
-            if (allComponentsUsed.contains(actuator.getName())) allActuatorsUsed.add(actuator);
-        }
-        return allActuatorsUsed;
-    }
-
     private static List<String> getAllSensorsAndActuatorsUsed(List<TopologyNode> nodes) {
         List<String> attributeNames = new ArrayList<>();
         List<String> includeTypes = new ArrayList<>(){{add("read-property"); add("invoke-action"); add("write-property");}};
@@ -178,26 +161,6 @@ public class JsonToPhysicalTopology {
         }
 
         return attributeNames;
-    }
-
-    private static List<Sensor> getAllSensorsFrom(VirtualDevice virtualDevice) {
-        List<Sensor> sensorsFromVD = new ArrayList<>();
-
-        if(!virtualDevice.getSensorProperties().isEmpty()) {
-            sensorsFromVD.addAll(virtualDevice.getSensorProperties());
-        }
-
-        return sensorsFromVD;
-    }
-
-    private static List<Actuator> getAllActuatorsFrom(VirtualDevice virtualDevice) {
-        List<Actuator> actuatorsFromVD = new ArrayList<>();
-
-        if(!virtualDevice.getSensorProperties().isEmpty()) {
-            actuatorsFromVD.addAll(virtualDevice.getActuatorActions());
-        }
-
-        return actuatorsFromVD;
     }
 
     private static int calculateNoOfEdgeNodes(int numberOfVDs, int maxNoVDsForOneEdgeNode) {
@@ -271,5 +234,4 @@ public class JsonToPhysicalTopology {
 
         return null;
     }
-
 }

@@ -102,11 +102,11 @@ public class JsonToApplicationModel {
     private static void setApplicationModules(EventDrivenApplication application) {
         // Default module
         application.addAppModule("default-module", 10);
-        applicationContext.nodeModules.put("default-module", new NodeModule(application.getModuleByName("default-module")));
+        //applicationContext.nodeModules.put("default-module", new NodeModule(application.getModuleByName("default-module")));
 
         // Client module
         application.addAppModule("client", 10);
-        applicationContext.nodeModules.put("client", new NodeModule(application.getModuleByName("client")));
+        //applicationContext.nodeModules.put("client", new NodeModule(application.getModuleByName("client")));
 
         // Define node types to process
         List<String> nodeTypesToSearchFor = List.of("read-property", "invoke-action");
