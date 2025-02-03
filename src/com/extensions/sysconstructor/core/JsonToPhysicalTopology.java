@@ -138,6 +138,7 @@ public class JsonToPhysicalTopology {
 
             System.out.println("Application's physical topology formed!");
 
+            // Create the physical topology instance and set its varaibles
             ApplicationPhysicalTopology applicationPhysicalTopology = new ApplicationPhysicalTopology();
 
             applicationPhysicalTopology.setFogDevices(applicationContext.fogDevices);

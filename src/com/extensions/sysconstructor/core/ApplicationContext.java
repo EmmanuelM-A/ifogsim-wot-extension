@@ -23,41 +23,59 @@ import java.util.Map;
  * to facilitate simulation and analysis.
  */
 public class ApplicationContext {
-    // Presets defining the characteristics of cloud and edge nodes, as well as the overall application
+    /**
+     * Presets for defining the characteristics of cloud nodes in the application
+     */
     public final CloudNodePreset cloudNodePreset;
+
+    /**
+     * Presets for defining the characteristics of all edge nodes in the application
+     */
     public final EdgeNodePreset edgeNodePreset;
+
+    /**
+     * Presets for defining the characteristics of all cloud nodes in the application
+     */
     public final ApplicationPreset applicationPreset;
 
-    // List of fog computing devices involved in the application
+    /**
+     * List of all fog computing devices involved in the application
+     */
     public final List<FogDevice> fogDevices;
 
-    // List of edge nodes in the application
+    /**
+     * List of edge nodes in the application
+     */
     public final List<FogDevice> edgeNodes;
 
-    // The list of all WoT things parsed from the application topology
+    /**
+     * The list of all WoT thing nodes parsed from the application topology
+     */
     public final List<TopologyNode> things;
 
-    // List of communication topics used by nodes
+    /**
+     * The list of all topics parsed from the application topology. Used to group devices with edge nodes.
+     */
     public final List<String> nodeTopics;
 
     /**
-     * A list of all topology nodes of specific types:
-     * - read-property
-     * - write-property
-     * - subscribe-event
-     * - inject
-     * - invoke-action
+     * A list of all nodes used in the application
      */
-    //public final List<TopologyNode> topologyNodes;
+    public final List<TopologyNode> topologyNodes;
+
+    // A list of all required nodes (WoT nodes and inject nodes), all other node types like functions or debugs have been filtered out
+    //public final List<TopologyNode> requiredNodes;
 
     // Hierarchical representation of topology nodes in a tree structure
     public final List<TopologyNodeTree> topologyNodeTrees;
 
-    // List of all direct connections between topology nodes
-    //public final List<TopologyNodeConnection> nodeConnections;
-
-    // Data flow paths within the application, stored as topology node trees
+    // Sub flow trees that represent data flows within an application
     public final List<TopologyNodeTree> dataFlows;
+
+    /**
+     * Sub flow trees that represent event flows within an application
+     */
+    public final List<TopologyNodeTree> eventFlows;
 
     // Map of created application modules, identified by a unique string key
     public final Map<String, AppModule> appModulesCreated;
@@ -68,11 +86,8 @@ public class ApplicationContext {
     // List of loops present in the application topology (cyclic dependencies)
     public final List<List<String>> appLoops;
 
-    // Map of node modules, storing different processing components for each node
-    //public final Map<String, NodeModule> nodeModules;
-
     // Checker to validate the connections between topology nodes
-    //public final TopologyNodeConnectionChecker nodeConnectionChecker;
+    public final TopologyNodeConnectionChecker nodeConnectionChecker;
 
     // Parser responsible for extracting and organizing application topology information
     public final ApplicationTopologyParser applicationTopologyParser;
@@ -97,7 +112,6 @@ public class ApplicationContext {
         this.applicationPreset = applicationPreset;
         this.fogDevices = new ArrayList<>();
         this.edgeNodes = new ArrayList<>();
-        //this.nodeModules = new HashMap<>();
 
         // Convert the Node-RED application description into a structured input format
         NodeRedTranslator.nodeRedToInputJson(nodeRedApplicationJsonFile);
@@ -111,24 +125,29 @@ public class ApplicationContext {
         // Extract the list of communication topics used in the application
         this.nodeTopics = applicationTopologyParser.parseTopologyNodeTopics();
 
-        // Extract all defined topology nodes from the parsed topology
-        //this.topologyNodes = applicationTopologyParser.parseTopologyNodes("nodes");
-
         // Parse and construct topology node trees for hierarchical organization
         this.topologyNodeTrees = applicationTopologyParser.parseTopologyNodeTrees();
 
-        // Extract the list of node-to-node connections within the topology
-        //this.nodeConnections = applicationTopologyParser.parseTopologyConnections();
+        // Get all the topology nodes from the sub flows list
+        this.topologyNodes = Utility.getAllNodesFromTopology(topologyNodeTrees);
+
+        // Get only the required topology nodes (only WoT nodes and inject nodes)
+        //this.requiredNodes = fi
 
         // Initialize the connection checker to validate topology node connections
-        //this.nodeConnectionChecker = new TopologyNodeConnectionChecker(this.nodeConnections, this.topologyNodes);
+        this.nodeConnectionChecker = new TopologyNodeConnectionChecker(topologyNodeTrees);
 
         // Initialize storage for data flows, application modules, and application edges
         this.dataFlows = new ArrayList<>();
+        this.eventFlows = new ArrayList<>();
         this.appModulesCreated = new HashMap<>();
         this.appEdges = new HashMap<>();
         this.appLoops = new ArrayList<>();
 
         System.out.println("Application Topology Parsed Successfully!");
     }
+
+    /*private List<TopologyNode> filterTopologyNode(List<TopologyNode> topologyNodes, List<String> filter) {
+
+    }*/
 }

@@ -6,10 +6,7 @@ import com.extensions.sysconstructor.topology.TopologyNode;
 import com.extensions.sysconstructor.topology.TopologyNodeTree;
 import com.extensions.vdcreation.core.VirtualDevice;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class Utility {
     public static VirtualDevice getVirtualDevice(List<VirtualDevice> virtualDevices, String name) {
@@ -127,7 +124,7 @@ public class Utility {
 
             System.out.println("Branches:");
             for (List<TopologyNode> branch : nodeTree.branches()) {
-                System.out.println("    Branch:");
+                System.out.println("--->Branch:");
                 for (TopologyNode node : branch) {
                     printTopologyNode(node);
                 }
@@ -137,7 +134,7 @@ public class Utility {
     }
 
     public static List<TopologyNode> getAllNodesFromTopology(List<TopologyNodeTree> topologyNodeTrees) {
-        List<TopologyNode> allNodes = new ArrayList<>();
+        Set<TopologyNode> allNodes = new HashSet<>();
 
         for (TopologyNodeTree topologyNodeTree : topologyNodeTrees) {
             // Add the root node
@@ -151,7 +148,7 @@ public class Utility {
             }
         }
 
-        return allNodes;
+        return new ArrayList<>(allNodes);
     }
 
     public static void printAppLoops(List<List<String>> appLoops) {

@@ -46,7 +46,7 @@ public final class App {
 
             ApplicationContext applicationContext = new ApplicationContext(
                     // SET THE NODE RED APPLICATION JSON FILE PATH HERE
-                    new File("src/com/extensions/input/application/smart-healthcare-facility.json"),
+                    new File("src/com/extensions/input/application/temperature-monitor.json"),
                     CloudNodePreset.DEFAULT,
                     EdgeNodePreset.DEFAULT,
                     ApplicationPreset.DEFAULT
