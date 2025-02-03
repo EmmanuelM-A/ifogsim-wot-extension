@@ -3,81 +3,61 @@ package com.extensions.sysconstructor.topology;
 import java.util.*;
 
 public class TopologyNodeConnectionChecker {
-    private final Map<String, Set<String>> adjacencyList;
-    private final Map<String, TopologyNode> nodeLookup;
+    private final Map<String, Set<String>> adjacencyList; // Stores node connections
+    private final Map<String, TopologyNode> nodeLookup; // Maps node IDs to actual nodes
 
-    public TopologyNodeConnectionChecker(List<TopologyNodeConnection> connections, List<TopologyNode> nodes) {
+    public TopologyNodeConnectionChecker(List<TopologyNodeTree> topologyNodeTrees) {
         this.adjacencyList = new HashMap<>();
         this.nodeLookup = new HashMap<>();
 
-        for (TopologyNode node : nodes) {
-            nodeLookup.put(node.id(), node);
-        }
-
-        for (TopologyNodeConnection connection : connections) {
-            adjacencyList
-                    .computeIfAbsent(connection.source(), k -> new HashSet<>())
-                    .add(connection.destination());
-            // If it's undirected, uncomment the line below
-            // adjacencyList.computeIfAbsent(connection.destination(), k -> new HashSet<>()).add(connection.source());
+        for (TopologyNodeTree tree : topologyNodeTrees) {
+            processTopologyNodeTree(tree);
         }
     }
 
-    public TopologyNodeConnectionStatus areNodesConnected(String identifierA, String identifierB, String criteria) {
-        Set<String> matchingNodesA = findNodesMatching(identifierA, criteria);
-        Set<String> matchingNodesB = findNodesMatching(identifierB, criteria);
+    // Processes each tree by extracting its root node and branches
+    private void processTopologyNodeTree(TopologyNodeTree tree) {
+        TopologyNode rootNode = tree.rootNode();
+        nodeLookup.put(rootNode.id(), rootNode);
+        buildAdjacencyList(rootNode, tree.branches());
+    }
 
-        if (matchingNodesA.isEmpty() || matchingNodesB.isEmpty()) {
-            return new TopologyNodeConnectionStatus(false, false); // No matching nodes for the given criteria
+    // Builds adjacency list from branches
+    private void buildAdjacencyList(TopologyNode rootNode, List<List<TopologyNode>> branches) {
+        for (List<TopologyNode> branch : branches) {
+            for (int i = 0; i < branch.size() - 1; i++) {
+                TopologyNode current = branch.get(i);
+                TopologyNode next = branch.get(i + 1);
+                adjacencyList.computeIfAbsent(current.id(), k -> new HashSet<>()).add(next.id());
+                nodeLookup.putIfAbsent(current.id(), current);
+                nodeLookup.putIfAbsent(next.id(), next);
+            }
+        }
+    }
+
+    // Checks if two nodes are connected using their unique IDs
+    public TopologyNodeConnectionStatus areNodesConnected(String nodeIdA, String nodeIdB) {
+        if (!nodeLookup.containsKey(nodeIdA) || !nodeLookup.containsKey(nodeIdB)) {
+            return new TopologyNodeConnectionStatus(false, false);
         }
 
         boolean isConnected = false;
         boolean isDirectlyConnected = false;
 
-        // Check if any node in set A is connected to any node in set B
-        for (String nodeA : matchingNodesA) {
-            Set<String> visited = new HashSet<>();
-            for (String nodeB : matchingNodesB) {
-                if (nodeA.equals(nodeB)) {
-                    return new TopologyNodeConnectionStatus(true, true); // Same node case
-                }
-                if (adjacencyList.getOrDefault(nodeA, Collections.emptySet()).contains(nodeB)) {
-                    isDirectlyConnected = true; // Immediate direct connection found
-                }
-                if (dfs(nodeA, nodeB, visited)) {
-                    isConnected = true; // Indirect connection found
-                }
-                if (isConnected && isDirectlyConnected) {
-                    return new TopologyNodeConnectionStatus(true, true); // Both conditions met
-                }
-            }
+        if (nodeIdA.equals(nodeIdB)) {
+            return new TopologyNodeConnectionStatus(true, true);
+        }
+        if (adjacencyList.getOrDefault(nodeIdA, Collections.emptySet()).contains(nodeIdB)) {
+            isDirectlyConnected = true;
+        }
+        if (dfs(nodeIdA, nodeIdB, new HashSet<>())) {
+            isConnected = true;
         }
 
         return new TopologyNodeConnectionStatus(isConnected, isDirectlyConnected);
     }
 
-    private Set<String> findNodesMatching(String identifier, String criteria) {
-        Set<String> matchingNodes = new HashSet<>();
-        for (TopologyNode node : nodeLookup.values()) {
-            switch (criteria.toLowerCase()) {
-                case "id" -> {
-                    if (node.id().equals(identifier)) matchingNodes.add(node.id());
-                }
-                case "name" -> {
-                    if (node.name().equalsIgnoreCase(identifier)) matchingNodes.add(node.id());
-                }
-                case "type" -> {
-                    if (node.type().equalsIgnoreCase(identifier)) matchingNodes.add(node.id());
-                }
-                case "topic" -> {
-                    if (node.topic().equalsIgnoreCase(identifier)) matchingNodes.add(node.id());
-                }
-            }
-        }
-        return matchingNodes;
-    }
-
-    // Depth-First Search for connectivity
+    // Depth-first search (DFS) to check connectivity
     private boolean dfs(String current, String target, Set<String> visited) {
         if (current.equals(target)) {
             return true;
@@ -98,4 +78,3 @@ public class TopologyNodeConnectionChecker {
         return false;
     }
 }
-
