@@ -85,9 +85,10 @@ public class FogDeviceFactory {
         );
 
         FogDevice fogdevice = null;
+        String fogDeviceName = name.replace(" ", "");
         try {
             fogdevice = new FogDevice(
-                    name,
+                    fogDeviceName,
                     characteristics,
                     new AppModuleAllocationPolicy(hostList),
                     storageList,
@@ -216,9 +217,10 @@ public class FogDeviceFactory {
         );
 
         FogDevice fogDevice = null;
+        String fogDeviceName = name.replace(" ", "");
         try {
             fogDevice = new FogDevice(
-                    name,
+                    fogDeviceName,
                     characteristics,
                     new AppModuleAllocationPolicy(hostList),
                     storageList,

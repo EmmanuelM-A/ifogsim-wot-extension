@@ -100,7 +100,6 @@ public final class App {
                     ApplicationPreset.DEFAULT
             );
 
-
             // Create the physical topology for the node red application
             ApplicationPhysicalTopology physicalTopology = JsonToPhysicalTopology.createApplicationPhysicalTopology(
                     virtualDevices,
@@ -132,9 +131,9 @@ public final class App {
 
             ModuleMapping moduleMapping = ModuleMapping.createModuleMapping();
 
-            System.out.println(physicalTopology.getFogDevices().size());
-            System.out.println(physicalTopology.getActuators().size());
-            System.out.println(physicalTopology.getSensors().size());
+            //System.out.println(physicalTopology.getFogDevices().size());
+            //System.out.println(physicalTopology.getActuators().size());
+            //System.out.println(physicalTopology.getSensors().size());
             System.out.println(moduleMapping.getModuleMapping().isEmpty() ? "Empty" : "Not Empty");
 
 

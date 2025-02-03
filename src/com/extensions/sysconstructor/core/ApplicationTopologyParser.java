@@ -35,6 +35,7 @@ public class ApplicationTopologyParser implements FileProcessor<JsonNode> {
         topologyNodeTypesToInclude.add(NodeRedJSONParser.TYPE_WRITE_PROPERTY);
         topologyNodeTypesToInclude.add(NodeRedJSONParser.TYPE_SUBSCRIBE_EVENT);
         topologyNodeTypesToInclude.add(NodeRedJSONParser.TYPE_INJECT);
+        topologyNodeTypesToInclude.add("consumed-thing");
 
         this.applicationTopology = process(applicationTopologyFile);
     }
@@ -166,6 +167,10 @@ public class ApplicationTopologyParser implements FileProcessor<JsonNode> {
                     case NodeRedJSONParser.TYPE_INVOKE_ACTION -> uniqueAttribute = node.path("action").asText(null);
                     case NodeRedJSONParser.TYPE_SUBSCRIBE_EVENT -> uniqueAttribute = node.path("event").asText(null);
                     case NodeRedJSONParser.TYPE_READ_PROPERTY, NodeRedJSONParser.TYPE_WRITE_PROPERTY -> uniqueAttribute = node.path("property").asText(null);
+                }
+
+                if(type.equals("consumed-thing")) {
+                    name = name.replace(" ", "");
                 }
 
                 // Create TopologyNode instance

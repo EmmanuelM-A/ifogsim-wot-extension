@@ -9,8 +9,8 @@ import org.fog.entities.Actuator;
 import org.fog.entities.FogDevice;
 import org.fog.entities.Sensor;
 
-import java.util.ArrayList;
-import java.util.List;
+import javax.xml.transform.Source;
+import java.util.*;
 
 public class JsonToPhysicalTopology {
     private static ApplicationContext applicationContext;
@@ -18,28 +18,36 @@ public class JsonToPhysicalTopology {
         // Set the global variable
         applicationContext = context;
 
+        //System.out.println("Nodes: " + applicationContext.topologyNodes.size());
+
         try {
             // Search for selected VDs based on things list
             List<VirtualDevice> selectedVirtualDevices = getSelectedVirtualDevices(virtualDevices, applicationContext.things);
 
-            // Get the name of all sensors and actuators used in the application
-            List<String> sensorsAndActuatorsUsed = getAllSensorsAndActuatorsUsed(applicationContext.topologyNodes);
+            // Get the names of all sensors and actuators used in the application
+            Set<String> sensorsAndActuatorsUsed = new HashSet<>(getAllSensorsAndActuatorsUsed(applicationContext.topologyNodes));
 
-            // Get all sensors used from selected VDs
-            List<Sensor> allSensorsFromVD = new ArrayList<>();
-            for(VirtualDevice virtualDevice : selectedVirtualDevices) {
-                allSensorsFromVD.addAll(getAllSensorsFrom(virtualDevice));
+            // Lists to store used sensors and actuators
+            List<Sensor> allSensorsUsedInApplication = new ArrayList<>();
+            List<Actuator> allActuatorsUsedInApplication = new ArrayList<>();
+
+            // Iterate once over VDs to collect sensors & actuators
+            for (VirtualDevice virtualDevice : selectedVirtualDevices) {
+                for (Sensor sensor : virtualDevice.getSensorProperties()) {
+                    if (sensorsAndActuatorsUsed.contains(sensor.getName())) {
+                        allSensorsUsedInApplication.add(sensor);
+                    }
+                }
+                for (Actuator actuator : virtualDevice.getActuatorActions()) {
+                    if (sensorsAndActuatorsUsed.contains(actuator.getName())) {
+                        allActuatorsUsedInApplication.add(actuator);
+                    }
+                }
             }
 
-            // Get all actuators used from selected VDs
-            List<Actuator> allActuatorsFromVD = new ArrayList<>();
-            for(VirtualDevice virtualDevice : selectedVirtualDevices) {
-                allActuatorsFromVD.addAll(getAllActuatorsFrom(virtualDevice));
-            }
+            //System.out.println("Total Sensors Used: " + allSensorsUsedInApplication.size());
+            //System.out.println("Total Actuators Used: " + allActuatorsUsedInApplication.size());
 
-            // Get all sensors and actuators used from the application
-            List<Sensor> allSensorsUsedInApplication = getAllSensorsUsed(allSensorsFromVD, sensorsAndActuatorsUsed);
-            List<Actuator> allActuatorsUsedInApplication = getAllActuatorsUsed(allActuatorsFromVD, sensorsAndActuatorsUsed);
 
             // Create cloud node/device at the top of the hierarchy
             FogDevice cloud = FogDeviceFactory.createFogDevice(
@@ -163,7 +171,7 @@ public class JsonToPhysicalTopology {
 
     private static List<String> getAllSensorsAndActuatorsUsed(List<TopologyNode> nodes) {
         List<String> attributeNames = new ArrayList<>();
-        List<String> includeTypes = new ArrayList<>(){{add("read-property"); add("invoke-action");}}; // Consider including write-props
+        List<String> includeTypes = new ArrayList<>(){{add("read-property"); add("invoke-action"); add("write-property");}};
 
         for(TopologyNode node : nodes) {
             if(includeTypes.contains(node.type())) attributeNames.add(node.uniqueAttribute());
@@ -227,30 +235,41 @@ public class JsonToPhysicalTopology {
         );
     }
 
-    private static VirtualDevice getVirtualDeviceWithMatchingTopic(List<TopologyNode> nodes, List<TopologyNode> things, VirtualDevice virtualDevice, String targetTopic) {
-        if(targetTopic.isEmpty()) {
+    private static VirtualDevice getVirtualDeviceWithMatchingTopic(
+            List<TopologyNode> nodes,
+            List<TopologyNode> things,
+            VirtualDevice virtualDevice,
+            String targetTopic) {
+
+        if (targetTopic == null || targetTopic.isEmpty()) {
             System.out.println("Topic must not be empty!");
             return null;
         }
 
-        // TODO IMPROVE TIME COMPLEXITY - CURRENTLY N^4 TOO HIGH!!!!
+        // Map thing ID → Thing Node for O(1) lookup
+        Map<String, TopologyNode> thingNodeMap = new HashMap<>();
+        for (TopologyNode thingNode : things) {
+            thingNodeMap.put(thingNode.id(), thingNode);
+        }
 
-        // If a topology node's thing and topic are set (not null or empty) and the topology node is an
-        // action or read-property node, then using the thing attribute get the thing referenced, and from that
-        // use the thing's name to get the corresponding VD.
-        for(TopologyNode node : nodes) {
-            if(
-                    node.thing() != null && !node.thing().isEmpty() && node.topic() != null && node.topic().equals(targetTopic) &&
-                            (node.uniqueAttribute().equals(NodeRedJSONParser.TYPE_READ_PROPERTY) ||
-                                    node.uniqueAttribute().equals(NodeRedJSONParser.TYPE_INVOKE_ACTION))) {
-                for(TopologyNode thingNode : things) {
-                    if(node.thing().equals(thingNode.id())) {
-                        if(virtualDevice.getFogDevice().getName().equals(thingNode.name())) return virtualDevice;
-                    }
+        // Set of valid node types
+        Set<String> validNodeTypes = Set.of(NodeRedJSONParser.TYPE_READ_PROPERTY, NodeRedJSONParser.TYPE_INVOKE_ACTION);
+
+        // Iterate through nodes
+        for (TopologyNode node : nodes) {
+            if (node.thing() != null && !node.thing().isEmpty() &&
+                    node.topic() != null && node.topic().equals(targetTopic) &&
+                    validNodeTypes.contains(node.uniqueAttribute())) {
+
+                TopologyNode thingNode = thingNodeMap.get(node.thing()); // O(1) lookup
+
+                if (thingNode != null && virtualDevice.getFogDevice().getName().equals(thingNode.name())) {
+                    return virtualDevice;  // Match found
                 }
             }
         }
 
         return null;
     }
+
 }
