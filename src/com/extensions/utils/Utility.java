@@ -1,11 +1,15 @@
 package com.extensions.utils;
 
+import com.extensions.sysconstructor.core.TupleMapping;
+import com.extensions.sysconstructor.eventdriver.EventDrivenApplication;
 import com.extensions.sysconstructor.topology.TopologyNode;
 import com.extensions.sysconstructor.topology.TopologyNodeTree;
 import com.extensions.vdcreation.core.VirtualDevice;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Utility {
     public static VirtualDevice getVirtualDevice(List<VirtualDevice> virtualDevices, String name) {
@@ -15,18 +19,66 @@ public class Utility {
         return null;
     }
 
-    public static String getTopologyNodeIdByName(List<TopologyNode> topologyNodes, String name) {
-        for(TopologyNode topologyNode : topologyNodes) {
-            if(topologyNode.name().equals(name)) return topologyNode.id();
+    public static TopologyNode findTopologyNodeBy(String criteria, String target, List<TopologyNode> allNodes) {
+        if (allNodes == null || allNodes.isEmpty() || criteria == null || target == null) {
+            return null; // Handle null or empty input
         }
-        return null;
-    }
 
-    public static String getTopologyNodeIdByType(List<TopologyNode> topologyNodes, String type) {
-        for(TopologyNode topologyNode : topologyNodes) {
-            if(topologyNode.type().equals(type)) return topologyNode.id();
+        TopologyNode targetNode = null;
+        switch (criteria) {
+            case "id":
+                for (TopologyNode topologyNode : allNodes) {
+                    if (target.equals(topologyNode.id())) { // Use .equals() for String comparison
+                        targetNode = topologyNode;
+                        break; // Exit loop once found
+                    }
+                }
+                break;
+            case "name":
+                for (TopologyNode topologyNode : allNodes) {
+                    if (target.equals(topologyNode.name())) {
+                        targetNode = topologyNode;
+                        break;
+                    }
+                }
+                break;
+            case "type":
+                for (TopologyNode topologyNode : allNodes) {
+                    if (target.equals(topologyNode.type())) {
+                        targetNode = topologyNode;
+                        break;
+                    }
+                }
+                break;
+            case "thing":
+                for (TopologyNode topologyNode : allNodes) {
+                    if (target.equals(topologyNode.thing())) {
+                        targetNode = topologyNode;
+                        break;
+                    }
+                }
+                break;
+            case "uniqueAttribute":
+                for (TopologyNode topologyNode : allNodes) {
+                    if (target.equals(topologyNode.uniqueAttribute())) {
+                        targetNode = topologyNode;
+                        break;
+                    }
+                }
+                break;
+            case "subFlowId":
+                for (TopologyNode topologyNode : allNodes) {
+                    if (target.equals(topologyNode.subFlowId())) {
+                        targetNode = topologyNode;
+                        break;
+                    }
+                }
+                break;
+            // Add more cases as needed (topic, etc.)
+            default:
+                System.out.println("Unknown criteria: " + criteria); // Or throw an exception
         }
-        return null;
+        return targetNode;
     }
 
     public static List<TopologyNode> getTopologyNodesByType(List<TopologyNode> topologyNodes, String type) {

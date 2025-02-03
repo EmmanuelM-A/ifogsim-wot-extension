@@ -35,7 +35,7 @@ public class ApplicationContext {
     public final List<TopologyNode> events;
     public final Map<String, AppModule> appModulesCreated;
 
-    public final Map<AppModule, AppModule> appEdges;
+    public final Map<String, String> appEdges;
 
     public final List<List<String>> appLoops;
 

@@ -35,6 +35,7 @@ public class JsonToApplicationModel {
         // Create and set the application modules
         setApplicationModules(application);
 
+        System.out.println("Created AppModules:");
         for(AppModule appModule : application.getModules()) {
             System.out.println(appModule.getName());
         }
@@ -42,16 +43,16 @@ public class JsonToApplicationModel {
         // Set the app edges between modules
         setApplicationEdges(application);
 
-        Utility.printAppLoops(applicationContext.appLoops);
-
         // Set the tuple mappings for modules
         setApplicationTupleMappings(application);
 
         // Set the app loops
         setApplicationLoops(application);
 
+        Utility.printAppLoops(applicationContext.appLoops);
+
         // Set the application events
-        setApplicationEvents(application);
+        //setApplicationEvents(application);
 
 
         // Create modules:
@@ -170,10 +171,10 @@ public class JsonToApplicationModel {
 
                         nodeIds.add(node.id());
                     } else {
-                        System.out.println("Skipping node: " + node.uniqueAttribute() + " (node already added)");
+                        //System.out.println("Skipping node: " + node.uniqueAttribute() + " (node already added)");
                     }
                 } else {
-                    System.out.println("Skipping node: " + node.uniqueAttribute() + " (not a data flow)");
+                    //System.out.println("Skipping node: " + node.uniqueAttribute() + " (not a data flow)");
                 }
             }
         }
@@ -217,13 +218,12 @@ public class JsonToApplicationModel {
                                 continue;
                             }
 
-                            // Create an app edge from src ---> dfm ---> Dst
+                            // Create an app edge from src ---> dfm ---> dst
                             addAppEdge(application, srcModule.getName(), dfm, src, dst);
                             addAppEdge(application, dfm, dstModule.getName(), src, dst);
 
                             // Record the connection
-
-                            //applicationContext.appEdges.put(srcModule, dstModule);
+                            applicationContext.appEdges.put(src.id(), dst.id());
 
                             // Set the route of the data flow (assuming some processing occurs at a dfm before heading to dst)
                             if(applicationContext.appLoops.isEmpty()) {
@@ -240,9 +240,9 @@ public class JsonToApplicationModel {
 
                                 newRoute.removeLast(); // Remove the last element
 
-                                route.add(srcModule.getName());
-                                route.add(dfm);
-                                route.add(dstModule.getName());
+                                newRoute.add(srcModule.getName());
+                                newRoute.add(dfm);
+                                newRoute.add(dstModule.getName());
 
                                 //newRoute.add(dstModule.getName()); // Add the new destination module
 
@@ -273,7 +273,7 @@ public class JsonToApplicationModel {
 
         if(srcModuleName.equals("default-module")) { // dfm ---> dst
             tupleType = determineTupleType(srcNode); // Same as src
-            edgeDirection = Tuple.DOWN; //
+            edgeDirection = determineDirection(dstNode); //
             edgeType = determineEdgeType(dstNode);
         } else {
             tupleType = determineTupleType(srcNode);
@@ -294,200 +294,67 @@ public class JsonToApplicationModel {
         System.out.println("Connected: " + srcModuleName + " --> " + dstModuleName);
     }
 
-
-
-
-
-    /*private static void setApplicationEdges(EventDrivenApplication application) {
-        for (TopologyNode srcNode : applicationContext.topologyNodes) {
-            for (TopologyNode dstNode : applicationContext.topologyNodes) {
-                TopologyNodeConnectionStatus connectionStatus = applicationContext.nodeConnectionChecker.areNodesConnected(srcNode.id(), dstNode.id(), "id");
-
-                if (connectionStatus.isThereAConnection()) {
-                    // Retrieve the module names from nodeModules
-                    NodeModule srcModule = applicationContext.nodeModules.get(srcNode.uniqueAttribute());
-                    NodeModule dstModule = applicationContext.nodeModules.get(dstNode.uniqueAttribute());
-
-                    if (srcModule != null && dstModule != null) {
-                        String tupleType = determineTupleType(srcNode, dstNode);
-                        int edgeDirection = determineDirection(srcNode, dstNode);
-                        int edgeType = determineEdgeType(srcNode, dstNode);
-
-                        // Set node module variables
-                        srcModule.setNextModule(dstModule);
-                        srcModule.setOutputTupleType(tupleType);
-                        dstModule.setInputTupleType(tupleType);
-
-                        // Add tuple to multi-output modules
-                        if (srcModule instanceof MultiOutputNodeModule multiModule) {
-                            multiModule.addOutputTuple(tupleType);
-                        }
-
-                        application.addAppEdge(
-                                srcModule.getModule().getName(),
-                                dstModule.getModule().getName(),
-                                applicationContext.applicationPreset.APP_EDGE_TUPLE_CPU_LENGTH,  // Processing latency (adjust as needed)
-                                applicationContext.applicationPreset.APP_EDGE_TUPLE_NW_LENGTH,    // Transmission latency (adjust as needed)
-                                tupleType,
-                                edgeDirection,
-                                edgeType
-                        );
-                    }
-                }
-            }
-        }
-    }*/
+    // TODO - Connect dfm to modules when there existing a node between src and dst. If src node is right next to dst node, no dfm needed
 
     private static void setApplicationTupleMappings(EventDrivenApplication application) {
-        for (Map.Entry<String, NodeModule> entry : applicationContext.nodeModules.entrySet()) {
-            NodeModule module = entry.getValue();
+        Map<String, Map<String, TupleMapping>> tupleMappings = new HashMap<>();
 
-            String moduleName = module.getModule().getName();
-            String inputTuple = module.getInputTupleType();
-            String outputTuple = module.getOutputTupleType();
+        List<TopologyNode> allNodes = Utility.getAllNodesFromTopology(applicationContext.topologyNodeTrees);
 
-            // Ensure valid mappings exist
-            if (inputTuple != null && outputTuple != null) {
-                application.addTupleMapping(moduleName, inputTuple, outputTuple, new FractionalSelectivity(1.0));
-            }
+        for (Map.Entry<String, String> edgeEntry : applicationContext.appEdges.entrySet()) {
+            String srcNodeId = edgeEntry.getKey();
+            String dstNodeId = edgeEntry.getValue();
 
-            // Handle multiple output tuples
-            if (module instanceof MultiOutputNodeModule multiModule) {  // A subclass supporting multiple outputs
-                for (String extraOutput : multiModule.getAdditionalOutputTuples()) {
-                    application.addTupleMapping(moduleName, inputTuple, extraOutput, new FractionalSelectivity(1.0));  // Adjust selectivity as needed
+            AppModule srcModule = applicationContext.appModulesCreated.get(srcNodeId);
+            AppModule dstModule = applicationContext.appModulesCreated.get(dstNodeId);
+
+            if (srcModule != null && dstModule != null) {
+                TopologyNode srcNode = Utility.findTopologyNodeBy("id", srcNodeId, allNodes);  // Find node by ID
+                TopologyNode dstNode = Utility.findTopologyNodeBy("id", dstNodeId, allNodes);
+
+                if (srcNode != null && dstNode != null) {
+                    String srcTupleType = determineTupleType(srcNode);
+                    String dstTupleType = determineTupleType(dstNode);
+
+                    if (srcTupleType != null && dstTupleType != null) {
+                        if (!tupleMappings.containsKey(srcTupleType)) {
+                            tupleMappings.put(srcTupleType, new HashMap<>());
+                        }
+                        TupleMapping mapping = new TupleMapping(srcModule.getName(), srcTupleType, dstTupleType, new FractionalSelectivity(1.0)); // Create mapping here
+                        tupleMappings.get(srcTupleType).put(dstTupleType, mapping);
+
+                        // Print the mapping as it's created:
+                        System.out.println("Tuple Mapping Created: " + mapping); // Or a more formatted output
+
+                        application.addTupleMapping(mapping.module(), mapping.inputTupleType(), mapping.outputTupleType(), mapping.selectivity()); // Add to application immediately
+                    }
                 }
             }
         }
     }
 
-
-    /*private static void setApplicationLoops(EventDrivenApplication application) {
-        List<AppLoop> loops = new ArrayList<>();
-        Map<String, List<String>> graph = new HashMap<>();
-
-        // Step 1: Build a directed graph from application edges
-        for (TopologyNode srcNode : applicationContext.topologyNodes) {
-            for (TopologyNode dstNode : applicationContext.topologyNodes) {
-                TopologyNodeConnectionStatus connectionStatus = applicationContext.nodeConnectionChecker.areNodesConnected(srcNode.id(), dstNode.id(), "id");
-                if (connectionStatus.isThereAConnection()) {
-                    String srcModuleName = applicationContext.nodeModules.get(srcNode.uniqueAttribute()).getModule().getName();
-                    String dstModuleName = applicationContext.nodeModules.get(dstNode.uniqueAttribute()).getModule().getName();
-
-                    String srcModuleName = nodeToModuleName.get(srcNode.uniqueAttribute());
-                    String dstModuleName = nodeToModuleName.get(dstNode.uniqueAttribute());
-
-                    if (srcModuleName == null || dstModuleName == null) {
-                        System.out.println("Warning: Missing module for node " +
-                                (srcModuleName == null ? srcNode.uniqueAttribute() : dstNode.uniqueAttribute()));
-                        continue; // Skip if any module is missing
-                    }
-
-                    graph.putIfAbsent(srcModuleName, new ArrayList<>());
-                    graph.get(srcModuleName).add(dstModuleName);
-                }
-            }
-        }
-
-        // Step 2: Find loops in the graph using DFS
-        Set<String> visited = new HashSet<>();
-        Stack<String> pathStack = new Stack<>();
-        Set<List<String>> detectedLoops = new HashSet<>();
-
-        for (String node : graph.keySet()) {
-            findLoopsDFS(node, graph, visited, pathStack, detectedLoops);
-        }
-
-        // Step 3: Convert detected loops into AppLoop objects
-        for (List<String> loopPath : detectedLoops) {
-            loops.add(new AppLoop(new ArrayList<>(loopPath)));
-        }
-
-        // Step 4: Assign loops to the application
-        application.setLoops(loops);
-    }*/
-
     private static void setApplicationLoops(EventDrivenApplication application) {
-        List<AppLoop> loops = new ArrayList<>();
-        Map<String, List<String>> graph = new HashMap<>();
+        // Generate the loops
+        List<AppLoop> appLoops = generateAppLoops(applicationContext.appLoops);
 
-        // Ensure all node modules are properly tracked
-        Map<String, String> nodeToModuleName = new HashMap<>();
-        for (Map.Entry<String, NodeModule> entry : applicationContext.nodeModules.entrySet()) {
-            nodeToModuleName.put(entry.getKey(), entry.getValue().getModule().getName());
-        }
-
-        // Step 1: Build a directed graph from application edges
-        for (TopologyNode srcNode : applicationContext.topologyNodes) {
-            for (TopologyNode dstNode : applicationContext.topologyNodes) {
-                TopologyNodeConnectionStatus connectionStatus =
-                        applicationContext.nodeConnectionChecker.areNodesConnected(srcNode.id(), dstNode.id(), "id");
-
-                if (connectionStatus.isThereAConnection()) {
-                    // Get module names safely
-                    String srcModuleName = nodeToModuleName.get(srcNode.uniqueAttribute());
-                    String dstModuleName = nodeToModuleName.get(dstNode.uniqueAttribute());
-
-                    if (srcModuleName == null || dstModuleName == null) {
-                        System.out.println("Warning: Missing module for node " +
-                                (srcModuleName == null ? srcNode.uniqueAttribute() : dstNode.uniqueAttribute()));
-                        continue; // Skip if any module is missing
-                    }
-
-                    //System.out.println("Module " + );
-
-                    graph.putIfAbsent(srcModuleName, new ArrayList<>());
-                    graph.get(srcModuleName).add(dstModuleName);
-                }
-            }
-        }
-
-        // Step 2: Find loops in the graph using DFS
-        Set<String> visited = new HashSet<>();
-        Stack<String> pathStack = new Stack<>();
-        Set<List<String>> detectedLoops = new HashSet<>();
-
-        for (String node : graph.keySet()) {
-            findLoopsDFS(node, graph, visited, pathStack, detectedLoops);
-        }
-
-        // Step 3: Convert detected loops into AppLoop objects
-        for (List<String> loopPath : detectedLoops) {
-            loops.add(new AppLoop(new ArrayList<>(loopPath)));
-        }
-
-        // Step 4: Assign loops to the application
-        application.setLoops(loops);
+        // Assign loops to the application
+        application.setLoops(appLoops);
     }
 
     private static void setApplicationEvents(EventDrivenApplication application) {
 
     }
 
-    /**
-     * DFS-based loop detection
-     */
-    private static void findLoopsDFS(String node, Map<String, List<String>> graph, Set<String> visited, Stack<String> pathStack, Set<List<String>> detectedLoops) {
-        if (pathStack.contains(node)) {
-            // Loop detected: extract loop sequence
-            int loopStartIndex = pathStack.indexOf(node);
-            List<String> loopPath = new ArrayList<>(pathStack.subList(loopStartIndex, pathStack.size()));
-            loopPath.add(node); // Complete the cycle
-            detectedLoops.add(loopPath);
-            return;
+    private static List<AppLoop> generateAppLoops(List<List<String>> loops) {
+        List<AppLoop> appLoops = new ArrayList<>();
+
+        for(List<String> loop : loops) {
+            AppLoop appLoop = new AppLoop(loop);
+
+            appLoops.add(appLoop);
         }
 
-        if (visited.contains(node)) return;
-
-        visited.add(node);
-        pathStack.push(node);
-
-        if (graph.containsKey(node)) {
-            for (String neighbor : graph.get(node)) {
-                findLoopsDFS(neighbor, graph, visited, pathStack, detectedLoops);
-            }
-        }
-
-        pathStack.pop();
+        return appLoops;
     }
 
     private static String determineTupleType(TopologyNode node) {

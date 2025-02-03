@@ -130,6 +130,14 @@ public final class App {
                     physicalTopology.getActuators()
             );
 
+            ModuleMapping moduleMapping = ModuleMapping.createModuleMapping();
+
+            System.out.println(physicalTopology.getFogDevices().size());
+            System.out.println(physicalTopology.getActuators().size());
+            System.out.println(physicalTopology.getSensors().size());
+            System.out.println(moduleMapping.getModuleMapping().isEmpty() ? "Empty" : "Not Empty");
+
+
             // Submit the application to the controller with the appropriate placement strategy
             controller.submitApplication(
                     application,
@@ -139,7 +147,7 @@ public final class App {
                             physicalTopology.getSensors(),
                             physicalTopology.getActuators(),
                             application,
-                            ModuleMapping.createModuleMapping()
+                            moduleMapping
                     )
             );
 
