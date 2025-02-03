@@ -22,6 +22,10 @@ import java.util.*;
  * READ-PROP search for
  * */
 
+// TODO - COMPLETE THE INJECT NODE DATA FLOW
+// TODO - CLEANUP CODE AND REMOVE REDUNDANT CODE
+// TODO - FINALISE CLASSES AND ADD COMMENTS TO CODE
+
 public class JsonToApplicationModel {
     private static ApplicationContext applicationContext;
 
@@ -243,6 +247,8 @@ public class JsonToApplicationModel {
                                 newRoute.add(srcModule.getName());
                                 newRoute.add(dfm);
                                 newRoute.add(dstModule.getName());
+
+                                // TODO - FIX THIS / OUTPUT INCORRECT
 
                                 //newRoute.add(dstModule.getName()); // Add the new destination module
 

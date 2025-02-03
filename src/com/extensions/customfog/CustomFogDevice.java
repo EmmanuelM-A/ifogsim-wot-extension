@@ -32,6 +32,8 @@ public class CustomFogDevice extends FogDevice {
 
     }
 
+    // TODO REMEMEBR TO SWITCH THE USE OF FOGDEVICE TO CUSTOMFOGDEVICE
+
     public void processEventTuple(EventTuple tuple) {
         System.out.println(getName() + " processing event tuple: " + tuple.getEventType());
         EventManager.getInstance().routeEvent(tuple);

@@ -18,6 +18,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+// TODO UPDATE THIS CLASS TO WORK WITH THE SUB FLOWS OBJECT IN AT
+
 public class ApplicationTopologyParser implements FileProcessor<JsonNode> {
     private final ObjectMapper objectMapper;
     private final JsonNode applicationTopology;

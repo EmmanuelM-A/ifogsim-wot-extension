@@ -18,8 +18,10 @@ import com.extensions.vdcreation.parsers.ThingDescriptionParser;
 import com.extensions.vdcreation.parsers.VirtualDeviceConfigParser;
 import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.core.CloudSim;
+import org.fog.application.AppModule;
 import org.fog.entities.Actuator;
 import org.fog.entities.FogBroker;
+import org.fog.entities.FogDevice;
 import org.fog.entities.Sensor;
 import org.fog.placement.Controller;
 import org.fog.placement.ModuleMapping;
@@ -94,7 +96,7 @@ public final class App {
             //////////////////////////////// APPLICATION SETUP ////////////////////////////////
 
             ApplicationContext applicationContext = new ApplicationContext(
-                    new File("src/com/extensions/input/application/door-security-application.json"), // SET THE NODE RED APPLICATION JSON FILE PATH HERE
+                    new File("src/com/extensions/input/application/smart-healthcare-facility.json"), // SET THE NODE RED APPLICATION JSON FILE PATH HERE
                     CloudNodePreset.DEFAULT,
                     EdgeNodePreset.DEFAULT,
                     ApplicationPreset.DEFAULT
@@ -108,6 +110,7 @@ public final class App {
 
             // Create the application model for the node red application
             EventDrivenApplication application = JsonToApplicationModel.createApplicationModel(appId, broker.getId(), applicationContext);
+            application.setUserId(broker.getId());
 
             // Set the application for VD's sensors and actuators
             for(VirtualDevice virtualDevice : virtualDevices) {
@@ -131,11 +134,19 @@ public final class App {
 
             ModuleMapping moduleMapping = ModuleMapping.createModuleMapping();
 
-            //System.out.println(physicalTopology.getFogDevices().size());
-            //System.out.println(physicalTopology.getActuators().size());
-            //System.out.println(physicalTopology.getSensors().size());
+            // Ensure each module has a valid fog device mapping
+            for (FogDevice device : physicalTopology.getFogDevices()) {
+                for (AppModule module : application.getModules()) {
+                    moduleMapping.addModuleToDevice(module.getName(), device.getName());
+                }
+            }
+
+            // TODO - FIX APPLICATION JSON FILES / INCORRECT TOPIC NAMES, ETC.
+
+
             System.out.println(moduleMapping.getModuleMapping().isEmpty() ? "Empty" : "Not Empty");
 
+            System.out.println("Application getModules(): " + application.getModules().size());
 
             // Submit the application to the controller with the appropriate placement strategy
             controller.submitApplication(
