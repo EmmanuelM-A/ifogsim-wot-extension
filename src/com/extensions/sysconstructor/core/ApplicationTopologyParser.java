@@ -18,8 +18,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
-// TODO UPDATE THIS CLASS TO WORK WITH THE SUB FLOWS OBJECT IN AT
-
 public class ApplicationTopologyParser implements FileProcessor<JsonNode> {
     private final ObjectMapper objectMapper;
     private final JsonNode applicationTopology;
@@ -112,22 +110,6 @@ public class ApplicationTopologyParser implements FileProcessor<JsonNode> {
         return nodeTrees;
     }
 
-    public List<TopologyNodeConnection> parseTopologyConnections() throws JsonProcessingException {
-        List<TopologyNodeConnection> nodeConnections = new ArrayList<>();
-
-        JsonNode connections = applicationTopology.get("connections");
-
-        for(JsonNode connection : connections) {
-            String src = connection.get("source").asText();
-            String dst = connection.get("destination").asText();
-
-            TopologyNodeConnection nodeConnection = new TopologyNodeConnection(src, dst);
-
-            nodeConnections.add(nodeConnection);
-        }
-        return nodeConnections;
-    }
-
     public TopologyNode parseTopologyNode(JsonNode node) {
         String id = node.path("id").asText(null);
         String name = node.path("name").asText(null);
@@ -183,27 +165,4 @@ public class ApplicationTopologyParser implements FileProcessor<JsonNode> {
 
         return nodes;
     }
-
-    public List<TopologyDataFlow> parseTopologyDataFlows() {
-        List<TopologyDataFlow> dataFlows = new ArrayList<>();
-
-        JsonNode dataFlowsNode = applicationTopology.get("dataFlows");
-        if (dataFlowsNode != null && dataFlowsNode.isArray()) {
-            for (JsonNode dataFlowNode : dataFlowsNode) {
-                String source = dataFlowNode.get("source").asText();
-                List<String> targets = new ArrayList<>();
-                JsonNode targetsNode = dataFlowNode.get("targets");
-                if (targetsNode != null && targetsNode.isArray()) {
-                    for (JsonNode targetNode : targetsNode) {
-                        targets.add(targetNode.asText());
-                    }
-                }
-                dataFlows.add(new TopologyDataFlow(source, targets));
-            }
-        }
-
-        return dataFlows;
-    }
-
-
 }

@@ -142,9 +142,10 @@ public class JsonToApplicationModel {
 
             if (hasEventStart) {
                 subFlowStartTypes.put(subFlowId, "event");
+                applicationContext.eventFlows.add(topologyNodeTree); // Keep track of sub flows that are event-driven
             } else if (hasInjectStart) {
                 subFlowStartTypes.put(subFlowId, "inject");
-                applicationContext.dataFlows.add(topologyNodeTree); // Add to dataflow sub flows
+                applicationContext.injectFlows.add(topologyNodeTree); // Keep track of sub flows that are inject-stimulated
             } else {
                 subFlowStartTypes.put(subFlowId, "none");
                 applicationContext.dataFlows.add(topologyNodeTree); // Add to dataflow sub flows
@@ -223,8 +224,17 @@ public class JsonToApplicationModel {
                             }
 
                             // Create an app edge from src ---> dfm ---> dst
-                            addAppEdge(application, srcModule.getName(), dfm, src, dst);
-                            addAppEdge(application, dfm, dstModule.getName(), src, dst);
+                            addAppEdge(application, srcModule.getName(), dstModule.getName(), src, dst);
+                            //addAppEdge(application, dfm, dstModule.getName(), src, dst);
+
+                            /*
+                            * If src is directly connected to dst => edge) src ---> dst
+                            * If there exists some nodes between src and dst (not directly connected) => edge) src ---> Pr --->  dst
+                            * record all appEdges
+                            * record all tuple flows through modules
+                            * */
+
+                            // TODO - Connect dfm to modules when there existing a node between src and dst. If src node is right next to dst node, no dfm needed
 
                             // Record the connection
                             applicationContext.appEdges.put(src.id(), dst.id());
@@ -242,15 +252,15 @@ public class JsonToApplicationModel {
 
                                 List<String> newRoute = new ArrayList<>(lastRoute); // Create a *copy*
 
-                                newRoute.removeLast(); // Remove the last element
+                                //newRoute.removeLast(); // Remove the last element
 
-                                newRoute.add(srcModule.getName());
-                                newRoute.add(dfm);
-                                newRoute.add(dstModule.getName());
+                                //newRoute.add(srcModule.getName());
+                                //newRoute.add(dfm);
+                                //newRoute.add(dstModule.getName());
 
                                 // TODO - FIX THIS / OUTPUT INCORRECT
 
-                                //newRoute.add(dstModule.getName()); // Add the new destination module
+                                newRoute.add(dstModule.getName()); // Add the new destination module
 
                                 applicationContext.appLoops.add(newRoute); // Add the extended route
                             }
@@ -262,6 +272,9 @@ public class JsonToApplicationModel {
                             ptr2++;
                         }
                     }
+
+                    // Empty route list for new branch
+                    route.clear();
                 }
             }
         }
@@ -299,8 +312,6 @@ public class JsonToApplicationModel {
 
         System.out.println("Connected: " + srcModuleName + " --> " + dstModuleName);
     }
-
-    // TODO - Connect dfm to modules when there existing a node between src and dst. If src node is right next to dst node, no dfm needed
 
     private static void setApplicationTupleMappings(EventDrivenApplication application) {
         Map<String, Map<String, TupleMapping>> tupleMappings = new HashMap<>();

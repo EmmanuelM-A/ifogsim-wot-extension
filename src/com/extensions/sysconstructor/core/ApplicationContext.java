@@ -1,5 +1,6 @@
 package com.extensions.sysconstructor.core;
 
+import com.extensions.sysconstructor.nodered.NodeRedJSONParser;
 import com.extensions.sysconstructor.nodered.NodeRedTranslator;
 import com.extensions.sysconstructor.topology.*;
 import com.extensions.utils.FilePaths;
@@ -59,12 +60,15 @@ public class ApplicationContext {
     public final List<String> nodeTopics;
 
     /**
-     * A list of all nodes used in the application
+     * A list of all nodes used in the application.
      */
     public final List<TopologyNode> topologyNodes;
 
-    // A list of all required nodes (WoT nodes and inject nodes), all other node types like functions or debugs have been filtered out
-    //public final List<TopologyNode> requiredNodes;
+    /**
+     * A list of all required nodes (WoT nodes and inject nodes), all other node types like
+     * functions or debugs have been filtered out.
+     */
+    public final List<TopologyNode> requiredNodes;
 
     // Hierarchical representation of topology nodes in a tree structure
     public final List<TopologyNodeTree> topologyNodeTrees;
@@ -73,7 +77,12 @@ public class ApplicationContext {
     public final List<TopologyNodeTree> dataFlows;
 
     /**
-     * Sub flow trees that represent event flows within an application
+     * Sub flow trees that represent (user) inject stimulated data flows.
+     */
+    public final List<TopologyNodeTree> injectFlows;
+
+    /**
+     * Sub flow trees that represent event flows within an application.
      */
     public final List<TopologyNodeTree> eventFlows;
 
@@ -99,7 +108,7 @@ public class ApplicationContext {
      * @param cloudNodePreset Preset configuration for cloud nodes.
      * @param edgeNodePreset Preset configuration for edge nodes.
      * @param applicationPreset Preset configuration for the application.
-     * @throws IOException if an error occurs while reading or parsing the file.
+     * @throws IOException If an error occurs while reading or parsing the file.
      */
     public ApplicationContext(
             File nodeRedApplicationJsonFile,
@@ -132,7 +141,7 @@ public class ApplicationContext {
         this.topologyNodes = Utility.getAllNodesFromTopology(topologyNodeTrees);
 
         // Get only the required topology nodes (only WoT nodes and inject nodes)
-        //this.requiredNodes = fi
+        this.requiredNodes = filterTopologyNode(topologyNodes);
 
         // Initialize the connection checker to validate topology node connections
         this.nodeConnectionChecker = new TopologyNodeConnectionChecker(topologyNodeTrees);
@@ -140,6 +149,7 @@ public class ApplicationContext {
         // Initialize storage for data flows, application modules, and application edges
         this.dataFlows = new ArrayList<>();
         this.eventFlows = new ArrayList<>();
+        this.injectFlows = new ArrayList<>();
         this.appModulesCreated = new HashMap<>();
         this.appEdges = new HashMap<>();
         this.appLoops = new ArrayList<>();
@@ -147,7 +157,20 @@ public class ApplicationContext {
         System.out.println("Application Topology Parsed Successfully!");
     }
 
-    /*private List<TopologyNode> filterTopologyNode(List<TopologyNode> topologyNodes, List<String> filter) {
+    private List<TopologyNode> filterTopologyNode(List<TopologyNode> topologyNodes) {
+        List<String> filter = List.of(
+                NodeRedJSONParser.TYPE_INVOKE_ACTION,
+                NodeRedJSONParser.TYPE_READ_PROPERTY,
+                NodeRedJSONParser.TYPE_WRITE_PROPERTY,
+                NodeRedJSONParser.TYPE_SUBSCRIBE_EVENT,
+                NodeRedJSONParser.TYPE_INJECT);
 
-    }*/
+        List<TopologyNode> filteredNodes = new ArrayList<>();
+
+        for(TopologyNode topologyNode : topologyNodes) {
+            if(filter.contains(topologyNode.type())) filteredNodes.add(topologyNode);
+        }
+
+        return filteredNodes;
+    }
 }
