@@ -1,5 +1,7 @@
 package com.extensions.vdcreation.core;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -43,7 +45,7 @@ public class VirtualDeviceFactory {
         // Instantiate a virtual device with no sensors or actuators
         VirtualDevice virtualDevice = defineVirtualDevice(thingDescription, configs);
 
-        // TODO ENSURE WRITE-PROPERTIES ARE ADDED AS ACTUATORS - REMEMBER
+        Map<String, Property> writeProperties = new HashMap<>();
 
         // Create the sensors for the TD properties
         for(Map.Entry<String, Property> propertyEntry : thingDescription.getProperties().entrySet()) {
@@ -51,21 +53,44 @@ public class VirtualDeviceFactory {
             String propertyName = propertyEntry.getKey();
             Property property = propertyEntry.getValue();
 
-            // Map the property to a SensorProperty
-            Sensor sensorProperty = new SensorProperty(propertyName, userId, appId, property, sensorPreset);
+            if(property.isWriteOnly() || property.isWriteable()) {
+                // If a writeable property, record it and skip
+                writeProperties.put(propertyName, property);
+            } else {
+                // Map the property to a SensorProperty
+                Sensor sensorProperty = new SensorProperty(propertyName, userId, appId, property, sensorPreset);
 
-            // Set the sensor's gateway device ID to the VD's ID
-            sensorProperty.setGatewayDeviceId(virtualDevice.getFogDevice().getId());
+                // Set the sensor's gateway device ID to the VD's ID
+                sensorProperty.setGatewayDeviceId(virtualDevice.getFogDevice().getId());
 
-            // Set the latency of the sensor communication
-            sensorProperty.setLatency(sensorPreset.LATENCY);
+                // Set the latency of the sensor communication
+                sensorProperty.setLatency(sensorPreset.LATENCY);
 
-            // Add sensor property to the virtual device
-            virtualDevice.getSensorProperties().add(sensorProperty);
+                // Add sensor property to the virtual device
+                virtualDevice.getSensorProperties().add(sensorProperty);
+            }
         }
 
         // Create actuators for the TD actions
         for(Map.Entry<String, Action> actionEntry : thingDescription.getActions().entrySet()) {
+            // Set writeable properties as actions
+            for(Map.Entry<String, Property> writeableProperty : writeProperties.entrySet()) {
+                // Extract entry data
+                String propertyName = writeableProperty.getKey();
+                Property property = writeableProperty.getValue();
+
+                ActuatorAction writePropertyAction = new ActuatorAction(propertyName, userId, appId, null, actuatorPreset);
+
+                // Add actuator action to the virtual device
+                virtualDevice.getActuatorActions().add(writePropertyAction);
+
+                // Set the actuator's gateway device ID to the VD's ID
+                writePropertyAction.setGatewayDeviceId(virtualDevice.getFogDevice().getId());
+
+                // Set the latency of the actuator communication
+                writePropertyAction.setLatency(actuatorPreset.LATENCY);
+            }
+
             // Extract entry data
             String actionName = actionEntry.getKey();
             Action action = actionEntry.getValue();
