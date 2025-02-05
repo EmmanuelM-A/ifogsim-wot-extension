@@ -13,19 +13,24 @@ import org.fog.utils.Logger;
 public class SensorProperty extends Sensor {
     private Property property;
     private SensorPreset preset;
-    private String units;
-    private double minValue;
-    private double maxValue;
-    private double samplingRate;
+    private String name;
+    private String tupleType;
 
     public SensorProperty(String name, int userId, String appId, Property property, SensorPreset preset) {
         super(name, name, userId, appId, preset.DISTRIBUTION);
+        this.name = name;
+        this.tupleType = name;
 
         // Define sensor configs
         setLatency(preset.LATENCY);
 
         this.property = property;
         this.preset = preset;
+    }
+
+    @Override
+    public String toString() {
+        return "{" + "Sensor Name: " + name + " | Tuple Type: " + tupleType + " | Distribution: " + preset.DISTRIBUTION.getDistributionType() + " | Latency: " + preset.LATENCY + "}";
     }
 
     @Override
@@ -36,10 +41,11 @@ public class SensorProperty extends Sensor {
                 _edge = edge;
         }
         if (_edge == null) {
-            System.out.println("AppEdge is null in SensorProperty! Ensure it is initialized correctly.");
+            System.out.println("AppEdge is null in SensorProperty! Ensure it is initialized correctly. Sensor: ");
         } else {
-            System.out.println("AppEdge is initialized correctly!");
+            //System.out.println("AppEdge is initialized correctly! Sensor: " + _edge.getDestination());
         }
+        assert _edge != null;
         long cpuLength = (long) _edge.getTupleCpuLength();
         long nwLength = (long) _edge.getTupleNwLength();
 

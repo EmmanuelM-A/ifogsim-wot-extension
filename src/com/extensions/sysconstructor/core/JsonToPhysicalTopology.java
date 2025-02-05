@@ -25,6 +25,8 @@ public class JsonToPhysicalTopology {
             // Search for selected VDs based on things list
             List<VirtualDevice> selectedVirtualDevices = getSelectedVirtualDevices(virtualDevices, applicationContext.things);
 
+            if(selectedVirtualDevices == null) throw new Error("No virtual devices exist for things specified!");
+
             // Get the names of all sensors and actuators used in the application
             Set<String> sensorsAndActuatorsUsed = new HashSet<>(getAllSensorsAndActuatorsUsed(applicationContext.topologyNodes));
 
@@ -182,7 +184,7 @@ public class JsonToPhysicalTopology {
             }
         }
 
-        return selectedVirtualDevices;
+        return selectedVirtualDevices.isEmpty() ? null : selectedVirtualDevices;
     }
 
     private static FogDevice createEdgeNode(String identifier) {

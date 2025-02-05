@@ -58,6 +58,6 @@ public class VirtualDeviceConfigParser implements FileProcessor<List<VirtualDevi
             configs.add(config);
         }
 
-        return configs;
+        return configs.isEmpty() ? null : configs;
     }
 }

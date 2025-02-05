@@ -144,8 +144,6 @@ public final class App {
                 }
             }
 
-            // TODO - FIX APPLICATION JSON FILES / INCORRECT TOPIC NAMES, ETC.
-
 
             System.out.println(moduleMapping.getModuleMapping().isEmpty() ? "Empty" : "Not Empty");
 

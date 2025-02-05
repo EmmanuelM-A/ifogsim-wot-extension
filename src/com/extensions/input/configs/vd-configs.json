@@ -1,3 +1,15 @@
 {
-  "configs": []
+  "configs": [
+    {
+      "tagNames": ["TemperatureSensor"],
+      "mips": 500,
+      "ram": 1024,
+      "upBw": 1000,
+      "downBw": 1000,
+      "level": 1,
+      "ratePerMips": 0.2,
+      "busyPower": 5.5,
+      "idlePower": 2.0
+    }
+  ]
 }

@@ -1,6 +1,6 @@
 [
     {
-        "id": "18eff0f03d5dfec7",
+        "id": "64f5c2f454bc239b",
         "type": "tab",
         "label": "Temperature Monitor",
         "disabled": false,
@@ -8,27 +8,27 @@
         "env": []
     },
     {
-        "id": "41d8538a44d91392",
+        "id": "b209047eeffd90cf",
         "type": "read-property",
-        "z": "18eff0f03d5dfec7",
+        "z": "64f5c2f454bc239b",
         "name": "",
         "topic": "",
         "thing": "097e18567aff7548",
         "property": "temperature",
         "uriVariables": "",
-        "observe": false,
+        "observe": true,
         "x": 460,
         "y": 200,
         "wires": [
             [
-                "bf02facb9b61ff39"
+                "2de28d3e9bc3826a"
             ]
         ]
     },
     {
-        "id": "bf02facb9b61ff39",
+        "id": "2de28d3e9bc3826a",
         "type": "function",
-        "z": "18eff0f03d5dfec7",
+        "z": "64f5c2f454bc239b",
         "name": "Some Processing",
         "func": "\nreturn msg;",
         "outputs": 1,
@@ -41,14 +41,14 @@
         "y": 200,
         "wires": [
             [
-                "f79b45cdc865320c"
+                "33e67c9c33ae2202"
             ]
         ]
     },
     {
-        "id": "577faf76995b30ad",
+        "id": "49f32fc818c156df",
         "type": "subscribe-event",
-        "z": "18eff0f03d5dfec7",
+        "z": "64f5c2f454bc239b",
         "name": "",
         "topic": "",
         "thing": "097e18567aff7548",
@@ -57,14 +57,14 @@
         "y": 380,
         "wires": [
             [
-                "40494056edc8cf2a"
+                "702787bcbba504c8"
             ]
         ]
     },
     {
-        "id": "40494056edc8cf2a",
+        "id": "702787bcbba504c8",
         "type": "invoke-action",
-        "z": "18eff0f03d5dfec7",
+        "z": "64f5c2f454bc239b",
         "name": "",
         "topic": "",
         "thing": "dc99cc6070d7f6fe",
@@ -77,9 +77,9 @@
         ]
     },
     {
-        "id": "f79b45cdc865320c",
+        "id": "33e67c9c33ae2202",
         "type": "invoke-action",
-        "z": "18eff0f03d5dfec7",
+        "z": "64f5c2f454bc239b",
         "name": "",
         "topic": "",
         "thing": "dc99cc6070d7f6fe",
@@ -92,19 +92,19 @@
         ]
     },
     {
-        "id": "aec6fe8336e8dca9",
+        "id": "ae1e15d0b06d19e1",
         "type": "comment",
-        "z": "18eff0f03d5dfec7",
-        "name": "Temperature processed and then display",
+        "z": "64f5c2f454bc239b",
+        "name": "Temperature processed and then displayed",
         "info": "",
         "x": 520,
         "y": 160,
         "wires": []
     },
     {
-        "id": "e27df3144d7d5de4",
+        "id": "cf61e98bc0bc8d6d",
         "type": "comment",
-        "z": "18eff0f03d5dfec7",
+        "z": "64f5c2f454bc239b",
         "name": "Handles the over heat event",
         "info": "",
         "x": 480,
@@ -112,10 +112,41 @@
         "wires": []
     },
     {
+        "id": "b69940d0053f0860",
+        "type": "subscribe-event",
+        "z": "64f5c2f454bc239b",
+        "name": "",
+        "topic": "",
+        "thing": "097e18567aff7548",
+        "event": "lowBattery",
+        "x": 440,
+        "y": 480,
+        "wires": [
+            [
+                "0f6ec1befc255f8e"
+            ]
+        ]
+    },
+    {
+        "id": "0f6ec1befc255f8e",
+        "type": "invoke-action",
+        "z": "64f5c2f454bc239b",
+        "name": "",
+        "topic": "",
+        "thing": "dc99cc6070d7f6fe",
+        "action": "showAlert",
+        "uriVariables": "",
+        "x": 730,
+        "y": 480,
+        "wires": [
+            []
+        ]
+    },
+    {
         "id": "097e18567aff7548",
         "type": "consumed-thing",
-        "tdLink": "http://10.32.147.97:8080/temperature-sensor",
-        "td": "{\"@context\":[\"https://www.w3.org/2019/wot/td/v1\",{\"@language\":\"en\"}],\"@type\":\"Thing\",\"title\":\"Temperature Sensor\",\"securityDefinitions\":{\"nosec\":{\"scheme\":\"nosec\"}},\"security\":[\"nosec\"],\"properties\":{\"temperature\":{\"type\":\"number\",\"description\":\"The current temperature reading of the environemnt in celsius.\",\"readOnly\":true,\"forms\":[{\"href\":\"http://10.32.147.97:8080/temperature-sensor/properties/temperature\",\"contentType\":\"application/json\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"},{\"href\":\"http://10.32.147.97:8080/temperature-sensor/properties/temperature\",\"contentType\":\"application/cbor\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"}],\"writeOnly\":false,\"observable\":false},\"batteryLevel\":{\"type\":\"number\",\"description\":\"The battery level of the sensor as a percentage.\",\"readOnly\":true,\"forms\":[{\"href\":\"http://10.32.147.97:8080/temperature-sensor/properties/batteryLevel\",\"contentType\":\"application/json\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"},{\"href\":\"http://10.32.147.97:8080/temperature-sensor/properties/batteryLevel\",\"contentType\":\"application/cbor\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"}],\"writeOnly\":false,\"observable\":false},\"status\":{\"type\":\"string\",\"description\":\"The current status of the sensor (e.g. active, inactive, error).\",\"properties\":{\"active\":{\"type\":\"string\",\"description\":\"Means the sensor is on and is sending data as normal.\"},\"inactive\":{\"type\":\"string\",\"description\":\"Means the sensor is off.\"},\"error\":{\"type\":\"string\",\"description\":\"Means an error has occured within the sensor.\"}},\"forms\":[{\"href\":\"http://10.32.147.97:8080/temperature-sensor/properties/status\",\"contentType\":\"application/json\",\"op\":[\"readproperty\",\"writeproperty\"]},{\"href\":\"http://10.32.147.97:8080/temperature-sensor/properties/status\",\"contentType\":\"application/cbor\",\"op\":[\"readproperty\",\"writeproperty\"]}],\"readOnly\":false,\"writeOnly\":false,\"observable\":false}},\"actions\":{\"reset\":{\"description\":\"Resets the temperature sensor to its default state.\",\"forms\":[{\"href\":\"http://10.32.147.97:8080/temperature-sensor/actions/reset\",\"contentType\":\"application/json\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"},{\"href\":\"http://10.32.147.97:8080/temperature-sensor/actions/reset\",\"contentType\":\"application/cbor\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"}],\"safe\":false,\"idempotent\":false},\"calibrate\":{\"description\":\"Calibrates the temperature sensor.\",\"input\":{\"type\":\"object\",\"properties\":{\"calibrationValue\":{\"type\":\"number\",\"description\":\"Calibration offset value in Celsius.\"}},\"required\":[\"calibrationValue\"]},\"forms\":[{\"href\":\"http://10.32.147.97:8080/temperature-sensor/actions/calibrate\",\"contentType\":\"application/json\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"},{\"href\":\"http://10.32.147.97:8080/temperature-sensor/actions/calibrate\",\"contentType\":\"application/cbor\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"}],\"safe\":false,\"idempotent\":false},\"setThreshold\":{\"description\":\"Sets a temperature threshold for triggering the overheat event.\",\"input\":{\"type\":\"object\",\"properties\":{\"threshold\":{\"type\":\"number\",\"description\":\"Temperature threshold in celsius.\"}},\"required\":[\"threshold\"]},\"forms\":[{\"href\":\"http://10.32.147.97:8080/temperature-sensor/actions/setThreshold\",\"contentType\":\"application/json\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"},{\"href\":\"http://10.32.147.97:8080/temperature-sensor/actions/setThreshold\",\"contentType\":\"application/cbor\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"}],\"safe\":false,\"idempotent\":false}},\"events\":{\"overheat\":{\"description\":\"Triggered when the temperature exceeds the set threshold.\",\"data\":{\"type\":\"number\"},\"forms\":[{\"href\":\"http://10.32.147.97:8080/temperature-sensor/events/overheat\",\"contentType\":\"application/json\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]},{\"href\":\"http://10.32.147.97:8080/temperature-sensor/events/overheat\",\"contentType\":\"application/cbor\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]}]},\"lowBattery\":{\"description\":\"Triggered when the battery level falls below 10%.\",\"data\":{\"type\":\"number\"},\"forms\":[{\"href\":\"http://10.32.147.97:8080/temperature-sensor/events/lowBattery\",\"contentType\":\"application/json\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]},{\"href\":\"http://10.32.147.97:8080/temperature-sensor/events/lowBattery\",\"contentType\":\"application/cbor\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]}]},\"statusChange\":{\"description\":\"Triggered when the sensor's status changes.\",\"data\":{\"type\":\"string\"},\"forms\":[{\"href\":\"http://10.32.147.97:8080/temperature-sensor/events/statusChange\",\"contentType\":\"application/json\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]},{\"href\":\"http://10.32.147.97:8080/temperature-sensor/events/statusChange\",\"contentType\":\"application/cbor\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]}]}},\"id\":\"urn:uuid:3b47980f-f83a-4df4-bf6c-3d68f8e34f19\",\"description\":\"A temperature sensor that provides readings, supports calibration, and monitors environmental conditions.\",\"support\":\"\",\"forms\":[{\"href\":\"http://10.32.147.97:8080/temperature-sensor/properties\",\"contentType\":\"application/json\",\"op\":[\"readallproperties\",\"readmultipleproperties\",\"writeallproperties\",\"writemultipleproperties\"]},{\"href\":\"http://10.32.147.97:8080/temperature-sensor/properties\",\"contentType\":\"application/cbor\",\"op\":[\"readallproperties\",\"readmultipleproperties\",\"writeallproperties\",\"writemultipleproperties\"]}]}",
+        "tdLink": "http://10.32.151.21:8081/temperature-sensor",
+        "td": "{\"@context\":[\"https://www.w3.org/2019/wot/td/v1\",{\"@language\":\"en\"}],\"@type\":\"Thing\",\"title\":\"Temperature Sensor\",\"securityDefinitions\":{\"nosec\":{\"scheme\":\"nosec\"}},\"security\":[\"nosec\"],\"properties\":{\"temperature\":{\"type\":\"number\",\"description\":\"The current temperature reading of the environemnt in celsius.\",\"readOnly\":true,\"observable\":true,\"forms\":[{\"href\":\"http://10.32.151.21:8081/temperature-sensor/properties/temperature\",\"contentType\":\"application/json\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"},{\"href\":\"http://10.32.151.21:8081/temperature-sensor/properties/temperature/observable\",\"contentType\":\"application/json\",\"op\":[\"observeproperty\",\"unobserveproperty\"],\"subprotocol\":\"longpoll\"},{\"href\":\"http://10.32.151.21:8081/temperature-sensor/properties/temperature\",\"contentType\":\"application/cbor\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"},{\"href\":\"http://10.32.151.21:8081/temperature-sensor/properties/temperature/observable\",\"contentType\":\"application/cbor\",\"op\":[\"observeproperty\",\"unobserveproperty\"],\"subprotocol\":\"longpoll\"}],\"writeOnly\":false},\"batteryLevel\":{\"type\":\"number\",\"description\":\"The battery level of the sensor as a percentage.\",\"readOnly\":true,\"forms\":[{\"href\":\"http://10.32.151.21:8081/temperature-sensor/properties/batteryLevel\",\"contentType\":\"application/json\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"},{\"href\":\"http://10.32.151.21:8081/temperature-sensor/properties/batteryLevel\",\"contentType\":\"application/cbor\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"}],\"writeOnly\":false,\"observable\":false},\"status\":{\"type\":\"string\",\"description\":\"The current status of the sensor (e.g. active, inactive, error).\",\"enum\":[\"active\",\"inactive\",\"error\"],\"forms\":[{\"href\":\"http://10.32.151.21:8081/temperature-sensor/properties/status\",\"contentType\":\"application/json\",\"op\":[\"readproperty\",\"writeproperty\"]},{\"href\":\"http://10.32.151.21:8081/temperature-sensor/properties/status\",\"contentType\":\"application/cbor\",\"op\":[\"readproperty\",\"writeproperty\"]}],\"readOnly\":false,\"writeOnly\":false,\"observable\":false}},\"actions\":{\"reset\":{\"description\":\"Resets the temperature sensor to its default state.\",\"forms\":[{\"href\":\"http://10.32.151.21:8081/temperature-sensor/actions/reset\",\"contentType\":\"application/json\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"},{\"href\":\"http://10.32.151.21:8081/temperature-sensor/actions/reset\",\"contentType\":\"application/cbor\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"}],\"safe\":false,\"idempotent\":false},\"calibrate\":{\"description\":\"Calibrates the temperature sensor.\",\"input\":{\"type\":\"object\",\"properties\":{\"calibrationValue\":{\"type\":\"number\",\"description\":\"Calibration offset value in Celsius.\"}},\"required\":[\"calibrationValue\"]},\"forms\":[{\"href\":\"http://10.32.151.21:8081/temperature-sensor/actions/calibrate\",\"contentType\":\"application/json\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"},{\"href\":\"http://10.32.151.21:8081/temperature-sensor/actions/calibrate\",\"contentType\":\"application/cbor\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"}],\"safe\":false,\"idempotent\":false},\"setThreshold\":{\"description\":\"Sets a temperature threshold for triggering the overheat event.\",\"input\":{\"type\":\"object\",\"properties\":{\"threshold\":{\"type\":\"number\",\"description\":\"Temperature threshold in celsius.\"}},\"required\":[\"threshold\"]},\"forms\":[{\"href\":\"http://10.32.151.21:8081/temperature-sensor/actions/setThreshold\",\"contentType\":\"application/json\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"},{\"href\":\"http://10.32.151.21:8081/temperature-sensor/actions/setThreshold\",\"contentType\":\"application/cbor\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"}],\"safe\":false,\"idempotent\":false}},\"events\":{\"overheat\":{\"description\":\"Triggered when the temperature exceeds the set threshold.\",\"data\":{\"type\":\"object\",\"properties\":{\"message\":{\"type\":\"string\"},\"timestamp\":{\"type\":\"string\",\"format\":\"date-time\"}}},\"forms\":[{\"href\":\"http://10.32.151.21:8081/temperature-sensor/events/overheat\",\"contentType\":\"application/json\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]},{\"href\":\"http://10.32.151.21:8081/temperature-sensor/events/overheat\",\"contentType\":\"application/cbor\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]}]},\"lowBattery\":{\"description\":\"Triggered when the battery level falls below 10%.\",\"data\":{\"type\":\"string\"},\"forms\":[{\"href\":\"http://10.32.151.21:8081/temperature-sensor/events/lowBattery\",\"contentType\":\"application/json\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]},{\"href\":\"http://10.32.151.21:8081/temperature-sensor/events/lowBattery\",\"contentType\":\"application/cbor\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]}]},\"statusChange\":{\"description\":\"Triggered when the sensor's status changes.\",\"data\":{\"type\":\"string\"},\"forms\":[{\"href\":\"http://10.32.151.21:8081/temperature-sensor/events/statusChange\",\"contentType\":\"application/json\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]},{\"href\":\"http://10.32.151.21:8081/temperature-sensor/events/statusChange\",\"contentType\":\"application/cbor\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]}]}},\"id\":\"urn:uuid:cf86b704-d32f-44cf-bf54-4ff525a7ca02\",\"description\":\"A temperature sensor that provides readings, supports calibration, and monitors environmental conditions.\",\"support\":\"http://example.com/support\",\"forms\":[{\"href\":\"http://10.32.151.21:8081/temperature-sensor/properties\",\"contentType\":\"application/json\",\"op\":[\"readallproperties\",\"readmultipleproperties\",\"writeallproperties\",\"writemultipleproperties\"]},{\"href\":\"http://10.32.151.21:8081/temperature-sensor/properties\",\"contentType\":\"application/cbor\",\"op\":[\"readallproperties\",\"readmultipleproperties\",\"writeallproperties\",\"writemultipleproperties\"]}]}",
         "http": true,
         "ws": false,
         "coap": false,
@@ -129,8 +160,8 @@
     {
         "id": "dc99cc6070d7f6fe",
         "type": "consumed-thing",
-        "tdLink": "http://10.32.147.97:8080/smart-display",
-        "td": "{\"@context\":[\"https://www.w3.org/2019/wot/td/v1\",{\"@language\":\"en\"}],\"@type\":\"Thing\",\"title\":\"Smart Display\",\"securityDefinitions\":{\"nosec\":{\"scheme\":\"nosec\"}},\"security\":[\"nosec\"],\"properties\":{\"displayedMessage\":{\"type\":\"string\",\"description\":\"The current message displayed on the screen.\",\"readOnly\":true,\"forms\":[{\"href\":\"http://10.32.147.97:8080/smart-display/properties/displayedMessage\",\"contentType\":\"application/json\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"},{\"href\":\"http://10.32.147.97:8080/smart-display/properties/displayedMessage\",\"contentType\":\"application/cbor\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"}],\"writeOnly\":false,\"observable\":false},\"alertMessage\":{\"type\":\"string\",\"description\":\"The current alert message displayed on the screen.\",\"readOnly\":true,\"forms\":[{\"href\":\"http://10.32.147.97:8080/smart-display/properties/alertMessage\",\"contentType\":\"application/json\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"},{\"href\":\"http://10.32.147.97:8080/smart-display/properties/alertMessage\",\"contentType\":\"application/cbor\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"}],\"writeOnly\":false,\"observable\":false},\"isDisplayActive\":{\"type\":\"boolean\",\"description\":\"Determines if the display is currently on or off.\",\"forms\":[{\"href\":\"http://10.32.147.97:8080/smart-display/properties/isDisplayActive\",\"contentType\":\"application/json\",\"op\":[\"readproperty\",\"writeproperty\"]},{\"href\":\"http://10.32.147.97:8080/smart-display/properties/isDisplayActive\",\"contentType\":\"application/cbor\",\"op\":[\"readproperty\",\"writeproperty\"]}],\"readOnly\":false,\"writeOnly\":false,\"observable\":false}},\"actions\":{\"updateDisplay\":{\"description\":\"Updates the message shown on smart display.\",\"input\":{\"type\":\"string\",\"description\":\"The message to display.\"},\"forms\":[{\"href\":\"http://10.32.147.97:8080/smart-display/actions/updateDisplay\",\"contentType\":\"application/json\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"},{\"href\":\"http://10.32.147.97:8080/smart-display/actions/updateDisplay\",\"contentType\":\"application/cbor\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"}],\"safe\":false,\"idempotent\":false},\"showAlert\":{\"description\":\"Displays an alert message on the screen.\",\"input\":{\"type\":\"string\",\"description\":\"The alert message to display.\"},\"forms\":[{\"href\":\"http://10.32.147.97:8080/smart-display/actions/showAlert\",\"contentType\":\"application/json\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"},{\"href\":\"http://10.32.147.97:8080/smart-display/actions/showAlert\",\"contentType\":\"application/cbor\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"}],\"safe\":false,\"idempotent\":false},\"clearDisplay\":{\"description\":\"Clears all information from the screen.\",\"forms\":[{\"href\":\"http://10.32.147.97:8080/smart-display/actions/clearDisplay\",\"contentType\":\"application/json\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"},{\"href\":\"http://10.32.147.97:8080/smart-display/actions/clearDisplay\",\"contentType\":\"application/cbor\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"}],\"safe\":false,\"idempotent\":false}},\"events\":{\"displayUpdated\":{\"description\":\"Triggered when the displayed message is updated.\",\"data\":{\"type\":\"string\"},\"forms\":[{\"href\":\"http://10.32.147.97:8080/smart-display/events/displayUpdated\",\"contentType\":\"application/json\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]},{\"href\":\"http://10.32.147.97:8080/smart-display/events/displayUpdated\",\"contentType\":\"application/cbor\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]}]},\"alertDisplayed\":{\"description\":\"Triggered when an alert message is displayed.\",\"data\":{\"type\":\"string\"},\"forms\":[{\"href\":\"http://10.32.147.97:8080/smart-display/events/alertDisplayed\",\"contentType\":\"application/json\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]},{\"href\":\"http://10.32.147.97:8080/smart-display/events/alertDisplayed\",\"contentType\":\"application/cbor\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]}]},\"displayCleared\":{\"description\":\"Triggered when the display is cleared.\",\"forms\":[{\"href\":\"http://10.32.147.97:8080/smart-display/events/displayCleared\",\"contentType\":\"application/json\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]},{\"href\":\"http://10.32.147.97:8080/smart-display/events/displayCleared\",\"contentType\":\"application/cbor\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]}]}},\"id\":\"urn:uuid:fc14185f-8385-4abf-b9ab-11a5599d5769\",\"description\":\"A smart display for display messages and related alerts.\",\"support\":\"\",\"forms\":[{\"href\":\"http://10.32.147.97:8080/smart-display/properties\",\"contentType\":\"application/json\",\"op\":[\"readallproperties\",\"readmultipleproperties\",\"writeallproperties\",\"writemultipleproperties\"]},{\"href\":\"http://10.32.147.97:8080/smart-display/properties\",\"contentType\":\"application/cbor\",\"op\":[\"readallproperties\",\"readmultipleproperties\",\"writeallproperties\",\"writemultipleproperties\"]}]}",
+        "tdLink": "http://10.32.151.21:8081/smart-display",
+        "td": "{\"@context\":[\"https://www.w3.org/2019/wot/td/v1\",{\"@language\":\"en\"}],\"@type\":\"Thing\",\"title\":\"Smart Display\",\"securityDefinitions\":{\"nosec\":{\"scheme\":\"nosec\"}},\"security\":[\"nosec\"],\"properties\":{\"displayedMessage\":{\"type\":\"string\",\"description\":\"The current message displayed on the screen.\",\"readOnly\":true,\"forms\":[{\"href\":\"http://10.32.151.21:8081/smart-display/properties/displayedMessage\",\"contentType\":\"application/json\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"},{\"href\":\"http://10.32.151.21:8081/smart-display/properties/displayedMessage\",\"contentType\":\"application/cbor\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"}],\"writeOnly\":false,\"observable\":false},\"alertMessage\":{\"type\":\"string\",\"description\":\"The current alert message displayed on the screen.\",\"readOnly\":true,\"forms\":[{\"href\":\"http://10.32.151.21:8081/smart-display/properties/alertMessage\",\"contentType\":\"application/json\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"},{\"href\":\"http://10.32.151.21:8081/smart-display/properties/alertMessage\",\"contentType\":\"application/cbor\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"}],\"writeOnly\":false,\"observable\":false},\"isDisplayActive\":{\"type\":\"boolean\",\"description\":\"Determines if the display is currently on or off.\",\"observable\":true,\"forms\":[{\"href\":\"http://10.32.151.21:8081/smart-display/properties/isDisplayActive\",\"contentType\":\"application/json\",\"op\":[\"readproperty\",\"writeproperty\"]},{\"href\":\"http://10.32.151.21:8081/smart-display/properties/isDisplayActive/observable\",\"contentType\":\"application/json\",\"op\":[\"observeproperty\",\"unobserveproperty\"],\"subprotocol\":\"longpoll\"},{\"href\":\"http://10.32.151.21:8081/smart-display/properties/isDisplayActive\",\"contentType\":\"application/cbor\",\"op\":[\"readproperty\",\"writeproperty\"]},{\"href\":\"http://10.32.151.21:8081/smart-display/properties/isDisplayActive/observable\",\"contentType\":\"application/cbor\",\"op\":[\"observeproperty\",\"unobserveproperty\"],\"subprotocol\":\"longpoll\"}],\"readOnly\":false,\"writeOnly\":false}},\"actions\":{\"updateDisplay\":{\"description\":\"Updates the message shown on smart display.\",\"input\":{\"type\":\"string\",\"description\":\"The message to display.\"},\"forms\":[{\"href\":\"http://10.32.151.21:8081/smart-display/actions/updateDisplay\",\"contentType\":\"application/json\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"},{\"href\":\"http://10.32.151.21:8081/smart-display/actions/updateDisplay\",\"contentType\":\"application/cbor\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"}],\"safe\":false,\"idempotent\":false},\"showAlert\":{\"description\":\"Displays an alert message on the screen.\",\"input\":{\"type\":\"string\",\"description\":\"The alert message to display.\"},\"forms\":[{\"href\":\"http://10.32.151.21:8081/smart-display/actions/showAlert\",\"contentType\":\"application/json\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"},{\"href\":\"http://10.32.151.21:8081/smart-display/actions/showAlert\",\"contentType\":\"application/cbor\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"}],\"safe\":false,\"idempotent\":false},\"clearDisplay\":{\"description\":\"Clears all information from the screen.\",\"forms\":[{\"href\":\"http://10.32.151.21:8081/smart-display/actions/clearDisplay\",\"contentType\":\"application/json\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"},{\"href\":\"http://10.32.151.21:8081/smart-display/actions/clearDisplay\",\"contentType\":\"application/cbor\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"}],\"safe\":false,\"idempotent\":false}},\"events\":{\"displayUpdated\":{\"description\":\"Triggered when the displayed message is updated.\",\"data\":{\"type\":\"string\"},\"forms\":[{\"href\":\"http://10.32.151.21:8081/smart-display/events/displayUpdated\",\"contentType\":\"application/json\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]},{\"href\":\"http://10.32.151.21:8081/smart-display/events/displayUpdated\",\"contentType\":\"application/cbor\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]}]},\"alertDisplayed\":{\"description\":\"Triggered when an alert message is displayed.\",\"data\":{\"type\":\"object\"},\"forms\":[{\"href\":\"http://10.32.151.21:8081/smart-display/events/alertDisplayed\",\"contentType\":\"application/json\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]},{\"href\":\"http://10.32.151.21:8081/smart-display/events/alertDisplayed\",\"contentType\":\"application/cbor\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]}]},\"displayCleared\":{\"description\":\"Triggered when the display is cleared.\",\"forms\":[{\"href\":\"http://10.32.151.21:8081/smart-display/events/displayCleared\",\"contentType\":\"application/json\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]},{\"href\":\"http://10.32.151.21:8081/smart-display/events/displayCleared\",\"contentType\":\"application/cbor\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]}]}},\"id\":\"urn:uuid:9d3cf72c-ab5b-49df-9faa-facc741fc4a0\",\"description\":\"A smart display for display messages and related alerts.\",\"support\":\"\",\"forms\":[{\"href\":\"http://10.32.151.21:8081/smart-display/properties\",\"contentType\":\"application/json\",\"op\":[\"readallproperties\",\"readmultipleproperties\",\"writeallproperties\",\"writemultipleproperties\"]},{\"href\":\"http://10.32.151.21:8081/smart-display/properties\",\"contentType\":\"application/cbor\",\"op\":[\"readallproperties\",\"readmultipleproperties\",\"writeallproperties\",\"writemultipleproperties\"]}]}",
         "http": true,
         "ws": false,
         "coap": false,
