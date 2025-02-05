@@ -99,7 +99,7 @@ public class TemperatureMonitoring {
             ModuleMapping moduleMapping = ModuleMapping.createModuleMapping();
 
             // Check if the deployment is cloud-based
-            if (CLOUD) {
+            /*if (CLOUD) {
                 // Assign specific application modules to the cloud
                 moduleMapping.addModuleToDevice("data_processor", "cloud"); // Assign data processing to the cloud
             } else {
@@ -108,9 +108,10 @@ public class TemperatureMonitoring {
                     if (device.getName().startsWith("sensor")) {
                         // Assign the "temperature_sensor" module to devices that represent sensors
                         moduleMapping.addModuleToDevice("temperature_sensor", device.getName());
+                        System.out.println("Module added! Device: " + device.getName());
                     }
                 }
-            }
+            }*/
 
             // Create the controller for managing the simulation
             Controller controller = new Controller(

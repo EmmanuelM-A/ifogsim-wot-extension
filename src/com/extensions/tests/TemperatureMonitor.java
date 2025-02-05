@@ -114,6 +114,9 @@ public class TemperatureMonitor {
                 //System.out.println(actuator.getName());
             }*/
 
+            // TODO - HAVE THE VD FACTORY JUST CREATE THE VD'S ACTUATORS AND SENSORS BUT DON'T ASSIGN LINKS. DURING PHYSICAL TOPOLOGY CONSTRUCTION GET THE LIST
+            //  OF ALL SENSOR PROPERTIES AND ACTUATOR ACTIONS USED. USING THESE LIST CONNECT ONLY THOSE COMPONENTS TO THE VD.
+
             // Set the application for VD's sensors and actuators
             for(VirtualDevice virtualDevice : vds) {
                 for(Sensor sensorProperty : virtualDevice.getSensorProperties()) {
@@ -131,7 +134,7 @@ public class TemperatureMonitor {
             // Assign specific application modules to the cloud
             moduleMapping.addModuleToDevice("processing", "processing_node"); // Assign data processing to the cloud
 
-            System.out.println(physicalTopology.getFogDevices());
+            //System.out.println(physicalTopology.getFogDevices());
 
             // Create the controller for managing the simulation
             Controller controller = new Controller(
@@ -252,7 +255,7 @@ public class TemperatureMonitor {
          * Adding modules (vertices) to the application model (directed graph).
          * Each module represents a processing or functional unit in the application.
          */
-        application.addAppModule("temperature", 10);
+        //application.addAppModule("temperature", 10);
         application.addAppModule("processing", 20); // Module for evaluating data and making decisions.
 
 
@@ -264,15 +267,15 @@ public class TemperatureMonitor {
         application.addAppEdge("temperature", "processing", 500, 200, "temperature", Tuple.UP, AppEdge.SENSOR);
 
         // Edge from the processing module to the updateDisplay actuator.
-        application.addAppEdge("processing", "updateDisplay", 500, 200, "temperature", Tuple.DOWN, AppEdge.ACTUATOR);
+        application.addAppEdge("processing", "updateDisplay", 500, 200, "updateDisplay", Tuple.DOWN, AppEdge.ACTUATOR);
 
-        System.out.println(application.getEdges());
+        //System.out.println(application.getEdges());
 
         /*
          * Defining tuple mappings for input-output relationships in each module.
          * Selectivity ratios specify how many output tuples are generated per input tuple.
          */
-        application.addTupleMapping("processing", "temperature", "temperature",
+        application.addTupleMapping("processing", "temperature", "updateDisplay",
                 new FractionalSelectivity(1.0)); // 1 output tuple per input tuple in the sensor module.
 
 
