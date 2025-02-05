@@ -1,5 +1,7 @@
 package com.extensions.tests;
 
+import com.extensions.customfog.CustomController;
+import com.extensions.customfog.CustomControllerTwo;
 import com.extensions.customfog.FogDeviceFactory;
 import com.extensions.utils.presets.ActuatorPreset;
 import com.extensions.utils.presets.FogDeviceHostPreset;
@@ -114,7 +116,7 @@ public class TemperatureMonitoring {
             }*/
 
             // Create the controller for managing the simulation
-            Controller controller = new Controller(
+            CustomControllerTwo controller = new CustomControllerTwo(
                     "iot-controller",
                     fogDevices,
                     temperatureSensorVD.getSensorProperties(),
