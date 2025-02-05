@@ -1,10 +1,12 @@
 package com.extensions.tests;
 
 import com.extensions.customfog.CustomController;
-import com.extensions.customfog.CustomControllerTwo;
 import com.extensions.customfog.FogDeviceFactory;
+import com.extensions.custommetrics.CustomMetricManager;
+import com.extensions.custommetrics.metrics.LongestApplicationLoopDelay;
+import com.extensions.custommetrics.metrics.PeakEnergyConsumptionDevice;
+import com.extensions.custommetrics.metrics.TotalEnergyConsumptionEfficiency;
 import com.extensions.utils.presets.ActuatorPreset;
-import com.extensions.utils.presets.FogDeviceHostPreset;
 import com.extensions.utils.presets.FogDevicePreset;
 import com.extensions.utils.presets.SensorPreset;
 import com.extensions.vdcreation.core.VirtualDevice;
@@ -21,7 +23,6 @@ import org.fog.application.selectivity.FractionalSelectivity;
 import org.fog.entities.FogBroker;
 import org.fog.entities.FogDevice;
 import org.fog.entities.Tuple;
-import org.fog.placement.Controller;
 import org.fog.placement.ModuleMapping;
 import org.fog.placement.ModulePlacementEdgewards;
 import org.fog.placement.ModulePlacementMapping;
@@ -116,7 +117,7 @@ public class TemperatureMonitoring {
             }*/
 
             // Create the controller for managing the simulation
-            CustomControllerTwo controller = new CustomControllerTwo(
+            CustomController controller = new CustomController(
                     "iot-controller",
                     fogDevices,
                     temperatureSensorVD.getSensorProperties(),
@@ -136,6 +137,12 @@ public class TemperatureMonitoring {
                             moduleMapping
                     ))
             );
+
+            CustomMetricManager customMetricManager = controller.getCustomMetricManager();
+
+            customMetricManager.registerMetric(new LongestApplicationLoopDelay());
+            customMetricManager.registerMetric(new PeakEnergyConsumptionDevice());
+            customMetricManager.registerMetric(new TotalEnergyConsumptionEfficiency());
 
             // Set the simulation start time
             TimeKeeper.getInstance().setSimulationStartTime(Calendar.getInstance().getTimeInMillis());

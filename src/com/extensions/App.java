@@ -1,11 +1,6 @@
 package com.extensions;
 
 import com.extensions.customfog.CustomController;
-import com.extensions.customfog.SensorProperty;
-import com.extensions.custommetrics.CustomMetricManager;
-import com.extensions.custommetrics.metrics.AverageTupleProcessingTimeMetric;
-import com.extensions.custommetrics.metrics.SystemEfficiencyMetric;
-import com.extensions.custommetrics.metrics.TaskCompletionCountMetric;
 import com.extensions.sysconstructor.core.*;
 import com.extensions.sysconstructor.eventdriver.EventDrivenApplication;
 import com.extensions.utils.FilePaths;
@@ -23,7 +18,6 @@ import org.fog.entities.Actuator;
 import org.fog.entities.FogBroker;
 import org.fog.entities.FogDevice;
 import org.fog.entities.Sensor;
-import org.fog.placement.Controller;
 import org.fog.placement.ModuleMapping;
 import org.fog.placement.ModulePlacementEdgewards;
 import org.fog.utils.TimeKeeper;

@@ -2,7 +2,6 @@ package com.extensions.tests;
 
 import com.extensions.customfog.CustomController;
 import com.extensions.customfog.FogDeviceFactory;
-import com.extensions.customfog.SensorProperty;
 import com.extensions.utils.presets.FogDevicePreset;
 import com.extensions.utils.presets.SensorPreset;
 import com.extensions.utils.presets.ActuatorPreset;

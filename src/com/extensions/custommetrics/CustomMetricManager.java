@@ -22,7 +22,11 @@ public class CustomMetricManager {
      * @param metric The metric to be registered.
      */
     public void registerMetric(CustomPerformanceMetric<?> metric) {
-        customMetrics.add(metric);
+        if (customMetrics.contains(metric)) {
+            System.out.println("Warning: Metric '" + metric.getMetricName() + "' is already registered!");
+        } else {
+            customMetrics.add(metric);
+        }
     }
 
     /**
@@ -32,10 +36,17 @@ public class CustomMetricManager {
         System.out.println("=========================================");
         System.out.println("CUSTOM PERFORMANCE METRICS");
         System.out.println("=========================================");
+
+        if (customMetrics.isEmpty()) {
+            System.out.println("No custom metrics registered!");
+            return;
+        }
+
         for (CustomPerformanceMetric<?> metric : customMetrics) {
             Object result = metric.evaluate(simulationResults);
             System.out.println(metric.getMetricName() + ": " + result);
         }
     }
 }
+
 
