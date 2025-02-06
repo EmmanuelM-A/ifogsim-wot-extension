@@ -1,11 +1,9 @@
 package com.extensions.simulation;
 
-import com.extensions.sysconstructor.eventdriver.EventDrivenApplication;
 import org.fog.entities.FogDevice;
 import org.fog.utils.Config;
 import org.fog.utils.NetworkUsageMonitor;
 import org.fog.utils.TimeKeeper;
-import org.fog.application.Application;
 
 import java.util.Calendar;
 import java.util.HashMap;
@@ -16,12 +14,13 @@ import java.util.Map;
  * This class stores and processes the results of an iFogSim simulation.
  */
 public class SimulationResults {
-    private final long executionTime;
-    private final Map<String, Double> applicationLoopDelays;
-    private final Map<String, Double> tupleExecutionDelays;
-    private final Map<String, Double> energyConsumptionPerDevice;
-    private final double totalNetworkUsage;
-    private final double cloudExecutionCost;
+    private static SimulationResults instance;
+    private long executionTime;
+    private Map<String, Double> applicationLoopDelays;
+    private Map<String, Double> tupleExecutionDelays;
+    private Map<String, Double> energyConsumptionPerDevice;
+    private double totalNetworkUsage;
+    private double cloudExecutionCost;
 
     /**
      * Constructor initializes and records all performance metrics from the simulation.
@@ -35,6 +34,13 @@ public class SimulationResults {
         this.totalNetworkUsage = NetworkUsageMonitor.getNetworkUsage() / Config.MAX_SIMULATION_TIME;
         this.cloudExecutionCost = extractCloudExecutionCost(fogDevices);
     }
+
+    /*public static SimulationResults getInstance() {
+        if (instance == null) {
+            instance = new SimulationResults();
+        }
+        return instance;
+    }*/
 
     /**
      * Extracts loop delays from TimeKeeper.
@@ -112,24 +118,48 @@ public class SimulationResults {
         return executionTime;
     }
 
+    public void setExecutionTime(long executionTime) {
+        this.executionTime = executionTime;
+    }
+
     public Map<String, Double> getApplicationLoopDelays() {
         return applicationLoopDelays;
+    }
+
+    public void setApplicationLoopDelays(Map<String, Double> applicationLoopDelays) {
+        this.applicationLoopDelays = applicationLoopDelays;
     }
 
     public Map<String, Double> getTupleExecutionDelays() {
         return tupleExecutionDelays;
     }
 
+    public void setTupleExecutionDelays(Map<String, Double> tupleExecutionDelays) {
+        this.tupleExecutionDelays = tupleExecutionDelays;
+    }
+
     public Map<String, Double> getEnergyConsumptionPerDevice() {
         return energyConsumptionPerDevice;
+    }
+
+    public void setEnergyConsumptionPerDevice(Map<String, Double> energyConsumptionPerDevice) {
+        this.energyConsumptionPerDevice = energyConsumptionPerDevice;
     }
 
     public double getTotalNetworkUsage() {
         return totalNetworkUsage;
     }
 
+    public void setTotalNetworkUsage(double totalNetworkUsage) {
+        this.totalNetworkUsage = totalNetworkUsage;
+    }
+
     public double getCloudExecutionCost() {
         return cloudExecutionCost;
+    }
+
+    public void setCloudExecutionCost(double cloudExecutionCost) {
+        this.cloudExecutionCost = cloudExecutionCost;
     }
 }
 

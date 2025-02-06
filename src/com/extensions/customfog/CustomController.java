@@ -6,6 +6,9 @@ import java.util.List;
 import java.util.Map;
 
 import com.extensions.custommetrics.CustomMetricManager;
+import com.extensions.custommetrics.metrics.LongestApplicationLoopDelay;
+import com.extensions.custommetrics.metrics.PeakEnergyConsumptionDevice;
+import com.extensions.custommetrics.metrics.TotalEnergyConsumptionEfficiency;
 import com.extensions.simulation.SimulationResults;
 import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.core.SimEntity;
@@ -34,9 +37,9 @@ public class CustomController extends SimEntity{
 
     private Map<String, ModulePlacement> appModulePlacementPolicy;
 
-    private final SimulationResults simulationResults;
+    private SimulationResults simulationResults;
 
-    private final CustomMetricManager customMetricManager;
+    private CustomMetricManager customMetricManager;
 
     public CustomController(String name, List<FogDevice> fogDevices, List<Sensor> sensors, List<Actuator> actuators) {
         super(name);
@@ -51,8 +54,21 @@ public class CustomController extends SimEntity{
         setSensors(sensors);
         connectWithLatencies();
 
-        this.simulationResults = new SimulationResults(fogDevices);
-        this.customMetricManager = new CustomMetricManager(simulationResults);
+        //this.simulationResults = new SimulationResults(getFogDevices());
+
+        //this.customMetricManager = new CustomMetricManager();
+    }
+
+    private void printSimulationResults() {
+        this.simulationResults = new SimulationResults(getFogDevices());
+
+        simulationResults.printResults();
+
+        //this.customMetricManager = new CustomMetricManager(simulationResults);
+
+        //System.out.println(customMetricManager);
+
+        //customMetricManager.evaluateMetrics();
     }
 
     private FogDevice getFogDeviceById(int id){
@@ -106,13 +122,26 @@ public class CustomController extends SimEntity{
                 break;
             case FogEvents.STOP_SIMULATION:
                 CloudSim.stopSimulation();
-                simulationResults.printResults();
+                //simulationResults.printResults();
+                //customMetricManager.evaluateMetrics();
+                printSimulationResults();
+                //System.out.println(getSimulationResults());
+                CustomMetricManager customMetricManager = new CustomMetricManager(getSimulationResults());
+                customMetricManager.registerMetric(new LongestApplicationLoopDelay());
+                customMetricManager.registerMetric(new PeakEnergyConsumptionDevice());
+                customMetricManager.registerMetric(new TotalEnergyConsumptionEfficiency());
                 customMetricManager.evaluateMetrics();
+                /*printTimeDetails();
+                printPowerDetails();
+                printCostDetails();
+                printNetworkUsageDetails();*/
                 System.exit(0);
                 break;
 
         }
     }
+
+    // TODO - MAKE IT SO THE CUSTOM METRICS ARE SET IN THE APPLICATION MAIN METHOD
 
     private void printNetworkUsageDetails() {
         System.out.println("Total network usage = "+NetworkUsageMonitor.getNetworkUsage()/Config.MAX_SIMULATION_TIME);
@@ -145,6 +174,8 @@ public class CustomController extends SimEntity{
         }
         return null;
     }
+
+    //private long calculateExecustionTime
     private void printTimeDetails() {
         System.out.println("=========================================");
         System.out.println("============== RESULTS ==================");
@@ -243,6 +274,10 @@ public class CustomController extends SimEntity{
 
     public CustomMetricManager getCustomMetricManager() {
         return customMetricManager;
+    }
+
+    public SimulationResults getSimulationResults() {
+        return simulationResults;
     }
 
     public List<FogDevice> getFogDevices() {

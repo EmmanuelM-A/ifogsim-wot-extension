@@ -98,23 +98,8 @@ public class TemperatureMonitoring {
 
             temperatureSensorVD.getSensorProperty("temperature").setApp(application);
 
-            // Initialize a module mapping to map application modules to fog devices
+            // Initialize a module mapping
             ModuleMapping moduleMapping = ModuleMapping.createModuleMapping();
-
-            // Check if the deployment is cloud-based
-            /*if (CLOUD) {
-                // Assign specific application modules to the cloud
-                moduleMapping.addModuleToDevice("data_processor", "cloud"); // Assign data processing to the cloud
-            } else {
-                // Edge-ward placement: Other modules will be dynamically assigned
-                for (FogDevice device : fogDevices) {
-                    if (device.getName().startsWith("sensor")) {
-                        // Assign the "temperature_sensor" module to devices that represent sensors
-                        moduleMapping.addModuleToDevice("temperature_sensor", device.getName());
-                        System.out.println("Module added! Device: " + device.getName());
-                    }
-                }
-            }*/
 
             // Create the controller for managing the simulation
             CustomController controller = new CustomController(
@@ -123,6 +108,14 @@ public class TemperatureMonitoring {
                     temperatureSensorVD.getSensorProperties(),
                     temperatureSensorVD.getActuatorActions()
             );
+
+            /*CustomMetricManager customMetricManager = controller.getCustomMetricManager();
+
+            System.out.println(customMetricManager);
+
+            customMetricManager.registerMetric(new LongestApplicationLoopDelay());
+            customMetricManager.registerMetric(new PeakEnergyConsumptionDevice());
+            customMetricManager.registerMetric(new TotalEnergyConsumptionEfficiency());*/
 
             // Submit the application to the controller with the appropriate placement strategy
             controller.submitApplication(
@@ -138,12 +131,6 @@ public class TemperatureMonitoring {
                     ))
             );
 
-            CustomMetricManager customMetricManager = controller.getCustomMetricManager();
-
-            customMetricManager.registerMetric(new LongestApplicationLoopDelay());
-            customMetricManager.registerMetric(new PeakEnergyConsumptionDevice());
-            customMetricManager.registerMetric(new TotalEnergyConsumptionEfficiency());
-
             // Set the simulation start time
             TimeKeeper.getInstance().setSimulationStartTime(Calendar.getInstance().getTimeInMillis());
 
@@ -152,6 +139,8 @@ public class TemperatureMonitoring {
 
             // Stop the simulation once it completes
             CloudSim.stopSimulation();
+
+            System.out.println("FINISHED!!!!");
 
             Log.printLine("IoT Application simulation finished!");
         } catch (IOException e) {
