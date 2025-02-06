@@ -109,13 +109,11 @@ public class TemperatureMonitoring {
                     temperatureSensorVD.getActuatorActions()
             );
 
-            /*CustomMetricManager customMetricManager = controller.getCustomMetricManager();
-
-            System.out.println(customMetricManager);
+            CustomMetricManager customMetricManager = controller.getCustomMetricManager();
 
             customMetricManager.registerMetric(new LongestApplicationLoopDelay());
             customMetricManager.registerMetric(new PeakEnergyConsumptionDevice());
-            customMetricManager.registerMetric(new TotalEnergyConsumptionEfficiency());*/
+            customMetricManager.registerMetric(new TotalEnergyConsumptionEfficiency());
 
             // Submit the application to the controller with the appropriate placement strategy
             controller.submitApplication(

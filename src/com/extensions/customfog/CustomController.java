@@ -39,7 +39,7 @@ public class CustomController extends SimEntity{
 
     private SimulationResults simulationResults;
 
-    private CustomMetricManager customMetricManager;
+    private final CustomMetricManager customMetricManager;
 
     public CustomController(String name, List<FogDevice> fogDevices, List<Sensor> sensors, List<Actuator> actuators) {
         super(name);
@@ -54,21 +54,13 @@ public class CustomController extends SimEntity{
         setSensors(sensors);
         connectWithLatencies();
 
-        //this.simulationResults = new SimulationResults(getFogDevices());
-
-        //this.customMetricManager = new CustomMetricManager();
+        this.customMetricManager = new CustomMetricManager();
     }
 
     private void printSimulationResults() {
         this.simulationResults = new SimulationResults(getFogDevices());
 
         simulationResults.printResults();
-
-        //this.customMetricManager = new CustomMetricManager(simulationResults);
-
-        //System.out.println(customMetricManager);
-
-        //customMetricManager.evaluateMetrics();
     }
 
     private FogDevice getFogDeviceById(int id){
@@ -122,19 +114,8 @@ public class CustomController extends SimEntity{
                 break;
             case FogEvents.STOP_SIMULATION:
                 CloudSim.stopSimulation();
-                //simulationResults.printResults();
-                //customMetricManager.evaluateMetrics();
                 printSimulationResults();
-                //System.out.println(getSimulationResults());
-                CustomMetricManager customMetricManager = new CustomMetricManager(getSimulationResults());
-                customMetricManager.registerMetric(new LongestApplicationLoopDelay());
-                customMetricManager.registerMetric(new PeakEnergyConsumptionDevice());
-                customMetricManager.registerMetric(new TotalEnergyConsumptionEfficiency());
-                customMetricManager.evaluateMetrics();
-                /*printTimeDetails();
-                printPowerDetails();
-                printCostDetails();
-                printNetworkUsageDetails();*/
+                customMetricManager.evaluateMetrics(simulationResults);
                 System.exit(0);
                 break;
 
@@ -274,10 +255,6 @@ public class CustomController extends SimEntity{
 
     public CustomMetricManager getCustomMetricManager() {
         return customMetricManager;
-    }
-
-    public SimulationResults getSimulationResults() {
-        return simulationResults;
     }
 
     public List<FogDevice> getFogDevices() {

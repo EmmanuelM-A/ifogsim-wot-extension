@@ -10,11 +10,6 @@ import java.util.List;
  */
 public class CustomMetricManager {
     private final List<CustomPerformanceMetric<?>> customMetrics = new ArrayList<>();
-    private final SimulationResults simulationResults;
-
-    public CustomMetricManager(SimulationResults simulationResults) {
-        this.simulationResults = simulationResults;
-    }
 
     /**
      * Allows users to register custom metrics.
@@ -32,7 +27,7 @@ public class CustomMetricManager {
     /**
      * Runs all registered custom metrics and prints results.
      */
-    public void evaluateMetrics() {
+    public void evaluateMetrics(SimulationResults simulationResults) {
         System.out.println("=========================================");
         System.out.println("CUSTOM PERFORMANCE METRICS");
         System.out.println("=========================================");
