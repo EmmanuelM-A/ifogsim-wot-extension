@@ -5,6 +5,7 @@ import com.extensions.sysconstructor.eventdriver.EventDrivenApplication;
 import com.extensions.sysconstructor.topology.TopologyNode;
 import com.extensions.sysconstructor.topology.TopologyNodeTree;
 import com.extensions.vdcreation.core.VirtualDevice;
+import org.fog.application.AppLoop;
 
 import java.util.*;
 
@@ -159,7 +160,7 @@ public class Utility {
 
         for (int i = 0; i < appLoops.size(); i++) {
             List<String> route = appLoops.get(i);
-            System.out.print("Route " + (i + 1) + ": ");  // Or just "Route:" if you prefer
+            System.out.print("Loop " + (i + 1) + ": ");
 
             if (route.isEmpty()) {
                 System.out.println("[]"); // Print empty route representation

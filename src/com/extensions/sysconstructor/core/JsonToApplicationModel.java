@@ -4,10 +4,12 @@ import com.extensions.sysconstructor.eventdriver.EventDrivenApplication;
 import com.extensions.sysconstructor.nodered.NodeRedJSONParser;
 import com.extensions.sysconstructor.topology.*;
 import com.extensions.utils.Utility;
+import org.apache.commons.math3.util.Pair;
 import org.fog.application.AppEdge;
 import org.fog.application.AppLoop;
 import org.fog.application.AppModule;
 import org.fog.application.selectivity.FractionalSelectivity;
+import org.fog.application.selectivity.SelectivityModel;
 import org.fog.entities.Tuple;
 
 import java.util.*;
@@ -31,9 +33,9 @@ public class JsonToApplicationModel {
         if(!success) return null;
 
         // Create the application model for all inject flows
-        for(TopologyNodeTree injectFlow : applicationContext.injectFlows) {
+        /*for(TopologyNodeTree injectFlow : applicationContext.injectFlows) {
             createInjectFlow(application, injectFlow);
-        }
+        }*/
 
         // Create the application model for all data flows
         for(TopologyNodeTree dataFlow : applicationContext.dataFlows) {
@@ -47,6 +49,43 @@ public class JsonToApplicationModel {
 
         // Set application loops
         setApplicationLoops(application);
+
+        // Print app modules
+        System.out.println("AppModules:");
+        System.out.println("--------------------------------------");
+        for(AppModule appModule : application.getModules()) {
+            System.out.println(appModule.getName());
+        }
+        System.out.println();
+
+        // Print app edges
+        System.out.println("AppEdges:");
+        System.out.println("---------------------------------------");
+        for(AppEdge appEdge : application.getEdges()) {
+            System.out.println(appEdge);
+        }
+        System.out.println();
+
+        // print tuple mappings
+        System.out.println("Tuple Mappings:");
+        System.out.println("---------------------------------------");
+        for (AppModule appModule : application.getModules()) {
+            for (Map.Entry<Pair<String, String>, SelectivityModel> entry : appModule.getSelectivityMap().entrySet()) {
+                Pair<String, String> key = entry.getKey();
+                SelectivityModel value = entry.getValue();
+
+                System.out.println("Module name: " + appModule.getName() +
+                        " | Input Tuple Type: " + key.getKey() +
+                        " | Output Tuple Type: " + key.getValue());
+            }
+        }
+        System.out.println();
+
+        // print app loop
+        System.out.println("AppLoops:");
+        System.out.println("----------------------------------------");
+        Utility.printAppLoops(applicationContext.appLoops);
+        System.out.println();
 
         System.out.println("Application Model formed!");
 
@@ -172,12 +211,14 @@ public class JsonToApplicationModel {
         }
 
         // Make sure the data flow is actually a data flow. If not return
-        if(!dataFlow.rootNode().type().equals("inject") && !dataFlow.rootNode().type().equals("event")) {
+        if(dataFlow.rootNode().type().equals(NodeRedJSONParser.TYPE_INJECT) || dataFlow.rootNode().type().equals(NodeRedJSONParser.TYPE_SUBSCRIBE_EVENT)) {
+            System.out.println("Sub Flow " + dataFlow.rootNode().id() + " is not a data flow");
             return;
         }
 
         // Checks if the data flow's branches list is set
         if(dataFlow.branches() == null || dataFlow.branches().isEmpty()) {
+            System.out.println("Sub Flow " + dataFlow.rootNode().id() + "'s branches list is not available!");
             return;
         }
 
@@ -189,6 +230,7 @@ public class JsonToApplicationModel {
 
         // Check if the rootNode is a wot node, if so get its type
         if(!isWoTNode(rootNode)) {
+            System.out.println("Sub Flow " + dataFlow.rootNode().id() + "'s root node is not a WoT node!");
             return;
         }
 
@@ -219,14 +261,65 @@ public class JsonToApplicationModel {
 
                     if(connectionStatus.isThereAConnection()) {
                         if(connectionStatus.isDirectionConnection()) {
+                            System.out.println("DIRECT CONNECTION FOUND!");
                             // HANDLE DIRECT CONNECTION HERE
-                        }
 
-                        //else {
+                            // Get the property/action name of the src and dst node
+                            String srcName = src.uniqueAttribute();
+                            String dstName = dst.uniqueAttribute();
+
+                            // Create app modules for the src and dst nodes
+                            if(application.getModuleByName(srcName) == null) {
+                                application.addAppModule(srcName, applicationContext.applicationPreset.APP_MODULE_RAM);
+                            }
+
+                            if(application.getModuleByName(dstName) == null) {
+                                application.addAppModule(dstName, applicationContext.applicationPreset.APP_MODULE_RAM);
+                            }
+
+                            // Create the app edges from src ----> dst
+                            String tupleTypeOne = determineTupleType(src);
+                            int edgeDirection1 = determineDirection(src);
+                            int edgeType1 = determineEdgeType(src);
+                            addAppEdge(application, srcName, dstName, tupleTypeOne, edgeDirection1, edgeType1);
+
+                            // Record tuple mappings between modules
+                            if(moduleMappings.containsKey(srcName)) {
+                                ModuleMapping mapping = moduleMappings.get(srcName);
+
+                                if(mapping.getOutputTupleType() == null) mapping.setOutputTupleType(tupleTypeOne);
+
+                            } else {
+                                moduleMappings.put(srcName, new ModuleMapping());
+                            }
+
+                            if(moduleMappings.containsKey(dstName)) {
+                                ModuleMapping mapping = moduleMappings.get(dstName);
+
+                                if(mapping.getInputTupleType() == null) mapping.setInputTupleType(tupleTypeOne);
+
+                            } else {
+                                moduleMappings.put(dstName, new ModuleMapping());
+                            }
+
+                            // Record the route of the data flow
+                            if(appLoopRoute.isEmpty()) {
+                                // First time, start with an empty list
+                                appLoopRoute.add(srcName);
+                                appLoopRoute.add(dstName);
+                            } else {
+                                // Subsequent times, extend the appLoopRoute
+                                appLoopRoute.add(dstName);
+                            }
+
+                            applicationContext.appLoops.add(appLoopRoute);
+
+                        } else {
                             // HANDLE INDIRECT CONNECTION HERE
+                            System.out.println("INDIRECT CONNECTION FOUND");
 
                             // Create a processing module (represents an intermediately processing unit for data)
-                            String processingModule = "processingModule-" + processingModuleCount;
+                            String processingModule = "PROCESSING_MODULE-" + processingModuleCount;
                             application.addAppModule(processingModule, applicationContext.applicationPreset.APP_MODULE_RAM);
 
                             // Get the property/action name of the src and dst node
@@ -250,29 +343,78 @@ public class JsonToApplicationModel {
                             if(moduleMappings.containsKey(srcName)) {
                                 ModuleMapping mapping = moduleMappings.get(srcName);
 
-                                if(mapping.getOutputTupleType() == null) mapping.setOutputTupleType(tupleTypeOne);
+                                if(mapping.getOutputTupleType() == null) {
+                                    mapping.setOutputTupleType(tupleTypeOne);
+                                    System.out.println(srcName + "'s output tuple type set to " + tupleTypeOne);
+                                } else {
+                                    System.out.println(srcName + "'s output tuple type already set to " + tupleTypeOne);
+                                }
 
                             } else {
-                                moduleMappings.put(srcName, new ModuleMapping());
+                                ModuleMapping mapping = new ModuleMapping();
+
+                                if(mapping.getOutputTupleType() == null) {
+                                    mapping.setOutputTupleType(tupleTypeOne);
+                                    System.out.println(srcName + "'s output tuple type set to " + tupleTypeOne);
+                                } else {
+                                    System.out.println(srcName + "'s output tuple type already set to " + tupleTypeOne);
+                                }
+
+                                moduleMappings.put(srcName, mapping);
+                                System.out.println("Tuple mapping made for " + srcName);
                             }
 
                             if(moduleMappings.containsKey(dstName)) {
                                 ModuleMapping mapping = moduleMappings.get(dstName);
 
-                                if(mapping.getInputTupleType() == null) mapping.setInputTupleType(tupleTypeTwo);
+                                if(mapping.getInputTupleType() == null) {
+                                    mapping.setInputTupleType(tupleTypeTwo);
+                                    System.out.println(dstName + "'s output tuple type set to " + tupleTypeTwo);
+                                } else {
+                                    System.out.println(dstName + "'s output tuple type already set to " + tupleTypeTwo);
+                                }
 
                             } else {
-                                moduleMappings.put(dstName, new ModuleMapping());
+                                ModuleMapping mapping = new ModuleMapping();
+
+                                if(mapping.getInputTupleType() == null) {
+                                    mapping.setInputTupleType(tupleTypeTwo);
+                                    System.out.println(dstName + "'s output tuple type set to " + tupleTypeTwo);
+                                } else {
+                                    System.out.println(dstName + "'s output tuple type already set to " + tupleTypeTwo);
+                                }
+
+                                moduleMappings.put(dstName, mapping);
+
+                                System.out.println("Tuple mapping made for " + dstName);
                             }
 
                             if(moduleMappings.containsKey(processingModule)) {
                                 ModuleMapping mapping = moduleMappings.get(processingModule);
 
-                                mapping.setInputTupleType(tupleTypeOne);
-                                mapping.setOutputTupleType(tupleTypeTwo);
+                                if(mapping.getInputTupleType() == null && mapping.getOutputTupleType() == null) {
+                                    mapping.setInputTupleType(tupleTypeOne);
+                                    mapping.setOutputTupleType(tupleTypeTwo);
 
+                                    System.out.println("Module: " + processingModule + " Input tuple type: " + tupleTypeOne + " Output tuple type: " + tupleTypeTwo);
+                                } else {
+                                    System.out.println("Module " + processingModule + " tuple mapping already set!");
+                                }
                             } else {
-                                moduleMappings.put(processingModule, new ModuleMapping());
+                                ModuleMapping mapping = new ModuleMapping();
+
+                                if(mapping.getInputTupleType() == null && mapping.getOutputTupleType() == null) {
+                                    mapping.setInputTupleType(tupleTypeOne);
+                                    mapping.setOutputTupleType(tupleTypeTwo);
+
+                                    System.out.println("Module: " + processingModule + " Input tuple type: " + tupleTypeOne + " Output tuple type: " + tupleTypeTwo);
+                                } else {
+                                    System.out.println("Module " + processingModule + " tuple mapping already set!");
+                                }
+
+                                moduleMappings.put(processingModule, mapping);
+
+                                System.out.println("Tuple mapping made for " + processingModule);
                             }
 
                             // Record the route of the data flow
@@ -290,16 +432,21 @@ public class JsonToApplicationModel {
                             applicationContext.appLoops.add(appLoopRoute);
 
                             processingModuleCount++;
+                        }
+                        //System.out.println("Current Data Flow: " + dataFlow.rootNode().id() + " Current Src Node: " + branch.get(ptr1) + " Current dst Node: " + branch.get(ptr2));
 
-                            // Move to the next position
-                            ptr1 = ptr2;
-                            ptr2++;
+                        // Move to the next position
+                        ptr1 = ptr2;
+                        ptr2++;
+                    } else {
+                        //System.out.println("Current Data Flow: " + dataFlow.rootNode().id() + " Current Src Node: " + branch.get(ptr1) + " Current dst Node: " + branch.get(ptr2));
 
-
-                        //}
+                        ptr2++;
                     }
                 } else {
-                    // Move to the node
+                    // Move to the next node
+                    //System.out.println("Current Data Flow: " + dataFlow.rootNode().id() + " Current Src Node: " + branch.get(ptr1) + " Current dst Node: " + branch.get(ptr2));
+
                     ptr2++;
                 }
             }
@@ -328,97 +475,6 @@ public class JsonToApplicationModel {
         // Processing modules are EVENT_PROCESSING_MODULE-....
 
         // EXTEND FOG DEVICES, SENSORS, ACTUATORS AND IFOGSIM SIMULATION CLASSES TO HANDLE TUPLE TYPES OF EVENT
-    }
-
-    private static void setApplicationEdges(EventDrivenApplication application) {
-        // Default module
-        String dfm = application.getModuleByName("default-module").getName();
-
-        List<String> route = new ArrayList<>();
-
-        for (TopologyNodeTree dataFlow : applicationContext.dataFlows) {
-            // Get root node
-            TopologyNode rootNode = dataFlow.rootNode();
-
-            // Get branches
-            List<List<TopologyNode>> branches = dataFlow.branches();
-
-            // If the data flow is NOT event-driven and does NOT start with an inject node
-            if (!rootNode.type().equals(NodeRedJSONParser.TYPE_SUBSCRIBE_EVENT) && !rootNode.type().equals(NodeRedJSONParser.TYPE_INJECT)) {
-                // Used to access the nodes in a branch
-                int ptr1 = 0, ptr2 = 1;
-
-                // Iterate through one branch at a time
-                for(List<TopologyNode> branch : branches) {
-                    while(ptr2 < branch.size()) {
-                        // Get the src node (Assuming it's a WoT node)
-                        TopologyNode src = branch.get(ptr1);
-
-                        // Get the dst node, checking if it's a WoT node
-                        if (isWoTNode(branch.get(ptr2))) {
-                            TopologyNode dst = branch.get(ptr2);
-
-                            // Retrieve module names, ensuring they exist
-                            AppModule srcModule = applicationContext.appModulesCreated.get(src.id());
-                            AppModule dstModule = applicationContext.appModulesCreated.get(dst.id());
-
-                            if (srcModule == null || dstModule == null) {
-                                System.out.println("Skipping edge: Missing module for Src: " + src.id() + ", Dst: " + dst.id());
-                                ptr2++;  // Continue checking next nodes
-                                continue;
-                            }
-
-                            // Create an app edge from src ---> dfm ---> dst
-                            //addAppEdge(application, srcModule.getName(), dstModule.getName(), src, dst);
-                            //addAppEdge(application, dfm, dstModule.getName(), src, dst);
-
-                            /*
-                            * If src is directly connected to dst => edge) src ---> dst
-                            * If there exists some nodes between src and dst (not directly connected) => edge) src ---> Pr --->  dst
-                            * record all appEdges
-                            * record all tuple flows through modules
-                            */
-
-                            // Record the connection
-                            applicationContext.appEdges.put(src.id(), dst.id());
-
-                            // Set the route of the data flow (assuming some processing occurs at a dfm before heading to dst)
-                            if(applicationContext.appLoops.isEmpty()) {
-                                // First time, start with an empty list
-                                route.add(srcModule.getName());
-                                route.add(dfm);
-                                route.add(dstModule.getName());
-                                applicationContext.appLoops.add(route);
-                            } else {
-                                // Subsequent times, extend the LAST route in appLoops
-                                List<String> lastRoute = applicationContext.appLoops.getLast(); // Get the last route
-
-                                List<String> newRoute = new ArrayList<>(lastRoute); // Create a *copy*
-
-                                //newRoute.removeLast(); // Remove the last element
-
-                                //newRoute.add(srcModule.getName());
-                                //newRoute.add(dfm);
-                                //newRoute.add(dstModule.getName());
-
-                                newRoute.add(dstModule.getName()); // Add the new destination module
-
-                                applicationContext.appLoops.add(newRoute); // Add the extended route
-                            }
-
-                            // Move ptr1 to the next valid node
-                            ptr1 = ptr2;
-                            ptr2++;
-                        } else {
-                            ptr2++;
-                        }
-                    }
-
-                    // Empty route list for new branch
-                    route.clear();
-                }
-            }
-        }
     }
 
     private static void setApplicationLoops(EventDrivenApplication application) {

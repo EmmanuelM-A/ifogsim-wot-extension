@@ -1,6 +1,10 @@
 package com.extensions;
 
 import com.extensions.customfog.CustomController;
+import com.extensions.custommetrics.CustomMetricManager;
+import com.extensions.custommetrics.metrics.LongestApplicationLoopDelay;
+import com.extensions.custommetrics.metrics.PeakEnergyConsumptionDevice;
+import com.extensions.custommetrics.metrics.TotalEnergyConsumptionEfficiency;
 import com.extensions.sysconstructor.core.*;
 import com.extensions.sysconstructor.eventdriver.EventDrivenApplication;
 import com.extensions.utils.FilePaths;
@@ -33,14 +37,12 @@ public final class App {
 
         Log.printLine("Starting Simulation...");
 
-
-
         try {
             Log.disable();
 
             ApplicationContext applicationContext = new ApplicationContext(
                     // SET THE NODE RED APPLICATION JSON FILE PATH HERE
-                    new File("src/com/extensions/input/application/door-security-application.json"),
+                    new File("src/com/extensions/input/application/temperature-monitor.json"),
                     CloudNodePreset.DEFAULT,
                     EdgeNodePreset.DEFAULT,
                     ApplicationPreset.DEFAULT
@@ -91,7 +93,7 @@ public final class App {
             for(ThingDescription thingDescription : thingDescriptions) {
                 VirtualDevice vd = virtualDeviceFactory.createVirtualDevice(
                         thingDescription,
-                        null //vdConfigParser.process(new File(FilePaths.VD_CONFIG_FILE)) // SET VD'S CONFIG FILE HERE
+                        vdConfigParser.process(new File(FilePaths.VD_CONFIG_FILE)) // SET VD'S CONFIG FILE HERE
                 );
                 // Validate VD HERE
                 virtualDevices.add(vd);
@@ -129,18 +131,6 @@ public final class App {
                     physicalTopology.getActuators()
             );
 
-            ModuleMapping moduleMapping = ModuleMapping.createModuleMapping();
-
-            // Ensure each module has a valid fog device mapping
-            for (FogDevice device : physicalTopology.getFogDevices()) {
-                for (AppModule module : application.getModules()) {
-                    moduleMapping.addModuleToDevice(module.getName(), device.getName());
-                }
-            }
-
-
-            System.out.println(moduleMapping.getModuleMapping().isEmpty() ? "Empty" : "Not Empty");
-
             System.out.println("Application getModules(): " + application.getModules().size());
 
             // Submit the application to the controller with the appropriate placement strategy
@@ -152,17 +142,19 @@ public final class App {
                             physicalTopology.getSensors(),
                             physicalTopology.getActuators(),
                             application,
-                            moduleMapping
+                            ModuleMapping.createModuleMapping()
                     )
             );
 
+            System.out.println("Data flows: " + applicationContext.dataFlows.size());
+
             //////////////////////////////// REGISTER CUSTOM PERFORMANCE METRICS ////////////////////////////////
 
-            /*CustomMetricManager customMetricManager = controller.getCustomMetricManager();
+            CustomMetricManager customMetricManager = controller.getCustomMetricManager();
 
-            customMetricManager.registerMetric(new AverageTupleProcessingTimeMetric());
-            customMetricManager.registerMetric(new SystemEfficiencyMetric());
-            customMetricManager.registerMetric(new TaskCompletionCountMetric());*/
+            customMetricManager.registerMetric(new LongestApplicationLoopDelay());
+            customMetricManager.registerMetric(new PeakEnergyConsumptionDevice());
+            customMetricManager.registerMetric(new TotalEnergyConsumptionEfficiency());
 
             //////////////////////////////// SIMULATION ////////////////////////////////
 
