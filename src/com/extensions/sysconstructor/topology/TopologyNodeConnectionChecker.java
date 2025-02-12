@@ -3,12 +3,12 @@ package com.extensions.sysconstructor.topology;
 import java.util.*;
 
 public class TopologyNodeConnectionChecker {
-    private final Map<String, Set<String>> adjacencyList; // Stores node connections
-    private final Map<String, TopologyNode> nodeLookup; // Maps node IDs to actual nodes
+    private static Map<String, Set<String>> adjacencyList; // Stores node connections
+    private static Map<String, TopologyNode> nodeLookup; // Maps node IDs to actual nodes
 
-    public TopologyNodeConnectionChecker(List<TopologyNodeTree> topologyNodeTrees) {
-        this.adjacencyList = new HashMap<>();
-        this.nodeLookup = new HashMap<>();
+    public static void initializeChecker(List<TopologyNodeTree> topologyNodeTrees) {
+        adjacencyList = new HashMap<>();
+        nodeLookup = new HashMap<>();
 
         for (TopologyNodeTree tree : topologyNodeTrees) {
             processTopologyNodeTree(tree);
@@ -16,14 +16,14 @@ public class TopologyNodeConnectionChecker {
     }
 
     // Processes each tree by extracting its root node and branches
-    private void processTopologyNodeTree(TopologyNodeTree tree) {
+    private static void processTopologyNodeTree(TopologyNodeTree tree) {
         TopologyNode rootNode = tree.rootNode();
         nodeLookup.put(rootNode.id(), rootNode);
         buildAdjacencyList(rootNode, tree.branches());
     }
 
     // Builds adjacency list from branches
-    private void buildAdjacencyList(TopologyNode rootNode, List<List<TopologyNode>> branches) {
+    private static void buildAdjacencyList(TopologyNode rootNode, List<List<TopologyNode>> branches) {
         for (List<TopologyNode> branch : branches) {
             for (int i = 0; i < branch.size() - 1; i++) {
                 TopologyNode current = branch.get(i);
@@ -36,7 +36,7 @@ public class TopologyNodeConnectionChecker {
     }
 
     // Checks if two nodes are connected using their unique IDs
-    public TopologyNodeConnectionStatus areNodesConnected(String nodeIdA, String nodeIdB) {
+    public static TopologyNodeConnectionStatus areNodesConnected(String nodeIdA, String nodeIdB) {
         if (!nodeLookup.containsKey(nodeIdA) || !nodeLookup.containsKey(nodeIdB)) {
             return new TopologyNodeConnectionStatus(false, false);
         }
@@ -58,7 +58,7 @@ public class TopologyNodeConnectionChecker {
     }
 
     // Depth-first search (DFS) to check connectivity
-    private boolean dfs(String current, String target, Set<String> visited) {
+    private static boolean dfs(String current, String target, Set<String> visited) {
         if (current.equals(target)) {
             return true;
         }
