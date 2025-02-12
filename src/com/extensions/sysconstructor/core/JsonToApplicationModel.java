@@ -4,7 +4,6 @@ import com.extensions.sysconstructor.eventdriver.EventDrivenApplication;
 import com.extensions.sysconstructor.nodered.NodeRedJSONParser;
 import com.extensions.sysconstructor.topology.*;
 import com.extensions.utils.Utility;
-import org.apache.commons.math3.util.Pair;
 import org.fog.application.AppEdge;
 import org.fog.application.AppLoop;
 import org.fog.application.AppModule;
@@ -13,18 +12,7 @@ import org.fog.entities.Tuple;
 
 import java.util.*;
 
-/*
- * Parse the application topology json
- * Get the VDs
- * Connect devices according to the topology JSON
- * INJECT, SUB-EVENTS = REPRESENTS DATA FLOW ONLY (IGNORE)
- * READ-PROP = SENSORS
- * INVOKE-ACTION, WRITE-PROP = ACTUATORS
- * READ-PROP search for
- * */
-
 // TODO - COMPLETE THE INJECT NODE DATA FLOW
-// TODO - CLEANUP CODE AND REMOVE REDUNDANT CODE
 // TODO - FINALISE CLASSES AND ADD COMMENTS TO CODE
 
 public class JsonToApplicationModel {
@@ -38,7 +26,9 @@ public class JsonToApplicationModel {
         EventDrivenApplication application = new EventDrivenApplication(appId, userId, applicationContext.applicationPreset);
 
         // Group sub flows into inject flows, data flows and event flows
-        groupTopologyNodeTrees(applicationContext.topologyNodeTrees);
+        boolean success = groupTopologyNodeTrees(applicationContext.topologyNodeTrees);
+
+        if(!success) return null;
 
         // Create the application model for all inject flows
         for(TopologyNodeTree injectFlow : applicationContext.injectFlows) {
@@ -55,150 +45,12 @@ public class JsonToApplicationModel {
             createEventFlow(application, eventFlow);
         }
 
-        // Create and set the application modules
-        /*setApplicationModules(application);
-
-        System.out.println("Created AppModules:");
-        for(AppModule appModule : application.getModules()) {
-            System.out.println(appModule.getName());
-        }
-
-        // Set the app edges between modules
-        //setApplicationEdges(application);
-
-        // Set the tuple mappings for modules
-        setApplicationTupleMappings(application);
-
-        // Set the app loops
+        // Set application loops
         setApplicationLoops(application);
-
-        Utility.printAppLoops(applicationContext.appLoops);
-
-        // Set the application events
-        //setApplicationEvents(application);*/
-
-
-        // Create modules:
-        // - DefaultModule module represents an imaginary module that handles some undefined processing or data transmission to other modules.
-        //
-        // - client module that represents user input or user-based tuple transmission
-        //
-        // - Modules for any read-prop, write-prop or invoke-action node given the sub-flow does not start with a sub-event node
-        //
-        // Add app edges
-        // - Modules connected based on node-red connections, so if a read-prop node is connected (directly or indirectly) to a write-prop, their
-        // module counterparts will be connected as such.
-        //      - The tuple type is the name of the property of the read-prop so the Property: lockState would be TUPLE_LOCK_STATE
-        //      - Direction: determineDirection(src, dst)
-        //      - edgeType: props as sensors and actions as actuators, everything else is a module
-        //      - keep track of module connections and module inputs in a D.S (ModuleConnections)
-        //
-        // Define tuple mappings:
-        // - use ModuleConnection class
-        //
-        //
-        // Define app loops
-        // - createAppLoops()
-        //
-        //
-        // Define events => setApplicationEvents() // Will handle all the event setting up and configurations to allow for event transmission and processing
-        // - Extend fogDevices to handle events
-        // - The fog node emits a tuple type of the event-node to all other fog nodes which will process it and act accordingly
-        // - Sensors and actuators (stored in VD) will process incoming event_tuples and emit tuples of their own type, so the invoke-action
-        // node: activateAlarm() will emit a tuple type of TUPLE_activateAlarm to some endpoint, after receiving a tuple of type EVENT_TUPLE_tamperAlert
-        // - Define event tuple flows transmission Map<Event_tuple, List<Nodes> components (like sensors or actuators)> and a response would the node
-        // emitting a tuple to some destination.
-        // - extend controller or application
-        //
-        // */
 
         System.out.println("Application Model formed!");
 
-
         return application;
-    }
-
-    private static void setApplicationModules(EventDrivenApplication application) {
-        // Default module
-        application.addAppModule("default-module", 10);
-        //applicationContext.nodeModules.put("default-module", new NodeModule(application.getModuleByName("default-module")));
-
-        // Client module
-        application.addAppModule("client", 10);
-        //applicationContext.nodeModules.put("client", new NodeModule(application.getModuleByName("client")));
-
-        // Define node types to process
-        List<String> nodeTypesToSearchFor = List.of("read-property", "invoke-action");
-
-        // Map to track the start types of each sub flow
-        Map<String, String> subFlowStartTypes = new HashMap<>();
-
-        // Process topology node trees (sub flows)
-        for (TopologyNodeTree topologyNodeTree : applicationContext.topologyNodeTrees) {
-            TopologyNode rootNode = topologyNodeTree.rootNode();
-            List<List<TopologyNode>> branches = topologyNodeTree.branches();
-
-            String subFlowId = rootNode.id(); // Use root node ID as sub flow identifier
-            boolean hasEventStart = false;
-            boolean hasInjectStart = false;
-
-            List<TopologyNode> subFlowNodes = new ArrayList<>();
-
-            // Collect all nodes in the sub flow
-            for (List<TopologyNode> branch : branches) {
-                subFlowNodes.addAll(branch);
-            }
-
-            // Determine sub flow type
-            for (TopologyNode node : subFlowNodes) {
-                if (node.type().equals(NodeRedJSONParser.TYPE_SUBSCRIBE_EVENT)) {
-                    hasEventStart = true;
-                    break;
-                } else if (node.type().equals(NodeRedJSONParser.TYPE_INJECT)) {
-                    hasInjectStart = true;
-                }
-            }
-
-            if (hasEventStart) {
-                subFlowStartTypes.put(subFlowId, "event");
-                applicationContext.eventFlows.add(topologyNodeTree); // Keep track of sub flows that are event-driven
-            } else if (hasInjectStart) {
-                subFlowStartTypes.put(subFlowId, "inject");
-                applicationContext.injectFlows.add(topologyNodeTree); // Keep track of sub flows that are inject-stimulated
-            } else {
-                subFlowStartTypes.put(subFlowId, "none");
-                applicationContext.dataFlows.add(topologyNodeTree); // Add to dataflow sub flows
-            }
-        }
-
-        List<TopologyNode> allNodes = Utility.getAllNodesFromTopology(applicationContext.topologyNodeTrees);
-
-        // Used to keep track of nodes that will be converted to modules, to ensure not duplicate nodes are converted
-        List<String> nodeIds = new ArrayList<>();
-
-        // Process WoT nodes
-        for (String nodeType : nodeTypesToSearchFor) {
-            List<TopologyNode> nodes = Utility.getTopologyNodesByType(allNodes, nodeType);
-
-            for (TopologyNode node : nodes) {
-                String subFlowId = node.subFlowId(); // Get the sub flow the node belongs to
-
-                // If the node belongs to a data flow sub flow (sub flow id equals none)
-                if (subFlowStartTypes.getOrDefault(subFlowId, "event").equals("none")) {
-                    if(!nodeIds.contains(node.id())) {
-                        String moduleName = node.uniqueAttribute() + "_" + node.id(); // Append ID to ensure uniqueness
-                        application.addAppModule(moduleName, 10);
-
-                        // Store the app modules created <ID, MODULE>
-                        applicationContext.appModulesCreated.put(node.id(), application.getModuleByName(moduleName));
-
-                        nodeIds.add(node.id());
-                    } else {
-                        //System.out.println("Skipping node: " + node.uniqueAttribute() + " (node already added)");
-                    }
-                }
-            }
-        }
     }
 
     private static boolean groupTopologyNodeTrees(List<TopologyNodeTree> topologyNodeTrees) {
@@ -223,10 +75,96 @@ public class JsonToApplicationModel {
         return true;
     }
 
+    /**
+     * Creates the necessary app modules, app edges, tuple mappings for app modules and app loops to simulate user data
+     * entering an application.
+     * @param application The application instance
+     * @param injectFlow The sub flow that represents user injected data (user-based data)
+     */
     private static void createInjectFlow(EventDrivenApplication application, TopologyNodeTree injectFlow) {
+        // Check if the inject flow actually exists
+        if(injectFlow == null) {
+            return;
+        }
 
+        // Make sure the inject flow is actually an inject  flow. If not return
+        if(!injectFlow.rootNode().type().equals(NodeRedJSONParser.TYPE_INJECT)) {
+            return;
+        }
+
+        // Checks if the inject flow's branches list is set
+        if(injectFlow.branches() == null || injectFlow.branches().isEmpty()) {
+            return;
+        }
+
+        int clientModuleCount = 0;
+
+        // Get root node
+        TopologyNode rootNode = injectFlow.rootNode();
+
+        // Get branches
+        List<List<TopologyNode>> branches = injectFlow.branches();
+
+        // Used to keep track of all modules made and ensure no duplicate
+        HashMap<String, ModuleMapping> moduleTupleMappings = new HashMap<>();
+
+        // Create the client module
+        String clientModule = "CLIENT_MODULE";
+        application.addAppModule(clientModule, applicationContext.applicationPreset.APP_MODULE_RAM);
+
+        // Iterate through one branch at a time
+        for(List<TopologyNode> branch : branches) {
+            // Helps keep track of data flow in and out of application model
+            List<String> appLoopRoute = new ArrayList<>();
+
+            for(int index = 0; index < branch.size(); index++) {
+                // Get node at index
+                TopologyNode node = branch.get(index);
+
+                // Check if the node is a WoT node
+                if(isWoTNode(node)) {
+                    TopologyNodeConnectionStatus connectionStatus = TopologyNodeConnectionChecker.areNodesConnected(rootNode.id(), node.id());
+
+                    // Only care if there exists some connection whether its direct or indirect
+                    if(connectionStatus.isThereAConnection()) {
+                        // Create the src
+                        String srcName = node.uniqueAttribute();
+
+                        // Create the app edge from src ----> client
+                        String tupleTypeOne = determineTupleType(node);
+                        int edgeDirection1 = determineDirection(node);
+                        int edgeType1 = determineEdgeType(node);
+                        addAppEdge(application, srcName, clientModule, tupleTypeOne, edgeDirection1, edgeType1);
+                    }
+                }
+            }
+        }
+
+        // TODO CONSIDER ITS IMPORTANCE - IS IT ACTUALLY NEEDED - MUST I MAP USER DATA FLOW IN THE APPLICATION
+
+        // Set tuple mappings
+        for(Map.Entry<String, ModuleMapping> moduleMapping : moduleTupleMappings.entrySet()) {
+            String moduleName = moduleMapping.getKey();
+            ModuleMapping mapping = moduleMapping.getValue();
+
+            // Only set tuple mapping if for that module, its input and output tuple types are both set
+            if(mapping.getInputTupleType() != null && mapping.getOutputTupleType() != null) {
+                application.addTupleMapping(
+                        moduleName,
+                        mapping.getInputTupleType(),
+                        mapping.getOutputTupleType(),
+                        new FractionalSelectivity(1.0) // CHANGE AT YOUR DISCRETION
+                );
+            }
+        }
     }
 
+    /**
+     * Creates the necessary app modules, app edges, tuple mappings for app modules and app loops for a given
+     * data flow sub flow.
+     * @param application The application instance
+     * @param dataFlow The sub flow which is a data flow
+     */
     private static void createDataFlow(EventDrivenApplication application, TopologyNodeTree dataFlow) {
         // Check if the data flow exists
         if(dataFlow == null) {
@@ -281,11 +219,11 @@ public class JsonToApplicationModel {
 
                     if(connectionStatus.isThereAConnection()) {
                         if(connectionStatus.isDirectionConnection()) {
-                            // Handle direct connections here
+                            // HANDLE DIRECT CONNECTION HERE
                         }
 
                         //else {
-                            // Handle indirect connection here
+                            // HANDLE INDIRECT CONNECTION HERE
 
                             // Create a processing module (represents an intermediately processing unit for data)
                             String processingModule = "processingModule-" + processingModuleCount;
@@ -353,12 +291,17 @@ public class JsonToApplicationModel {
 
                             processingModuleCount++;
 
+                            // Move to the next position
+                            ptr1 = ptr2;
+                            ptr2++;
+
 
                         //}
                     }
-
+                } else {
+                    // Move to the node
+                    ptr2++;
                 }
-
             }
         }
 
@@ -380,7 +323,11 @@ public class JsonToApplicationModel {
     }
 
     private static void createEventFlow(EventDrivenApplication application, TopologyNodeTree eventFlow) {
+        // APPLICATION MODEL THE EXACT SAME AS THE createDataFlow()
+        // Tuple types start with EVENT_TUPLE_....
+        // Processing modules are EVENT_PROCESSING_MODULE-....
 
+        // EXTEND FOG DEVICES, SENSORS, ACTUATORS AND IFOGSIM SIMULATION CLASSES TO HANDLE TUPLE TYPES OF EVENT
     }
 
     private static void setApplicationEdges(EventDrivenApplication application) {
@@ -422,7 +369,7 @@ public class JsonToApplicationModel {
                             }
 
                             // Create an app edge from src ---> dfm ---> dst
-                            addAppEdge(application, srcModule.getName(), dstModule.getName(), src, dst);
+                            //addAppEdge(application, srcModule.getName(), dstModule.getName(), src, dst);
                             //addAppEdge(application, dfm, dstModule.getName(), src, dst);
 
                             /*
@@ -431,8 +378,6 @@ public class JsonToApplicationModel {
                             * record all appEdges
                             * record all tuple flows through modules
                             */
-
-                            // TODO - Connect dfm to modules when there existing a node between src and dst. If src node is right next to dst node, no dfm needed
 
                             // Record the connection
                             applicationContext.appEdges.put(src.id(), dst.id());
@@ -456,8 +401,6 @@ public class JsonToApplicationModel {
                                 //newRoute.add(dfm);
                                 //newRoute.add(dstModule.getName());
 
-                                // TODO - FIX THIS / OUTPUT INCORRECT
-
                                 newRoute.add(dstModule.getName()); // Add the new destination module
 
                                 applicationContext.appLoops.add(newRoute); // Add the extended route
@@ -478,65 +421,18 @@ public class JsonToApplicationModel {
         }
     }
 
-    private static void setApplicationTupleMappings(EventDrivenApplication application) {
-        Map<String, Map<String, TupleMapping>> tupleMappings = new HashMap<>();
-
-        List<TopologyNode> allNodes = Utility.getAllNodesFromTopology(applicationContext.topologyNodeTrees);
-
-        for (Map.Entry<String, String> edgeEntry : applicationContext.appEdges.entrySet()) {
-            String srcNodeId = edgeEntry.getKey();
-            String dstNodeId = edgeEntry.getValue();
-
-            AppModule srcModule = applicationContext.appModulesCreated.get(srcNodeId);
-            AppModule dstModule = applicationContext.appModulesCreated.get(dstNodeId);
-
-            if (srcModule != null && dstModule != null) {
-                TopologyNode srcNode = Utility.findTopologyNodeBy("id", srcNodeId, allNodes);  // Find node by ID
-                TopologyNode dstNode = Utility.findTopologyNodeBy("id", dstNodeId, allNodes);
-
-                if (srcNode != null && dstNode != null) {
-                    String srcTupleType = determineTupleType(srcNode);
-                    String dstTupleType = determineTupleType(dstNode);
-
-                    if (srcTupleType != null && dstTupleType != null) {
-                        if (!tupleMappings.containsKey(srcTupleType)) {
-                            tupleMappings.put(srcTupleType, new HashMap<>());
-                        }
-                        TupleMapping mapping = new TupleMapping(srcModule.getName(), srcTupleType, dstTupleType, new FractionalSelectivity(1.0)); // Create mapping here
-                        tupleMappings.get(srcTupleType).put(dstTupleType, mapping);
-
-                        // Print the mapping as it's created:
-                        System.out.println("Tuple Mapping Created: " + mapping); // Or a more formatted output
-
-                        application.addTupleMapping(mapping.module(), mapping.inputTupleType(), mapping.outputTupleType(), mapping.selectivity()); // Add to application immediately
-                    }
-                }
-            }
-        }
-    }
-
     private static void setApplicationLoops(EventDrivenApplication application) {
         // Generate the loops
-        List<AppLoop> appLoops = generateAppLoops(applicationContext.appLoops);
-
-        // Assign loops to the application
-        application.setLoops(appLoops);
-    }
-
-    private static void setApplicationEvents(EventDrivenApplication application) {
-
-    }
-
-    private static List<AppLoop> generateAppLoops(List<List<String>> loops) {
         List<AppLoop> appLoops = new ArrayList<>();
 
-        for(List<String> loop : loops) {
+        for(List<String> loop : applicationContext.appLoops) {
             AppLoop appLoop = new AppLoop(loop);
 
             appLoops.add(appLoop);
         }
 
-        return appLoops;
+        // Assign loops to the application
+        application.setLoops(appLoops);
     }
 
     private static boolean isWoTNode(TopologyNode node) {
