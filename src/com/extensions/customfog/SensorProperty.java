@@ -40,29 +40,26 @@ public class SensorProperty extends Sensor {
             if(edge.getSource().equals(getTupleType()))
                 _edge = edge;
         }
-        if (_edge == null) {
-            System.out.println("AppEdge is null in SensorProperty! Ensure it is initialized correctly. Sensor: ");
-        } else {
-            //System.out.println("AppEdge is initialized correctly! Sensor: " + _edge.getDestination());
+
+        if(_edge != null) {
+            long cpuLength = (long) _edge.getTupleCpuLength();
+            long nwLength = (long) _edge.getTupleNwLength();
+
+            Tuple tuple = new Tuple(getAppId(), FogUtils.generateTupleId(), Tuple.UP, cpuLength, 1, nwLength, getOutputSize(),
+                    new UtilizationModelFull(), new UtilizationModelFull(), new UtilizationModelFull());
+            tuple.setUserId(getUserId());
+            tuple.setTupleType(getTupleType());
+
+            tuple.setDestModuleName(_edge.getDestination());
+            tuple.setSrcModuleName(getSensorName());
+            Logger.debug(getName(), "Sending tuple with tupleId = "+tuple.getCloudletId());
+
+            tuple.setDestinationDeviceId(getGatewayDeviceId());
+
+            int actualTupleId = updateTimings(getSensorName(), tuple.getDestModuleName());
+            tuple.setActualTupleId(actualTupleId);
+
+            send(getGatewayDeviceId(), getLatency(), FogEvents.TUPLE_ARRIVAL,tuple);
         }
-        assert _edge != null;
-        long cpuLength = (long) _edge.getTupleCpuLength();
-        long nwLength = (long) _edge.getTupleNwLength();
-
-        Tuple tuple = new Tuple(getAppId(), FogUtils.generateTupleId(), Tuple.UP, cpuLength, 1, nwLength, getOutputSize(),
-                new UtilizationModelFull(), new UtilizationModelFull(), new UtilizationModelFull());
-        tuple.setUserId(getUserId());
-        tuple.setTupleType(getTupleType());
-
-        tuple.setDestModuleName(_edge.getDestination());
-        tuple.setSrcModuleName(getSensorName());
-        Logger.debug(getName(), "Sending tuple with tupleId = "+tuple.getCloudletId());
-
-        tuple.setDestinationDeviceId(getGatewayDeviceId());
-
-        int actualTupleId = updateTimings(getSensorName(), tuple.getDestModuleName());
-        tuple.setActualTupleId(actualTupleId);
-
-        send(getGatewayDeviceId(), getLatency(), FogEvents.TUPLE_ARRIVAL,tuple);
     }
 }

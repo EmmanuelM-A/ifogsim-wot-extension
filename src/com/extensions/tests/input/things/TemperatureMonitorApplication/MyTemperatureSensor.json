@@ -15,6 +15,19 @@
       "description": "Current temperature reading in Celsius.",
       "readOnly": true,
       "observable": true
+    },
+    "humidity": {
+      "type": "number",
+      "description": "Current humidity percentage.",
+      "readOnly": true,
+      "observable": true,
+      "forms": [
+        {
+          "href": "https://example.com/temp-sensor/properties/humidity",
+          "contentType": "application/json",
+          "op": ["readproperty", "observeproperty"]
+        }
+      ]
     }
   },
   "actions": {
@@ -23,6 +36,26 @@
       "inputSchema": {
         "type": "null"
       }
+    },
+    "calibrate": {
+      "description": "Calibrates the temperature sensor.",
+      "input": {
+        "type": "object",
+        "properties": {
+          "calibrationValue": {
+            "type": "number",
+            "description": "Calibration offset value in Celsius."
+          }
+        },
+        "required": ["calibrationValue"]
+      },
+      "forms": [
+        {
+          "href": "https://example.com/temp-sensor/actions/calibrate",
+          "contentType": "application/json",
+          "op": ["invokeaction"]
+        }
+      ]
     }
   },
   "events": {

@@ -81,14 +81,14 @@ public class VirtualDeviceFactory {
 
                 ActuatorAction writePropertyAction = new ActuatorAction(propertyName, userId, appId, null, actuatorPreset);
 
-                // Add actuator action to the virtual device
-                virtualDevice.getActuatorActions().add(writePropertyAction);
-
                 // Set the actuator's gateway device ID to the VD's ID
                 writePropertyAction.setGatewayDeviceId(virtualDevice.getFogDevice().getId());
 
                 // Set the latency of the actuator communication
                 writePropertyAction.setLatency(actuatorPreset.LATENCY);
+
+                // Add actuator action to the virtual device
+                virtualDevice.getActuatorActions().add(writePropertyAction);
             }
 
             // Extract entry data
@@ -98,14 +98,14 @@ public class VirtualDeviceFactory {
             // Map action to an ActuatorAction
             ActuatorAction actuatorAction = new ActuatorAction(actionName, userId, appId, action, actuatorPreset);
 
-            // Add actuator action to the virtual device
-            virtualDevice.getActuatorActions().add(actuatorAction);
-
             // Set the actuator's gateway device ID to the VD's ID
             actuatorAction.setGatewayDeviceId(virtualDevice.getFogDevice().getId());
 
             // Set the latency of the actuator communication
             actuatorAction.setLatency(actuatorPreset.LATENCY);
+
+            // Add actuator action to the virtual device
+            virtualDevice.getActuatorActions().add(actuatorAction);
         }
 
         // Create event for the events

@@ -1,5 +1,7 @@
 package com.extensions.simulation;
 
+import org.fog.application.AppLoop;
+import org.fog.application.Application;
 import org.fog.entities.FogDevice;
 import org.fog.utils.Config;
 import org.fog.utils.NetworkUsageMonitor;
@@ -34,13 +36,6 @@ public class SimulationResults {
         this.totalNetworkUsage = NetworkUsageMonitor.getNetworkUsage() / Config.MAX_SIMULATION_TIME;
         this.cloudExecutionCost = extractCloudExecutionCost(fogDevices);
     }
-
-    /*public static SimulationResults getInstance() {
-        if (instance == null) {
-            instance = new SimulationResults();
-        }
-        return instance;
-    }*/
 
     /**
      * Extracts loop delays from TimeKeeper.
@@ -98,6 +93,7 @@ public class SimulationResults {
         System.out.println("Total Network Usage: " + totalNetworkUsage);
         System.out.println("Cloud Execution Cost: " + cloudExecutionCost);
 
+        // TODO REFORMAT THIS SO IT PRINTS OUT THE ITEMS IN THE LOOP AS WELL AS ITS DELAY
         System.out.println("\nApplication Loop Delays:");
         for (Map.Entry<String, Double> entry : applicationLoopDelays.entrySet()) {
             System.out.println(entry.getKey() + " ---> " + entry.getValue() + " ms");

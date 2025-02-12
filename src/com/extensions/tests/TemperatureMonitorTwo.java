@@ -118,7 +118,6 @@ public class TemperatureMonitorTwo {
 
         // Define Application Loops
         final AppLoop loop = new AppLoop(Arrays.asList("temperature", "processing", "updateDisplay"));
-        System.out.println("LOOP ID at creation = " + loop.getLoopId());
         application.setLoops(Collections.singletonList(loop));
 
         return application;

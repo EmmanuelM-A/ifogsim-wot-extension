@@ -6,9 +6,6 @@ import java.util.List;
 import java.util.Map;
 
 import com.extensions.custommetrics.CustomMetricManager;
-import com.extensions.custommetrics.metrics.LongestApplicationLoopDelay;
-import com.extensions.custommetrics.metrics.PeakEnergyConsumptionDevice;
-import com.extensions.custommetrics.metrics.TotalEnergyConsumptionEfficiency;
 import com.extensions.simulation.SimulationResults;
 import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.core.SimEntity;
@@ -121,8 +118,6 @@ public class CustomController extends SimEntity{
 
         }
     }
-
-    // TODO - MAKE IT SO THE CUSTOM METRICS ARE SET IN THE APPLICATION MAIN METHOD
 
     private void printNetworkUsageDetails() {
         System.out.println("Total network usage = "+NetworkUsageMonitor.getNetworkUsage()/Config.MAX_SIMULATION_TIME);
