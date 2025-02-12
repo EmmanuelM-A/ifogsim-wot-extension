@@ -99,7 +99,7 @@ public class JsonToPhysicalTopology {
                 }
             } else { // If the topics array is not set, distribute nodes normally
                 // Calculate the number of edge nodes needed
-                int numberOfEdgeNodes = Math.max(1, calculateNoOfEdgeNodes(virtualDevices.size(), applicationContext.applicationPreset.MAX_VDS_FOR_ONE_EDE_NODE));
+                int numberOfEdgeNodes = Math.max(1, calculateNoOfEdgeNodes(selectedVirtualDevices.size(), applicationContext.applicationPreset.MAX_VDS_FOR_ONE_EDE_NODE));
 
                 // Create a list of edge nodes (each edge node is represented as a list of VDs)
                 List<List<VirtualDevice>> edgeNodeList = new ArrayList<>();
@@ -109,9 +109,9 @@ public class JsonToPhysicalTopology {
                     edgeNodeList.add(new ArrayList<>());
                 }
 
-                for (int i = 0; i < virtualDevices.size(); i++) {
+                for (int i = 0; i < selectedVirtualDevices.size(); i++) {
                     // Assign each virtual device to an edge node in a round-robin manner
-                    edgeNodeList.get(i % numberOfEdgeNodes).add(virtualDevices.get(i));
+                    edgeNodeList.get(i % numberOfEdgeNodes).add(selectedVirtualDevices.get(i));
                 }
 
                 // Connect the VDs to the edge nodes
