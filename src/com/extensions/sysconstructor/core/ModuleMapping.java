@@ -1,20 +1,13 @@
 package com.extensions.sysconstructor.core;
 
-public class NodeModule {
-    private final String name;
-
+public class ModuleMapping {
     private String inputTupleType;
 
     private String outputTupleType;
 
-    public NodeModule(String name) {
-        this.name = name;
+    public ModuleMapping() {
         this.inputTupleType = null;
         this.outputTupleType = null;
-    }
-
-    public String getName() {
-        return name;
     }
 
     public String getInputTupleType() {

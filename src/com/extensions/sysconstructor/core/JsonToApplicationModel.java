@@ -4,6 +4,7 @@ import com.extensions.sysconstructor.eventdriver.EventDrivenApplication;
 import com.extensions.sysconstructor.nodered.NodeRedJSONParser;
 import com.extensions.sysconstructor.topology.*;
 import com.extensions.utils.Utility;
+import org.apache.commons.math3.util.Pair;
 import org.fog.application.AppEdge;
 import org.fog.application.AppLoop;
 import org.fog.application.AppModule;
@@ -36,8 +37,26 @@ public class JsonToApplicationModel {
         // Create the application instance
         EventDrivenApplication application = new EventDrivenApplication(appId, userId, applicationContext.applicationPreset);
 
+        // Group sub flows into inject flows, data flows and event flows
+        groupTopologyNodeTrees(applicationContext.topologyNodeTrees);
+
+        // Create the application model for all inject flows
+        for(TopologyNodeTree injectFlow : applicationContext.injectFlows) {
+            createInjectFlow(application, injectFlow);
+        }
+
+        // Create the application model for all data flows
+        for(TopologyNodeTree dataFlow : applicationContext.dataFlows) {
+            createDataFlow(application, dataFlow);
+        }
+
+        // Set all the event flows for the application model
+        for(TopologyNodeTree eventFlow : applicationContext.eventFlows) {
+            createEventFlow(application, eventFlow);
+        }
+
         // Create and set the application modules
-        setApplicationModules(application);
+        /*setApplicationModules(application);
 
         System.out.println("Created AppModules:");
         for(AppModule appModule : application.getModules()) {
@@ -45,7 +64,7 @@ public class JsonToApplicationModel {
         }
 
         // Set the app edges between modules
-        setApplicationEdges(application);
+        //setApplicationEdges(application);
 
         // Set the tuple mappings for modules
         setApplicationTupleMappings(application);
@@ -56,7 +75,7 @@ public class JsonToApplicationModel {
         Utility.printAppLoops(applicationContext.appLoops);
 
         // Set the application events
-        //setApplicationEvents(application);
+        //setApplicationEvents(application);*/
 
 
         // Create modules:
@@ -164,8 +183,7 @@ public class JsonToApplicationModel {
             for (TopologyNode node : nodes) {
                 String subFlowId = node.subFlowId(); // Get the sub flow the node belongs to
 
-                // Accept if:
-                // - It belongs to a sub flow that has no event or inject node
+                // If the node belongs to a data flow sub flow (sub flow id equals none)
                 if (subFlowStartTypes.getOrDefault(subFlowId, "event").equals("none")) {
                     if(!nodeIds.contains(node.id())) {
                         String moduleName = node.uniqueAttribute() + "_" + node.id(); // Append ID to ensure uniqueness
@@ -178,11 +196,191 @@ public class JsonToApplicationModel {
                     } else {
                         //System.out.println("Skipping node: " + node.uniqueAttribute() + " (node already added)");
                     }
-                } else {
-                    //System.out.println("Skipping node: " + node.uniqueAttribute() + " (not a data flow)");
                 }
             }
         }
+    }
+
+    private static boolean groupTopologyNodeTrees(List<TopologyNodeTree> topologyNodeTrees) {
+        // Process topology node trees (sub flows)
+        for (TopologyNodeTree topologyNodeTree : topologyNodeTrees) {
+            TopologyNode rootNode = topologyNodeTree.rootNode();
+
+            if(rootNode == null) {
+                System.out.println("In groupTopologyNodeTrees(), a root node has not been set!");
+                return false;
+            }
+
+            if (rootNode.type().equals(NodeRedJSONParser.TYPE_SUBSCRIBE_EVENT)) {
+                applicationContext.eventFlows.add(topologyNodeTree); // Keep track of sub flows that are event-driven
+            } else if (rootNode.type().equals(NodeRedJSONParser.TYPE_INJECT)) {
+                applicationContext.injectFlows.add(topologyNodeTree); // Keep track of sub flows that are inject-stimulated
+            } else {
+                applicationContext.dataFlows.add(topologyNodeTree); // Add to dataflow sub flows
+            }
+        }
+
+        return true;
+    }
+
+    private static void createInjectFlow(EventDrivenApplication application, TopologyNodeTree injectFlow) {
+
+    }
+
+    private static void createDataFlow(EventDrivenApplication application, TopologyNodeTree dataFlow) {
+        // Check if the data flow exists
+        if(dataFlow == null) {
+            return;
+        }
+
+        // Make sure the data flow is actually a data flow. If not return
+        if(!dataFlow.rootNode().type().equals("inject") && !dataFlow.rootNode().type().equals("event")) {
+            return;
+        }
+
+        // Checks if the data flow's branches list is set
+        if(dataFlow.branches() == null || dataFlow.branches().isEmpty()) {
+            return;
+        }
+
+        // Get the rootNode
+        TopologyNode rootNode = dataFlow.rootNode();
+
+        // Get branches
+        List<List<TopologyNode>> branches = dataFlow.branches();
+
+        // Check if the rootNode is a wot node, if so get its type
+        if(!isWoTNode(rootNode)) {
+            return;
+        }
+
+        // A count used to keep track of processing modules created
+        int processingModuleCount = 0;
+
+        // Used to keep track of all modules made and ensure no duplicate
+        HashMap<String, ModuleMapping> moduleMappings = new HashMap<>();
+
+        // Iterate through one branch at a time
+        for(List<TopologyNode> branch : branches) {
+            // Used to access nodes in a branch
+            int ptr1 = 0, ptr2 = 1;
+
+            // Helps keep track of data flow in and out of application model
+            List<String> appLoopRoute = new ArrayList<>();
+
+            while(ptr2 < branch.size()) {
+                // Get the src node (Assuming it's a WoT node) and dst node (will be checked)
+                TopologyNode src = branch.get(ptr1);
+
+                TopologyNode dst = branch.get(ptr2);
+
+                // Check if the dst node is a WoT node
+                if(isWoTNode(dst)) {
+                    // Check the connectivity between the src and dst nodes
+                    TopologyNodeConnectionStatus connectionStatus = TopologyNodeConnectionChecker.areNodesConnected(src.id(), dst.id());
+
+                    if(connectionStatus.isThereAConnection()) {
+                        if(connectionStatus.isDirectionConnection()) {
+                            // Handle direct connections here
+                        }
+
+                        //else {
+                            // Handle indirect connection here
+
+                            // Create a processing module (represents an intermediately processing unit for data)
+                            String processingModule = "processingModule-" + processingModuleCount;
+                            application.addAppModule(processingModule, applicationContext.applicationPreset.APP_MODULE_RAM);
+
+                            // Get the property/action name of the src and dst node
+                            String srcName = src.uniqueAttribute();
+                            String dstName = dst.uniqueAttribute();
+
+                            // Create the app edges from src ----> PrM ----> dst
+                            // Src ----> PrM
+                            String tupleTypeOne = determineTupleType(src);
+                            int edgeDirection1 = determineDirection(src);
+                            int edgeType1 = determineEdgeType(src);
+                            addAppEdge(application, srcName, processingModule, tupleTypeOne, edgeDirection1, edgeType1);
+
+                            // PrM ----> dst
+                            String tupleTypeTwo = determineTupleType(dst);
+                            int edgeDirection2 = determineDirection(dst);
+                            int edgeType2 = determineEdgeType(dst);
+                            addAppEdge(application, processingModule, dstName, tupleTypeTwo, edgeDirection2, edgeType2);
+
+                            // Record tuple mappings between modules
+                            if(moduleMappings.containsKey(srcName)) {
+                                ModuleMapping mapping = moduleMappings.get(srcName);
+
+                                if(mapping.getOutputTupleType() == null) mapping.setOutputTupleType(tupleTypeOne);
+
+                            } else {
+                                moduleMappings.put(srcName, new ModuleMapping());
+                            }
+
+                            if(moduleMappings.containsKey(dstName)) {
+                                ModuleMapping mapping = moduleMappings.get(dstName);
+
+                                if(mapping.getInputTupleType() == null) mapping.setInputTupleType(tupleTypeTwo);
+
+                            } else {
+                                moduleMappings.put(dstName, new ModuleMapping());
+                            }
+
+                            if(moduleMappings.containsKey(processingModule)) {
+                                ModuleMapping mapping = moduleMappings.get(processingModule);
+
+                                mapping.setInputTupleType(tupleTypeOne);
+                                mapping.setOutputTupleType(tupleTypeTwo);
+
+                            } else {
+                                moduleMappings.put(processingModule, new ModuleMapping());
+                            }
+
+                            // Record the route of the data flow
+                            if(appLoopRoute.isEmpty()) {
+                                // First time, start with an empty list
+                                appLoopRoute.add(srcName);
+                                appLoopRoute.add(processingModule);
+                                appLoopRoute.add(dstName);
+                            } else {
+                                // Subsequent times, extend the appLoopRoute
+                                appLoopRoute.add(processingModule);
+                                appLoopRoute.add(dstName);
+                            }
+
+                            applicationContext.appLoops.add(appLoopRoute);
+
+                            processingModuleCount++;
+
+
+                        //}
+                    }
+
+                }
+
+            }
+        }
+
+        // Set tuple mappings
+        for(Map.Entry<String, ModuleMapping> moduleMapping : moduleMappings.entrySet()) {
+            String moduleName = moduleMapping.getKey();
+            ModuleMapping mapping = moduleMapping.getValue();
+
+            // Only set tuple mapping if for that module, its input and output tuple types are both set
+            if(mapping.getInputTupleType() != null && mapping.getOutputTupleType() != null) {
+                application.addTupleMapping(
+                        moduleName,
+                        mapping.getInputTupleType(),
+                        mapping.getOutputTupleType(),
+                        new FractionalSelectivity(1.0) // CHANGE AT YOUR DISCRETION
+                        );
+            }
+        }
+    }
+
+    private static void createEventFlow(EventDrivenApplication application, TopologyNodeTree eventFlow) {
+
     }
 
     private static void setApplicationEdges(EventDrivenApplication application) {
@@ -232,7 +430,7 @@ public class JsonToApplicationModel {
                             * If there exists some nodes between src and dst (not directly connected) => edge) src ---> Pr --->  dst
                             * record all appEdges
                             * record all tuple flows through modules
-                            * */
+                            */
 
                             // TODO - Connect dfm to modules when there existing a node between src and dst. If src node is right next to dst node, no dfm needed
 
@@ -278,39 +476,6 @@ public class JsonToApplicationModel {
                 }
             }
         }
-    }
-
-    private static boolean isWoTNode(TopologyNode node) {
-        return node.thing() != null && !node.thing().isEmpty();
-    }
-
-
-    private static void addAppEdge(EventDrivenApplication application, String srcModuleName, String dstModuleName, TopologyNode srcNode, TopologyNode dstNode) {
-        String tupleType = null;
-        int edgeDirection = 0;
-        int edgeType = 0;
-
-        if(srcModuleName.equals("default-module")) { // dfm ---> dst
-            tupleType = determineTupleType(srcNode); // Same as src
-            edgeDirection = determineDirection(dstNode); //
-            edgeType = determineEdgeType(dstNode);
-        } else {
-            tupleType = determineTupleType(srcNode);
-            edgeDirection = determineDirection(srcNode);
-            edgeType = determineEdgeType(srcNode);
-        }
-
-        application.addAppEdge(
-                srcModuleName,
-                dstModuleName,
-                applicationContext.applicationPreset.APP_EDGE_TUPLE_CPU_LENGTH,  // Processing latency
-                applicationContext.applicationPreset.APP_EDGE_TUPLE_NW_LENGTH,   // Transmission latency
-                tupleType,
-                edgeDirection,
-                edgeType
-        );
-
-        System.out.println("Connected: " + srcModuleName + " --> " + dstModuleName);
     }
 
     private static void setApplicationTupleMappings(EventDrivenApplication application) {
@@ -374,14 +539,27 @@ public class JsonToApplicationModel {
         return appLoops;
     }
 
+    private static boolean isWoTNode(TopologyNode node) {
+        return node.thing() != null && !node.thing().isEmpty();
+    }
+
+
+    private static void addAppEdge(EventDrivenApplication application, String srcModuleName, String dstModuleName, String tupleType, int edgeDirection, int edgeType) {
+        application.addAppEdge(
+                srcModuleName,
+                dstModuleName,
+                applicationContext.applicationPreset.APP_EDGE_TUPLE_CPU_LENGTH,  // Processing latency
+                applicationContext.applicationPreset.APP_EDGE_TUPLE_NW_LENGTH,   // Transmission latency
+                tupleType,
+                edgeDirection,
+                edgeType
+        );
+
+        System.out.println("Connected: " + srcModuleName + " --> " + dstModuleName);
+    }
+
     private static String determineTupleType(TopologyNode node) {
-        if (node.type().equals("read-property")) {
-            return node.uniqueAttribute();  // Use property name as tuple
-        } else if (node.type().equals("invoke-action") || node.type().equals("write-property")) {
-            return node.uniqueAttribute();  // Action-related tuple
-        } else {
-            return node.uniqueAttribute();  // Generic processing tuple
-        }
+        return node.uniqueAttribute();
     }
 
     private static int determineDirection(TopologyNode node) {

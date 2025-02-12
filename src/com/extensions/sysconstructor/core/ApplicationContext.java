@@ -95,9 +95,6 @@ public class ApplicationContext {
     // List of loops present in the application topology (cyclic dependencies)
     public final List<List<String>> appLoops;
 
-    // Checker to validate the connections between topology nodes
-    public final TopologyNodeConnectionChecker nodeConnectionChecker;
-
     // Parser responsible for extracting and organizing application topology information
     public final ApplicationTopologyParser applicationTopologyParser;
 
@@ -144,7 +141,7 @@ public class ApplicationContext {
         this.requiredNodes = filterTopologyNode(topologyNodes);
 
         // Initialize the connection checker to validate topology node connections
-        this.nodeConnectionChecker = new TopologyNodeConnectionChecker(topologyNodeTrees);
+        TopologyNodeConnectionChecker.initializeChecker(topologyNodeTrees);
 
         // Initialize storage for data flows, application modules, and application edges
         this.dataFlows = new ArrayList<>();

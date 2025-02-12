@@ -8,8 +8,8 @@ import java.util.List;
 public class MultiOutputNodeModule extends NodeModule {
     private final List<String> additionalOutputTuples;
 
-    public MultiOutputNodeModule(AppModule module) {
-        super(module);
+    public MultiOutputNodeModule(String name) {
+        super(name);
         this.additionalOutputTuples = new ArrayList<>();
     }
 
