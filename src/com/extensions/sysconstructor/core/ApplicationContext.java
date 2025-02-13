@@ -8,6 +8,7 @@ import com.extensions.utils.Utility;
 import com.extensions.utils.presets.ApplicationPreset;
 import com.extensions.utils.presets.CloudNodePreset;
 import com.extensions.utils.presets.EdgeNodePreset;
+import com.extensions.vdcreation.core.VirtualDevice;
 import org.fog.entities.FogDevice;
 import org.fog.application.AppModule;
 
@@ -95,6 +96,8 @@ public class ApplicationContext {
     // Parser responsible for extracting and organizing application topology information
     public final ApplicationTopologyParser applicationTopologyParser;
 
+    public final List<VirtualDevice> selectedVirtualDevices;
+
     /**
      * Constructor to initialize the application context by parsing a Node-RED application design.
      *
@@ -139,6 +142,8 @@ public class ApplicationContext {
 
         // Initialize the connection checker to validate topology node connections
         TopologyNodeConnectionChecker.initializeChecker(topologyNodeTrees);
+
+        this.selectedVirtualDevices = new ArrayList<>();
 
         // Initialize storage for data flows, application modules, and application edges
         this.dataFlows = new ArrayList<>();

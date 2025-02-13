@@ -17,6 +17,24 @@ public class Utility {
         return null;
     }
 
+    public static VirtualDevice getVirtualDevice(List<TopologyNode> things, List<VirtualDevice> virtualDevices, TopologyNode node) {
+        String thingNode = null;
+
+        if(node.thing() == null || node.thing().isEmpty()) return null;
+
+        for(TopologyNode thing : things) {
+            if(thing.id().equals(node.thing())) thingNode = thing.name();
+        }
+
+        for(VirtualDevice virtualDevice : virtualDevices) {
+            if(virtualDevice.getFogDevice().getName().equals(thingNode)) {
+                return virtualDevice;
+            }
+        }
+
+        return null;
+    }
+
     public static TopologyNode findTopologyNodeBy(String criteria, String target, List<TopologyNode> allNodes) {
         if (allNodes == null || allNodes.isEmpty() || criteria == null || target == null) {
             return null; // Handle null or empty input

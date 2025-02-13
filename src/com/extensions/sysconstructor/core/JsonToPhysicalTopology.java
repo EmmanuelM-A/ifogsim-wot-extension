@@ -27,6 +27,8 @@ public class JsonToPhysicalTopology {
 
             if(selectedVirtualDevices == null) throw new Error("No virtual devices exist for things specified!");
 
+            applicationContext.selectedVirtualDevices.addAll(selectedVirtualDevices);
+
             // Get the names of all sensors and actuators used in the application
             Set<String> sensorsAndActuatorsUsed = new HashSet<>(getAllSensorsAndActuatorsUsed(applicationContext.topologyNodes));
 
