@@ -20,19 +20,18 @@ public class CustomFogDevice extends FogDevice {
 
     @Override
     protected void processTupleArrival(SimEvent ev) {
-        EventTuple tuple = (EventTuple) ev.getData();
+        Object data = ev.getData();
 
-        // Check if the tuple is an event tuple
-        if(tuple != null) {
-            // Handle event tuple
-            processEventTuple(tuple);
+        // Check if it's an instance of EventTuple
+        if (data instanceof EventTuple eventTuple) {
+            processEventTuple(eventTuple);
+        } else if (data instanceof Tuple tuple) {
+            // Default iFogSim Tuple Handling
+            super.processTupleArrival(ev);
         } else {
-            super.processTupleArrival(ev); // Regular tuple handling
+            System.out.println("Warning: Received an unknown tuple type: " + data.getClass().getName());
         }
-
     }
-
-    // TODO REMEMEBR TO SWITCH THE USE OF FOGDEVICE TO CUSTOMFOGDEVICE
 
     public void processEventTuple(EventTuple tuple) {
         System.out.println(getName() + " processing event tuple: " + tuple.getEventType());

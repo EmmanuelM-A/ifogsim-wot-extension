@@ -1,5 +1,6 @@
 package com.extensions.vdcreation.core;
 
+import com.extensions.customfog.CustomFogDevice;
 import com.extensions.customfog.FogDeviceFactory;
 import com.extensions.utils.presets.FogDevicePreset;
 import com.extensions.vdcreation.models.Event;
@@ -18,7 +19,7 @@ public class VirtualDevice {
     /**
      * Represents the core virtual device in the simulation, mapping to the actual IoT device.
      */
-    private FogDevice fogDevice;
+    private CustomFogDevice fogDevice;
 
     /**
      * Represents properties of the TD.
@@ -56,11 +57,11 @@ public class VirtualDevice {
         this.thingDescription = null;
     }
 
-    public FogDevice getFogDevice() {
+    public CustomFogDevice getFogDevice() {
         return fogDevice;
     }
 
-    public void setFogDevice(FogDevice fogDevice) {
+    public void setFogDevice(CustomFogDevice fogDevice) {
         this.fogDevice = fogDevice;
     }
 

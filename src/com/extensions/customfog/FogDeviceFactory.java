@@ -35,7 +35,7 @@ public class FogDeviceFactory {
      * @param ratePerMips the cost rate (in currency units) per MIPS for executing tasks on this FogDevice
      * @return the created FogDevice instance with the specified configuration
      */
-    public static FogDevice createFogDevice(
+    public static CustomFogDevice createFogDevice(
             String name,
             long mips,
             int ram,
@@ -84,10 +84,10 @@ public class FogDeviceFactory {
                 CharacteristicsPreset.COST_PER_BW
         );
 
-        FogDevice fogdevice = null;
+        CustomFogDevice fogdevice = null;
         String fogDeviceName = name.replace(" ", "");
         try {
-            fogdevice = new FogDevice(
+            fogdevice = new CustomFogDevice(
                     fogDeviceName,
                     characteristics,
                     new AppModuleAllocationPolicy(hostList),
@@ -111,7 +111,7 @@ public class FogDeviceFactory {
      * @param preset The preset configuration containing the default values for the device.
      * @return The created FogDevice object, or null if an exception occurs.
      */
-    public static FogDevice createFogDevice(String name, FogDevicePreset preset) {
+    public static CustomFogDevice createFogDevice(String name, FogDevicePreset preset) {
         // Create a list of Processing Elements (PEs) with the specified MIPS value from the preset
         List<Pe> peList = new ArrayList<>();
         peList.add(new Pe(0, new PeProvisionerOverbooking(preset.MIPS)));
@@ -153,7 +153,7 @@ public class FogDeviceFactory {
         // Create and return the FogDevice instance
         String fogDeviceName = name.replace(" ", "");
         try {
-            return new FogDevice(
+            return new CustomFogDevice(
                     fogDeviceName,
                     characteristics,
                     new AppModuleAllocationPolicy(hostList),
@@ -179,7 +179,7 @@ public class FogDeviceFactory {
      * @param config The VirtualDeviceConfig providing custom values for specific device properties.
      * @return The created FogDevice object, or null if an exception occurs.
      */
-    public static FogDevice createFogDevice(String name, FogDevicePreset preset, VirtualDeviceConfig config) {
+    public static CustomFogDevice createFogDevice(String name, FogDevicePreset preset, VirtualDeviceConfig config) {
         // Create a list of Processing Elements (PEs) with the MIPS value from the virtual device configuration
         List<Pe> peList = new ArrayList<>();
         peList.add(new Pe(0, new PeProvisionerOverbooking(config.getMips())));
@@ -216,10 +216,10 @@ public class FogDeviceFactory {
                 CharacteristicsPreset.COST_PER_BW
         );
 
-        FogDevice fogDevice = null;
+        CustomFogDevice fogDevice = null;
         String fogDeviceName = name.replace(" ", "");
         try {
-            fogDevice = new FogDevice(
+            fogDevice = new CustomFogDevice(
                     fogDeviceName,
                     characteristics,
                     new AppModuleAllocationPolicy(hostList),

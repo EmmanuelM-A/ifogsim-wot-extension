@@ -1,9 +1,13 @@
 package com.extensions.sysconstructor.core;
 
+import com.extensions.customfog.CustomFogDevice;
 import com.extensions.sysconstructor.eventdriver.EventDrivenApplication;
+import com.extensions.sysconstructor.eventdriver.EventManager;
 import com.extensions.sysconstructor.nodered.NodeRedJSONParser;
 import com.extensions.sysconstructor.topology.*;
+import com.extensions.utils.FogEntityPrefixes;
 import com.extensions.utils.Utility;
+import com.extensions.vdcreation.core.VirtualDevice;
 import org.apache.commons.math3.util.Pair;
 import org.fog.application.AppEdge;
 import org.fog.application.AppLoop;
@@ -27,8 +31,13 @@ public class JsonToApplicationModel {
         // Create the application instance
         EventDrivenApplication application = new EventDrivenApplication(appId, userId, applicationContext.applicationPreset);
 
+        // Set an empty array list to store appLoops
+        application.setLoops(new ArrayList<>());
+
         // Group sub flows into inject flows, data flows and event flows
         boolean success = groupTopologyNodeTrees(applicationContext.topologyNodeTrees);
+
+        System.out.println("No Data flows: " + applicationContext.dataFlows.size());
 
         if(!success) return null;
 
@@ -42,13 +51,14 @@ public class JsonToApplicationModel {
             createDataFlow(application, dataFlow);
         }
 
+        System.out.println("--------------------------------------");
+        System.out.println("--------------------------------------");
+        System.out.println("--------------------------------------");
+
         // Set all the event flows for the application model
         for(TopologyNodeTree eventFlow : applicationContext.eventFlows) {
             createEventFlow(application, eventFlow);
         }
-
-        // Set application loops
-        setApplicationLoops(application);
 
         // Print app modules
         System.out.println("AppModules:");
@@ -84,8 +94,10 @@ public class JsonToApplicationModel {
         // print app loop
         System.out.println("AppLoops:");
         System.out.println("----------------------------------------");
-        Utility.printAppLoops(applicationContext.appLoops);
+        Utility.printAppLoops(new ArrayList<>(applicationContext.appLoops));
         System.out.println();
+
+        setApplicationLoops(application, new ArrayList<>(applicationContext.appLoops));
 
         System.out.println("Application Model formed!");
 
@@ -240,6 +252,9 @@ public class JsonToApplicationModel {
         // Used to keep track of all modules made and ensure no duplicate
         HashMap<String, ModuleMapping> moduleMappings = new HashMap<>();
 
+        // Helps keep track of all processingModules
+        Map<String, String> existingProcessingModules = new HashMap<>();
+
         // Iterate through one branch at a time
         for(List<TopologyNode> branch : branches) {
             // Used to access nodes in a branch
@@ -265,7 +280,7 @@ public class JsonToApplicationModel {
                             // HANDLE DIRECT CONNECTION HERE
 
                             // Get the property/action name of the src and dst node
-                            String srcName = src.uniqueAttribute();
+                            /*String srcName = src.uniqueAttribute();
                             String dstName = dst.uniqueAttribute();
 
                             // Create app modules for the src and dst nodes
@@ -312,126 +327,78 @@ public class JsonToApplicationModel {
                                 appLoopRoute.add(dstName);
                             }
 
-                            applicationContext.appLoops.add(appLoopRoute);
+                            // Record the data flow route
+                            appLoops.add(appLoopRoute);*/
 
                         } else {
                             // HANDLE INDIRECT CONNECTION HERE
                             System.out.println("INDIRECT CONNECTION FOUND");
 
-                            // Create a processing module (represents an intermediately processing unit for data)
-                            String processingModule = "PROCESSING_MODULE-" + processingModuleCount;
-                            application.addAppModule(processingModule, applicationContext.applicationPreset.APP_MODULE_RAM);
-
                             // Get the property/action name of the src and dst node
                             String srcName = src.uniqueAttribute();
                             String dstName = dst.uniqueAttribute();
 
-                            // Create the app edges from src ----> PrM ----> dst
-                            // Src ----> PrM
-                            String tupleTypeOne = determineTupleType(src);
-                            int edgeDirection1 = determineDirection(src);
-                            int edgeType1 = determineEdgeType(src);
-                            addAppEdge(application, srcName, processingModule, tupleTypeOne, edgeDirection1, edgeType1);
+                            // Create a processing module (represents an intermediately processing unit for data)
+                            String processingModule = "PROCESSING_MODULE-" + processingModuleCount;
+                            application.addAppModule(processingModule, applicationContext.applicationPreset.APP_MODULE_RAM);
 
-                            // PrM ----> dst
-                            String tupleTypeTwo = determineTupleType(dst);
-                            int edgeDirection2 = determineDirection(dst);
-                            int edgeType2 = determineEdgeType(dst);
-                            addAppEdge(application, processingModule, dstName, tupleTypeTwo, edgeDirection2, edgeType2);
+                            // Check if there doesn't already exist a processing module for this src
+                            if(!existingProcessingModules.containsKey(processingModule)) {
+                                // Create the app edges from src ----> PrM ----> dst
+                                // Src ----> PrM
+                                String tupleTypeOne = determineTupleType(src);
+                                int edgeDirection1 = determineDirection(src);
+                                int edgeType1 = determineEdgeType(src);
+                                addAppEdge(application, srcName, processingModule, tupleTypeOne, edgeDirection1, edgeType1);
 
-                            // Record tuple mappings between modules
-                            if(moduleMappings.containsKey(srcName)) {
-                                ModuleMapping mapping = moduleMappings.get(srcName);
+                                // PrM ----> dst
+                                String tupleTypeTwo = determineTupleType(dst);
+                                int edgeDirection2 = determineDirection(dst);
+                                int edgeType2 = determineEdgeType(dst);
+                                addAppEdge(application, processingModule, dstName, tupleTypeTwo, edgeDirection2, edgeType2);
 
-                                if(mapping.getOutputTupleType() == null) {
-                                    mapping.setOutputTupleType(tupleTypeOne);
-                                    System.out.println(srcName + "'s output tuple type set to " + tupleTypeOne);
-                                } else {
-                                    System.out.println(srcName + "'s output tuple type already set to " + tupleTypeOne);
+                                // Ensure src module has output tuple type
+                                if (!moduleMappings.containsKey(srcName)) {
+                                    moduleMappings.put(srcName, new ModuleMapping());
                                 }
-
-                            } else {
-                                ModuleMapping mapping = new ModuleMapping();
-
-                                if(mapping.getOutputTupleType() == null) {
-                                    mapping.setOutputTupleType(tupleTypeOne);
-                                    System.out.println(srcName + "'s output tuple type set to " + tupleTypeOne);
-                                } else {
-                                    System.out.println(srcName + "'s output tuple type already set to " + tupleTypeOne);
-                                }
-
-                                moduleMappings.put(srcName, mapping);
+                                moduleMappings.get(srcName).setOutputTupleType(tupleTypeOne);
                                 System.out.println("Tuple mapping made for " + srcName);
-                            }
 
-                            if(moduleMappings.containsKey(dstName)) {
-                                ModuleMapping mapping = moduleMappings.get(dstName);
-
-                                if(mapping.getInputTupleType() == null) {
-                                    mapping.setInputTupleType(tupleTypeTwo);
-                                    System.out.println(dstName + "'s output tuple type set to " + tupleTypeTwo);
-                                } else {
-                                    System.out.println(dstName + "'s output tuple type already set to " + tupleTypeTwo);
+                                // Ensure processing module has both input and output tuple types
+                                if (!moduleMappings.containsKey(processingModule)) {
+                                    moduleMappings.put(processingModule, new ModuleMapping());
                                 }
-
-                            } else {
-                                ModuleMapping mapping = new ModuleMapping();
-
-                                if(mapping.getInputTupleType() == null) {
-                                    mapping.setInputTupleType(tupleTypeTwo);
-                                    System.out.println(dstName + "'s output tuple type set to " + tupleTypeTwo);
-                                } else {
-                                    System.out.println(dstName + "'s output tuple type already set to " + tupleTypeTwo);
-                                }
-
-                                moduleMappings.put(dstName, mapping);
-
-                                System.out.println("Tuple mapping made for " + dstName);
-                            }
-
-                            if(moduleMappings.containsKey(processingModule)) {
-                                ModuleMapping mapping = moduleMappings.get(processingModule);
-
-                                if(mapping.getInputTupleType() == null && mapping.getOutputTupleType() == null) {
-                                    mapping.setInputTupleType(tupleTypeOne);
-                                    mapping.setOutputTupleType(tupleTypeTwo);
-
-                                    System.out.println("Module: " + processingModule + " Input tuple type: " + tupleTypeOne + " Output tuple type: " + tupleTypeTwo);
-                                } else {
-                                    System.out.println("Module " + processingModule + " tuple mapping already set!");
-                                }
-                            } else {
-                                ModuleMapping mapping = new ModuleMapping();
-
-                                if(mapping.getInputTupleType() == null && mapping.getOutputTupleType() == null) {
-                                    mapping.setInputTupleType(tupleTypeOne);
-                                    mapping.setOutputTupleType(tupleTypeTwo);
-
-                                    System.out.println("Module: " + processingModule + " Input tuple type: " + tupleTypeOne + " Output tuple type: " + tupleTypeTwo);
-                                } else {
-                                    System.out.println("Module " + processingModule + " tuple mapping already set!");
-                                }
-
-                                moduleMappings.put(processingModule, mapping);
-
+                                moduleMappings.get(processingModule).setInputTupleType(tupleTypeOne);
+                                moduleMappings.get(processingModule).setOutputTupleType(tupleTypeTwo);
                                 System.out.println("Tuple mapping made for " + processingModule);
+
+                                // Ensure dst module has input tuple type
+                                if (!moduleMappings.containsKey(dstName)) {
+                                    moduleMappings.put(dstName, new ModuleMapping());
+                                }
+                                moduleMappings.get(dstName).setInputTupleType(tupleTypeTwo);
+                                System.out.println("Tuple mapping made for " + dstName);
+
+
+                                // Record the route of the data flow
+                                if(appLoopRoute.isEmpty()) {
+                                    // First time, start with an empty list
+                                    appLoopRoute.add(srcName);
+                                    appLoopRoute.add(processingModule);
+                                    appLoopRoute.add(dstName);
+                                } else {
+                                    // Subsequent times, extend the appLoopRoute
+                                    appLoopRoute.add(processingModule);
+                                    appLoopRoute.add(dstName);
+                                }
+
+                                // Record the data flow route in appLoops
+                                applicationContext.appLoops.add(appLoopRoute);
+
+                                processingModuleCount++;
+
+                                existingProcessingModules.put(srcName, processingModule);
                             }
-
-                            // Record the route of the data flow
-                            if(appLoopRoute.isEmpty()) {
-                                // First time, start with an empty list
-                                appLoopRoute.add(srcName);
-                                appLoopRoute.add(processingModule);
-                                appLoopRoute.add(dstName);
-                            } else {
-                                // Subsequent times, extend the appLoopRoute
-                                appLoopRoute.add(processingModule);
-                                appLoopRoute.add(dstName);
-                            }
-
-                            applicationContext.appLoops.add(appLoopRoute);
-
-                            processingModuleCount++;
                         }
                         //System.out.println("Current Data Flow: " + dataFlow.rootNode().id() + " Current Src Node: " + branch.get(ptr1) + " Current dst Node: " + branch.get(ptr2));
 
@@ -470,20 +437,85 @@ public class JsonToApplicationModel {
     }
 
     private static void createEventFlow(EventDrivenApplication application, TopologyNodeTree eventFlow) {
-        // APPLICATION MODEL THE EXACT SAME AS THE createDataFlow()
-        // Tuple types start with EVENT_TUPLE_....
-        // Processing modules are EVENT_PROCESSING_MODULE-....
+        // Ensure the root node is a valid event publisher
+        if (!eventFlow.rootNode().type().equals(NodeRedJSONParser.TYPE_SUBSCRIBE_EVENT)) {
+            System.out.println("Sub Flow " + eventFlow.rootNode().id() + " is NOT an event flow.");
+            return;
+        }
 
-        // EXTEND FOG DEVICES, SENSORS, ACTUATORS AND IFOGSIM SIMULATION CLASSES TO HANDLE TUPLE TYPES OF EVENT
+        List<TopologyNode> allNodes = Utility.getAllNodesFromTopology(applicationContext.topologyNodeTrees);
+
+        // Extract event type
+        String eventType = eventFlow.rootNode().uniqueAttribute();
+
+        // Track processing modules created
+        int processingModuleCount = 0;
+
+        // Keep track of modules for tuple mappings
+        HashMap<String, ModuleMapping> moduleMappings = new HashMap<>();
+
+        for (List<TopologyNode> branch : eventFlow.branches()) {
+            int ptr1 = 0, ptr2 = 1;
+
+            while (ptr2 < branch.size()) {
+                TopologyNode src = branch.get(ptr1);
+                TopologyNode dst = branch.get(ptr2);
+
+                if (isWoTNode(dst)) {
+                    // Create event tuple type
+                    String eventTupleType = FogEntityPrefixes.EVENT_TUPLE_PREFIX + eventType;
+
+                    // Create an event-processing module
+                    String eventProcessingModule = "EVENT_PROCESSING_MODULE-" + processingModuleCount;
+                    application.addAppModule(eventProcessingModule, applicationContext.applicationPreset.APP_MODULE_RAM);
+
+                    processingModuleCount++;
+
+                    // Register event with EventManager
+                    VirtualDevice vd = Utility.getVirtualDevice(applicationContext.things, applicationContext.selectedVirtualDevices, src);
+
+                    if(vd != null) {
+                        EventManager.getInstance().registerEvent(eventType, vd.getFogDevice());
+                    }
+
+                    // Connect event source to event processing module
+                    addAppEdge(application, src.uniqueAttribute(), eventProcessingModule, eventTupleType, Tuple.UP, AppEdge.MODULE);
+
+                    // Connect event processing module to destination module
+                    addAppEdge(application, eventProcessingModule, dst.uniqueAttribute(), eventTupleType, Tuple.DOWN, AppEdge.MODULE);
+
+                    // Ensure proper tuple mappings
+                    if (!moduleMappings.containsKey(eventProcessingModule)) {
+                        moduleMappings.put(eventProcessingModule, new ModuleMapping());
+                    }
+                    moduleMappings.get(eventProcessingModule).setInputTupleType(eventTupleType);
+                    moduleMappings.get(eventProcessingModule).setOutputTupleType(eventTupleType);
+
+                    ptr1 = ptr2;
+                }
+                ptr2++;
+            }
+        }
+
+        // Set tuple mappings
+        for (Map.Entry<String, ModuleMapping> moduleMapping : moduleMappings.entrySet()) {
+            application.addTupleMapping(
+                    moduleMapping.getKey(),
+                    moduleMapping.getValue().getInputTupleType(),
+                    moduleMapping.getValue().getOutputTupleType(),
+                    new FractionalSelectivity(1.0) // Adjust as needed
+            );
+        }
     }
 
-    private static void setApplicationLoops(EventDrivenApplication application) {
-        // Generate the loops
-        List<AppLoop> appLoops = new ArrayList<>();
 
-        for(List<String> loop : applicationContext.appLoops) {
+    private static void setApplicationLoops(EventDrivenApplication application, List<List<String>> loops) {
+        // Get the app loops
+        List<AppLoop> appLoops = application.getLoops();
+
+        // Add loop to app loops
+        for(List<String> loop : loops) {
             AppLoop appLoop = new AppLoop(loop);
-
             appLoops.add(appLoop);
         }
 
