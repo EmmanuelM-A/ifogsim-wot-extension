@@ -77,6 +77,25 @@ public class SubFlowTreeGrouper {
         }
     }
 
+    /*private static void traverseSubFlow(NodeRedNode node, Set<String> visited, List<TreeBranch> branches, List<NodeRedNode> currentBranch) {
+        if (visited.contains(node.getId())) return;
+
+        visited.add(node.getId());
+        currentBranch.add(node);
+
+        if (node.getConnections() == null || node.getConnections().isEmpty()) {
+            branches.add(new TreeBranch(new ArrayList<>(currentBranch)));
+            return;
+        }
+
+        for (String wire : node.getConnections()) {
+            NodeRedNode connectedNode = findNodeById(wire);
+            if (connectedNode != null) {
+                traverseSubFlow(connectedNode, visited, branches, currentBranch); // Keep the same branch
+            }
+        }
+    }*/
+
     private static NodeRedNode findNodeById(String id) {
         for (NodeRedNode node : nodes) {
             if (node.getId() == null) continue;

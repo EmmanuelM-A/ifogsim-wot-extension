@@ -1,6 +1,6 @@
 [
     {
-        "id": "a7476951e1de8d34",
+        "id": "802a6ae34b4a36af",
         "type": "tab",
         "label": "Door Security Application",
         "disabled": false,
@@ -8,26 +8,26 @@
         "env": []
     },
     {
-        "id": "0df687eaf78a49d5",
+        "id": "9db12d6115952391",
         "type": "subscribe-event",
-        "z": "a7476951e1de8d34",
-        "name": "",
+        "z": "802a6ae34b4a36af",
+        "name": "onTamperAlertEvent()",
         "topic": "access-control",
         "thing": "263d2ff2376b823c",
         "event": "tamperAlert",
-        "x": 330,
+        "x": 340,
         "y": 1040,
         "wires": [
             [
-                "3cf9152ea1a0f438",
-                "1c17e9e063c4e324"
+                "f3e4a7e45b1528ec",
+                "d3db99b0f35b81ce"
             ]
         ]
     },
     {
-        "id": "3cf9152ea1a0f438",
+        "id": "f3e4a7e45b1528ec",
         "type": "invoke-action",
-        "z": "a7476951e1de8d34",
+        "z": "802a6ae34b4a36af",
         "name": "activateAlarm()",
         "topic": "security-monitoring",
         "thing": "60ec5509eed581fd",
@@ -40,27 +40,27 @@
         ]
     },
     {
-        "id": "5672a7b79222ebb5",
+        "id": "c5fdbc67d85cfe4b",
         "type": "read-property",
-        "z": "a7476951e1de8d34",
-        "name": "",
+        "z": "802a6ae34b4a36af",
+        "name": "getLockState()",
         "topic": "access-control",
         "thing": "263d2ff2376b823c",
         "property": "lockState",
         "uriVariables": "",
         "observe": true,
-        "x": 330,
+        "x": 320,
         "y": 740,
         "wires": [
             [
-                "7f50cd20a278e460"
+                "4751a14ba955c435"
             ]
         ]
     },
     {
-        "id": "7f50cd20a278e460",
+        "id": "4751a14ba955c435",
         "type": "switch",
-        "z": "a7476951e1de8d34",
+        "z": "802a6ae34b4a36af",
         "name": "",
         "property": "payload",
         "propertyType": "msg",
@@ -84,32 +84,32 @@
         "wires": [
             [],
             [
-                "aa21445813262e15",
-                "fded3e31159f472d"
+                "75e9a24f35463920",
+                "03ed1574430869f3"
             ]
         ]
     },
     {
-        "id": "cfce2b4ef69e60c2",
+        "id": "9d94164d06b0710c",
         "type": "subscribe-event",
-        "z": "a7476951e1de8d34",
-        "name": "",
+        "z": "802a6ae34b4a36af",
+        "name": "onSnapshotTakenEvent()",
         "topic": "security-monitoring",
         "thing": "b7c9cdf5487520a3",
         "event": "snapshotTaken",
-        "x": 340,
+        "x": 350,
         "y": 1280,
         "wires": [
             [
-                "f97a30cc48074f57",
-                "614d67869d5e3e26"
+                "ed04d7ad2e16b730",
+                "836ea1adc6c4f940"
             ]
         ]
     },
     {
-        "id": "1c17e9e063c4e324",
+        "id": "d3db99b0f35b81ce",
         "type": "invoke-action",
-        "z": "a7476951e1de8d34",
+        "z": "802a6ae34b4a36af",
         "name": "takePhoto()",
         "topic": "security-monitoring",
         "thing": "b7c9cdf5487520a3",
@@ -122,92 +122,60 @@
         ]
     },
     {
-        "id": "f97a30cc48074f57",
+        "id": "ed04d7ad2e16b730",
         "type": "read-property",
-        "z": "a7476951e1de8d34",
-        "name": "",
+        "z": "802a6ae34b4a36af",
+        "name": "getStreamURL()",
         "topic": "security-monitoring",
         "thing": "b7c9cdf5487520a3",
         "property": "streamURL",
         "uriVariables": "",
         "observe": false,
-        "x": 700,
+        "x": 680,
         "y": 1280,
         "wires": [
             [
-                "f4652feba07b5c6c"
+                "6715a35ba36fd344"
             ]
         ]
     },
     {
-        "id": "614d67869d5e3e26",
+        "id": "836ea1adc6c4f940",
         "type": "read-property",
-        "z": "a7476951e1de8d34",
-        "name": "",
+        "z": "802a6ae34b4a36af",
+        "name": "getLastSnapshot()",
         "topic": "security-monitoring",
         "thing": "b7c9cdf5487520a3",
         "property": "lastSnapshot",
         "uriVariables": "",
         "observe": false,
-        "x": 700,
+        "x": 690,
         "y": 1360,
         "wires": [
             [
-                "ae3ea1663205f2b2"
+                "9a4be8e1136190c1"
             ]
         ]
     },
     {
-        "id": "f4652feba07b5c6c",
-        "type": "debug",
-        "z": "a7476951e1de8d34",
-        "name": "debug 1",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "false",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 980,
-        "y": 1280,
-        "wires": []
-    },
-    {
-        "id": "ae3ea1663205f2b2",
-        "type": "debug",
-        "z": "a7476951e1de8d34",
-        "name": "debug 2",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "false",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 990,
-        "y": 1360,
-        "wires": []
-    },
-    {
-        "id": "aa21445813262e15",
+        "id": "75e9a24f35463920",
         "type": "invoke-action",
-        "z": "a7476951e1de8d34",
-        "name": "",
+        "z": "802a6ae34b4a36af",
+        "name": "lockDoor()",
         "topic": "access-control",
         "thing": "263d2ff2376b823c",
         "action": "lockDoor",
         "uriVariables": "",
-        "x": 800,
+        "x": 790,
         "y": 780,
         "wires": [
             []
         ]
     },
     {
-        "id": "1e5b73e603170a88",
+        "id": "e638cd20ca165fcc",
         "type": "comment",
-        "z": "a7476951e1de8d34",
+        "z": "802a6ae34b4a36af",
         "name": "Auto lcok door if unlocked",
         "info": "",
         "x": 350,
@@ -215,9 +183,9 @@
         "wires": []
     },
     {
-        "id": "2213fef1b36af2e5",
+        "id": "7aed2958a3ca967d",
         "type": "comment",
-        "z": "a7476951e1de8d34",
+        "z": "802a6ae34b4a36af",
         "name": "activate alarm and cameras if door is tampered with",
         "info": "",
         "x": 430,
@@ -225,9 +193,9 @@
         "wires": []
     },
     {
-        "id": "5265f1e13608cbfc",
+        "id": "9582431001633c73",
         "type": "comment",
-        "z": "a7476951e1de8d34",
+        "z": "802a6ae34b4a36af",
         "name": "Send photos and video recording ",
         "info": "",
         "x": 370,
@@ -235,24 +203,24 @@
         "wires": []
     },
     {
-        "id": "030ca93a106529df",
+        "id": "ab799136aebc7a6f",
         "type": "invoke-action",
-        "z": "a7476951e1de8d34",
-        "name": "",
+        "z": "802a6ae34b4a36af",
+        "name": "unlockDoor()",
         "topic": "access-control",
         "thing": "263d2ff2376b823c",
         "action": "unlockDoor",
         "uriVariables": "",
-        "x": 530,
+        "x": 510,
         "y": 580,
         "wires": [
             []
         ]
     },
     {
-        "id": "26d68214f3b55423",
+        "id": "6d0c0d10e6a07442",
         "type": "inject",
-        "z": "a7476951e1de8d34",
+        "z": "802a6ae34b4a36af",
         "name": "",
         "props": [],
         "repeat": "",
@@ -264,14 +232,14 @@
         "y": 580,
         "wires": [
             [
-                "030ca93a106529df"
+                "ab799136aebc7a6f"
             ]
         ]
     },
     {
-        "id": "c4d410a159722b04",
+        "id": "40f23b916d6f15e3",
         "type": "comment",
-        "z": "a7476951e1de8d34",
+        "z": "802a6ae34b4a36af",
         "name": "Simulates the user opening the door",
         "info": "",
         "x": 400,
@@ -279,41 +247,9 @@
         "wires": []
     },
     {
-        "id": "214c1604a6f11f68",
-        "type": "subscribe-event",
-        "z": "a7476951e1de8d34",
-        "name": "",
-        "topic": "security-monitoring",
-        "thing": "60ec5509eed581fd",
-        "event": "alarmTriggered",
-        "x": 340,
-        "y": 1480,
-        "wires": [
-            [
-                "5c93feb3cd579218"
-            ]
-        ]
-    },
-    {
-        "id": "5c93feb3cd579218",
+        "id": "03ed1574430869f3",
         "type": "debug",
-        "z": "a7476951e1de8d34",
-        "name": "debug 4",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "false",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 550,
-        "y": 1480,
-        "wires": []
-    },
-    {
-        "id": "fded3e31159f472d",
-        "type": "debug",
-        "z": "a7476951e1de8d34",
+        "z": "802a6ae34b4a36af",
         "name": "debug 5",
         "active": true,
         "tosidebar": true,
@@ -327,9 +263,9 @@
         "wires": []
     },
     {
-        "id": "d94ac48d5b1babbc",
+        "id": "9587c249258c0e5e",
         "type": "subscribe-event",
-        "z": "a7476951e1de8d34",
+        "z": "802a6ae34b4a36af",
         "name": "",
         "topic": "access-control",
         "thing": "263d2ff2376b823c",
@@ -338,25 +274,165 @@
         "y": 880,
         "wires": [
             [
-                "f752d71334f00c40"
+                "13bd4e8359ce1a5f"
             ]
         ]
     },
     {
-        "id": "f752d71334f00c40",
-        "type": "debug",
-        "z": "a7476951e1de8d34",
-        "name": "debug 6",
-        "active": true,
-        "tosidebar": true,
-        "console": false,
-        "tostatus": false,
-        "complete": "false",
-        "statusVal": "",
-        "statusType": "auto",
-        "x": 570,
+        "id": "3b6935d22bd00ead",
+        "type": "subscribe-event",
+        "z": "802a6ae34b4a36af",
+        "name": "onAlarmTriggeredEvent()",
+        "topic": "security-monitoring",
+        "thing": "60ec5509eed581fd",
+        "event": "alarmTriggered",
+        "x": 350,
+        "y": 1480,
+        "wires": [
+            [
+                "f961cb5a16678a6e"
+            ]
+        ]
+    },
+    {
+        "id": "13bd4e8359ce1a5f",
+        "type": "function",
+        "z": "802a6ae34b4a36af",
+        "name": "Do something",
+        "func": "\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 640,
         "y": 880,
-        "wires": []
+        "wires": [
+            [
+                "6abec97a066fa433"
+            ]
+        ]
+    },
+    {
+        "id": "f961cb5a16678a6e",
+        "type": "function",
+        "z": "802a6ae34b4a36af",
+        "name": "Do something",
+        "func": "\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 630,
+        "y": 1480,
+        "wires": [
+            [
+                "99879b685f3d65b8"
+            ]
+        ]
+    },
+    {
+        "id": "6abec97a066fa433",
+        "type": "invoke-action",
+        "z": "802a6ae34b4a36af",
+        "name": "logEvent()",
+        "topic": "access-control",
+        "thing": "dc99cc6070d7f6fe",
+        "action": "showAlert",
+        "uriVariables": "",
+        "x": 910,
+        "y": 880,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "99879b685f3d65b8",
+        "type": "invoke-action",
+        "z": "802a6ae34b4a36af",
+        "name": "logEvent()",
+        "topic": "access-control",
+        "thing": "dc99cc6070d7f6fe",
+        "action": "showAlert",
+        "uriVariables": "",
+        "x": 930,
+        "y": 1480,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "6715a35ba36fd344",
+        "type": "function",
+        "z": "802a6ae34b4a36af",
+        "name": "Some Processing",
+        "func": "\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1030,
+        "y": 1280,
+        "wires": [
+            [
+                "80359b6e0dae8f0d"
+            ]
+        ]
+    },
+    {
+        "id": "9a4be8e1136190c1",
+        "type": "function",
+        "z": "802a6ae34b4a36af",
+        "name": "Some Processing",
+        "func": "\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1030,
+        "y": 1360,
+        "wires": [
+            [
+                "0f5c64a7567a5548"
+            ]
+        ]
+    },
+    {
+        "id": "80359b6e0dae8f0d",
+        "type": "invoke-action",
+        "z": "802a6ae34b4a36af",
+        "name": "logData()",
+        "topic": "security-monitoring",
+        "thing": "dc99cc6070d7f6fe",
+        "action": "updateDisplay",
+        "uriVariables": "",
+        "x": 1260,
+        "y": 1280,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "0f5c64a7567a5548",
+        "type": "invoke-action",
+        "z": "802a6ae34b4a36af",
+        "name": "logData()",
+        "topic": "security-monitoring",
+        "thing": "dc99cc6070d7f6fe",
+        "action": "updateDisplay",
+        "uriVariables": "",
+        "x": 1260,
+        "y": 1360,
+        "wires": [
+            []
+        ]
     },
     {
         "id": "263d2ff2376b823c",
@@ -393,6 +469,21 @@
         "type": "consumed-thing",
         "tdLink": "http://10.32.154.144:8081/smart-camera",
         "td": "{\"@context\":[\"https://www.w3.org/2019/wot/td/v1\",{\"@language\":\"en\"}],\"@type\":\"Thing\",\"title\":\"Smart Camera\",\"securityDefinitions\":{\"nosec\":{\"scheme\":\"nosec\"}},\"security\":[\"nosec\"],\"properties\":{\"streamURL\":{\"type\":\"string\",\"description\":\"The URL of the video stream.\",\"readOnly\":true,\"forms\":[{\"href\":\"http://10.32.154.144:8081/smart-camera/properties/streamURL\",\"contentType\":\"application/json\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"},{\"href\":\"http://10.32.154.144:8081/smart-camera/properties/streamURL\",\"contentType\":\"application/cbor\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"}],\"writeOnly\":false,\"observable\":false},\"lastSnapshot\":{\"type\":\"string\",\"description\":\"Base64 encoded image of the last snapshot.\",\"readOnly\":true,\"forms\":[{\"href\":\"http://10.32.154.144:8081/smart-camera/properties/lastSnapshot\",\"contentType\":\"application/json\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"},{\"href\":\"http://10.32.154.144:8081/smart-camera/properties/lastSnapshot\",\"contentType\":\"application/cbor\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"}],\"writeOnly\":false,\"observable\":false}},\"actions\":{\"takeSnapshot\":{\"description\":\"Captures a snapshot from the camera.\",\"forms\":[{\"href\":\"http://10.32.154.144:8081/smart-camera/actions/takeSnapshot\",\"contentType\":\"application/json\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"},{\"href\":\"http://10.32.154.144:8081/smart-camera/actions/takeSnapshot\",\"contentType\":\"application/cbor\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"}],\"safe\":false,\"idempotent\":false}},\"events\":{\"snapshotTaken\":{\"description\":\"Triggered when a snapshot is taken.\",\"data\":{\"type\":\"boolean\"},\"forms\":[{\"href\":\"http://10.32.154.144:8081/smart-camera/events/snapshotTaken\",\"contentType\":\"application/json\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]},{\"href\":\"http://10.32.154.144:8081/smart-camera/events/snapshotTaken\",\"contentType\":\"application/cbor\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]}]}},\"id\":\"urn:uuid:02c12332-8ff3-4136-8b2c-8a21874e5799\",\"description\":\"A camera that streams video and captures snapshots.\",\"support\":\"\",\"forms\":[{\"href\":\"http://10.32.154.144:8081/smart-camera/properties\",\"contentType\":\"application/json\",\"op\":[\"readallproperties\",\"readmultipleproperties\"]},{\"href\":\"http://10.32.154.144:8081/smart-camera/properties\",\"contentType\":\"application/cbor\",\"op\":[\"readallproperties\",\"readmultipleproperties\"]}]}",
+        "http": true,
+        "ws": false,
+        "coap": false,
+        "mqtt": false,
+        "opcua": false,
+        "modbus": false,
+        "basicAuth": false,
+        "username": "",
+        "password": ""
+    },
+    {
+        "id": "dc99cc6070d7f6fe",
+        "type": "consumed-thing",
+        "tdLink": "http://10.32.147.97:8080/smart-display",
+        "td": "{\"@context\":[\"https://www.w3.org/2019/wot/td/v1\",{\"@language\":\"en\"}],\"@type\":\"Thing\",\"title\":\"Smart Display\",\"securityDefinitions\":{\"nosec\":{\"scheme\":\"nosec\"}},\"security\":[\"nosec\"],\"properties\":{\"displayedMessage\":{\"type\":\"string\",\"description\":\"The current message displayed on the screen.\",\"readOnly\":true,\"forms\":[{\"href\":\"http://10.32.147.97:8080/smart-display/properties/displayedMessage\",\"contentType\":\"application/json\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"},{\"href\":\"http://10.32.147.97:8080/smart-display/properties/displayedMessage\",\"contentType\":\"application/cbor\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"}],\"writeOnly\":false,\"observable\":false},\"alertMessage\":{\"type\":\"string\",\"description\":\"The current alert message displayed on the screen.\",\"readOnly\":true,\"forms\":[{\"href\":\"http://10.32.147.97:8080/smart-display/properties/alertMessage\",\"contentType\":\"application/json\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"},{\"href\":\"http://10.32.147.97:8080/smart-display/properties/alertMessage\",\"contentType\":\"application/cbor\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"}],\"writeOnly\":false,\"observable\":false},\"isDisplayActive\":{\"type\":\"boolean\",\"description\":\"Determines if the display is currently on or off.\",\"forms\":[{\"href\":\"http://10.32.147.97:8080/smart-display/properties/isDisplayActive\",\"contentType\":\"application/json\",\"op\":[\"readproperty\",\"writeproperty\"]},{\"href\":\"http://10.32.147.97:8080/smart-display/properties/isDisplayActive\",\"contentType\":\"application/cbor\",\"op\":[\"readproperty\",\"writeproperty\"]}],\"readOnly\":false,\"writeOnly\":false,\"observable\":false}},\"actions\":{\"updateDisplay\":{\"description\":\"Updates the message shown on smart display.\",\"input\":{\"type\":\"string\",\"description\":\"The message to display.\"},\"forms\":[{\"href\":\"http://10.32.147.97:8080/smart-display/actions/updateDisplay\",\"contentType\":\"application/json\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"},{\"href\":\"http://10.32.147.97:8080/smart-display/actions/updateDisplay\",\"contentType\":\"application/cbor\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"}],\"safe\":false,\"idempotent\":false},\"showAlert\":{\"description\":\"Displays an alert message on the screen.\",\"input\":{\"type\":\"string\",\"description\":\"The alert message to display.\"},\"forms\":[{\"href\":\"http://10.32.147.97:8080/smart-display/actions/showAlert\",\"contentType\":\"application/json\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"},{\"href\":\"http://10.32.147.97:8080/smart-display/actions/showAlert\",\"contentType\":\"application/cbor\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"}],\"safe\":false,\"idempotent\":false},\"clearDisplay\":{\"description\":\"Clears all information from the screen.\",\"forms\":[{\"href\":\"http://10.32.147.97:8080/smart-display/actions/clearDisplay\",\"contentType\":\"application/json\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"},{\"href\":\"http://10.32.147.97:8080/smart-display/actions/clearDisplay\",\"contentType\":\"application/cbor\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"}],\"safe\":false,\"idempotent\":false}},\"events\":{\"displayUpdated\":{\"description\":\"Triggered when the displayed message is updated.\",\"data\":{\"type\":\"string\"},\"forms\":[{\"href\":\"http://10.32.147.97:8080/smart-display/events/displayUpdated\",\"contentType\":\"application/json\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]},{\"href\":\"http://10.32.147.97:8080/smart-display/events/displayUpdated\",\"contentType\":\"application/cbor\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]}]},\"alertDisplayed\":{\"description\":\"Triggered when an alert message is displayed.\",\"data\":{\"type\":\"string\"},\"forms\":[{\"href\":\"http://10.32.147.97:8080/smart-display/events/alertDisplayed\",\"contentType\":\"application/json\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]},{\"href\":\"http://10.32.147.97:8080/smart-display/events/alertDisplayed\",\"contentType\":\"application/cbor\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]}]},\"displayCleared\":{\"description\":\"Triggered when the display is cleared.\",\"forms\":[{\"href\":\"http://10.32.147.97:8080/smart-display/events/displayCleared\",\"contentType\":\"application/json\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]},{\"href\":\"http://10.32.147.97:8080/smart-display/events/displayCleared\",\"contentType\":\"application/cbor\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]}]}},\"id\":\"urn:uuid:fc14185f-8385-4abf-b9ab-11a5599d5769\",\"description\":\"A smart display for display messages and related alerts.\",\"support\":\"\",\"forms\":[{\"href\":\"http://10.32.147.97:8080/smart-display/properties\",\"contentType\":\"application/json\",\"op\":[\"readallproperties\",\"readmultipleproperties\",\"writeallproperties\",\"writemultipleproperties\"]},{\"href\":\"http://10.32.147.97:8080/smart-display/properties\",\"contentType\":\"application/cbor\",\"op\":[\"readallproperties\",\"readmultipleproperties\",\"writeallproperties\",\"writemultipleproperties\"]}]}",
         "http": true,
         "ws": false,
         "coap": false,
