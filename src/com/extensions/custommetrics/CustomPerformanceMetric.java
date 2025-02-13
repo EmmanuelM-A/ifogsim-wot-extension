@@ -1,5 +1,6 @@
 package com.extensions.custommetrics;
 
+import com.extensions.simulation.SimulationData;
 import com.extensions.simulation.SimulationResults;
 
 /**
@@ -15,7 +16,7 @@ public interface CustomPerformanceMetric<T> {
      * @param simulationData Data collected during the simulation.
      * @return The computed metric value of type T.
      */
-    T evaluate(SimulationResults simulationData);
+    T evaluate(SimulationData simulationData);
 
     /**
      * Returns the name of the custom metric.

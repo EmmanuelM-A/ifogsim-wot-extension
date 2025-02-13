@@ -1,6 +1,7 @@
 package com.extensions.custommetrics.metrics;
 
 import com.extensions.custommetrics.CustomPerformanceMetric;
+import com.extensions.simulation.SimulationData;
 import com.extensions.simulation.SimulationResults;
 
 import java.util.Map;
@@ -11,8 +12,8 @@ import java.util.Map;
  */
 public class LongestApplicationLoopDelay implements CustomPerformanceMetric<String> {
     @Override
-    public String evaluate(SimulationResults simulationResults) {
-        Map<String, Double> loopDelays = simulationResults.getApplicationLoopDelays();
+    public String evaluate(SimulationData simulationData) {
+        Map<String, Double> loopDelays = simulationData.getApplicationLoopDelays();
         if (loopDelays.isEmpty()) return "No loops detected";
 
         return loopDelays.entrySet()

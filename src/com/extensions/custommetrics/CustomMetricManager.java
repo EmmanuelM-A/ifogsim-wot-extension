@@ -1,5 +1,6 @@
 package com.extensions.custommetrics;
 
+import com.extensions.simulation.SimulationData;
 import com.extensions.simulation.SimulationResults;
 
 import java.util.ArrayList;
@@ -27,7 +28,7 @@ public class CustomMetricManager {
     /**
      * Runs all registered custom metrics and prints results.
      */
-    public void evaluateMetrics(SimulationResults simulationResults) {
+    public void evaluateMetrics(SimulationData simulationData) {
         System.out.println("=========================================");
         System.out.println("CUSTOM PERFORMANCE METRICS");
         System.out.println("=========================================");
@@ -38,7 +39,7 @@ public class CustomMetricManager {
         }
 
         for (CustomPerformanceMetric<?> metric : customMetrics) {
-            Object result = metric.evaluate(simulationResults);
+            Object result = metric.evaluate(simulationData);
             System.out.println(metric.getMetricName() + ": " + result);
         }
     }

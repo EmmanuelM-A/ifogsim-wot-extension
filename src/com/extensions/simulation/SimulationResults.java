@@ -1,5 +1,6 @@
 package com.extensions.simulation;
 
+import com.extensions.sysconstructor.eventdriver.EventDrivenApplication;
 import org.fog.application.AppLoop;
 import org.fog.application.Application;
 import org.fog.entities.FogDevice;
@@ -23,6 +24,7 @@ public class SimulationResults {
     private Map<String, Double> energyConsumptionPerDevice;
     private double totalNetworkUsage;
     private double cloudExecutionCost;
+    private Map<String, Application> applications;
 
     /**
      * Constructor initializes and records all performance metrics from the simulation.
@@ -35,6 +37,15 @@ public class SimulationResults {
         this.energyConsumptionPerDevice = extractEnergyConsumption(fogDevices);
         this.totalNetworkUsage = NetworkUsageMonitor.getNetworkUsage() / Config.MAX_SIMULATION_TIME;
         this.cloudExecutionCost = extractCloudExecutionCost(fogDevices);
+        this.applications = new HashMap<>();
+    }
+
+    public Map<String, Application> getApplications() {
+        return applications;
+    }
+
+    public void setApplications(Map<String, Application> applications) {
+        this.applications = applications;
     }
 
     /**
@@ -82,6 +93,17 @@ public class SimulationResults {
         return 0;
     }
 
+    private String getStringForLoopId(int loopId){
+        for(String appId : getApplications().keySet()){
+            Application app = getApplications().get(appId);
+            for(AppLoop loop : app.getLoops()){
+                if(loop.getLoopId() == loopId)
+                    return loop.getModules().toString();
+            }
+        }
+        return null;
+    }
+
     /**
      * Prints out the simulation results.
      */
@@ -95,8 +117,8 @@ public class SimulationResults {
 
         // TODO REFORMAT THIS SO IT PRINTS OUT THE ITEMS IN THE LOOP AS WELL AS ITS DELAY
         System.out.println("\nApplication Loop Delays:");
-        for (Map.Entry<String, Double> entry : applicationLoopDelays.entrySet()) {
-            System.out.println(entry.getKey() + " ---> " + entry.getValue() + " ms");
+        for(Integer loopId : TimeKeeper.getInstance().getLoopIdToTupleIds().keySet()){
+            System.out.println(getStringForLoopId(loopId) + " ---> "+TimeKeeper.getInstance().getLoopIdToCurrentAverage().get(loopId));
         }
 
         System.out.println("\nTuple Execution Delays:");

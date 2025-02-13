@@ -13,10 +13,7 @@ import org.fog.application.AppModule;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * The ApplicationContext class represents the execution context of an IoT-Fog computing application.
@@ -93,7 +90,7 @@ public class ApplicationContext {
     public final Map<String, String> appEdges;
 
     // List of loops present in the application topology (cyclic dependencies)
-    public final List<List<String>> appLoops;
+    public final Set<List<String>> appLoops;
 
     // Parser responsible for extracting and organizing application topology information
     public final ApplicationTopologyParser applicationTopologyParser;
@@ -149,7 +146,7 @@ public class ApplicationContext {
         this.injectFlows = new ArrayList<>();
         this.appModulesCreated = new HashMap<>();
         this.appEdges = new HashMap<>();
-        this.appLoops = new ArrayList<>();
+        this.appLoops = new HashSet<>();
 
         System.out.println("Application Topology Parsed Successfully!");
     }

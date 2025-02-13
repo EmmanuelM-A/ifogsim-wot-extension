@@ -22,6 +22,7 @@ import org.fog.entities.Actuator;
 import org.fog.entities.FogBroker;
 import org.fog.entities.FogDevice;
 import org.fog.entities.Sensor;
+import org.fog.placement.Controller;
 import org.fog.placement.ModuleMapping;
 import org.fog.placement.ModulePlacementEdgewards;
 import org.fog.utils.TimeKeeper;
@@ -42,7 +43,7 @@ public final class App {
 
             ApplicationContext applicationContext = new ApplicationContext(
                     // SET THE NODE RED APPLICATION JSON FILE PATH HERE
-                    new File("src/com/extensions/input/application/temperature-monitor.json"),
+                    new File("src/com/extensions/input/application/door-security-application.json"),
                     CloudNodePreset.DEFAULT,
                     EdgeNodePreset.DEFAULT,
                     ApplicationPreset.DEFAULT
@@ -109,7 +110,7 @@ public final class App {
 
             // Create the application model for the node red application
             EventDrivenApplication application = JsonToApplicationModel.createApplicationModel(appId, broker.getId(), applicationContext);
-            application.setUserId(broker.getId());
+            //application.setUserId(broker.getId());
 
             // Set the application for VD's sensors and actuators
             for(VirtualDevice virtualDevice : virtualDevices) {
@@ -131,8 +132,6 @@ public final class App {
                     physicalTopology.getActuators()
             );
 
-            System.out.println("Application getModules(): " + application.getModules().size());
-
             // Submit the application to the controller with the appropriate placement strategy
             controller.submitApplication(
                     application,
@@ -145,8 +144,6 @@ public final class App {
                             ModuleMapping.createModuleMapping()
                     )
             );
-
-            System.out.println("Data flows: " + applicationContext.dataFlows.size());
 
             //////////////////////////////// REGISTER CUSTOM PERFORMANCE METRICS ////////////////////////////////
 

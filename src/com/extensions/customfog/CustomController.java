@@ -6,7 +6,9 @@ import java.util.List;
 import java.util.Map;
 
 import com.extensions.custommetrics.CustomMetricManager;
+import com.extensions.simulation.SimulationData;
 import com.extensions.simulation.SimulationResults;
+import com.extensions.sysconstructor.eventdriver.EventDrivenApplication;
 import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.core.SimEntity;
 import org.cloudbus.cloudsim.core.SimEvent;
@@ -34,7 +36,7 @@ public class CustomController extends SimEntity{
 
     private Map<String, ModulePlacement> appModulePlacementPolicy;
 
-    private SimulationResults simulationResults;
+    private final SimulationData simulationData;
 
     private final CustomMetricManager customMetricManager;
 
@@ -52,12 +54,7 @@ public class CustomController extends SimEntity{
         connectWithLatencies();
 
         this.customMetricManager = new CustomMetricManager();
-    }
-
-    private void printSimulationResults() {
-        this.simulationResults = new SimulationResults(getFogDevices());
-
-        simulationResults.printResults();
+        this.simulationData = new SimulationData();
     }
 
     private FogDevice getFogDeviceById(int id){
@@ -111,12 +108,44 @@ public class CustomController extends SimEntity{
                 break;
             case FogEvents.STOP_SIMULATION:
                 CloudSim.stopSimulation();
-                printSimulationResults();
-                customMetricManager.evaluateMetrics(simulationResults);
+
+                // Record simulation data
+                recordSimulationData();
+
+                // Print simulation data
+                simulationData.printResults();
+
+                // Run custom metrics using simulation data
+                customMetricManager.evaluateMetrics(simulationData);
+
                 System.exit(0);
                 break;
 
         }
+    }
+
+    private void recordSimulationData() {
+        // Execution time
+        simulationData.recordExecutionTime();
+
+        // Application Loop Delays
+        for(Integer loopId : TimeKeeper.getInstance().getLoopIdToTupleIds().keySet()){
+            simulationData.recordApplicationLoopDelays(getStringForLoopId(loopId), TimeKeeper.getInstance().getLoopIdToCurrentAverage().get(loopId));
+        }
+
+        // Tuple CPU Execution Delays
+        for(String tupleType : TimeKeeper.getInstance().getTupleTypeToAverageCpuTime().keySet()){
+            simulationData.recordTupleExecutionDelays(tupleType, TimeKeeper.getInstance().getTupleTypeToAverageCpuTime().get(tupleType));
+        }
+
+        // The cost of executing in the cloud
+        simulationData.recordCloudExecutionCost(getCloud());
+
+        // Network cost
+        simulationData.recordNetworkUsage();
+
+        // Energy Consumption per device
+        simulationData.recordEnergyConsumption(fogDevices);
     }
 
     private void printNetworkUsageDetails() {

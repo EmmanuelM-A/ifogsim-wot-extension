@@ -26,8 +26,4 @@ public class EventDrivenApplication extends Application {
         return eventMap.get(eventType);
     }
 
-    public AppModule addAppModule(String moduleName) {
-        super.addAppModule(moduleName, appliationPreset.APP_MODULE_RAM);
-        return super.getModuleByName(moduleName);
-    }
 }

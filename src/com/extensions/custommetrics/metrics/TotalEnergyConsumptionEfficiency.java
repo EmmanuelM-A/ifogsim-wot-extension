@@ -1,6 +1,7 @@
 package com.extensions.custommetrics.metrics;
 
 import com.extensions.custommetrics.CustomPerformanceMetric;
+import com.extensions.simulation.SimulationData;
 import com.extensions.simulation.SimulationResults;
 
 /**
@@ -9,11 +10,11 @@ import com.extensions.simulation.SimulationResults;
  */
 public class TotalEnergyConsumptionEfficiency implements CustomPerformanceMetric<Double> {
     @Override
-    public Double evaluate(SimulationResults simulationResults) {
-        double totalEnergy = simulationResults.getEnergyConsumptionPerDevice().values()
+    public Double evaluate(SimulationData simulationData) {
+        double totalEnergy = simulationData.getEnergyConsumptionPerDevice().values()
                 .stream().mapToDouble(Double::doubleValue).sum();
 
-        int totalTuplesProcessed = simulationResults.getTupleExecutionDelays().size();
+        int totalTuplesProcessed = simulationData.getTupleExecutionDelays().size();
         if (totalTuplesProcessed == 0) return Double.POSITIVE_INFINITY;
 
         return totalEnergy / totalTuplesProcessed;
