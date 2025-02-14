@@ -2,7 +2,6 @@ package com.extensions.custommetrics.metrics;
 
 import com.extensions.custommetrics.CustomPerformanceMetric;
 import com.extensions.simulation.SimulationData;
-import com.extensions.simulation.SimulationResults;
 
 /**
  * Calculates the energy used per tuple processed. It helps measure how power-efficient the IoT

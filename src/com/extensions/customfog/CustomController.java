@@ -7,8 +7,6 @@ import java.util.Map;
 
 import com.extensions.custommetrics.CustomMetricManager;
 import com.extensions.simulation.SimulationData;
-import com.extensions.simulation.SimulationResults;
-import com.extensions.sysconstructor.eventdriver.EventDrivenApplication;
 import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.core.SimEntity;
 import org.cloudbus.cloudsim.core.SimEvent;

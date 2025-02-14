@@ -1,7 +1,6 @@
 package com.extensions.custommetrics;
 
 import com.extensions.simulation.SimulationData;
-import com.extensions.simulation.SimulationResults;
 
 /**
  * Generic interface for defining custom performance metrics.
