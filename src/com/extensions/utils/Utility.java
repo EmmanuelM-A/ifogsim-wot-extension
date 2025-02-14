@@ -171,7 +171,7 @@ public class Utility {
         return new ArrayList<>(allNodes);
     }
 
-    private static String formAppLoop(AppLoop appLoop) {
+    public static String formAppLoop(AppLoop appLoop) {
         StringBuilder loop = new StringBuilder("[");
 
         for (String appModule : appLoop.getModules()) {
@@ -183,8 +183,13 @@ public class Utility {
     }
 
     public static void printAppLoops(List<AppLoop> appLoops) {
-        if (appLoops == null || appLoops.isEmpty()) {
-            System.out.println("App loops are empty or null.");
+        if(appLoops == null) {
+            System.out.println("App loops are  null!");
+            return;
+        }
+
+        if(appLoops.isEmpty()) {
+            System.out.println("App loops are empty!");
             return;
         }
 

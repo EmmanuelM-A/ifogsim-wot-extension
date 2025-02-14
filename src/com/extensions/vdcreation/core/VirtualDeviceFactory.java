@@ -1,5 +1,7 @@
 package com.extensions.vdcreation.core;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -7,6 +9,7 @@ import java.util.Map;
 
 import com.extensions.customfog.ActuatorAction;
 import com.extensions.customfog.SensorProperty;
+import com.extensions.utils.FilePaths;
 import com.extensions.utils.presets.ActuatorPreset;
 import com.extensions.utils.presets.FogDevicePreset;
 import com.extensions.utils.presets.SensorPreset;
@@ -14,6 +17,8 @@ import com.extensions.vdcreation.models.Event;
 import com.extensions.vdcreation.models.Property;
 import com.extensions.vdcreation.models.ThingDescription;
 import com.extensions.vdcreation.models.Action;
+import com.extensions.vdcreation.parsers.ThingDescriptionParser;
+import com.extensions.vdcreation.parsers.VirtualDeviceConfigParser;
 import org.fog.entities.Sensor;
 
 public class VirtualDeviceFactory {
@@ -27,12 +32,52 @@ public class VirtualDeviceFactory {
 
     private final ActuatorPreset actuatorPreset;
 
-    public VirtualDeviceFactory(int userId, String appId, FogDevicePreset fogDevicePreset, SensorPreset sensorPreset, ActuatorPreset actuatorPreset) {
+    private VirtualDeviceFactory(int userId, String appId, FogDevicePreset fogDevicePreset, SensorPreset sensorPreset, ActuatorPreset actuatorPreset) {
         this.userId = userId;
         this.appId = appId;
         this.fogDevicePreset = fogDevicePreset;
         this.sensorPreset = sensorPreset;
         this.actuatorPreset = actuatorPreset;
+    }
+
+    public static List<VirtualDevice> createVirtualDevices(
+            int userId,
+            String appId,
+            FogDevicePreset fogDevicePreset,
+            SensorPreset sensorPreset,
+            ActuatorPreset actuatorPreset,
+            String thingRepoFolder,
+            List<VirtualDeviceConfig> configs
+    ) throws IOException {
+        // The list to store virtual devices created
+        List<VirtualDevice> createdVirtualDevices = new ArrayList<>();
+
+        // Extract the metadata from the TDs
+        List<ThingDescription> thingDescriptions = JsonFileProcessor.processJsonFiles(
+                thingRepoFolder,
+                new ThingDescriptionParser()
+        );
+
+        // Set up the VD factory to create VDs with the appropriate presets
+        VirtualDeviceFactory virtualDeviceFactory = new VirtualDeviceFactory(
+                userId,
+                appId,
+                fogDevicePreset,
+                sensorPreset,
+                actuatorPreset
+        );
+
+        // Create the virtual devices using the thing descriptions and factory method
+        for(ThingDescription thingDescription : thingDescriptions) {
+            VirtualDevice vd = virtualDeviceFactory.createVirtualDevice(
+                    thingDescription,
+                    configs
+            );
+            // IF YOU WISH TO VALIDATE VDS, DO IT HERE
+            createdVirtualDevices.add(vd);
+        }
+
+        return createdVirtualDevices;
     }
 
     /**
