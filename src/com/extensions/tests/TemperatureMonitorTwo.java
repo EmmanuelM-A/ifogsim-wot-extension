@@ -2,6 +2,7 @@ package com.extensions.tests;
 
 import com.extensions.customfog.CustomController;
 import com.extensions.customfog.FogDeviceFactory;
+import com.extensions.utils.FilePaths;
 import com.extensions.utils.presets.FogDevicePreset;
 import com.extensions.utils.presets.SensorPreset;
 import com.extensions.utils.presets.ActuatorPreset;
@@ -35,46 +36,51 @@ public class TemperatureMonitorTwo {
 
     public static void main(String[] args) {
         try {
-            /*Log.disable(); // Enable logging
+            //////////////////////////////// INITIAL SETUP ////////////////////////////////
+
+            // Disables iFogSim's logging mechanism, only display simulation results
+            Log.disable();
 
             int numUsers = 1;
+
             Calendar calendar = Calendar.getInstance();
+
             CloudSim.init(numUsers, calendar, false);
 
-            String appId = "temperature-monitor";
+            String appId = "Temperature-Monitor";
 
             // Create broker
             FogBroker broker = new FogBroker("broker");
 
-            // Step 1: Extract TD Metadata
-            ThingDescriptionParser tdParser = new ThingDescriptionParser();
-            ThingDescription tempSensorThing = tdParser.process(new File("src/com/extensions/input/things/temperature-sensor.json"));
-            ThingDescription smartDisplayThing = tdParser.process(new File("src/com/extensions/input/things/smart-display.json"));
+            //////////////////////////////// VIRTUAL DEVICE CREATION ////////////////////////////////
 
-            List<ThingDescription> tds = Arrays.asList(tempSensorThing, smartDisplayThing);
+            // Step 1: Create the virtual devices
 
-            // Step 2: Create Virtual Devices from TDs
-            VirtualDeviceFactory vdFactory = new VirtualDeviceFactory(
-                    broker.getId(), appId, FogDevicePreset.DEFAULT, SensorPreset.DEFAULT, ActuatorPreset.DEFAULT
+            // The parser used to extract virtual device configurations if there are any
+            VirtualDeviceConfigParser vdConfigParser = new VirtualDeviceConfigParser();
+
+            // Create the virtual devices using the thing descriptions repo folder
+            List<VirtualDevice> virtualDevices = VirtualDeviceFactory.createVirtualDevices(
+                    broker.getId(),
+                    appId,
+                    FogDevicePreset.DEFAULT,
+                    SensorPreset.DEFAULT,
+                    ActuatorPreset.DEFAULT,
+                    "src/com/extensions/input/things/repo1",
+                    vdConfigParser.process(new File(FilePaths.VD_CONFIG_FILE)) // SET VD'S CONFIG FILE HERE
             );
 
-            List<VirtualDevice> vds = new ArrayList<>();
-            for (ThingDescription td : tds) {
-                VirtualDevice vd = vdFactory.createVirtualDevice(
-                        td, new VirtualDeviceConfigParser().process(new File("src/com/extensions/input/configs/vd-configs.json"))
-                );
-                vds.add(vd);
-            }
+            //////////////////////////////// APPLICATION SETUP ////////////////////////////////
 
             // Step 3: Create Temperature Monitoring Application
             Application application = createApplication(appId, broker.getId());
             application.setUserId(broker.getId());
 
             // Step 4: Create the Physical Topology
-            List<FogDevice> fogDevices = createPhysicalTopology(vds);
+            List<FogDevice> fogDevices = createPhysicalTopology(virtualDevices);
 
             // Step 5: Set the application for VD's sensors and actuators
-            for (VirtualDevice virtualDevice : vds) {
+            for (VirtualDevice virtualDevice : virtualDevices) {
                 for (Sensor sensor : virtualDevice.getSensorProperties()) {
                     sensor.setApp(application);
                     //System.out.println(sensor.toString());
@@ -95,7 +101,7 @@ public class TemperatureMonitorTwo {
 
             // Step 6: Create the controller for managing the simulation
             CustomController controller = new CustomController(
-                    "master-controller", fogDevices, extractSensors(vds), extractActuators(vds)
+                    "master-controller", fogDevices, extractSensors(virtualDevices), extractActuators(virtualDevices)
             );
 
             // Step 7: Module Placement Strategy
@@ -105,12 +111,12 @@ public class TemperatureMonitorTwo {
                     application,
                     0,
                     (CLOUD) ? (new ModulePlacementMapping(fogDevices, application, moduleMapping))
-                            : (new ModulePlacementEdgewards(fogDevices, extractSensors(vds), extractActuators(vds), application, moduleMapping))
+                            : (new ModulePlacementEdgewards(fogDevices, extractSensors(virtualDevices), extractActuators(virtualDevices), application, moduleMapping))
             );
 
             // Step 8: Start Simulation
             CloudSim.startSimulation();
-            CloudSim.stopSimulation();*/
+            CloudSim.stopSimulation();
         } catch (Exception e) {
             e.printStackTrace();
         }

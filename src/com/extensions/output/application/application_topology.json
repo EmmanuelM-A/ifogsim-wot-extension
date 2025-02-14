@@ -269,7 +269,7 @@
           "id" : "99879b685f3d65b8",
           "name" : "logEvent()",
           "type" : "invoke-action",
-          "topic" : "access-control",
+          "topic" : "security-monitoring",
           "thing" : "dc99cc6070d7f6fe",
           "action" : "showAlert"
         } ]

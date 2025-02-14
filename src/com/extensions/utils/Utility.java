@@ -11,6 +11,19 @@ import org.fog.application.AppModule;
 import java.util.*;
 
 public class Utility {
+    public static void printVirtualDevices(List<VirtualDevice> virtualDevices, String identifier) {
+        System.out.println("----------------------------------------------");
+        System.out.println("Identifier: " + identifier + " | Virtual Devices: ");
+        for(VirtualDevice virtualDevice : virtualDevices) {
+            if(virtualDevice != null) {
+                System.out.println("[Virtual Device] " + virtualDevice.getFogDevice().getName());
+            } else {
+                System.out.println("[Virtual Device] null!");
+            }
+        }
+        System.out.println("----------------------------------------------");
+    }
+
     public static VirtualDevice getVirtualDevice(List<VirtualDevice> virtualDevices, String name) {
         for(VirtualDevice virtualDevice : virtualDevices) {
             if(virtualDevice.getFogDevice().getName().equals(name)) return virtualDevice;

@@ -124,11 +124,11 @@ public class TemperatureMonitor {
 
             //////////////////////////////// REGISTER CUSTOM PERFORMANCE METRICS ////////////////////////////////
 
-            /*CustomMetricManager customMetricManager = controller.getCustomMetricManager();
+            CustomMetricManager customMetricManager = controller.getCustomMetricManager();
 
             customMetricManager.registerMetric(new LongestApplicationLoopDelay());
             customMetricManager.registerMetric(new PeakEnergyConsumptionDevice());
-            customMetricManager.registerMetric(new TotalEnergyConsumptionEfficiency());*/
+            customMetricManager.registerMetric(new TotalEnergyConsumptionEfficiency());
 
             //////////////////////////////// SIMULATION ////////////////////////////////
 

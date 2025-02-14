@@ -1,19 +1,12 @@
 package com.extensions.tests;
 
 import com.extensions.customfog.CustomController;
-import com.extensions.custommetrics.CustomMetricManager;
-import com.extensions.custommetrics.metrics.LongestApplicationLoopDelay;
-import com.extensions.custommetrics.metrics.PeakEnergyConsumptionDevice;
-import com.extensions.custommetrics.metrics.TotalEnergyConsumptionEfficiency;
 import com.extensions.sysconstructor.core.ApplicationPhysicalTopology;
 import com.extensions.sysconstructor.core.JsonToApplication;
 import com.extensions.utils.FilePaths;
-import com.extensions.utils.Utility;
 import com.extensions.utils.presets.*;
 import com.extensions.vdcreation.core.VirtualDevice;
 import com.extensions.vdcreation.core.VirtualDeviceFactory;
-import com.extensions.vdcreation.models.ThingDescription;
-import com.extensions.vdcreation.parsers.ThingDescriptionParser;
 import com.extensions.vdcreation.parsers.VirtualDeviceConfigParser;
 import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.core.CloudSim;
@@ -22,10 +15,7 @@ import org.fog.application.AppLoop;
 import org.fog.application.AppModule;
 import org.fog.application.Application;
 import org.fog.application.selectivity.FractionalSelectivity;
-import org.fog.entities.Actuator;
-import org.fog.entities.FogBroker;
-import org.fog.entities.Sensor;
-import org.fog.entities.Tuple;
+import org.fog.entities.*;
 import org.fog.placement.Controller;
 import org.fog.placement.ModuleMapping;
 import org.fog.placement.ModulePlacementEdgewards;
@@ -33,28 +23,19 @@ import org.fog.placement.ModulePlacementMapping;
 import org.fog.utils.TimeKeeper;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
 
-public class DoorSecurityApplication {
+public class DoorSecurityApplicationManual {
     /**
      * Determines if the application is cloud-based
      */
     private static final boolean CLOUD = true;
 
-    public static void main(String[] args) {
+    /*public static void main(String[] args) {
         Log.printLine("Starting Simulation....");
 
         try {
             //////////////////////////////// INITIAL SETUP ////////////////////////////////
-
-            // This instance is responsible for loading in the node red application and setting up connections
-            JsonToApplication jsonToApplication = new JsonToApplication(
-                    CloudNodePreset.DEFAULT,
-                    EdgeNodePreset.DEFAULT,
-                    ApplicationPreset.DEFAULT,
-                    new File("src/com/extensions/input/application/door-security-application.json")
-            );
 
             // Disables iFogSim's logging mechanism, only display simulation results
             Log.disable();
@@ -71,7 +52,7 @@ public class DoorSecurityApplication {
             CloudSim.init(numUsers, calendar, trace_flag);
 
             // Identifier of the application
-            String appId = jsonToApplication.getApplicationTopologyParser().parseApplicationTitle();
+            String appId = "Door-Security-Application";
 
             // Initializes a FogBroker, which manages application modules and coordinates communication between them in the simulation.
             FogBroker broker = new FogBroker("broker");
@@ -92,16 +73,13 @@ public class DoorSecurityApplication {
                     vdConfigParser.process(new File(FilePaths.VD_CONFIG_FILE)) // SET VD'S CONFIG FILE HERE
             );
 
-            //Utility.printVirtualDevices(virtualDevices, "Main");
-
             //////////////////////////////// APPLICATION SETUP ////////////////////////////////
 
             // Create the physical topology for the application
-            ApplicationPhysicalTopology physicalTopology = jsonToApplication.createApplicationPhysicalTopology(virtualDevices);
+            ApplicationPhysicalTopology physicalTopology1 = createPhysicalTopology(virtualDevices);
 
             // Create the application model for the application
             Application application = createApplication(appId, broker.getId());
-            //Application application = jsonToApplication.createApplicationModel(appId, broker.getId());
 
             // Set the application for VD's sensors and actuators
             for(VirtualDevice virtualDevice : virtualDevices) {
@@ -146,7 +124,7 @@ public class DoorSecurityApplication {
 
             customMetricManager.registerMetric(new LongestApplicationLoopDelay());
             customMetricManager.registerMetric(new PeakEnergyConsumptionDevice());
-            customMetricManager.registerMetric(new TotalEnergyConsumptionEfficiency());*/
+            customMetricManager.registerMetric(new TotalEnergyConsumptionEfficiency());
 
             //////////////////////////////// SIMULATION ////////////////////////////////
 
@@ -162,6 +140,23 @@ public class DoorSecurityApplication {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    private static ApplicationPhysicalTopology createPhysicalTopology(List<VirtualDevice> virtualDevices) {
+        List<FogDevice> fogDevices = new ArrayList<>();
+        // Cloud device
+
+        //
+
+        // Create the physical topology instance and set its variables
+        ApplicationPhysicalTopology applicationPhysicalTopology = new ApplicationPhysicalTopology();
+
+        applicationPhysicalTopology.setFogDevices(fogDevices);
+        applicationPhysicalTopology.setSensors(allSensorsUsedInApplication);
+        applicationPhysicalTopology.setActuators(allActuatorsUsedInApplication);
+        applicationPhysicalTopology.setEdgeNodes(edgeNodes);
+
+        return applicationPhysicalTopology;
     }
 
     private static Application createApplication(String appId, int userId) {
@@ -191,5 +186,6 @@ public class DoorSecurityApplication {
         // App Loops
         AppLoop loop = new AppLoop(Arrays.asList("lockState", "processing-0", "lockDoor"));
         application.setLoops(Collections.singletonList(loop));
-    }
+    }*/
 }
+

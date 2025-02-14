@@ -354,7 +354,7 @@
         "type": "invoke-action",
         "z": "802a6ae34b4a36af",
         "name": "logEvent()",
-        "topic": "access-control",
+        "topic": "security-monitoring",
         "thing": "dc99cc6070d7f6fe",
         "action": "showAlert",
         "uriVariables": "",

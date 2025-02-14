@@ -58,7 +58,7 @@ public class JsonToApplication {
     /**
      * A list of all nodes used in the application.
      */
-    private final List<TopologyNode> topologyNodes;
+    private final List<TopologyNode> allTopologyNodes;
 
     /**
      * A list of all sub flows in a tree-like data structure
@@ -155,7 +155,7 @@ public class JsonToApplication {
         this.nodeTopics = applicationTopologyParser.parseTopologyNodeTopics();
 
         // Get all the topology nodes from the sub flows list
-        this.topologyNodes = Utility.getAllNodesFromTopology(topologyNodeTrees);
+        this.allTopologyNodes = Utility.getAllNodesFromTopology(topologyNodeTrees);
 
         // Initialize the connection checker to validate topology node connections
         TopologyNodeConnectionChecker.initializeChecker(topologyNodeTrees);
@@ -458,7 +458,7 @@ public class JsonToApplication {
             selectedVirtualDevices.addAll(allSelectedVirtualDevices);
 
             // Get the names of all sensors and actuators used in the application
-            Set<String> sensorsAndActuatorsUsed = new HashSet<>(getAllSensorsAndActuatorsUsed(topologyNodes));
+            Set<String> sensorsAndActuatorsUsed = new HashSet<>(getAllSensorsAndActuatorsUsed(allTopologyNodes));
 
             // Lists to store used sensors and actuators
             List<Sensor> allSensorsUsedInApplication = new ArrayList<>();
@@ -508,13 +508,15 @@ public class JsonToApplication {
                     fogDevices.add(edgeNode);
                     edgeNodes.add(edgeNode);
 
-                    // Connect all VDs to this edge node based on the topic
-                    for(VirtualDevice virtualDevice : selectedVirtualDevices) {
-                        VirtualDevice vd = getVirtualDeviceWithMatchingTopic(topologyNodes, things, virtualDevice, topic);
+                    List<VirtualDevice> virtualDevicesUsed = getVirtualDeviceWithMatchingTopic(allTopologyNodes, allSelectedVirtualDevices, topic);
 
+                    assert virtualDevicesUsed != null;
+                    for(VirtualDevice virtualDevice : virtualDevicesUsed) {
                         FogDevice vdFogDevice = null;
 
-                        if(vd != null) vdFogDevice = vd.getFogDevice();
+                        if(virtualDevice != null) {
+                            vdFogDevice = virtualDevice.getFogDevice();
+                        }
 
                         if(vdFogDevice != null) {
                             vdFogDevice.setParentId(edgeNode.getId());
@@ -524,6 +526,7 @@ public class JsonToApplication {
                     }
                 }
             } else { // If the topics array is not set, distribute nodes normally
+                //System.out.println("TOPICS NOT USED!");
                 // Calculate the number of edge nodes needed
                 int numberOfEdgeNodes = Math.max(1, calculateNoOfEdgeNodes(selectedVirtualDevices.size(), applicationPreset.MAX_VDS_FOR_ONE_EDE_NODE));
 
@@ -627,36 +630,55 @@ public class JsonToApplication {
         );
     }
 
-    private VirtualDevice getVirtualDeviceWithMatchingTopic(List<TopologyNode> nodes, List<TopologyNode> things, VirtualDevice virtualDevice, String targetTopic) {
+    /**
+     * Gets all virtual devices with the matching topic
+     * @param nodes All nodes used in the application
+     * @param allVirtualDevices All virtual devices used in the application
+     * @param targetTopic The target topic to search for
+     * @return A list of all virtual devices counterparts of the (referenced) things that contain the matching topic
+     */
+    private List<VirtualDevice> getVirtualDeviceWithMatchingTopic(List<TopologyNode> nodes, List<VirtualDevice> allVirtualDevices, String targetTopic) {
         if (targetTopic == null || targetTopic.isEmpty()) {
             System.out.println("Topic must not be empty!");
             return null;
         }
-
-        // Map thing ID → Thing Node
-        Map<String, TopologyNode> thingNodeMap = new HashMap<>();
-        for (TopologyNode thingNode : things) {
-            thingNodeMap.put(thingNode.id(), thingNode);
+        
+        // Get all nodes that have a matching topic attribute
+        Set<TopologyNode> matchingNodesWithTopic = new HashSet<>();
+        
+        for(TopologyNode topologyNode : nodes) {
+            if(topologyNode.topic() != null && topologyNode.topic().equals(targetTopic)) {
+                matchingNodesWithTopic.add(topologyNode);
+            }
         }
-
-        // Set of valid node types
-        Set<String> validNodeTypes = Set.of(NodeRedJSONParser.TYPE_READ_PROPERTY, NodeRedJSONParser.TYPE_INVOKE_ACTION);
-
-        // Iterate through nodes
-        for (TopologyNode node : nodes) {
-            if (node.thing() != null && !node.thing().isEmpty() &&
-                    node.topic() != null && node.topic().equals(targetTopic) &&
-                    validNodeTypes.contains(node.uniqueAttribute())) {
-
-                TopologyNode thingNode = thingNodeMap.get(node.thing());
-
-                if (thingNode != null && virtualDevice.getFogDevice().getName().equals(thingNode.name())) {
-                    return virtualDevice;  // Match found
-                }
+        
+        // Get all things referenced (stores thing id) by the nodes with a matching topic
+        Set<String> thingsRef = new HashSet<>();
+        
+        for(TopologyNode node : matchingNodesWithTopic) {
+            if(node.thing() != null && !node.thing().isEmpty()) {
+                thingsRef.add(node.thing());
             }
         }
 
-        return null;
+        // Get the things (topology nodes) referenced
+        Set<TopologyNode> thingNodes = new HashSet<>();
+        for(TopologyNode thingNode : this.things) {
+            if(thingsRef.contains(thingNode.id())) {
+                thingNodes.add(thingNode);
+            }
+        }
+
+        // Get the corresponding virtual devices of the things
+        Set<VirtualDevice> virtualDevices = new HashSet<>();
+
+        // Get all things used for that topic (topic-node) and get its corresponding virtual device
+        for(TopologyNode thing : thingNodes) {
+            String formattedThingName = thing.name().replace(" ", "");
+            virtualDevices.add(Utility.getVirtualDevice(allVirtualDevices, formattedThingName));
+        }
+
+        return !virtualDevices.isEmpty() ? new ArrayList<>(virtualDevices) : null;
     }
 
     /////////////////////////////////////////////////// HELPER FUNCTIONS ///////////////////////////////////////////////////
@@ -694,8 +716,8 @@ public class JsonToApplication {
         return nodeTopics;
     }
 
-    public List<TopologyNode> getTopologyNodes() {
-        return topologyNodes;
+    public List<TopologyNode> getAllTopologyNodes() {
+        return allTopologyNodes;
     }
 
     public List<TopologyNodeTree> getTopologyNodeTrees() {
