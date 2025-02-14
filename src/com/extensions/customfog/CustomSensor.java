@@ -1,6 +1,7 @@
 package com.extensions.customfog;
 
 import com.extensions.utils.presets.SensorPreset;
+import com.extensions.vdcreation.models.Event;
 import com.extensions.vdcreation.models.Property;
 import org.cloudbus.cloudsim.UtilizationModelFull;
 import org.fog.application.AppEdge;
@@ -10,27 +11,27 @@ import org.fog.utils.FogEvents;
 import org.fog.utils.FogUtils;
 import org.fog.utils.Logger;
 
-public class SensorProperty extends Sensor {
+public class CustomSensor extends Sensor {
+    private final SensorPreset preset;
     private Property property;
-    private SensorPreset preset;
-    private String name;
-    private String tupleType;
 
-    public SensorProperty(String name, int userId, String appId, Property property, SensorPreset preset) {
+    public CustomSensor(String name, int userId, String appId, SensorPreset preset) {
         super(name, name, userId, appId, preset.DISTRIBUTION);
-        this.name = name;
-        this.tupleType = name;
-
-        // Define sensor configs
         setLatency(preset.LATENCY);
-
-        this.property = property;
         this.preset = preset;
+    }
+
+    public Property getProperty() {
+        return property;
+    }
+
+    public void setProperty(Property property) {
+        this.property = property;
     }
 
     @Override
     public String toString() {
-        return "{" + "Sensor Name: " + name + " | Tuple Type: " + tupleType + " | Distribution: " + preset.DISTRIBUTION.getDistributionType() + " | Latency: " + preset.LATENCY + "}";
+        return "{" + "Sensor Name: " + getName() + " | Tuple Type: " + getTupleType() + " | Distribution: " + preset.DISTRIBUTION.getDistributionType() + " | Latency: " + preset.LATENCY + "}";
     }
 
     @Override

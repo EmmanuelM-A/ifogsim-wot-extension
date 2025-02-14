@@ -2,6 +2,7 @@ package com.extensions.vdcreation.core;
 
 import com.extensions.customfog.CustomFogDevice;
 import com.extensions.customfog.FogDeviceFactory;
+import com.extensions.sysconstructor.eventdriver.EventSensor;
 import com.extensions.utils.presets.FogDevicePreset;
 import com.extensions.vdcreation.models.Event;
 import com.extensions.vdcreation.models.ThingDescription;
@@ -34,7 +35,7 @@ public class VirtualDevice {
     /**
      * Represents events in the TD.
      */
-    private final List<Event> events;
+    private final List<Sensor> eventSensors;
 
     /**
      * Represents the TD used to create this virtual device.
@@ -45,7 +46,7 @@ public class VirtualDevice {
         this.fogDevice = FogDeviceFactory.createFogDevice(name, preset);
         this.sensorProperties = new ArrayList<>();
         this.actuatorActions = new ArrayList<>();
-        this.events = new ArrayList<>();
+        this.eventSensors = new ArrayList<>();
         this.thingDescription = null;
     }
 
@@ -53,7 +54,7 @@ public class VirtualDevice {
         this.fogDevice = FogDeviceFactory.createFogDevice(name, preset, config);
         this.sensorProperties = new ArrayList<>();
         this.actuatorActions = new ArrayList<>();
-        this.events = new ArrayList<>();
+        this.eventSensors = new ArrayList<>();
         this.thingDescription = null;
     }
 
@@ -73,8 +74,8 @@ public class VirtualDevice {
         return actuatorActions;
     }
 
-    public List<Event> getEvents() {
-        return events;
+    public List<Sensor> getEventSensors() {
+        return eventSensors;
     }
 
     public ThingDescription getThingDescription() {
@@ -140,14 +141,14 @@ public class VirtualDevice {
         }
 
         // Print events
-        /*System.out.println("Events:");
-        if (virtualDevice.events != null && !virtualDevice.events.isEmpty()) {
-            for (EventTrigger event : virtualDevice.events) {
-                System.out.println("- " + event); // Assuming EventTrigger has a meaningful toString method
+        System.out.println("Events:");
+        if (virtualDevice.getEventSensors() != null && !virtualDevice.getEventSensors().isEmpty()) {
+            for (Sensor eventSensor : virtualDevice.getEventSensors()) {
+                System.out.println("- " + eventSensor.toString());
             }
         } else {
-            System.out.println("No events available");
-        }*/
+            System.out.println("No event sensors available");
+        }
         System.out.println("-----------------------------------------------------------------");
     }
 }

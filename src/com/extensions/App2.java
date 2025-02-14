@@ -50,7 +50,7 @@ public final class App2 {
     public static void main(String[] args) {
         Log.printLine("Starting Simulation...");
         try {
-            /*Log.disable();
+            //////////////////////////////// INITIAL SETUP ////////////////////////////////
 
             // This instance is responsible for loading in the node red application and setting up connections
             JsonToApplication jsonToApplication = new JsonToApplication(
@@ -59,6 +59,8 @@ public final class App2 {
                     ApplicationPreset.DEFAULT,
                     new File("src/com/extensions/input/application/door-security-application.json")
             );
+
+            Log.disable();
 
             // Specifies the number of users interacting with the cloud.
             int numUsers = 10;
@@ -78,31 +80,23 @@ public final class App2 {
             // Initialize a FogBroker, which manages application modules and coordinates communication between them in the simulation.
             FogBroker broker = new FogBroker("broker");
 
-            // Extract the metadata from the TDs
-            List<ThingDescription> thingDescriptions = JsonFileProcessor.processJsonFiles(
-                    FilePaths.JSON_THINGS_REPO, // SET THINGS REPO HERE
-                    new ThingDescriptionParser()
-            );
+            //////////////////////////////// VIRTUAL DEVICE CREATION ////////////////////////////////
 
-            // Set up the VD factory to create VDs with the appropriate presets
-            VirtualDeviceFactory virtualDeviceFactory = new VirtualDeviceFactory(
+            // The parser used to extract virtual device configurations if there are any
+            VirtualDeviceConfigParser vdConfigParser = new VirtualDeviceConfigParser();
+
+            // Create the virtual devices using the thing descriptions repo folder
+            List<VirtualDevice> virtualDevices = VirtualDeviceFactory.createVirtualDevices(
                     broker.getId(),
                     appId,
                     FogDevicePreset.DEFAULT,
                     SensorPreset.DEFAULT,
-                    ActuatorPreset.DEFAULT
+                    ActuatorPreset.DEFAULT,
+                    "src/com/extensions/input/things/repo2", // SET THINGS REPO HERE
+                    vdConfigParser.process(new File(FilePaths.VD_CONFIG_FILE)) // SET VD'S CONFIG FILE HERE
             );
-            VirtualDeviceConfigParser vdConfigParser = new VirtualDeviceConfigParser();
 
-            // Create the virtual devices using the thing descriptions and factory method
-            for(ThingDescription thingDescription : thingDescriptions) {
-                VirtualDevice vd = virtualDeviceFactory.createVirtualDevice(
-                        thingDescription,
-                        vdConfigParser.process(new File(FilePaths.VD_CONFIG_FILE)) // SET VD'S CONFIG FILE HERE
-                );
-                // Validate VD HERE
-                virtualDevices.add(vd);
-            }
+            //////////////////////////////// APPLICATION SETUP ////////////////////////////////
 
             // Create the physical topology for the node red application
             ApplicationPhysicalTopology physicalTopology = jsonToApplication.createApplicationPhysicalTopology(virtualDevices);
@@ -110,9 +104,6 @@ public final class App2 {
             // Create the application model for the node red application
             Application application = jsonToApplication.createApplicationModel(appId, broker.getId());
             application.setUserId(broker.getId());
-
-            System.out.println("Application Loops: " + application.getLoops().size());
-            //System.out.println("Tuple CPU Delays: " + application.get);
 
             // Set the application for VD's sensors and actuators
             for(VirtualDevice virtualDevice : virtualDevices) {
@@ -150,11 +141,15 @@ public final class App2 {
                     ))
             );
 
+            //////////////////////////////// REGISTER CUSTOM PERFORMANCE METRICS ////////////////////////////////
+
             /*CustomMetricManager customMetricManager = controller.getCustomMetricManager();
 
             customMetricManager.registerMetric(new LongestApplicationLoopDelay());
             customMetricManager.registerMetric(new PeakEnergyConsumptionDevice());
-            customMetricManager.registerMetric(new TotalEnergyConsumptionEfficiency());
+            customMetricManager.registerMetric(new TotalEnergyConsumptionEfficiency());*/
+
+            //////////////////////////////// SIMULATION ////////////////////////////////
 
             // Set the simulation start time
             TimeKeeper.getInstance().setSimulationStartTime(Calendar.getInstance().getTimeInMillis());
@@ -164,8 +159,6 @@ public final class App2 {
 
             // Stop the simulation once it completes
             CloudSim.stopSimulation();
-
-            Log.printLine("IoT Application simulation finished!");*/
 
         } catch(Exception e) {
             e.printStackTrace();

@@ -1,6 +1,5 @@
 package com.extensions.vdcreation.core;
 
-import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -8,8 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 import com.extensions.customfog.ActuatorAction;
-import com.extensions.customfog.SensorProperty;
-import com.extensions.utils.FilePaths;
+import com.extensions.customfog.CustomSensor;
+import com.extensions.sysconstructor.eventdriver.EventSensor;
 import com.extensions.utils.presets.ActuatorPreset;
 import com.extensions.utils.presets.FogDevicePreset;
 import com.extensions.utils.presets.SensorPreset;
@@ -18,9 +17,11 @@ import com.extensions.vdcreation.models.Property;
 import com.extensions.vdcreation.models.ThingDescription;
 import com.extensions.vdcreation.models.Action;
 import com.extensions.vdcreation.parsers.ThingDescriptionParser;
-import com.extensions.vdcreation.parsers.VirtualDeviceConfigParser;
 import org.fog.entities.Sensor;
 
+/**
+ * Responsible for creating the virtual devices (VDs) from the thing descriptions.
+ */
 public class VirtualDeviceFactory {
     private final int userId;
 
@@ -81,9 +82,11 @@ public class VirtualDeviceFactory {
     }
 
     /**
-     * Creates a virtual device based on the provided {@link ThingDescription}.
+     * Creates a virtual device based on the provided {@link ThingDescription}. If there are configurations present
+     * for any VD, they will be applied.
      *
      * @param thingDescription The extracted information from a IoT TD.
+     * @param configs A list of VD configurations
      * @return A virtual device that contains all necessary information about the TD.
      */
     public VirtualDevice createVirtualDevice(ThingDescription thingDescription, List<VirtualDeviceConfig> configs) {
@@ -103,7 +106,8 @@ public class VirtualDeviceFactory {
                 writeProperties.put(propertyName, property);
             } else {
                 // Map the property to a SensorProperty
-                Sensor sensorProperty = new SensorProperty(propertyName, userId, appId, property, sensorPreset);
+                CustomSensor sensorProperty = new CustomSensor(propertyName, userId, appId, sensorPreset);
+                sensorProperty.setProperty(property);
 
                 // Set the sensor's gateway device ID to the VD's ID
                 sensorProperty.setGatewayDeviceId(virtualDevice.getFogDevice().getId());
@@ -153,22 +157,36 @@ public class VirtualDeviceFactory {
             virtualDevice.getActuatorActions().add(actuatorAction);
         }
 
-        // Create event for the events
+        // Create sensors for the TD events
         for(Map.Entry<String, Event> eventEntry : thingDescription.getEvents().entrySet()) {
             // Extract entry data
             String eventName = eventEntry.getKey();
             Event event = eventEntry.getValue();
 
-            // Set event name
-            event.setTitle(eventName);
+            // Map event to an EventSensor
+            EventSensor eventSensor = new EventSensor(eventName, userId, appId, sensorPreset);
+            eventSensor.setEvent(event);
 
-            // Add event to virtual device
-            virtualDevice.getEvents().add(event);
+            // Set the sensor's gateway device ID to the VD's ID
+            eventSensor.setGatewayDeviceId(virtualDevice.getFogDevice().getId());
+
+            // Set the latency of the sensor communication
+            eventSensor.setLatency(sensorPreset.LATENCY);
+
+            // Add the event sensor to the virtual device
+            virtualDevice.getEventSensors().add(eventSensor);
         }
 
         return virtualDevice;
     }
 
+    /**
+     * Creates a virtual device and sets its configurations if a VD config file is present for that VD.
+     *
+     * @param thingDescription The thing description used to map thing attributes into a virtual device.
+     * @param configs A list of VD configurations
+     * @return The created VD from the TD with is configurations and components defined and set.
+     */
     private VirtualDevice defineVirtualDevice(ThingDescription thingDescription, List<VirtualDeviceConfig> configs) {
         // Create a virtual device using defined presets only
         VirtualDevice virtualDevice = new VirtualDevice(thingDescription.getTitle(), fogDevicePreset);

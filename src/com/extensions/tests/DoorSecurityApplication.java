@@ -36,6 +36,10 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
+/**
+ * This application uses the automatic physical topology constructor mechanism but the application model and
+ * event handling are done manually. This class tests the effectiveness of the physical topology constructor mechanism.
+ */
 public class DoorSecurityApplication {
     /**
      * Determines if the application is cloud-based
@@ -92,7 +96,7 @@ public class DoorSecurityApplication {
                     vdConfigParser.process(new File(FilePaths.VD_CONFIG_FILE)) // SET VD'S CONFIG FILE HERE
             );
 
-            //Utility.printVirtualDevices(virtualDevices, "Main");
+            //Utility.printVirtualDevices(virtualDevices, "Main Class");
 
             //////////////////////////////// APPLICATION SETUP ////////////////////////////////
 
@@ -103,6 +107,10 @@ public class DoorSecurityApplication {
             Application application = createApplication(appId, broker.getId());
             //Application application = jsonToApplication.createApplicationModel(appId, broker.getId());
 
+            System.out.println("AppModules: " + application.getModules().size());
+            System.out.println("AppEdges: " + application.getEdges().size());
+            //System.out.println("AppModules: " + application.getModules().size());
+
             // Set the application for VD's sensors and actuators
             for(VirtualDevice virtualDevice : virtualDevices) {
                 for(Sensor sensorProperty : virtualDevice.getSensorProperties()) {
@@ -110,6 +118,9 @@ public class DoorSecurityApplication {
                 }
                 for(Actuator actuatorAction : virtualDevice.getActuatorActions()) {
                     actuatorAction.setApp(application);
+                }
+                for(Sensor eventSensor : virtualDevice.getEventSensors()) {
+                    eventSensor.setApp(application);
                 }
             }
 
@@ -167,7 +178,7 @@ public class DoorSecurityApplication {
     private static Application createApplication(String appId, int userId) {
         Application application = Application.createApplication(appId, userId);
 
-        // Inject Flow
+        application.setLoops(new ArrayList<>());
 
         // Data Flow
         setDataFlowForApplication(application);
@@ -190,6 +201,6 @@ public class DoorSecurityApplication {
 
         // App Loops
         AppLoop loop = new AppLoop(Arrays.asList("lockState", "processing-0", "lockDoor"));
-        application.setLoops(Collections.singletonList(loop));
+        application.getLoops().add(loop);
     }
 }

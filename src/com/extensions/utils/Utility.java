@@ -1,12 +1,9 @@
 package com.extensions.utils;
 
-import com.extensions.sysconstructor.core.TupleMapping;
-import com.extensions.sysconstructor.eventdriver.EventDrivenApplication;
 import com.extensions.sysconstructor.topology.TopologyNode;
 import com.extensions.sysconstructor.topology.TopologyNodeTree;
 import com.extensions.vdcreation.core.VirtualDevice;
 import org.fog.application.AppLoop;
-import org.fog.application.AppModule;
 
 import java.util.*;
 

@@ -1,7 +1,6 @@
 package com.extensions.sysconstructor.core;
 
 import com.extensions.customfog.FogDeviceFactory;
-import com.extensions.sysconstructor.eventdriver.EventDrivenApplication;
 import com.extensions.sysconstructor.nodered.NodeRedJSONParser;
 import com.extensions.sysconstructor.topology.TopologyNode;
 import com.extensions.vdcreation.core.VirtualDevice;
@@ -9,7 +8,6 @@ import org.fog.entities.Actuator;
 import org.fog.entities.FogDevice;
 import org.fog.entities.Sensor;
 
-import javax.xml.transform.Source;
 import java.util.*;
 
 public class JsonToPhysicalTopology {

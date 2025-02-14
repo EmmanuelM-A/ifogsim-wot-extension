@@ -167,7 +167,7 @@ public class JsonToApplication {
         // Create the application instance
         Application application = new Application(appId, userId);
 
-        System.out.println(application.getLoops() != null ? "Application loop list set!" : "Application loop list not set!");
+        application.setLoops(new ArrayList<AppLoop>());
 
         // Create the application model for all inject flows
         for(TopologyNodeTree injectFlow : injectFlows) {
@@ -185,7 +185,7 @@ public class JsonToApplication {
         }
 
         // Print app modules
-        System.out.println("AppModules:");
+        /*System.out.println("AppModules:");
         System.out.println("--------------------------------------");
         for(AppModule appModule : application.getModules()) {
             System.out.println(appModule.getName());
@@ -223,11 +223,12 @@ public class JsonToApplication {
         }
         System.out.println();
 
-        System.out.println("Application Model formed!");
+        System.out.println("Application Model formed!");*/
 
         return application;
     }
 
+    // IGNORED FOR NOW, BUT IF YOU INCLUDE INJECT SUB FLOWS INTO THE APPLICATION MODEL GO FOR IT
     public void setupInjectFlowInApplication(Application application, TopologyNodeTree injectFlow) {}
 
     /**
@@ -526,7 +527,6 @@ public class JsonToApplication {
                     }
                 }
             } else { // If the topics array is not set, distribute nodes normally
-                //System.out.println("TOPICS NOT USED!");
                 // Calculate the number of edge nodes needed
                 int numberOfEdgeNodes = Math.max(1, calculateNoOfEdgeNodes(selectedVirtualDevices.size(), applicationPreset.MAX_VDS_FOR_ONE_EDE_NODE));
 

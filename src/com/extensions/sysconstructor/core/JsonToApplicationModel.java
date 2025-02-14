@@ -1,7 +1,5 @@
 package com.extensions.sysconstructor.core;
 
-import com.extensions.customfog.CustomFogDevice;
-import com.extensions.sysconstructor.eventdriver.EventDrivenApplication;
 import com.extensions.sysconstructor.eventdriver.EventManager;
 import com.extensions.sysconstructor.nodered.NodeRedJSONParser;
 import com.extensions.sysconstructor.topology.*;
@@ -12,6 +10,7 @@ import org.apache.commons.math3.util.Pair;
 import org.fog.application.AppEdge;
 import org.fog.application.AppLoop;
 import org.fog.application.AppModule;
+import org.fog.application.Application;
 import org.fog.application.selectivity.FractionalSelectivity;
 import org.fog.application.selectivity.SelectivityModel;
 import org.fog.entities.Tuple;
@@ -37,12 +36,12 @@ public class JsonToApplicationModel {
      */
     private static int eventProcessingModuleCount = 0;
 
-    public static EventDrivenApplication createApplicationModel(String appId, int userId, ApplicationContext context) {
+    public static Application createApplicationModel(String appId, int userId, ApplicationContext context) {
         // Set the global variable
         applicationContext = context;
 
         // Create the application instance
-        EventDrivenApplication application = new EventDrivenApplication(appId, userId, applicationContext.applicationPreset);
+        Application application = new Application(appId, userId);
 
         // Set appLoops - IMPORTANT DO NOT CHANGE
         application.setLoops(applicationContext.appLoops);
@@ -141,7 +140,7 @@ public class JsonToApplicationModel {
      * @param application The application instance
      * @param injectFlow The sub flow that represents user injected data (user-based data)
      */
-    private static void createInjectFlow(EventDrivenApplication application, TopologyNodeTree injectFlow) {
+    private static void createInjectFlow(Application application, TopologyNodeTree injectFlow) {
         // Check if the inject flow actually exists
         if(injectFlow == null) {
             return;
@@ -225,7 +224,7 @@ public class JsonToApplicationModel {
      * @param application The application instance
      * @param dataFlow The sub flow which is a data flow
      */
-    private static void createDataFlow(EventDrivenApplication application, TopologyNodeTree dataFlow) {
+    private static void createDataFlow(Application application, TopologyNodeTree dataFlow) {
         // Check if the data flow exists
         if(dataFlow == null) {
             return;
@@ -375,7 +374,7 @@ public class JsonToApplicationModel {
         }
     }
 
-    private static void createEventFlow(EventDrivenApplication application, TopologyNodeTree eventFlow) {
+    private static void createEventFlow(Application application, TopologyNodeTree eventFlow) {
         // Ensure the root node is a valid event publisher
         if (!eventFlow.rootNode().type().equals(NodeRedJSONParser.TYPE_SUBSCRIBE_EVENT)) {
             System.out.println("Sub Flow " + eventFlow.rootNode().id() + " is NOT an event flow.");
@@ -463,7 +462,7 @@ public class JsonToApplicationModel {
      * @param application The application instance
      * @param loopToAdd The app loop to add
      */
-    private static void addLoopToAppLoops(EventDrivenApplication application, List<String> loopToAdd) {
+    private static void addLoopToAppLoops(Application application, List<String> loopToAdd) {
         AppLoop loop = new AppLoop(new ArrayList<>(loopToAdd));
 
         application.getLoops().add(loop);
@@ -474,7 +473,7 @@ public class JsonToApplicationModel {
     }
 
 
-    private static void addAppEdge(EventDrivenApplication application, String srcModuleName, String dstModuleName, String tupleType, int edgeDirection, int edgeType) {
+    private static void addAppEdge(Application application, String srcModuleName, String dstModuleName, String tupleType, int edgeDirection, int edgeType) {
         application.addAppEdge(
                 srcModuleName,
                 dstModuleName,
