@@ -18,11 +18,13 @@ import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.core.CloudSim;
 import org.fog.application.AppEdge;
 import org.fog.application.AppLoop;
+import org.fog.application.AppModule;
 import org.fog.application.Application;
 import org.fog.application.selectivity.FractionalSelectivity;
 import org.fog.entities.FogBroker;
 import org.fog.entities.FogDevice;
 import org.fog.entities.Tuple;
+import org.fog.placement.Controller;
 import org.fog.placement.ModuleMapping;
 import org.fog.placement.ModulePlacementEdgewards;
 import org.fog.placement.ModulePlacementMapping;
@@ -90,8 +92,6 @@ public class TemperatureMonitoring {
                     vdConfigParser.process(new File("src/com/extensions/tests/input/configs/TestConfig.json"))
             );
 
-            VirtualDevice.printVirtualDeviceData(temperatureSensorVD);
-
             // Create Temperature Monitoring application
             Application application = createApplication(appId, broker.getId());
 
@@ -102,6 +102,12 @@ public class TemperatureMonitoring {
 
             // Initialize a module mapping
             ModuleMapping moduleMapping = ModuleMapping.createModuleMapping();
+
+            if(CLOUD) {
+                for(AppModule appModule : application.getModules()) {
+                    moduleMapping.addModuleToDevice(appModule.getName(), "cloud");
+                }
+            }
 
             // Create the controller for managing the simulation
             CustomController controller = new CustomController(
@@ -137,8 +143,12 @@ public class TemperatureMonitoring {
             // Start the CloudSim simulation
             CloudSim.startSimulation();
 
+            //System.out.println("Loops: " + TimeKeeper.getInstance().getLoopIdToTupleIds().keySet().size());
+
             // Stop the simulation once it completes
             CloudSim.stopSimulation();
+
+            System.out.println("Loops: " + TimeKeeper.getInstance().getLoopIdToTupleIds().keySet().size());
 
             System.out.println("FINISHED!!!!");
 
@@ -211,17 +221,17 @@ public class TemperatureMonitoring {
         Application application = Application.createApplication(appId, userId);
 
         String rawTempProcessor = "temperature_sensor";
-        //String rawHumidityProcessor = "humidity_sensor";
+        String rawHumidityProcessor = "humidity_sensor";
         String dataProcessor = "data_processor";
         String TEMP_SENSOR = "temperature"; // THE TUPLE TYPE OF THE EDGE DEVICE NEEDS TO MATCH THE TUPLE TYPE OF THE CORRESPONDING SENSOR
-        //String HUMIDITY_SENSOR = "humidity";
+        String HUMIDITY_SENSOR = "humidity";
 
         /*
          * Adding modules (vertices) to the application model (directed graph).
          * Each module represents a processing or functional unit in the application.
          */
         application.addAppModule(rawTempProcessor, 10); // Module for processing raw sensor data.
-        //application.addAppModule(rawHumidityProcessor, 10);
+        application.addAppModule(rawHumidityProcessor, 10);
         application.addAppModule(dataProcessor, 10);     // Module for evaluating data and making decisions.
 
         /*
@@ -229,14 +239,14 @@ public class TemperatureMonitoring {
          * Each edge represents data flow (tuples) between modules, sensors, or actuators.
          */
         // Edge from the physical sensor to the processing module.
-        application.addAppEdge(TEMP_SENSOR, rawTempProcessor, 500, 200, TEMP_SENSOR, Tuple.UP, AppEdge.SENSOR);
+        application.addAppEdge(TEMP_SENSOR, rawTempProcessor, 500, 800, TEMP_SENSOR, Tuple.UP, AppEdge.SENSOR);
 
         // Edge from the sensor module to the data processor module.
-        application.addAppEdge(rawTempProcessor, dataProcessor, 1000, 500, "PROCESSED_TEMP", Tuple.UP, AppEdge.MODULE);
+        application.addAppEdge(rawTempProcessor, dataProcessor, 1000, 700, "PROCESSED_TEMP", Tuple.UP, AppEdge.MODULE);
 
-        //application.addAppEdge(HUMIDITY_SENSOR, rawHumidityProcessor, 500, 200, HUMIDITY_SENSOR, Tuple.UP, AppEdge.SENSOR);
+        application.addAppEdge(HUMIDITY_SENSOR, rawHumidityProcessor, 500, 200, HUMIDITY_SENSOR, Tuple.UP, AppEdge.SENSOR);
 
-        //application.addAppEdge(rawTempProcessor, dataProcessor, 1000, 500, "PROCESSED_HUMIDITY", Tuple.UP, AppEdge.MODULE);
+        application.addAppEdge(rawHumidityProcessor, dataProcessor, 1000, 650, "PROCESSED_HUMIDITY", Tuple.UP, AppEdge.MODULE);
 
         /*
          * Defining tuple mappings for input-output relationships in each module.
@@ -245,8 +255,8 @@ public class TemperatureMonitoring {
         application.addTupleMapping(rawTempProcessor, TEMP_SENSOR, "PROCESSED_TEMP",
                 new FractionalSelectivity(1.0)); // 1 output tuple per input tuple in the sensor module.
 
-        //application.addTupleMapping(rawTempProcessor, HUMIDITY_SENSOR, "PROCESSED_HUMIDITY",
-                //new FractionalSelectivity(1.0));
+        application.addTupleMapping(rawHumidityProcessor, HUMIDITY_SENSOR, "PROCESSED_HUMIDITY",
+                new FractionalSelectivity(1.0));
 
 
         /*
@@ -260,13 +270,13 @@ public class TemperatureMonitoring {
         }});
 
         final AppLoop loop2 = new AppLoop(new ArrayList<String>() {{
-            //add(HUMIDITY_SENSOR);  // Start from the physical sensor.
-            add(rawTempProcessor); // Pass through the sensor processing module.
+            add(HUMIDITY_SENSOR);  // Start from the physical sensor.
+            add(rawHumidityProcessor); // Pass through the sensor processing module.
             add(dataProcessor);     // End at the data processor module.
         }});
         List<AppLoop> loops =  new ArrayList<AppLoop>() {{
             add(loop1); // Add the defined loop to the application.
-            //add(loop2);
+            add(loop2);
         }};
 
         application.setLoops(loops); // Set the application loops for monitoring.

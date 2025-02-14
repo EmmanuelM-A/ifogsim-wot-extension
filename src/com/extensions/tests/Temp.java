@@ -245,7 +245,6 @@ public class Temp {
          * Adding modules (vertices) to the application model (directed graph).
          * Each module represents a processing or functional unit in the application.
          */
-        //application.addAppModule("temperature", 20);
         application.addAppModule("processing", 50); // Module for evaluating data and making decisions.
 
 

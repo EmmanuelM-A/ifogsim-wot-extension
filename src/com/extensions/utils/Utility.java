@@ -6,6 +6,7 @@ import com.extensions.sysconstructor.topology.TopologyNode;
 import com.extensions.sysconstructor.topology.TopologyNodeTree;
 import com.extensions.vdcreation.core.VirtualDevice;
 import org.fog.application.AppLoop;
+import org.fog.application.AppModule;
 
 import java.util.*;
 
@@ -170,28 +171,29 @@ public class Utility {
         return new ArrayList<>(allNodes);
     }
 
-    public static void printAppLoops(List<List<String>> appLoops) {
+    private static String formAppLoop(AppLoop appLoop) {
+        StringBuilder loop = new StringBuilder("[");
+
+        for (String appModule : appLoop.getModules()) {
+            loop.append(" ").append(appModule);
+        }
+
+        loop.append(" ]");
+        return loop.toString();
+    }
+
+    public static void printAppLoops(List<AppLoop> appLoops) {
         if (appLoops == null || appLoops.isEmpty()) {
             System.out.println("App loops are empty or null.");
             return;
         }
 
         for (int i = 0; i < appLoops.size(); i++) {
-            List<String> route = appLoops.get(i);
-            System.out.print("Loop " + (i + 1) + ": ");
+            AppLoop appLoop = appLoops.get(i);
 
-            if (route.isEmpty()) {
-                System.out.println("[]"); // Print empty route representation
-            } else {
-                System.out.print("[");
-                for (int j = 0; j < route.size(); j++) {
-                    System.out.print(route.get(j));
-                    if (j < route.size() - 1) {
-                        System.out.print(", ");
-                    }
-                }
-                System.out.println("]");
-            }
+            System.out.print("Loop " + (i + 1) + ": ");
+            System.out.println(formAppLoop(appLoop));
         }
     }
+
 }

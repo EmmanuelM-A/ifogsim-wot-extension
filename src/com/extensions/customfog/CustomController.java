@@ -115,6 +115,11 @@ public class CustomController extends SimEntity{
                 // Print simulation data
                 simulationData.printResults();
 
+                /*printTimeDetails();
+                printPowerDetails();
+                printCostDetails();
+                printNetworkUsageDetails();*/
+
                 // Run custom metrics using simulation data
                 customMetricManager.evaluateMetrics(simulationData);
 
