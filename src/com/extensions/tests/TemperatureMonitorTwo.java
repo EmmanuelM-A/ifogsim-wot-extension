@@ -13,17 +13,25 @@ import com.extensions.vdcreation.parsers.VirtualDeviceConfigParser;
 import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.core.CloudSim;
 import org.fog.application.AppEdge;
+import org.fog.application.AppModule;
 import org.fog.application.Application;
 import org.fog.application.AppLoop;
 import org.fog.application.selectivity.FractionalSelectivity;
 import org.fog.entities.*;
 import org.fog.placement.ModuleMapping;
 import org.fog.placement.ModulePlacementEdgewards;
+import org.fog.placement.ModulePlacementMapping;
 
 import java.io.File;
 import java.util.*;
 
 public class TemperatureMonitorTwo {
+    /**
+     * Determines if the application is cloud-based
+     */
+    private static final boolean CLOUD = true;
+
+    // TODO - LOOK INTO WHY TUPLE EXECUTION DELAY & APP LOOP DELAY DON'T DISPLAY WHEN CLOUD = FALSE
 
     public static void main(String[] args) {
         try {
@@ -77,19 +85,27 @@ public class TemperatureMonitorTwo {
                 }
             }
 
+            ModuleMapping moduleMapping = ModuleMapping.createModuleMapping();
+
+            if(CLOUD) {
+                for(AppModule appModule : application.getModules()) {
+                    moduleMapping.addModuleToDevice(appModule.getName(), "cloud");
+                }
+            }
+
             // Step 6: Create the controller for managing the simulation
             CustomController controller = new CustomController(
                     "master-controller", fogDevices, extractSensors(vds), extractActuators(vds)
             );
 
             // Step 7: Module Placement Strategy
-            ModuleMapping moduleMapping = ModuleMapping.createModuleMapping();
-            moduleMapping.addModuleToDevice("processing", "edge-node");
+            //moduleMapping.addModuleToDevice("processing", "edge-node");
 
             controller.submitApplication(
-                    application, 0, new ModulePlacementEdgewards(
-                            fogDevices, extractSensors(vds), extractActuators(vds), application, moduleMapping
-                    )
+                    application,
+                    0,
+                    (CLOUD) ? (new ModulePlacementMapping(fogDevices, application, moduleMapping))
+                            : (new ModulePlacementEdgewards(fogDevices, extractSensors(vds), extractActuators(vds), application, moduleMapping))
             );
 
             // Step 8: Start Simulation

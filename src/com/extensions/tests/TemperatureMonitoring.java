@@ -143,14 +143,8 @@ public class TemperatureMonitoring {
             // Start the CloudSim simulation
             CloudSim.startSimulation();
 
-            //System.out.println("Loops: " + TimeKeeper.getInstance().getLoopIdToTupleIds().keySet().size());
-
             // Stop the simulation once it completes
             CloudSim.stopSimulation();
-
-            System.out.println("Loops: " + TimeKeeper.getInstance().getLoopIdToTupleIds().keySet().size());
-
-            System.out.println("FINISHED!!!!");
 
             Log.printLine("IoT Application simulation finished!");
         } catch (IOException e) {

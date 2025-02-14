@@ -1,6 +1,11 @@
 package com.extensions.tests;
 
+import com.extensions.customfog.CustomController;
 import com.extensions.customfog.FogDeviceFactory;
+import com.extensions.custommetrics.CustomMetricManager;
+import com.extensions.custommetrics.metrics.LongestApplicationLoopDelay;
+import com.extensions.custommetrics.metrics.PeakEnergyConsumptionDevice;
+import com.extensions.custommetrics.metrics.TotalEnergyConsumptionEfficiency;
 import com.extensions.sysconstructor.core.ApplicationPhysicalTopology;
 import com.extensions.sysconstructor.core.JsonToPhysicalTopology;
 import com.extensions.utils.presets.ActuatorPreset;
@@ -17,6 +22,7 @@ import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.core.CloudSim;
 import org.fog.application.AppEdge;
 import org.fog.application.AppLoop;
+import org.fog.application.AppModule;
 import org.fog.application.Application;
 import org.fog.application.selectivity.FractionalSelectivity;
 import org.fog.entities.*;
@@ -32,11 +38,6 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-// TODO - CREATE AN EXACT COPY OF TEMPERATURE MONITORING APPLICATION
-// TODO - TEST CUSTOM PERFORMANCE CHECKS
-// TODO - TEST EVENT DRIVEN HANDLING
-// TODO - TRY AND AUTOMATE CONSTRUCTION SO IT TOPOLOGY AND MODEL ARE SIMILAR TO THE MANUAL CONSTRUCTION
-
 /**
  A simple IoT application which consists of one Virtual Device, a temperature sensor. This application is a basic Temperature
  Monitoring System, where a temperature sensor reads and sends data periodically to a gateway device, that acts as a
@@ -46,7 +47,7 @@ public class TemperatureMonitor {
     /**
      * Determines if the application is cloud-based
      */
-    private static final boolean CLOUD = false;
+    private static final boolean CLOUD = true;
 
     public static void main(String[] args) {
         Log.printLine("Starting Temperature Monitor....");
@@ -93,7 +94,6 @@ public class TemperatureMonitor {
                         td,
                         new VirtualDeviceConfigParser().process(new File("src/com/extensions/input/configs/vd-configs.json"))
                 );
-                //VirtualDevice.printVirtualDeviceData(vd);
                 vds.add(vd);
             }
 
@@ -103,23 +103,11 @@ public class TemperatureMonitor {
             // Create the physical topology for the fog devices
             ApplicationPhysicalTopology physicalTopology = createPhysicalTopology(vds);
 
-
-            for(Sensor sensor : physicalTopology.getSensors()) {
-                sensor.setApp(application);
-                //System.out.println(sensor.getName());
-            }
-
-            for(Actuator actuator : physicalTopology.getActuators()) {
-                actuator.setApp(application);
-                //System.out.println(actuator.getName());
-            }
-
-            // Set the application for VD's sensors and actuators
+            // Set the application for all sensors and actuators
             for(VirtualDevice virtualDevice : vds) {
                 for(Sensor sensorProperty : virtualDevice.getSensorProperties()) {
                     sensorProperty.setApp(application);
                 }
-
                 for(Actuator actuatorAction : virtualDevice.getActuatorActions()) {
                     actuatorAction.setApp(application);
                 }
@@ -129,17 +117,25 @@ public class TemperatureMonitor {
             ModuleMapping moduleMapping = ModuleMapping.createModuleMapping();
 
             // Assign specific application modules to the cloud
-            moduleMapping.addModuleToDevice("processing", "processing_node"); // Assign data processing to the cloud
-
-            //System.out.println(physicalTopology.getFogDevices());
+            /*if(CLOUD) {
+                for(AppModule appModule : application.getModules()) {
+                    moduleMapping.addModuleToDevice(appModule.getName(), "cloud");
+                }
+            }*/
 
             // Create the controller for managing the simulation
-            Controller controller = new Controller(
+            CustomController controller = new CustomController(
                     "iot-controller",
                     physicalTopology.getFogDevices(),
                     physicalTopology.getSensors(),
                     physicalTopology.getActuators()
             );
+
+            CustomMetricManager customMetricManager = controller.getCustomMetricManager();
+
+            customMetricManager.registerMetric(new LongestApplicationLoopDelay());
+            customMetricManager.registerMetric(new PeakEnergyConsumptionDevice());
+            customMetricManager.registerMetric(new TotalEnergyConsumptionEfficiency());
 
             // Submit the application to the controller with the appropriate placement strategy
             controller.submitApplication(
@@ -211,13 +207,13 @@ public class TemperatureMonitor {
             for (Sensor sensor : virtualDevice.getSensorProperties()) {
                 if (sensorsAndActuatorsUsed.contains(sensor.getName())) {
                     allSensorsUsedInApplication.add(sensor);
-                    //System.out.println(sensor.getName());
+                    System.out.println("Sensor Used: " + sensor.getName());
                 }
             }
             for (Actuator actuator : virtualDevice.getActuatorActions()) {
                 if (sensorsAndActuatorsUsed.contains(actuator.getName())) {
                     allActuatorsUsedInApplication.add(actuator);
-                    //System.out.println(actuator.getName());
+                    System.out.println("Actuator Used: " + actuator.getName());
                 }
             }
         }
@@ -246,34 +242,16 @@ public class TemperatureMonitor {
         // Creates an empty application model with the given app ID and user ID.
         Application application = Application.createApplication(appId, userId);
 
-        //String TEMP_SENSOR = "temperature"; // THE TUPLE TYPE OF THE EDGE DEVICE NEEDS TO MATCH THE TUPLE TYPE OF THE CORRESPONDING SENSOR
-
-        /*
-         * Adding modules (vertices) to the application model (directed graph).
-         * Each module represents a processing or functional unit in the application.
-         */
-        //application.addAppModule("temperature", 10);
         application.addAppModule("processing", 20); // Module for evaluating data and making decisions.
 
-
-        /*
-         * Connecting the application modules (vertices) in the application model (directed graph) with edges.
-         * Each edge represents data flow (tuples) between modules, sensors, or actuators.
-         */
         // Edge from the physical sensor to the processing module.
         application.addAppEdge("temperature", "processing", 500, 200, "temperature", Tuple.UP, AppEdge.SENSOR);
 
         // Edge from the processing module to the updateDisplay actuator.
         application.addAppEdge("processing", "updateDisplay", 500, 200, "updateDisplay", Tuple.DOWN, AppEdge.ACTUATOR);
 
-        //System.out.println(application.getEdges());
 
-        /*
-         * Defining tuple mappings for input-output relationships in each module.
-         * Selectivity ratios specify how many output tuples are generated per input tuple.
-         */
-        application.addTupleMapping("processing", "temperature", "updateDisplay",
-                new FractionalSelectivity(1.0)); // 1 output tuple per input tuple in the sensor module.
+        application.addTupleMapping("processing", "temperature", "updateDisplay", new FractionalSelectivity(1.0)); // 1 output tuple per input tuple in the sensor module.
 
 
         /*

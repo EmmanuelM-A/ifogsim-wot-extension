@@ -29,9 +29,9 @@ public class CustomMetricManager {
      * Runs all registered custom metrics and prints results.
      */
     public void evaluateMetrics(SimulationData simulationData) {
-        System.out.println("=========================================");
+        System.out.println("==========================================");
         System.out.println("CUSTOM PERFORMANCE METRICS");
-        System.out.println("=========================================");
+        System.out.println("==========================================");
 
         if (customMetrics.isEmpty()) {
             System.out.println("No custom metrics registered!");

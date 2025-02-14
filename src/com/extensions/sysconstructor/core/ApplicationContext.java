@@ -9,6 +9,7 @@ import com.extensions.utils.presets.ApplicationPreset;
 import com.extensions.utils.presets.CloudNodePreset;
 import com.extensions.utils.presets.EdgeNodePreset;
 import com.extensions.vdcreation.core.VirtualDevice;
+import org.fog.application.AppLoop;
 import org.fog.entities.FogDevice;
 import org.fog.application.AppModule;
 
@@ -91,7 +92,7 @@ public class ApplicationContext {
     public final Map<String, String> appEdges;
 
     // List of loops present in the application topology (cyclic dependencies)
-    public final Set<List<String>> appLoops;
+    public final List<AppLoop> appLoops;
 
     // Parser responsible for extracting and organizing application topology information
     public final ApplicationTopologyParser applicationTopologyParser;
@@ -151,7 +152,7 @@ public class ApplicationContext {
         this.injectFlows = new ArrayList<>();
         this.appModulesCreated = new HashMap<>();
         this.appEdges = new HashMap<>();
-        this.appLoops = new HashSet<>();
+        this.appLoops = new ArrayList<>();
 
         System.out.println("Application Topology Parsed Successfully!");
     }
