@@ -56,7 +56,7 @@ public class TemperatureMonitoring {
         Log.printLine("Starting Temperature Monitor....");
 
         try {
-            Log.disable();
+            /*Log.disable();
 
             // The number of cloud users
             int numUsers = 1;
@@ -146,9 +146,7 @@ public class TemperatureMonitoring {
             // Stop the simulation once it completes
             CloudSim.stopSimulation();
 
-            Log.printLine("IoT Application simulation finished!");
-        } catch (IOException e) {
-            Log.printLine(e.getMessage());
+            Log.printLine("IoT Application simulation finished!");*/
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

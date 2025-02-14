@@ -35,7 +35,7 @@ public class TemperatureMonitorTwo {
 
     public static void main(String[] args) {
         try {
-            Log.disable(); // Enable logging
+            /*Log.disable(); // Enable logging
 
             int numUsers = 1;
             Calendar calendar = Calendar.getInstance();
@@ -110,7 +110,7 @@ public class TemperatureMonitorTwo {
 
             // Step 8: Start Simulation
             CloudSim.startSimulation();
-            CloudSim.stopSimulation();
+            CloudSim.stopSimulation();*/
         } catch (Exception e) {
             e.printStackTrace();
         }

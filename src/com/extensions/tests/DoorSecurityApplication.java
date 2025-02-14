@@ -1,15 +1,14 @@
-package com.extensions;
+package com.extensions.tests;
 
 import com.extensions.customfog.CustomController;
 import com.extensions.custommetrics.CustomMetricManager;
 import com.extensions.custommetrics.metrics.LongestApplicationLoopDelay;
 import com.extensions.custommetrics.metrics.PeakEnergyConsumptionDevice;
 import com.extensions.custommetrics.metrics.TotalEnergyConsumptionEfficiency;
-import com.extensions.sysconstructor.core.*;
-import com.extensions.sysconstructor.eventdriver.EventDrivenApplication;
+import com.extensions.sysconstructor.core.ApplicationPhysicalTopology;
+import com.extensions.sysconstructor.core.JsonToApplication;
 import com.extensions.utils.FilePaths;
 import com.extensions.utils.presets.*;
-import com.extensions.vdcreation.core.JsonFileProcessor;
 import com.extensions.vdcreation.core.VirtualDevice;
 import com.extensions.vdcreation.core.VirtualDeviceFactory;
 import com.extensions.vdcreation.models.ThingDescription;
@@ -17,12 +16,15 @@ import com.extensions.vdcreation.parsers.ThingDescriptionParser;
 import com.extensions.vdcreation.parsers.VirtualDeviceConfigParser;
 import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.core.CloudSim;
+import org.fog.application.AppEdge;
 import org.fog.application.AppLoop;
 import org.fog.application.AppModule;
+import org.fog.application.Application;
+import org.fog.application.selectivity.FractionalSelectivity;
 import org.fog.entities.Actuator;
 import org.fog.entities.FogBroker;
-import org.fog.entities.FogDevice;
 import org.fog.entities.Sensor;
+import org.fog.entities.Tuple;
 import org.fog.placement.Controller;
 import org.fog.placement.ModuleMapping;
 import org.fog.placement.ModulePlacementEdgewards;
@@ -30,113 +32,90 @@ import org.fog.placement.ModulePlacementMapping;
 import org.fog.utils.TimeKeeper;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
+import java.io.IOException;
+import java.util.*;
 
-public final class App {
-    private static final boolean CLOUD = true;
+public class DoorSecurityApplication {
+    /**
+     * Determines if the application is cloud-based
+     */
+    private static final boolean CLOUD = false;
+
     public static void main(String[] args) {
-        List<VirtualDevice> virtualDevices = new ArrayList<>();
-
-        Log.printLine("Starting Simulation...");
+        Log.printLine("Starting Simulation....");
 
         try {
-            /*Log.disable();
-
-            ApplicationContext applicationContext = new ApplicationContext(
-                    // SET THE NODE RED APPLICATION JSON FILE PATH HERE
-                    new File("src/com/extensions/input/application/door-security-application.json"),
-                    CloudNodePreset.DEFAULT,
-                    EdgeNodePreset.DEFAULT,
-                    ApplicationPreset.DEFAULT
-            );
-
             //////////////////////////////// INITIAL SETUP ////////////////////////////////
 
-            // Specifies the number of users interacting with the cloud.
+            // This instance is responsible for loading in the node red application and setting up connections
+            JsonToApplication jsonToApplication = new JsonToApplication(
+                    CloudNodePreset.DEFAULT,
+                    EdgeNodePreset.DEFAULT,
+                    ApplicationPreset.DEFAULT,
+                    new File("src/com/extensions/input/application/door-security-application.json")
+            );
+
+            // Disables iFogSim's logging mechanism, only display simulation results
+            Log.disable();
+
+            // The number of cloud users
             int numUsers = 1;
 
-            // Initializes a calendar object to track simulation time and events.
+            // An instance of the calendar
             Calendar calendar = Calendar.getInstance();
 
-            // Determines whether to enable tracing of simulation events for debugging purposes.
-            boolean traceFlag = false;
+            // Mean trace events
+            boolean trace_flag = false;
 
-            // Initializes the CloudSim toolkit with the specified number of users, the calendar instance, and trace settings.
-            CloudSim.init(numUsers, calendar, traceFlag);
+            CloudSim.init(numUsers, calendar, trace_flag);
 
-            /*
-            * Assigns a unique identifier to the application being simulated.
-            * This ID is used to manage the application's components and operations.
-            *
-            String appId = applicationContext.applicationTopologyParser.parseApplicationTitle();
+            // Identifier of the application
+            String appId = jsonToApplication.getApplicationTopologyParser().parseApplicationTitle();
 
             // Initializes a FogBroker, which manages application modules and coordinates communication between them in the simulation.
             FogBroker broker = new FogBroker("broker");
 
             //////////////////////////////// VIRTUAL DEVICE CREATION ////////////////////////////////
 
-            // Extract the metadata from the TDs
-            List<ThingDescription> thingDescriptions = JsonFileProcessor.processJsonFiles(
-                    FilePaths.JSON_THINGS_REPO, // SET THINGS REPO HERE
-                    new ThingDescriptionParser()
-            );
+            // The parser used to extract virtual device configurations if there are any
+            VirtualDeviceConfigParser vdConfigParser = new VirtualDeviceConfigParser();
 
-            // Set up the VD factory to create VDs with the appropriate presets
-            VirtualDeviceFactory virtualDeviceFactory = new VirtualDeviceFactory(
+            // Create the virtual devices using the thing descriptions repo folder
+            List<VirtualDevice> virtualDevices = VirtualDeviceFactory.createVirtualDevices(
                     broker.getId(),
                     appId,
                     FogDevicePreset.DEFAULT,
                     SensorPreset.DEFAULT,
-                    ActuatorPreset.DEFAULT
+                    ActuatorPreset.DEFAULT,
+                    FilePaths.JSON_THINGS_REPO, // SET THINGS REPO HERE
+                    vdConfigParser.process(new File(FilePaths.VD_CONFIG_FILE)) // SET VD'S CONFIG FILE HERE
             );
-            VirtualDeviceConfigParser vdConfigParser = new VirtualDeviceConfigParser();
-
-            // Create the virtual devices using the thing descriptions and factory method
-            for(ThingDescription thingDescription : thingDescriptions) {
-                VirtualDevice vd = virtualDeviceFactory.createVirtualDevice(
-                        thingDescription,
-                        vdConfigParser.process(new File(FilePaths.VD_CONFIG_FILE)) // SET VD'S CONFIG FILE HERE
-                );
-                // Validate VD HERE
-                virtualDevices.add(vd);
-            }
 
             //////////////////////////////// APPLICATION SETUP ////////////////////////////////
 
-            // Create the physical topology for the node red application
-            ApplicationPhysicalTopology physicalTopology = JsonToPhysicalTopology.createApplicationPhysicalTopology(
-                    virtualDevices,
-                    applicationContext
-            );
+            // Create the physical topology for the application
+            ApplicationPhysicalTopology physicalTopology = jsonToApplication.createApplicationPhysicalTopology(virtualDevices);
 
-            // Create the application model for the node red application
-            EventDrivenApplication application = JsonToApplicationModel.createApplicationModel(appId, broker.getId(), applicationContext);
-            application.setUserId(broker.getId());
+            // Create the application model for the application
+            Application application = createApplication(appId, broker.getId());
 
             // Set the application for VD's sensors and actuators
             for(VirtualDevice virtualDevice : virtualDevices) {
                 for(Sensor sensorProperty : virtualDevice.getSensorProperties()) {
                     sensorProperty.setApp(application);
                 }
-
                 for(Actuator actuatorAction : virtualDevice.getActuatorActions()) {
                     actuatorAction.setApp(application);
                 }
             }
 
             // Create the controller for managing the simulation
-            assert physicalTopology != null;
-            Controller controller = new Controller(
-                    "master-controller",
-                    physicalTopology.getFogDevices(),
-                    physicalTopology.getSensors(),
-                    physicalTopology.getActuators()
-            );
+            Controller controller = new Controller("master-controller", physicalTopology.getFogDevices(), physicalTopology.getSensors(), physicalTopology.getActuators());
 
+            // Set up module mapping
             ModuleMapping moduleMapping = ModuleMapping.createModuleMapping();
 
+            // If cloud based deployment then connect all app modules to the cloud device/node
             if(CLOUD) {
                 for(AppModule appModule : application.getModules()) {
                     moduleMapping.addModuleToDevice(appModule.getName(), "cloud");
@@ -163,7 +142,7 @@ public final class App {
 
             customMetricManager.registerMetric(new LongestApplicationLoopDelay());
             customMetricManager.registerMetric(new PeakEnergyConsumptionDevice());
-            customMetricManager.registerMetric(new TotalEnergyConsumptionEfficiency());
+            customMetricManager.registerMetric(new TotalEnergyConsumptionEfficiency());*/
 
             //////////////////////////////// SIMULATION ////////////////////////////////
 
@@ -176,11 +155,37 @@ public final class App {
             // Stop the simulation once it completes
             CloudSim.stopSimulation();
 
-            Log.printLine("IoT Application simulation finished!");*/
-
-        } catch(Exception e) {
-            e.printStackTrace();
-            System.out.println(e.getMessage());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
+    }
+
+    private static Application createApplication(String appId, int userId) {
+        Application application = Application.createApplication(appId, userId);
+
+        // Inject Flow
+
+        // Data Flow
+        setDataFlowForApplication(application);
+
+        // Event Flow
+
+        return application;
+    }
+
+    private static void setDataFlowForApplication(Application application) {
+        // Processing modules
+        application.addAppModule("processing-0", 50);
+
+        // App Edges
+        application.addAppEdge("lockState", "processing-0", 700, 900, "lockState", Tuple.UP, AppEdge.SENSOR);
+        application.addAppEdge("processing-0", "lockDoor", 850, 350, "lockDoor", Tuple.DOWN, AppEdge.ACTUATOR);
+
+        // Tuple Mappings
+        application.addTupleMapping("processing-0", "lockState", "lockDoor", new FractionalSelectivity(1.0));
+
+        // App Loops
+        AppLoop loop = new AppLoop(Arrays.asList("lockState", "processing-0", "lockDoor"));
+        application.setLoops(Collections.singletonList(loop));
     }
 }

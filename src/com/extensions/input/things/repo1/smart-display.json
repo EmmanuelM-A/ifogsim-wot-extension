@@ -1,0 +1,294 @@
+{
+  "@context": [
+	"https://www.w3.org/2019/wot/td/v1",
+	{
+	  "@language": "en"
+	}
+  ],
+  "@type": "Thing",
+  "title": "Smart Display",
+  "securityDefinitions": {
+	"nosec": {
+	  "scheme": "nosec"
+	}
+  },
+  "security": [
+	"nosec"
+  ],
+  "properties": {
+	"displayedMessage": {
+	  "type": "string",
+	  "description": "The current message displayed on the screen.",
+	  "readOnly": true,
+	  "forms": [
+		{
+		  "href": "http://10.32.151.21:8081/smart-display/properties/displayedMessage",
+		  "contentType": "application/json",
+		  "op": [
+			"readproperty"
+		  ],
+		  "htv:methodName": "GET"
+		},
+		{
+		  "href": "http://10.32.151.21:8081/smart-display/properties/displayedMessage",
+		  "contentType": "application/cbor",
+		  "op": [
+			"readproperty"
+		  ],
+		  "htv:methodName": "GET"
+		}
+	  ],
+	  "writeOnly": false,
+	  "observable": false
+	},
+	"alertMessage": {
+	  "type": "string",
+	  "description": "The current alert message displayed on the screen.",
+	  "readOnly": true,
+	  "forms": [
+		{
+		  "href": "http://10.32.151.21:8081/smart-display/properties/alertMessage",
+		  "contentType": "application/json",
+		  "op": [
+			"readproperty"
+		  ],
+		  "htv:methodName": "GET"
+		},
+		{
+		  "href": "http://10.32.151.21:8081/smart-display/properties/alertMessage",
+		  "contentType": "application/cbor",
+		  "op": [
+			"readproperty"
+		  ],
+		  "htv:methodName": "GET"
+		}
+	  ],
+	  "writeOnly": false,
+	  "observable": false
+	},
+	"isDisplayActive": {
+	  "type": "boolean",
+	  "description": "Determines if the display is currently on or off.",
+	  "observable": true,
+	  "forms": [
+		{
+		  "href": "http://10.32.151.21:8081/smart-display/properties/isDisplayActive",
+		  "contentType": "application/json",
+		  "op": [
+			"readproperty",
+			"writeproperty"
+		  ]
+		},
+		{
+		  "href": "http://10.32.151.21:8081/smart-display/properties/isDisplayActive/observable",
+		  "contentType": "application/json",
+		  "op": [
+			"observeproperty",
+			"unobserveproperty"
+		  ],
+		  "subprotocol": "longpoll"
+		},
+		{
+		  "href": "http://10.32.151.21:8081/smart-display/properties/isDisplayActive",
+		  "contentType": "application/cbor",
+		  "op": [
+			"readproperty",
+			"writeproperty"
+		  ]
+		},
+		{
+		  "href": "http://10.32.151.21:8081/smart-display/properties/isDisplayActive/observable",
+		  "contentType": "application/cbor",
+		  "op": [
+			"observeproperty",
+			"unobserveproperty"
+		  ],
+		  "subprotocol": "longpoll"
+		}
+	  ],
+	  "readOnly": false,
+	  "writeOnly": false
+	}
+  },
+  "actions": {
+	"updateDisplay": {
+	  "description": "Updates the message shown on smart display.",
+	  "input": {
+		"type": "string",
+		"description": "The message to display."
+	  },
+	  "forms": [
+		{
+		  "href": "http://10.32.151.21:8081/smart-display/actions/updateDisplay",
+		  "contentType": "application/json",
+		  "op": [
+			"invokeaction"
+		  ],
+		  "htv:methodName": "POST"
+		},
+		{
+		  "href": "http://10.32.151.21:8081/smart-display/actions/updateDisplay",
+		  "contentType": "application/cbor",
+		  "op": [
+			"invokeaction"
+		  ],
+		  "htv:methodName": "POST"
+		}
+	  ],
+	  "safe": false,
+	  "idempotent": false
+	},
+	"showAlert": {
+	  "description": "Displays an alert message on the screen.",
+	  "input": {
+		"type": "string",
+		"description": "The alert message to display."
+	  },
+	  "forms": [
+		{
+		  "href": "http://10.32.151.21:8081/smart-display/actions/showAlert",
+		  "contentType": "application/json",
+		  "op": [
+			"invokeaction"
+		  ],
+		  "htv:methodName": "POST"
+		},
+		{
+		  "href": "http://10.32.151.21:8081/smart-display/actions/showAlert",
+		  "contentType": "application/cbor",
+		  "op": [
+			"invokeaction"
+		  ],
+		  "htv:methodName": "POST"
+		}
+	  ],
+	  "safe": false,
+	  "idempotent": false
+	},
+	"clearDisplay": {
+	  "description": "Clears all information from the screen.",
+	  "forms": [
+		{
+		  "href": "http://10.32.151.21:8081/smart-display/actions/clearDisplay",
+		  "contentType": "application/json",
+		  "op": [
+			"invokeaction"
+		  ],
+		  "htv:methodName": "POST"
+		},
+		{
+		  "href": "http://10.32.151.21:8081/smart-display/actions/clearDisplay",
+		  "contentType": "application/cbor",
+		  "op": [
+			"invokeaction"
+		  ],
+		  "htv:methodName": "POST"
+		}
+	  ],
+	  "safe": false,
+	  "idempotent": false
+	}
+  },
+  "events": {
+	"displayUpdated": {
+	  "description": "Triggered when the displayed message is updated.",
+	  "data": {
+		"type": "string"
+	  },
+	  "forms": [
+		{
+		  "href": "http://10.32.151.21:8081/smart-display/events/displayUpdated",
+		  "contentType": "application/json",
+		  "subprotocol": "longpoll",
+		  "op": [
+			"subscribeevent",
+			"unsubscribeevent"
+		  ]
+		},
+		{
+		  "href": "http://10.32.151.21:8081/smart-display/events/displayUpdated",
+		  "contentType": "application/cbor",
+		  "subprotocol": "longpoll",
+		  "op": [
+			"subscribeevent",
+			"unsubscribeevent"
+		  ]
+		}
+	  ]
+	},
+	"alertDisplayed": {
+	  "description": "Triggered when an alert message is displayed.",
+	  "data": {
+		"type": "object"
+	  },
+	  "forms": [
+		{
+		  "href": "http://10.32.151.21:8081/smart-display/events/alertDisplayed",
+		  "contentType": "application/json",
+		  "subprotocol": "longpoll",
+		  "op": [
+			"subscribeevent",
+			"unsubscribeevent"
+		  ]
+		},
+		{
+		  "href": "http://10.32.151.21:8081/smart-display/events/alertDisplayed",
+		  "contentType": "application/cbor",
+		  "subprotocol": "longpoll",
+		  "op": [
+			"subscribeevent",
+			"unsubscribeevent"
+		  ]
+		}
+	  ]
+	},
+	"displayCleared": {
+	  "description": "Triggered when the display is cleared.",
+	  "forms": [
+		{
+		  "href": "http://10.32.151.21:8081/smart-display/events/displayCleared",
+		  "contentType": "application/json",
+		  "subprotocol": "longpoll",
+		  "op": [
+			"subscribeevent",
+			"unsubscribeevent"
+		  ]
+		},
+		{
+		  "href": "http://10.32.151.21:8081/smart-display/events/displayCleared",
+		  "contentType": "application/cbor",
+		  "subprotocol": "longpoll",
+		  "op": [
+			"subscribeevent",
+			"unsubscribeevent"
+		  ]
+		}
+	  ]
+	}
+  },
+  "id": "urn:uuid:9d3cf72c-ab5b-49df-9faa-facc741fc4a0",
+  "description": "A smart display for display messages and related alerts.",
+  "support": "",
+  "forms": [
+	{
+	  "href": "http://10.32.151.21:8081/smart-display/properties",
+	  "contentType": "application/json",
+	  "op": [
+		"readallproperties",
+		"readmultipleproperties",
+		"writeallproperties",
+		"writemultipleproperties"
+	  ]
+	},
+	{
+	  "href": "http://10.32.151.21:8081/smart-display/properties",
+	  "contentType": "application/cbor",
+	  "op": [
+		"readallproperties",
+		"readmultipleproperties",
+		"writeallproperties",
+		"writemultipleproperties"
+	  ]
+	}
+  ]
+}

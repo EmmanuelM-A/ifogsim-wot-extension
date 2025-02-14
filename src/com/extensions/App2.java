@@ -6,7 +6,6 @@ import com.extensions.custommetrics.metrics.LongestApplicationLoopDelay;
 import com.extensions.custommetrics.metrics.PeakEnergyConsumptionDevice;
 import com.extensions.custommetrics.metrics.TotalEnergyConsumptionEfficiency;
 import com.extensions.sysconstructor.core.*;
-import com.extensions.sysconstructor.eventdriver.EventDrivenApplication;
 import com.extensions.utils.FilePaths;
 import com.extensions.utils.presets.*;
 import com.extensions.vdcreation.core.JsonFileProcessor;
@@ -17,11 +16,10 @@ import com.extensions.vdcreation.parsers.ThingDescriptionParser;
 import com.extensions.vdcreation.parsers.VirtualDeviceConfigParser;
 import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.core.CloudSim;
-import org.fog.application.AppLoop;
 import org.fog.application.AppModule;
+import org.fog.application.Application;
 import org.fog.entities.Actuator;
 import org.fog.entities.FogBroker;
-import org.fog.entities.FogDevice;
 import org.fog.entities.Sensor;
 import org.fog.placement.Controller;
 import org.fog.placement.ModuleMapping;
@@ -34,28 +32,36 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
-public final class App {
+public final class App2 {
+    /**
+     * Determines if the application will be cloud-based
+     */
     private static final boolean CLOUD = true;
+
+    /**
+     * A list of all virtual devices created from the things folder (provided)
+     */
+    private static final List<VirtualDevice> virtualDevices = new ArrayList<>();
+
+    /**
+     * Contains all related code and is where the simulation set up and running occurs
+     * @param args Arguments (Never used)
+     */
     public static void main(String[] args) {
-        List<VirtualDevice> virtualDevices = new ArrayList<>();
-
         Log.printLine("Starting Simulation...");
-
         try {
             /*Log.disable();
 
-            ApplicationContext applicationContext = new ApplicationContext(
-                    // SET THE NODE RED APPLICATION JSON FILE PATH HERE
-                    new File("src/com/extensions/input/application/door-security-application.json"),
+            // This instance is responsible for loading in the node red application and setting up connections
+            JsonToApplication jsonToApplication = new JsonToApplication(
                     CloudNodePreset.DEFAULT,
                     EdgeNodePreset.DEFAULT,
-                    ApplicationPreset.DEFAULT
+                    ApplicationPreset.DEFAULT,
+                    new File("src/com/extensions/input/application/door-security-application.json")
             );
 
-            //////////////////////////////// INITIAL SETUP ////////////////////////////////
-
             // Specifies the number of users interacting with the cloud.
-            int numUsers = 1;
+            int numUsers = 10;
 
             // Initializes a calendar object to track simulation time and events.
             Calendar calendar = Calendar.getInstance();
@@ -66,16 +72,11 @@ public final class App {
             // Initializes the CloudSim toolkit with the specified number of users, the calendar instance, and trace settings.
             CloudSim.init(numUsers, calendar, traceFlag);
 
-            /*
-            * Assigns a unique identifier to the application being simulated.
-            * This ID is used to manage the application's components and operations.
-            *
-            String appId = applicationContext.applicationTopologyParser.parseApplicationTitle();
+            // Assign a unique identifier to the application being simulated (retrieved from the node red application title).
+            String appId = jsonToApplication.getApplicationTopologyParser().parseApplicationTitle();
 
-            // Initializes a FogBroker, which manages application modules and coordinates communication between them in the simulation.
+            // Initialize a FogBroker, which manages application modules and coordinates communication between them in the simulation.
             FogBroker broker = new FogBroker("broker");
-
-            //////////////////////////////// VIRTUAL DEVICE CREATION ////////////////////////////////
 
             // Extract the metadata from the TDs
             List<ThingDescription> thingDescriptions = JsonFileProcessor.processJsonFiles(
@@ -103,38 +104,30 @@ public final class App {
                 virtualDevices.add(vd);
             }
 
-            //////////////////////////////// APPLICATION SETUP ////////////////////////////////
-
             // Create the physical topology for the node red application
-            ApplicationPhysicalTopology physicalTopology = JsonToPhysicalTopology.createApplicationPhysicalTopology(
-                    virtualDevices,
-                    applicationContext
-            );
+            ApplicationPhysicalTopology physicalTopology = jsonToApplication.createApplicationPhysicalTopology(virtualDevices);
 
             // Create the application model for the node red application
-            EventDrivenApplication application = JsonToApplicationModel.createApplicationModel(appId, broker.getId(), applicationContext);
+            Application application = jsonToApplication.createApplicationModel(appId, broker.getId());
             application.setUserId(broker.getId());
+
+            System.out.println("Application Loops: " + application.getLoops().size());
+            //System.out.println("Tuple CPU Delays: " + application.get);
 
             // Set the application for VD's sensors and actuators
             for(VirtualDevice virtualDevice : virtualDevices) {
                 for(Sensor sensorProperty : virtualDevice.getSensorProperties()) {
                     sensorProperty.setApp(application);
                 }
-
                 for(Actuator actuatorAction : virtualDevice.getActuatorActions()) {
                     actuatorAction.setApp(application);
                 }
             }
 
             // Create the controller for managing the simulation
-            assert physicalTopology != null;
-            Controller controller = new Controller(
-                    "master-controller",
-                    physicalTopology.getFogDevices(),
-                    physicalTopology.getSensors(),
-                    physicalTopology.getActuators()
-            );
+            Controller controller = new Controller("master-controller", physicalTopology.getFogDevices(), physicalTopology.getSensors(), physicalTopology.getActuators());
 
+            // Set up module mapping
             ModuleMapping moduleMapping = ModuleMapping.createModuleMapping();
 
             if(CLOUD) {
@@ -157,15 +150,11 @@ public final class App {
                     ))
             );
 
-            //////////////////////////////// REGISTER CUSTOM PERFORMANCE METRICS ////////////////////////////////
-
             /*CustomMetricManager customMetricManager = controller.getCustomMetricManager();
 
             customMetricManager.registerMetric(new LongestApplicationLoopDelay());
             customMetricManager.registerMetric(new PeakEnergyConsumptionDevice());
             customMetricManager.registerMetric(new TotalEnergyConsumptionEfficiency());
-
-            //////////////////////////////// SIMULATION ////////////////////////////////
 
             // Set the simulation start time
             TimeKeeper.getInstance().setSimulationStartTime(Calendar.getInstance().getTimeInMillis());

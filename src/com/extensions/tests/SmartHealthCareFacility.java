@@ -85,7 +85,7 @@ public class SmartHealthCareFacility {
         Log.printLine("Starting Smart Healthcare Facility Application....");
 
         try {
-            Log.disable();
+            /*Log.disable();
 
             //////////////////////////////// INITIAL SETUP ////////////////////////////////
 
@@ -165,7 +165,7 @@ public class SmartHealthCareFacility {
                     if (device.getName().equals("WearableHealthMonitor")) {
                         moduleMapping.addModuleToDevice("wearable_sensor_data", device.getName());
                     }
-                }*/
+                }
             }
 
             addAllSensorsAndActuators();
@@ -183,7 +183,7 @@ public class SmartHealthCareFacility {
 
             CloudSim.startSimulation();
 
-            CloudSim.stopSimulation();
+            CloudSim.stopSimulation();*/
 
         } catch (Exception e) {
             e.printStackTrace();

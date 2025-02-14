@@ -1,12 +1,28 @@
 package com.extensions.sysconstructor.core;
 
-import org.fog.application.selectivity.FractionalSelectivity;
+public class TupleMapping {
+    private String inputTupleType;
 
-import java.util.*;
+    private String outputTupleType;
 
-public record TupleMapping(String module, String inputTupleType, String outputTupleType, FractionalSelectivity selectivity) {
-    @Override
-    public String toString() {
-        return "{Module: " + module + " InputTupleType: " + inputTupleType + " OutputTupleType: " + outputTupleType + " Selectivity: " + selectivity.getSelectivity() + "}";
+    public TupleMapping() {
+        this.inputTupleType = null;
+        this.outputTupleType = null;
+    }
+
+    public String getInputTupleType() {
+        return inputTupleType;
+    }
+
+    public void setInputTupleType(String inputTupleType) {
+        this.inputTupleType = inputTupleType;
+    }
+
+    public String getOutputTupleType() {
+        return outputTupleType;
+    }
+
+    public void setOutputTupleType(String outputTupleType) {
+        this.outputTupleType = outputTupleType;
     }
 }

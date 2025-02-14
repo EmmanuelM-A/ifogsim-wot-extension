@@ -90,21 +90,21 @@ public class SimulationData {
         // Application Loop Delays
         System.out.println("APPLICATION LOOP DELAYS:");
         for (Map.Entry<String, Double> entry : applicationLoopDelays.entrySet()) {
-            System.out.printf("%s ---> Delay: %.3f ms%n", entry.getKey(), entry.getValue());
+            System.out.printf("%s ---> %.3f ms%n", entry.getKey(), entry.getValue());
         }
         System.out.println("==========================================");
 
         // Tuple Execution Delays
         System.out.println("TUPLE EXECUTION DELAYS:");
         for (Map.Entry<String, Double> entry : tupleExecutionDelays.entrySet()) {
-            System.out.printf("Tuple [%s] ---> CPU Execution Delay: %.3f ms%n", entry.getKey(), entry.getValue());
+            System.out.printf("Tuple [%s] ---> %.3f ms%n", entry.getKey(), entry.getValue());
         }
         System.out.println("==========================================");
 
         // Energy Consumption Per Device
         System.out.println("ENERGY CONSUMPTION PER DEVICE:");
         for (Map.Entry<String, Double> entry : energyConsumptionPerDevice.entrySet()) {
-            System.out.printf("Device [%s] ---> Energy Consumed: %.3f J%n", entry.getKey(), entry.getValue());
+            System.out.printf("Device [%s] ---> %.3f J%n", entry.getKey(), entry.getValue());
         }
         System.out.println("==========================================");
 

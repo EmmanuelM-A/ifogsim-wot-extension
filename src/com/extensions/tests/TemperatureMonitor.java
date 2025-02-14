@@ -8,6 +8,7 @@ import com.extensions.custommetrics.metrics.PeakEnergyConsumptionDevice;
 import com.extensions.custommetrics.metrics.TotalEnergyConsumptionEfficiency;
 import com.extensions.sysconstructor.core.ApplicationPhysicalTopology;
 import com.extensions.sysconstructor.core.JsonToPhysicalTopology;
+import com.extensions.utils.FilePaths;
 import com.extensions.utils.presets.ActuatorPreset;
 import com.extensions.utils.presets.FogDeviceHostPreset;
 import com.extensions.utils.presets.FogDevicePreset;
@@ -40,8 +41,8 @@ import java.util.List;
 
 /**
  A simple IoT application which consists of one Virtual Device, a temperature sensor. This application is a basic Temperature
- Monitoring System, where a temperature sensor reads and sends data periodically to a gateway device, that acts as a
- communication hub for the sensor.
+ Monitoring System, where a temperature sensor reads data and sends it to a processing node which then sends data
+ to a smart display. The processed data is also sent to the cloud.
  */
 public class TemperatureMonitor {
     /**
@@ -53,6 +54,9 @@ public class TemperatureMonitor {
         Log.printLine("Starting Temperature Monitor....");
 
         try {
+            //////////////////////////////// INITIAL SETUP ////////////////////////////////
+
+            // Disables iFogSim's logging mechanism, only display simulation results
             Log.disable();
 
             // The number of cloud users
@@ -71,40 +75,32 @@ public class TemperatureMonitor {
 
             FogBroker broker = new FogBroker("broker");
 
-            // Extract metadata for the TD
-            ThingDescriptionParser tdParser = new ThingDescriptionParser();
+            //////////////////////////////// VIRTUAL DEVICE CREATION ////////////////////////////////
 
-            ThingDescription tempSensorThing = tdParser.process(
-                    new File("src/com/extensions/input/things/temperature-sensor.json")
+            // The parser used to extract virtual device configurations if there are any
+            VirtualDeviceConfigParser vdConfigParser = new VirtualDeviceConfigParser();
+
+            // Create the virtual devices using the thing descriptions repo folder
+            List<VirtualDevice> virtualDevices = VirtualDeviceFactory.createVirtualDevices(
+                    broker.getId(),
+                    appId,
+                    FogDevicePreset.DEFAULT,
+                    SensorPreset.DEFAULT,
+                    ActuatorPreset.DEFAULT,
+                    "src/com/extensions/input/things/repo1",
+                    vdConfigParser.process(new File(FilePaths.VD_CONFIG_FILE)) // SET VD'S CONFIG FILE HERE
             );
 
-            ThingDescription smartDisplayThing = tdParser.process(
-                    new File("src/com/extensions/input/things/smart-display.json")
-            );
-
-            List<ThingDescription> tds = new ArrayList<>();
-            tds.add(tempSensorThing);
-            tds.add(smartDisplayThing);
-
-            // Create VD from TD
-            VirtualDeviceFactory virtualDeviceFactory = new VirtualDeviceFactory(broker.getId(), appId, FogDevicePreset.DEFAULT, SensorPreset.DEFAULT, ActuatorPreset.DEFAULT);
-            List<VirtualDevice> vds = new ArrayList<>();
-            for(ThingDescription td : tds) {
-                VirtualDevice vd = virtualDeviceFactory.createVirtualDevice(
-                        td,
-                        new VirtualDeviceConfigParser().process(new File("src/com/extensions/input/configs/vd-configs.json"))
-                );
-                vds.add(vd);
-            }
+            //////////////////////////////// APPLICATION SETUP ////////////////////////////////
 
             // Create Temperature Monitoring application
             Application application = createApplication(appId, broker.getId());
 
             // Create the physical topology for the fog devices
-            ApplicationPhysicalTopology physicalTopology = createPhysicalTopology(vds);
+            ApplicationPhysicalTopology physicalTopology = createPhysicalTopology(virtualDevices);
 
             // Set the application for all sensors and actuators
-            for(VirtualDevice virtualDevice : vds) {
+            for(VirtualDevice virtualDevice : virtualDevices) {
                 for(Sensor sensorProperty : virtualDevice.getSensorProperties()) {
                     sensorProperty.setApp(application);
                 }
@@ -117,25 +113,24 @@ public class TemperatureMonitor {
             ModuleMapping moduleMapping = ModuleMapping.createModuleMapping();
 
             // Assign specific application modules to the cloud
-            /*if(CLOUD) {
+            if(CLOUD) {
                 for(AppModule appModule : application.getModules()) {
                     moduleMapping.addModuleToDevice(appModule.getName(), "cloud");
                 }
-            }*/
+            }
 
             // Create the controller for managing the simulation
-            CustomController controller = new CustomController(
-                    "iot-controller",
-                    physicalTopology.getFogDevices(),
-                    physicalTopology.getSensors(),
-                    physicalTopology.getActuators()
-            );
+            CustomController controller = new CustomController("master-controller", physicalTopology.getFogDevices(), physicalTopology.getSensors(), physicalTopology.getActuators());
 
-            CustomMetricManager customMetricManager = controller.getCustomMetricManager();
+            //////////////////////////////// REGISTER CUSTOM PERFORMANCE METRICS ////////////////////////////////
+
+            /*CustomMetricManager customMetricManager = controller.getCustomMetricManager();
 
             customMetricManager.registerMetric(new LongestApplicationLoopDelay());
             customMetricManager.registerMetric(new PeakEnergyConsumptionDevice());
-            customMetricManager.registerMetric(new TotalEnergyConsumptionEfficiency());
+            customMetricManager.registerMetric(new TotalEnergyConsumptionEfficiency());*/
+
+            //////////////////////////////// SIMULATION ////////////////////////////////
 
             // Submit the application to the controller with the appropriate placement strategy
             controller.submitApplication(
@@ -159,10 +154,6 @@ public class TemperatureMonitor {
 
             // Stop the simulation once it completes
             CloudSim.stopSimulation();
-
-            Log.printLine("IoT Application simulation finished!");
-        } catch (IOException e) {
-            Log.printLine(e.getMessage());
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -207,13 +198,13 @@ public class TemperatureMonitor {
             for (Sensor sensor : virtualDevice.getSensorProperties()) {
                 if (sensorsAndActuatorsUsed.contains(sensor.getName())) {
                     allSensorsUsedInApplication.add(sensor);
-                    System.out.println("Sensor Used: " + sensor.getName());
+                    //System.out.println("Sensor Used: " + sensor.getName());
                 }
             }
             for (Actuator actuator : virtualDevice.getActuatorActions()) {
                 if (sensorsAndActuatorsUsed.contains(actuator.getName())) {
                     allActuatorsUsedInApplication.add(actuator);
-                    System.out.println("Actuator Used: " + actuator.getName());
+                    //System.out.println("Actuator Used: " + actuator.getName());
                 }
             }
         }
