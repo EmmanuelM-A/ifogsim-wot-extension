@@ -1,0 +1,48 @@
+{
+  "configs": [
+	{
+	  "tagNames": ["SmartDoorLock"],
+	  "mips": 800,
+	  "ram": 2048,
+	  "upBw": 1500,
+	  "downBw": 1500,
+	  "level": 3,
+	  "ratePerMips": 0.3,
+	  "busyPower": 4.0,
+	  "idlePower": 1.5
+	},
+	{
+	  "tagNames": ["SmartDisplay"],
+	  "mips": 600,
+	  "ram": 1024,
+	  "upBw": 1200,
+	  "downBw": 1200,
+	  "level": 3,
+	  "ratePerMips": 0.25,
+	  "busyPower": 6.0,
+	  "idlePower": 2.5
+	},
+	{
+	  "tagNames": ["Alarm"],
+	  "mips": 500,
+	  "ram": 512,
+	  "upBw": 1000,
+	  "downBw": 1000,
+	  "level": 3,
+	  "ratePerMips": 0.2,
+	  "busyPower": 3.5,
+	  "idlePower": 1.2
+	},
+	{
+	  "tagNames": ["SmartCamera"],
+	  "mips": 1000,
+	  "ram": 4096,
+	  "upBw": 2000,
+	  "downBw": 2000,
+	  "level": 3,
+	  "ratePerMips": 0.4,
+	  "busyPower": 7.0,
+	  "idlePower": 3.0
+	}
+  ]
+}

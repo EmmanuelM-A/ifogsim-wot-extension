@@ -1,19 +1,12 @@
 package com.extensions.tests;
 
 import com.extensions.customfog.CustomController;
-import com.extensions.custommetrics.CustomMetricManager;
-import com.extensions.custommetrics.metrics.LongestApplicationLoopDelay;
-import com.extensions.custommetrics.metrics.PeakEnergyConsumptionDevice;
-import com.extensions.custommetrics.metrics.TotalEnergyConsumptionEfficiency;
 import com.extensions.sysconstructor.core.ApplicationPhysicalTopology;
 import com.extensions.sysconstructor.core.JsonToApplication;
 import com.extensions.utils.FilePaths;
-import com.extensions.utils.Utility;
 import com.extensions.utils.presets.*;
 import com.extensions.vdcreation.core.VirtualDevice;
 import com.extensions.vdcreation.core.VirtualDeviceFactory;
-import com.extensions.vdcreation.models.ThingDescription;
-import com.extensions.vdcreation.parsers.ThingDescriptionParser;
 import com.extensions.vdcreation.parsers.VirtualDeviceConfigParser;
 import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.core.CloudSim;
@@ -26,14 +19,12 @@ import org.fog.entities.Actuator;
 import org.fog.entities.FogBroker;
 import org.fog.entities.Sensor;
 import org.fog.entities.Tuple;
-import org.fog.placement.Controller;
 import org.fog.placement.ModuleMapping;
 import org.fog.placement.ModulePlacementEdgewards;
 import org.fog.placement.ModulePlacementMapping;
 import org.fog.utils.TimeKeeper;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.*;
 
 /**
@@ -52,15 +43,15 @@ public class DoorSecurityApplication {
         try {
             //////////////////////////////// INITIAL SETUP ////////////////////////////////
 
-            // This instance is responsible for loading in the node red application and setting up connections
+            // This instance is responsible for loading in the node red application and setting up related data
             JsonToApplication jsonToApplication = new JsonToApplication(
                     CloudNodePreset.DEFAULT,
                     EdgeNodePreset.DEFAULT,
                     ApplicationPreset.DEFAULT,
-                    new File("src/com/extensions/input/application/door-security-application.json")
+                    new File("src/com/extensions/input/application/door-security-application.json") // The file path of the Node-RED application design
             );
 
-            // Disables iFogSim's logging mechanism, only display simulation results
+            // Disables iFogSim's logging mechanism, only displaying simulation results
             Log.disable();
 
             // The number of cloud users
@@ -93,7 +84,7 @@ public class DoorSecurityApplication {
                     SensorPreset.DEFAULT,
                     ActuatorPreset.DEFAULT,
                     "src/com/extensions/input/things/repo2", // SET THINGS REPO HERE
-                    vdConfigParser.process(new File(FilePaths.VD_CONFIG_FILE)) // SET VD'S CONFIG FILE HERE
+                    vdConfigParser.process(new File("src/com/extensions/input/configs/repo2-vd-configs.json")) // SET VD'S CONFIG FILE HERE
             );
 
             //Utility.printVirtualDevices(virtualDevices, "Main Class");
@@ -104,8 +95,8 @@ public class DoorSecurityApplication {
             ApplicationPhysicalTopology physicalTopology = jsonToApplication.createApplicationPhysicalTopology(virtualDevices);
 
             // Create the application model for the application
-            Application application = createApplication(appId, broker.getId());
-            //Application application = jsonToApplication.createApplicationModel(appId, broker.getId());
+            //Application application = createApplication(appId, broker.getId());
+            Application application = jsonToApplication.createApplicationModel(appId, broker.getId());
 
             System.out.println("AppModules: " + application.getModules().size());
             System.out.println("AppEdges: " + application.getEdges().size());
@@ -178,12 +169,13 @@ public class DoorSecurityApplication {
     private static Application createApplication(String appId, int userId) {
         Application application = Application.createApplication(appId, userId);
 
-        application.setLoops(new ArrayList<>());
+        //application.setLoops(new ArrayList<>());
 
         // Data Flow
         setDataFlowForApplication(application);
 
         // Event Flow
+        //setEventFlowForApplication(application);
 
         return application;
     }
@@ -202,5 +194,27 @@ public class DoorSecurityApplication {
         // App Loops
         AppLoop loop = new AppLoop(Arrays.asList("lockState", "processing-0", "lockDoor"));
         application.getLoops().add(loop);
+    }
+
+    private static final double PERIODICITY = 100;
+
+    private static void setEventFlowForApplication(Application application) {
+        application.addAppModule("processing-1", 50); // For onDoorLockedEvent()
+        //application.addAppModule("processing-2", 50); // For onTamperAlertEvent()
+        //application.addAppModule("processing-3", 50); // For onSnapshotTakenEvent()
+        //application.addAppModule("processing-4", 50); // For onAlarmTriggeredEvent()
+
+        // onDoorLockedEvent()
+        application.addAppEdge("doorLocked", "processing-1", PERIODICITY, 485, 890, "doorLocked", Tuple.UP, AppEdge.SENSOR);
+        application.addAppEdge("processing-1", "showAlert", 780, 866, 789, "showAlert", Tuple.DOWN, AppEdge.ACTUATOR);
+
+        application.addTupleMapping("processing-1", "doorLocked", "showAlert", new FractionalSelectivity(1.0));
+
+        AppLoop loop = new AppLoop(Arrays.asList("doorLocked", "processing-1", "showAlert"));
+        application.getLoops().add(loop);
+
+        // onTamperAlertEvent()
+        // onSnapshotTakenEvent()
+        // onAlarmTriggeredEvent()
     }
 }

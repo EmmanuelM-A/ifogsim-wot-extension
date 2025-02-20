@@ -126,8 +126,9 @@ public class VirtualDeviceFactory {
             for(Map.Entry<String, Property> writeableProperty : writeProperties.entrySet()) {
                 // Extract entry data
                 String propertyName = writeableProperty.getKey();
-                Property property = writeableProperty.getValue();
+                //Property property = writeableProperty.getValue();
 
+                // Create a writeable property actuator action
                 ActuatorAction writePropertyAction = new ActuatorAction(propertyName, userId, appId, null, actuatorPreset);
 
                 // Set the actuator's gateway device ID to the VD's ID
@@ -194,7 +195,10 @@ public class VirtualDeviceFactory {
         // Store the VD's TD
         virtualDevice.setThingDescription(thingDescription);
 
-        if(configs == null || configs.isEmpty()) return virtualDevice;
+        if(configs == null || configs.isEmpty()) {
+            System.out.println("No VD Configurations Set!");
+            return virtualDevice;
+        }
 
         // Search through the configs to find a VD config file for the TD
         for(VirtualDeviceConfig config : configs) {

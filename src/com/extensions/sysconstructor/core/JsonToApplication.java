@@ -13,13 +13,10 @@ import com.extensions.utils.presets.ApplicationPreset;
 import com.extensions.utils.presets.CloudNodePreset;
 import com.extensions.utils.presets.EdgeNodePreset;
 import com.extensions.vdcreation.core.VirtualDevice;
-import org.apache.commons.math3.util.Pair;
 import org.fog.application.AppEdge;
 import org.fog.application.AppLoop;
-import org.fog.application.AppModule;
 import org.fog.application.Application;
 import org.fog.application.selectivity.FractionalSelectivity;
-import org.fog.application.selectivity.SelectivityModel;
 import org.fog.entities.Actuator;
 import org.fog.entities.FogDevice;
 import org.fog.entities.Sensor;
@@ -165,14 +162,14 @@ public class JsonToApplication {
 
     public Application createApplicationModel(String appId, int userId) {
         // Create the application instance
-        Application application = new Application(appId, userId);
+        Application application = Application.createApplication(appId, userId);
 
-        application.setLoops(new ArrayList<AppLoop>());
+        //application.setLoops(new ArrayList<AppLoop>());
 
         // Create the application model for all inject flows
-        for(TopologyNodeTree injectFlow : injectFlows) {
+        /*for(TopologyNodeTree injectFlow : injectFlows) {
             setupInjectFlowInApplication(application, injectFlow);
-        }
+        }*/
 
         // Create the application model for all data flows
         for(TopologyNodeTree dataFlow : dataFlows) {
@@ -180,9 +177,9 @@ public class JsonToApplication {
         }
 
         // Set all the event flows for the application model
-        for(TopologyNodeTree eventFlow : eventFlows) {
+        /*for(TopologyNodeTree eventFlow : eventFlows) {
             setupEventFlowInApplication(application, eventFlow);
-        }
+        }*/
 
         // Print app modules
         /*System.out.println("AppModules:");
@@ -228,7 +225,7 @@ public class JsonToApplication {
         return application;
     }
 
-    // IGNORED FOR NOW, BUT IF YOU INCLUDE INJECT SUB FLOWS INTO THE APPLICATION MODEL GO FOR IT
+    // IGNORED FOR NOW, BUT IF YOU IMPLEMENT INJECT SUB FLOWS INTO THE APPLICATION MODEL GO FOR IT :)
     public void setupInjectFlowInApplication(Application application, TopologyNodeTree injectFlow) {}
 
     /**
@@ -241,11 +238,13 @@ public class JsonToApplication {
     private void setupDataFlowInApplication(Application application, TopologyNodeTree dataFlow) {
         // Check if the data flow exists
         if(dataFlow == null) {
+            System.out.println("Dataflow passed in is null!");
             return;
         }
 
         // Make sure the data flow is actually a data flow. If not return
-        if(dataFlow.rootNode().type().equals(NodeRedJSONParser.TYPE_INJECT) || dataFlow.rootNode().type().equals(NodeRedJSONParser.TYPE_SUBSCRIBE_EVENT)) {
+        if(dataFlow.rootNode().type().equals(NodeRedJSONParser.TYPE_INJECT) ||
+           dataFlow.rootNode().type().equals(NodeRedJSONParser.TYPE_SUBSCRIBE_EVENT)) {
             System.out.println("Sub Flow " + dataFlow.rootNode().id() + " is not a data flow");
             return;
         }
@@ -268,65 +267,66 @@ public class JsonToApplication {
             return;
         }
 
-        // Helps keep track of data flow in and out of application model
-        Set<String> appLoopRoute = new HashSet<>();
+        // Track routes for app loops (using List to maintain order)
+        List<String> appLoopRoute = new ArrayList<>();
+
+        // Used to access nodes in a branch
+        int ptr1 = 0, ptr2 = 1;
 
         // Iterate through one branch at a time
         for(List<TopologyNode> branch : branches) {
-            // Used to access nodes in a branch
-            int ptr1 = 0, ptr2 = 1;
-
+            // Iterate through each branch using the two pointers method
             while(ptr2 < branch.size()) {
-                // Get the src node (Assuming it's a WoT node) and dst node (will be checked)
+                // Get the src node (Assuming it's a WoT node)
                 TopologyNode src = branch.get(ptr1);
 
+                // Dst node is checked
                 TopologyNode dst = branch.get(ptr2);
+
+                String srcName1 = (src.name() != null && !src.name().isEmpty()) ? src.name() : src.type();
+                String dstName1 = (dst.name() != null && !dst.name().isEmpty()) ? dst.name() : dst.type();
+
+                //System.out.println("Ptr1: " + ptr1 + " Ptr2: " + ptr2);
+                //System.out.println("Src: " + srcName1 + " Dst: " + dstName1);
 
                 // Check if the dst node is a WoT node
                 if(isWoTNode(dst)) {
                     // Check the connectivity between the src and dst nodes
                     TopologyNodeConnectionStatus connectionStatus = TopologyNodeConnectionChecker.areNodesConnected(src.id(), dst.id());
 
-                    // I only care if there exists some connection between two nodes (whether its direct or indirect)
+                    // For this level of complexity, I only care if there exists some connection between two nodes (whether its direct or indirect)
                     if(connectionStatus.isThereAConnection()) {
                         //if(connectionStatus.isDirectionConnection()) {} // You can change it to handle direct connections
 
                         // Get the property/action name of the src and dst node
-                        String srcName = src.name() != null ? src.name() : src.uniqueAttribute();
-                        String dstName = dst.name() != null ? dst.name() : dst.uniqueAttribute();
+                        String srcName = src.uniqueAttribute();
+                        String dstName = dst.uniqueAttribute();
 
                         // Check if a processing module already exists for this src
-                        String processingModule;
+                        String processingModule = "PROCESSING_MODULE-" + processingModuleCount;
+                        application.addAppModule(processingModule, applicationPreset.APP_MODULE_RAM);
 
-                        if (existingProcessingModules.containsKey(srcName)) {
-                            processingModule = existingProcessingModules.get(srcName);
-                        } else {
-                            // Create a processing module (represents an intermediately processing unit for data)
-                            processingModule = "PROCESSING_MODULE-" + processingModuleCount;
-                            application.addAppModule(processingModule, applicationPreset.APP_MODULE_RAM);
+                        // Store the new processing module for this src
+                        //existingProcessingModules.put(srcName, processingModule);
 
-                            // Store the new processing module for this src
-                            existingProcessingModules.put(srcName, processingModule);
-
-                            // Increase count only when a new module is created
-                            processingModuleCount++;
-                        }
+                        // Increase count only when a new module is created
+                        processingModuleCount++;
 
                         // Create the app edges from src ----> PrM ----> dst
-                        // Src ----> PrM
+                        // 1. Src ----> PrM
                         String tupleTypeOne = determineTupleType(src);
                         int edgeDirection1 = determineDirection(src);
                         int edgeType1 = determineEdgeType(src);
                         addAppEdge(application, srcName, processingModule, tupleTypeOne, edgeDirection1, edgeType1);
 
-                        // PrM ----> dst
+                        // 2. PrM ----> dst
                         String tupleTypeTwo = determineTupleType(dst);
                         int edgeDirection2 = determineDirection(dst);
                         int edgeType2 = determineEdgeType(dst);
                         addAppEdge(application, processingModule, dstName, tupleTypeTwo, edgeDirection2, edgeType2);
 
                         // Ensure src module has output tuple type
-                        if (!moduleTupleMappings.containsKey(srcName)) {
+                        /*if (!moduleTupleMappings.containsKey(srcName)) {
                             moduleTupleMappings.put(srcName, new TupleMapping());
                         }
                         moduleTupleMappings.get(srcName).setOutputTupleType(tupleTypeOne);
@@ -336,7 +336,12 @@ public class JsonToApplication {
                             moduleTupleMappings.put(processingModule, new TupleMapping());
                         }
                         moduleTupleMappings.get(processingModule).setInputTupleType(tupleTypeOne);
+                        moduleTupleMappings.get(processingModule).setOutputTupleType(tupleTypeTwo);*/
+                        // Ensure tuple mappings for all relevant nodes
+                        moduleTupleMappings.computeIfAbsent(srcName, k -> new TupleMapping()).setOutputTupleType(tupleTypeOne);
+                        moduleTupleMappings.computeIfAbsent(processingModule, k -> new TupleMapping()).setInputTupleType(tupleTypeOne);
                         moduleTupleMappings.get(processingModule).setOutputTupleType(tupleTypeTwo);
+                        moduleTupleMappings.computeIfAbsent(dstName, k -> new TupleMapping()).setInputTupleType(tupleTypeTwo);
 
                         // Ensure dst module has input tuple type
                         if (!moduleTupleMappings.containsKey(dstName)) {
@@ -344,16 +349,26 @@ public class JsonToApplication {
                         }
                         moduleTupleMappings.get(dstName).setInputTupleType(tupleTypeTwo);
 
-                        // Record the route of the data flow
-                        appLoopRoute.add(srcName);
-                        appLoopRoute.add(processingModule);
-                        appLoopRoute.add(dstName);
+                        // Maintain ordered App Loop
+                        if (appLoopRoute.isEmpty()) {
+                            appLoopRoute.add(srcName);
+                            appLoopRoute.add(processingModule);
+                            appLoopRoute.add(dstName);
+                        } else {
+                            // The previous dst now becomes the src
+                            appLoopRoute.add(processingModule);
+                            appLoopRoute.add(dstName);
+                        }
 
-                        // Add app loop to the application's app loop list
-                        addLoopToAppLoops(application, new ArrayList<>(appLoopRoute));
+                        // Add the constructed App Loop to the application
+                        application.getLoops().add(new AppLoop(appLoopRoute));
+                        System.out.println("App Loop added: " + appLoopRoute);
+
 
                         // Move to the next position
                         ptr1 = ptr2;
+
+                        System.out.println(srcName + " ----> "  + processingModule + " ----> " + dstName);
                     }
                 }
                 ptr2++;
@@ -361,7 +376,7 @@ public class JsonToApplication {
         }
 
         // Set tuple mappings
-        for(Map.Entry<String, TupleMapping> moduleMapping : moduleTupleMappings.entrySet()) {
+        /*for(Map.Entry<String, TupleMapping> moduleMapping : tupleMappings.entrySet()) {
             String moduleName = moduleMapping.getKey();
             TupleMapping mapping = moduleMapping.getValue();
 
@@ -374,6 +389,22 @@ public class JsonToApplication {
                         mapping.getOutputTupleType(),
                         new FractionalSelectivity(1.0) // CHANGE AT YOUR DISCRETION
                 );
+            }
+        }*/
+
+        // Set tuple mappings for modules
+        for (Map.Entry<String, TupleMapping> moduleMapping : moduleTupleMappings.entrySet()) {
+            String moduleName = moduleMapping.getKey();
+            TupleMapping mapping = moduleMapping.getValue();
+
+            if (mapping.getInputTupleType() != null && mapping.getOutputTupleType() != null) {
+                application.addTupleMapping(
+                        moduleName,
+                        mapping.getInputTupleType(),
+                        mapping.getOutputTupleType(),
+                        new FractionalSelectivity(1.0)
+                );
+                System.out.println("Tuple mapping set for " + moduleName);
             }
         }
     }
@@ -401,10 +432,10 @@ public class JsonToApplication {
     }
 
 
-    private void addAppEdge(Application application, String srcModuleName, String dstModuleName, String tupleType, int edgeDirection, int edgeType) {
+    private void addAppEdge(Application application, String srcName, String dstName, String tupleType, int edgeDirection, int edgeType) {
         application.addAppEdge(
-                srcModuleName,
-                dstModuleName,
+                srcName,
+                dstName,
                 applicationPreset.APP_EDGE_TUPLE_CPU_LENGTH,  // Processing latency
                 applicationPreset.APP_EDGE_TUPLE_NW_LENGTH,   // Transmission latency
                 tupleType,
@@ -412,7 +443,7 @@ public class JsonToApplication {
                 edgeType
         );
 
-        System.out.println("Connected: " + srcModuleName + " --> " + dstModuleName);
+        //System.out.println("Connected: " + srcModuleName + " --> " + dstModuleName);
     }
 
     private String determineTupleType(TopologyNode node) {
@@ -421,7 +452,7 @@ public class JsonToApplication {
 
     private int determineDirection(TopologyNode node) {
         // Assume upward tuple flow for sensors and downward for actuators
-        if (node.type().equals(NodeRedJSONParser.TYPE_READ_PROPERTY)) {
+        if (node.type().equals(NodeRedJSONParser.TYPE_READ_PROPERTY) || node.type().equals(NodeRedJSONParser.TYPE_SUBSCRIBE_EVENT)) {
             return Tuple.UP;
         } else if (node.type().equals(NodeRedJSONParser.TYPE_INVOKE_ACTION) || node.type().equals(NodeRedJSONParser.TYPE_WRITE_PROPERTY)) {
             return Tuple.DOWN;
@@ -431,7 +462,7 @@ public class JsonToApplication {
     }
 
     private int determineEdgeType(TopologyNode node) {
-        if (node.type().equals(NodeRedJSONParser.TYPE_READ_PROPERTY)) {
+        if (node.type().equals(NodeRedJSONParser.TYPE_READ_PROPERTY) || node.type().equals(NodeRedJSONParser.TYPE_SUBSCRIBE_EVENT)) {
             return AppEdge.SENSOR;
         } else if (node.type().equals(NodeRedJSONParser.TYPE_INVOKE_ACTION) || node.type().equals(NodeRedJSONParser.TYPE_WRITE_PROPERTY)) {
             return AppEdge.ACTUATOR;

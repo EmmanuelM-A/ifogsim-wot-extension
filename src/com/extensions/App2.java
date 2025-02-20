@@ -113,6 +113,9 @@ public final class App2 {
                 for(Actuator actuatorAction : virtualDevice.getActuatorActions()) {
                     actuatorAction.setApp(application);
                 }
+                for(Sensor eventSensor : virtualDevice.getEventSensors()) {
+                    eventSensor.setApp(application);
+                }
             }
 
             // Create the controller for managing the simulation

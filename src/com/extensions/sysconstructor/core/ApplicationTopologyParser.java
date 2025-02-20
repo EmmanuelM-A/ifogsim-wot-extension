@@ -50,7 +50,7 @@ public class ApplicationTopologyParser implements FileProcessor<JsonNode> {
 
         if(applicationDetails == null || !applicationDetails.has("title")) return null;
 
-        return applicationDetails.get("title").asText(null);
+        return applicationDetails.get("title").asText("IoT-Application");
     }
 
     public List<String> parseTopologyNodeTopics() {

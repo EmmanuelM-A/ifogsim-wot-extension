@@ -107,6 +107,9 @@ public class TemperatureMonitor {
                 for(Actuator actuatorAction : virtualDevice.getActuatorActions()) {
                     actuatorAction.setApp(application);
                 }
+                for(Sensor eventSensor : virtualDevice.getEventSensors()) {
+                    eventSensor.setApp(application);
+                }
             }
 
             // Initialize a module mapping to map application modules to fog devices

@@ -80,14 +80,15 @@ public class TemperatureMonitorTwo {
             List<FogDevice> fogDevices = createPhysicalTopology(virtualDevices);
 
             // Step 5: Set the application for VD's sensors and actuators
-            for (VirtualDevice virtualDevice : virtualDevices) {
-                for (Sensor sensor : virtualDevice.getSensorProperties()) {
-                    sensor.setApp(application);
-                    //System.out.println(sensor.toString());
+            for(VirtualDevice virtualDevice : virtualDevices) {
+                for(Sensor sensorProperty : virtualDevice.getSensorProperties()) {
+                    sensorProperty.setApp(application);
                 }
-                for (Actuator actuator : virtualDevice.getActuatorActions()) {
-                    actuator.setApp(application);
-                    //System.out.println(actuator.toString());
+                for(Actuator actuatorAction : virtualDevice.getActuatorActions()) {
+                    actuatorAction.setApp(application);
+                }
+                for(Sensor eventSensor : virtualDevice.getEventSensors()) {
+                    eventSensor.setApp(application);
                 }
             }
 
