@@ -5,14 +5,12 @@ import com.extensions.utils.presets.FogDeviceHostPreset;
 import com.extensions.utils.presets.FogDevicePreset;
 import com.extensions.vdcreation.core.VirtualDeviceConfig;
 import org.cloudbus.cloudsim.Host;
-import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.Pe;
 import org.cloudbus.cloudsim.Storage;
 import org.cloudbus.cloudsim.power.PowerHost;
 import org.cloudbus.cloudsim.provisioners.RamProvisionerSimple;
 import org.cloudbus.cloudsim.sdn.overbooking.BwProvisionerOverbooking;
 import org.cloudbus.cloudsim.sdn.overbooking.PeProvisionerOverbooking;
-import org.fog.entities.FogDevice;
 import org.fog.entities.FogDeviceCharacteristics;
 import org.fog.policy.AppModuleAllocationPolicy;
 import org.fog.scheduler.StreamOperatorScheduler;
@@ -182,18 +180,18 @@ public class FogDeviceFactory {
     public static CustomFogDevice createFogDevice(String name, FogDevicePreset preset, VirtualDeviceConfig config) {
         // Create a list of Processing Elements (PEs) with the MIPS value from the virtual device configuration
         List<Pe> peList = new ArrayList<>();
-        peList.add(new Pe(0, new PeProvisionerOverbooking(config.getMips())));
+        peList.add(new Pe(0, new PeProvisionerOverbooking(config.mips())));
 
         // Generate a unique host ID and use it to create a PowerHost with the virtual device configuration
         int hostId = FogUtils.generateEntityId();
         PowerHost host = new PowerHost(
                 hostId,
-                new RamProvisionerSimple(config.getRam()),
+                new RamProvisionerSimple(config.ram()),
                 new BwProvisionerOverbooking(FogDeviceHostPreset.DEFAULT.HOST_BANDWIDTH),
                 FogDeviceHostPreset.DEFAULT.HOST_STORAGE,
                 peList,
                 new StreamOperatorScheduler(peList),
-                new FogLinearPowerModel(config.getBusyPower(), config.getIdlePower())
+                new FogLinearPowerModel(config.busyPower(), config.idlePower())
         );
 
         // Add the created host to a host list
@@ -225,14 +223,14 @@ public class FogDeviceFactory {
                     new AppModuleAllocationPolicy(hostList),
                     storageList,
                     preset.SCHEDULING_INTERVAL,
-                    config.getUpBw(),
-                    config.getDownBw(),
+                    config.upBw(),
+                    config.downBw(),
                     preset.UPLINK_LATENCY,
-                    config.getRatePerMips()
+                    config.ratePerMips()
             );
 
             // Set the fog device's level in the hierarchy
-            fogDevice.setLevel(config.getLevel());
+            fogDevice.setLevel(config.level());
 
             // Return null if the FogDevice could not be created
             return fogDevice;

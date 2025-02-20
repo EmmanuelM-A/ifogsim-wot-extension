@@ -17,7 +17,6 @@ import com.extensions.vdcreation.models.Property;
 import com.extensions.vdcreation.models.ThingDescription;
 import com.extensions.vdcreation.models.Action;
 import com.extensions.vdcreation.parsers.ThingDescriptionParser;
-import org.fog.entities.Sensor;
 
 /**
  * Responsible for creating the virtual devices (VDs) from the thing descriptions.
@@ -202,8 +201,11 @@ public class VirtualDeviceFactory {
 
         // Search through the configs to find a VD config file for the TD
         for(VirtualDeviceConfig config : configs) {
+            // Format TD title, so it matches the format of the VD title
+            String tdName = thingDescription.getTitle().replace(" ", "");
+
             // Check if the TD has a config file for its VD
-            if(config.getTags().contains(thingDescription.getTitle())) {
+            if(config.tags().contains(tdName)) {
                 // Create a virtual device using the defined presets and the config data for this VD
                 virtualDevice = new VirtualDevice(thingDescription.getTitle(), fogDevicePreset, config);
                 break;
