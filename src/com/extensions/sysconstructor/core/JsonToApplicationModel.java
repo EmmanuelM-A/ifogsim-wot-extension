@@ -374,7 +374,7 @@ public class JsonToApplicationModel {
         }
     }
 
-    private static void createEventFlow(Application application, TopologyNodeTree eventFlow) {
+    /*private static void createEventFlow(Application application, TopologyNodeTree eventFlow) {
         // Ensure the root node is a valid event publisher
         if (!eventFlow.rootNode().type().equals(NodeRedJSONParser.TYPE_SUBSCRIBE_EVENT)) {
             System.out.println("Sub Flow " + eventFlow.rootNode().id() + " is NOT an event flow.");
@@ -455,7 +455,7 @@ public class JsonToApplicationModel {
                     new FractionalSelectivity(1.0) // Adjust as needed
             );
         }
-    }
+    }*/
 
     /**
      * Adds a new app loop to the app loop list in application.

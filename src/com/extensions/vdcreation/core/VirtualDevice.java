@@ -1,6 +1,8 @@
 package com.extensions.vdcreation.core;
 
+import com.extensions.customfog.ActuatorAction;
 import com.extensions.customfog.CustomFogDevice;
+import com.extensions.customfog.CustomSensor;
 import com.extensions.customfog.FogDeviceFactory;
 import com.extensions.sysconstructor.eventdriver.EventSensor;
 import com.extensions.utils.presets.FogDevicePreset;
@@ -25,17 +27,17 @@ public class VirtualDevice {
     /**
      * Represents properties of the TD.
      */
-    private final List<Sensor> sensorProperties;
+    private final List<CustomSensor> sensorProperties;
 
     /**
      * Represents actions in the TD.
      */
-    private final List<Actuator> actuatorActions;
+    private final List<ActuatorAction> actuatorActions;
 
     /**
      * Represents events in the TD.
      */
-    private final List<Sensor> eventSensors;
+    private final List<CustomSensor> eventSensors;
 
     /**
      * Represents the TD used to create this virtual device.
@@ -66,15 +68,15 @@ public class VirtualDevice {
         this.fogDevice = fogDevice;
     }
 
-    public List<Sensor> getSensorProperties() {
+    public List<CustomSensor> getSensorProperties() {
         return sensorProperties;
     }
 
-    public List<Actuator> getActuatorActions() {
+    public List<ActuatorAction> getActuatorActions() {
         return actuatorActions;
     }
 
-    public List<Sensor> getEventSensors() {
+    public List<CustomSensor> getEventSensors() {
         return eventSensors;
     }
 
@@ -86,8 +88,8 @@ public class VirtualDevice {
         this.thingDescription = thingDescription;
     }
 
-    public Sensor getSensorProperty(String name) {
-        for(Sensor sensor : sensorProperties) {
+    public CustomSensor getSensorProperty(String name) {
+        for(CustomSensor sensor : sensorProperties) {
             if(sensor.getName().equalsIgnoreCase(name)) return sensor;
         }
         return null;

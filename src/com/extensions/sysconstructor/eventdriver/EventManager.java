@@ -8,27 +8,24 @@ import java.util.List;
 import java.util.Map;
 
 public class EventManager {
-    private static EventManager instance;
-    private final Map<String, List<CustomFogDevice>> eventRoutingTable = new HashMap<>();
+    private static final EventManager instance = new EventManager();
+    private final List<EventSensor> eventSensors = new ArrayList<>();
 
     private EventManager() {}
 
     public static synchronized EventManager getInstance() {
-        if (instance == null) {
-            instance = new EventManager();
-        }
         return instance;
     }
 
-    public void registerEvent(String eventType, CustomFogDevice device) {
-        eventRoutingTable.computeIfAbsent(eventType, k -> new ArrayList<>()).add(device);
+    public void registerEventSensor(EventSensor sensor) {
+        eventSensors.add(sensor);
     }
 
-    public void routeEvent(EventTuple tuple) {
-        List<CustomFogDevice> destinations = eventRoutingTable.get(tuple.getEventType());
-        if (destinations != null) {
-            for (CustomFogDevice device : destinations) {
-                device.processEventTuple(tuple);
+    public void triggerEvent(String eventType) {
+        for (EventSensor sensor : eventSensors) {
+            if (sensor.getTupleType().equals(eventType)) {
+                sensor.triggerEvent();
+                System.out.println("Event triggered: " + eventType);
             }
         }
     }

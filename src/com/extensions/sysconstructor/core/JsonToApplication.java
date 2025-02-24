@@ -1,6 +1,7 @@
 package com.extensions.sysconstructor.core;
 
 import com.extensions.customfog.FogDeviceFactory;
+import com.extensions.sysconstructor.eventdriver.EventSensor;
 import com.extensions.sysconstructor.nodered.NodeRedJSONParser;
 import com.extensions.sysconstructor.nodered.NodeRedTranslator;
 import com.extensions.sysconstructor.topology.TopologyNode;
@@ -498,14 +499,19 @@ public class JsonToApplication {
 
             // Iterate once over VDs to collect sensors & actuators
             for (VirtualDevice virtualDevice : selectedVirtualDevices) {
-                for (Sensor sensor : virtualDevice.getSensorProperties()) {
+                for (Sensor sensor : virtualDevice.getSensorProperties()) { // Sensor Properties
                     if (sensorsAndActuatorsUsed.contains(sensor.getName())) {
                         allSensorsUsedInApplication.add(sensor);
                     }
                 }
-                for (Actuator actuator : virtualDevice.getActuatorActions()) {
+                for (Actuator actuator : virtualDevice.getActuatorActions()) { // Actuator Actions
                     if (sensorsAndActuatorsUsed.contains(actuator.getName())) {
                         allActuatorsUsedInApplication.add(actuator);
+                    }
+                }
+                for (Sensor sensor : virtualDevice.getEventSensors()) { // Event Sensors
+                    if (sensorsAndActuatorsUsed.contains(sensor.getName())) {
+                        allSensorsUsedInApplication.add(sensor);
                     }
                 }
             }
@@ -525,6 +531,7 @@ public class JsonToApplication {
 
             // Cloud has no parent, it is the root of the hierarchy
             cloud.setParentId(-1);
+            cloud.setLevel(1);
 
             fogDevices.add(cloud);
 
@@ -537,6 +544,7 @@ public class JsonToApplication {
                     // Link the edge node to the cloud
                     edgeNode.setParentId(cloud.getId());
                     edgeNode.setUplinkLatency(applicationPreset.UPLINK_LATENCY_EDGE_TO_CLOUD);
+                    edgeNode.setLevel(2);
                     fogDevices.add(edgeNode);
                     edgeNodes.add(edgeNode);
 
@@ -553,6 +561,7 @@ public class JsonToApplication {
                         if(vdFogDevice != null) {
                             vdFogDevice.setParentId(edgeNode.getId());
                             vdFogDevice.setUplinkLatency(applicationPreset.UPLINK_LATENCY_VD_TO_EDGE);
+                            vdFogDevice.setLevel(3);
                             fogDevices.add(vdFogDevice);
                         }
                     }
@@ -582,6 +591,7 @@ public class JsonToApplication {
                     // Link the edge node to the cloud
                     edgeNode.setParentId(cloud.getId());
                     edgeNode.setUplinkLatency(applicationPreset.UPLINK_LATENCY_EDGE_TO_CLOUD);
+                    edgeNode.setLevel(2);
                     fogDevices.add(edgeNode);
                     edgeNodes.add(edgeNode);
 
@@ -592,6 +602,8 @@ public class JsonToApplication {
                         vdFogDevice.setParentId(edgeNode.getId());
 
                         vdFogDevice.setUplinkLatency(applicationPreset.UPLINK_LATENCY_VD_TO_EDGE);
+
+                        vdFogDevice.setLevel(3);
 
                         fogDevices.add(vdFogDevice);
                     }
@@ -617,7 +629,12 @@ public class JsonToApplication {
 
     private List<String> getAllSensorsAndActuatorsUsed(List<TopologyNode> nodes) {
         List<String> attributeNames = new ArrayList<>();
-        List<String> includeTypes = new ArrayList<>(){{add("read-property"); add("invoke-action"); add("write-property");}};
+        List<String> includeTypes = new ArrayList<>(){{
+            add(NodeRedJSONParser.TYPE_READ_PROPERTY);
+            add(NodeRedJSONParser.TYPE_INVOKE_ACTION);
+            add(NodeRedJSONParser.TYPE_WRITE_PROPERTY);
+            add(NodeRedJSONParser.TYPE_SUBSCRIBE_EVENT);
+        }};
 
         for(TopologyNode node : nodes) {
             if(includeTypes.contains(node.type())) attributeNames.add(node.uniqueAttribute());

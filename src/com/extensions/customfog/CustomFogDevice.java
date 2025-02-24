@@ -35,7 +35,11 @@ public class CustomFogDevice extends FogDevice {
 
     public void processEventTuple(EventTuple tuple) {
         System.out.println(getName() + " processing event tuple: " + tuple.getEventType());
-        EventManager.getInstance().routeEvent(tuple);
+        ///.getInstance().routeEvent(tuple);
     }
 
+    @Override
+    protected void sendDown(Tuple tuple, int childId) {
+        super.sendDown(tuple, childId);
+    }
 }
