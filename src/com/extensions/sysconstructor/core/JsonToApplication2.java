@@ -300,6 +300,8 @@ public class JsonToApplication2 {
                 }
             }
         }
+        System.out.println("Application's application model formed!");
+
         return application;
     }
 
