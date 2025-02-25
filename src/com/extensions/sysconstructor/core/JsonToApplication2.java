@@ -121,6 +121,11 @@ public class JsonToApplication2 {
     // Keep tracks of the number of worker modules created
     private int eventWorkerModuleCount = 1;
 
+    // All event sensors
+    Set<EventSensor> eventSensors = new HashSet<>();
+
+    List<Sensor> allSensors = new ArrayList<>();
+
     public JsonToApplication2(
             CloudNodePreset cloudNodePreset,
             EdgeNodePreset edgeNodePreset,
@@ -300,9 +305,18 @@ public class JsonToApplication2 {
                 }
             }
         }
+        /*// Trigger all events
+        for(EventSensor eventSensor : eventSensors) {
+            EventManager.getInstance().triggerEvent(eventSensor.getName());
+        }*/
+
         System.out.println("Application's application model formed!");
 
         return application;
+    }
+
+    public void setAllSensors(List<Sensor> sensors) {
+        this.allSensors = sensors;
     }
 
     private VD getVDUsed(TopologyNode node, List<VD> vds) {
@@ -324,6 +338,10 @@ public class JsonToApplication2 {
         return null;
     }
 
+    // TODO - TIDY UP CODE EVERYWHERE
+    // TODO - FINALISE DESIGNS
+    // TODO - TRY AND INCOPORATE EVENT HANDLING
+
     private String connectWorkerModule(
             Application application,
             String VD_SENSOR,
@@ -333,6 +351,13 @@ public class JsonToApplication2 {
             String MASTER_MODULE,
             boolean isEventful
     ) {
+        /*if(isEventful) {
+            // Register event
+            EventSensor eventSensor =  (EventSensor) getSensorBy(subFlowSensor, allSensors);
+            eventSensors.add(eventSensor);
+            EventManager.getInstance().registerEventSensor(eventSensor);
+        }*/
+
         ////////// App Modules //////////
 
         String WORKER_MODULE_K;
@@ -375,6 +400,13 @@ public class JsonToApplication2 {
         application.getLoops().add(loop);
 
         return subFlowSensor + " --> " + WORKER_MODULE_K + " --> " + subFlowActuator; // USED FOR DEBUGGING
+    }
+
+    private Sensor getSensorBy(String name, List<Sensor> sensors) {
+        for(Sensor sensor : sensors) {
+            if(sensor.getName().equals(name)) return sensor;
+        }
+        return null;
     }
 
     private boolean isActuator(TopologyNode node) {
