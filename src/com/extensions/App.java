@@ -1,6 +1,13 @@
 package com.extensions;
 
+import com.extensions.customfog.CustomActuator;
 import com.extensions.customfog.CustomController;
+import com.extensions.customfog.CustomSensor;
+import com.extensions.customfog.FogDeviceFactory;
+import com.extensions.custommetrics.CustomMetricManager;
+import com.extensions.custommetrics.metrics.LongestApplicationLoopDelay;
+import com.extensions.custommetrics.metrics.PeakEnergyConsumptionDevice;
+import com.extensions.custommetrics.metrics.TotalEnergyConsumptionEfficiency;
 import com.extensions.sysconstructor.core.ApplicationPhysicalTopology;
 import com.extensions.sysconstructor.core.JsonToApplication;
 import com.extensions.sysconstructor.core.JsonToApplication2;
@@ -12,11 +19,12 @@ import com.extensions.vdcreation.core.VirtualDeviceFactory;
 import com.extensions.vdcreation.parsers.VirtualDeviceConfigParser;
 import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.core.CloudSim;
+import org.fog.application.AppEdge;
+import org.fog.application.AppLoop;
 import org.fog.application.AppModule;
 import org.fog.application.Application;
-import org.fog.entities.Actuator;
-import org.fog.entities.FogBroker;
-import org.fog.entities.Sensor;
+import org.fog.application.selectivity.FractionalSelectivity;
+import org.fog.entities.*;
 import org.fog.placement.ModuleMapping;
 import org.fog.placement.ModulePlacementEdgewards;
 import org.fog.placement.ModulePlacementMapping;
@@ -25,6 +33,7 @@ import org.fog.utils.TimeKeeper;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
@@ -49,7 +58,7 @@ public final class App {
                     CloudNodePreset.DEFAULT,
                     EdgeNodePreset.DEFAULT,
                     ApplicationPreset.DEFAULT,
-                    new File("src/com/extensions/input/application/temperature-monitor.json") // The file path of the Node-RED application design
+                    new File("src/com/extensions/input/application/door-security-application.json") // The file path of the Node-RED application design
             );
 
             // Disables iFogSim's logging mechanism, only displaying simulation results
@@ -85,16 +94,18 @@ public final class App {
                     FogDevicePreset.DEFAULT,
                     SensorPreset.DEFAULT,
                     ActuatorPreset.DEFAULT,
-                    "src/com/extensions/input/things/repo1", // SET THINGS REPO HERE
-                    vdConfigParser.process(new File("")) // SET VD'S CONFIG FILE HERE
+                    "src/com/extensions/input/things/repo2", // SET THINGS REPO HERE
+                    vdConfigParser.process(new File("src/com/extensions/input/configs/repo2-vd-configs.json")) // SET VD'S CONFIG FILE HERE
             );
 
             //////////////////////////////// APPLICATION SETUP ////////////////////////////////
 
             // Create the physical topology for the application
             ApplicationPhysicalTopology physicalTopology = jsonToApplication.createApplicationPhysicalTopology(virtualDevices);
+            //PhysicalTopology physicalTopology = createPhysicalTopology(virtualDevices);
 
             // Create the application model for the application
+            //Application application = createApplication(appId, broker.getId());
             Application application = jsonToApplication.createApplicationModel(appId, broker.getId());
 
             // Set the application for VD's sensors and actuators
@@ -132,11 +143,11 @@ public final class App {
 
             //////////////////////////////// REGISTER CUSTOM PERFORMANCE METRICS ////////////////////////////////
 
-            /*CustomMetricManager customMetricManager = controller.getCustomMetricManager();
+            CustomMetricManager customMetricManager = controller.getCustomMetricManager();
 
-            customMetricManager.registerMetric(new LongestApplicationLoopDelay());
+            //customMetricManager.registerMetric(new LongestApplicationLoopDelay());
             customMetricManager.registerMetric(new PeakEnergyConsumptionDevice());
-            customMetricManager.registerMetric(new TotalEnergyConsumptionEfficiency());*/
+            customMetricManager.registerMetric(new TotalEnergyConsumptionEfficiency());
 
             //////////////////////////////// SIMULATION ////////////////////////////////
 
@@ -155,9 +166,90 @@ public final class App {
         }
     }
 
-    /*private static Application createApplication(String appId, int brokerId) {
+    private static PhysicalTopology createPhysicalTopology(List<VD> vds) {
+        List<FogDevice> fogDevices = new ArrayList<>();
+        List<Actuator> actuators = new ArrayList<>();
+        List<Sensor> sensors = new ArrayList<>();
+
+        // Cloud Device
+        FogDevice cloud = FogDeviceFactory.createFogDevice("cloud", FogDevicePreset.DEFAULT);
+        fogDevices.add(cloud);
+
+        // Edge Node
+        FogDevice edgeNode = FogDeviceFactory.createFogDevice("edge-node", FogDevicePreset.DEFAULT);
+
+        if(edgeNode != null) {
+            assert cloud != null;
+            edgeNode.setParentId(cloud.getId());
+            fogDevices.add(edgeNode);
+        }
+
+        // Connect Virtual Devices (VDs) to the Edge Node
+        for (VD vd : vds) {
+            FogDevice vdFogDevice = vd.getFogDevice();
+            sensors.add(vd.getSensor());
+            actuators.add(vd.getActuator());
+            assert edgeNode != null;
+            vdFogDevice.setParentId(edgeNode.getId());
+            fogDevices.add(vdFogDevice);
+        }
+
+        PhysicalTopology physicalTopology = new PhysicalTopology();
+
+        physicalTopology.setActuators(actuators);
+        physicalTopology.setSensors(sensors);
+        physicalTopology.setFogDevices(fogDevices);
+
+        return physicalTopology;
+    }
+
+    private static Application createApplication(String appId, int brokerId) {
         Application application = Application.createApplication(appId, brokerId);
 
-        ap
-    }*/
+        String VD_SENSOR = "TemperatureSensor_SENSOR";
+        String VD_ACTUATOR = "TemperatureSensor_ACTUATOR";
+
+        String MM = "MasterModule";
+        String WM1 = "WorkerModule-1";
+        String WM2 = "WorkerModule-2";
+        String WM3 = "WorkerModule-3";
+
+        application.addAppModule(MM, 10);
+        application.addAppModule(WM1, 10);
+        application.addAppModule(WM2, 10);
+        application.addAppModule(WM3, 10);
+
+       application.addAppEdge(VD_SENSOR, MM, 3000, 500, VD_SENSOR, Tuple.UP, AppEdge.SENSOR);
+       application.addAppEdge(MM, VD_ACTUATOR, 500, 4000, VD_ACTUATOR, Tuple.DOWN, AppEdge.ACTUATOR);
+
+       application.addAppEdge(MM, WM1, 4034, 4590, "temperature", Tuple.UP, AppEdge.MODULE);
+       application.addAppEdge(WM1, MM, 300, 500, "updateDisplay", Tuple.DOWN, AppEdge.MODULE);
+
+        application.addAppEdge(MM, WM2, 4034, 4590, "overheat", Tuple.UP, AppEdge.MODULE);
+        application.addAppEdge(WM2, MM, 300, 500, "showAlert", Tuple.DOWN, AppEdge.MODULE);
+
+        application.addAppEdge(MM, WM3, 4034, 4590, "lowBattery", Tuple.UP, AppEdge.MODULE);
+        application.addAppEdge(WM3, MM, 300, 500, "showAlert", Tuple.DOWN, AppEdge.MODULE);
+
+        // Tuple Mappings
+        application.addTupleMapping(MM, VD_SENSOR, "temperature", new FractionalSelectivity(1.0));
+        application.addTupleMapping(MM, VD_SENSOR, "overheat", new FractionalSelectivity(1.0));
+        application.addTupleMapping(MM, VD_SENSOR, "lowBattery", new FractionalSelectivity(1.0));
+        application.addTupleMapping(WM1, "temperature", "updateDisplay", new FractionalSelectivity(1.0));
+        application.addTupleMapping(WM2, "overheat", "showAlert", new FractionalSelectivity(1.0));
+        application.addTupleMapping(WM3, "lowBattery", "showAlert", new FractionalSelectivity(1.0));
+        application.addTupleMapping(MM, "updateDisplay", VD_ACTUATOR, new FractionalSelectivity(1.0));
+        application.addTupleMapping(MM, "showAlert", VD_ACTUATOR, new FractionalSelectivity(1.0));
+
+        // Application Loops
+        List<String> loop1 = Arrays.asList(VD_SENSOR, MM, WM1, MM, VD_ACTUATOR);
+        List<String> loop2 = Arrays.asList(VD_SENSOR, MM, WM2, MM, VD_ACTUATOR);
+        List<String> loop3 = Arrays.asList(VD_SENSOR, MM, WM3, MM, VD_ACTUATOR);
+
+        application.getLoops().add(new AppLoop(loop1));
+        application.getLoops().add(new AppLoop(loop2));
+        application.getLoops().add(new AppLoop(loop3));
+
+        return application;
+    }
 }

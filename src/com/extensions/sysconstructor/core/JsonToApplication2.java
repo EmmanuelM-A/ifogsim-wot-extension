@@ -260,9 +260,7 @@ public class JsonToApplication2 {
                                 String dstName = dst.uniqueAttribute();
 
                                 // Convert the branch (sub-flow) into a WORKER_MODULE -> MASTER_MODULE connection
-                                String workerModuleConnection = srcName + " --> " + "WM-" + workerModuleCount + " --> " + dstName;
-
-                                connectWorkerModule(
+                                String workerModuleConnection = connectWorkerModule(
                                         application,
                                         VD_SENSOR,
                                         VD_ACTUATOR,
@@ -272,8 +270,8 @@ public class JsonToApplication2 {
                                         isEventful
                                 );
 
-                                System.out.println("New VD SENSOR-MODULE-ACTUATOR connection made for " + virtualDevice.getFogDevice().getName());
-                                System.out.println("W-M connection: " + workerModuleConnection + " added for " + virtualDevice.getFogDevice().getName());
+                                //System.out.println("New VD SENSOR-MODULE-ACTUATOR connection made for " + virtualDevice.getFogDevice().getName());
+                                //System.out.println("WORKER-MODULE connection: " + workerModuleConnection + " added for " + virtualDevice.getFogDevice().getName());
                             } else {
                                 /*
                                 VD SENSOR-MODULE-ACTUATOR connection already exists for the sub-flow and as such just create
@@ -285,9 +283,7 @@ public class JsonToApplication2 {
                                 String dstName = dst.uniqueAttribute();
 
                                 // Convert the branch (sub-flow) into a WORKER_MODULE -> MASTER_MODULE connection
-                                String workerModuleConnection = srcName + " --> " + "WM-" + workerModuleCount + " --> " + dstName;
-
-                                connectWorkerModule(
+                                String workerModuleConnection = connectWorkerModule(
                                         application,
                                         VD_SENSOR,
                                         VD_ACTUATOR,
@@ -297,7 +293,7 @@ public class JsonToApplication2 {
                                         isEventful
                                 );
 
-                                System.out.println("W-M connection: " + workerModuleConnection + " added to existing " + virtualDevice.getFogDevice().getName() + " SENSOR-MODULE-ACTUATOR connection.");
+                                //System.out.println("WORKER-MODULE connection: " + workerModuleConnection + " added to existing " + virtualDevice.getFogDevice().getName() + " SENSOR-MODULE-ACTUATOR connection.");
                             }
                         }
                     }
@@ -326,7 +322,7 @@ public class JsonToApplication2 {
         return null;
     }
 
-    private void connectWorkerModule(
+    private String connectWorkerModule(
             Application application,
             String VD_SENSOR,
             String VD_ACTUATOR,
@@ -375,6 +371,8 @@ public class JsonToApplication2 {
 
         // Add the created app loop to the appLoops list
         application.getLoops().add(loop);
+
+        return subFlowSensor + " --> " + WORKER_MODULE_K + " --> " + subFlowActuator; // USED FOR DEBUGGING
     }
 
     private boolean isActuator(TopologyNode node) {

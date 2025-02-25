@@ -174,18 +174,18 @@ public class JsonToApplication {
 
         List<TopologyNodeTree> trees = new ArrayList<>();
 
-        trees.addAll(dataFlows);
+        //trees.addAll(dataFlows);
         trees.addAll(eventFlows);
 
         // Create the application model for all data flows
-        for(TopologyNodeTree dataFlow : trees) {
+        /*for(TopologyNodeTree dataFlow : trees) {
             applicationModels.addAll(setupDataFlowForApplication(appId, userId, dataFlow));
-        }
+        }*/
 
         // Set all the event flows for the application model
-        /*for(TopologyNodeTree eventFlow : eventFlows) {
+        for(TopologyNodeTree eventFlow : eventFlows) {
             applicationModels.addAll(setupEventFlowForApplication(appId, userId, eventFlow, allSensors));
-        }*/
+        }
 
         return applicationModels;
     }
@@ -201,16 +201,16 @@ public class JsonToApplication {
         }
 
         // Make sure the data flow is actually a data flow. If not return
-        /*if(dataFlow.rootNode().type().equals(NodeRedJSONParser.TYPE_INJECT) || dataFlow.rootNode().type().equals(NodeRedJSONParser.TYPE_SUBSCRIBE_EVENT)) {
+        if(dataFlow.rootNode().type().equals(NodeRedJSONParser.TYPE_INJECT) || dataFlow.rootNode().type().equals(NodeRedJSONParser.TYPE_SUBSCRIBE_EVENT)) {
             System.out.println("Sub Flow " + dataFlow.rootNode().id() + " is not a data flow");
             return null;
-        }*/
+        }
 
         // Checks if the data flow's branches list is set
-        if(dataFlow.branches() == null || dataFlow.branches().isEmpty()) {
+        /*if(dataFlow.branches() == null || dataFlow.branches().isEmpty()) {
             System.out.println("Sub Flow " + dataFlow.rootNode().id() + "'s branches list is not available!");
             return null;
-        }
+        }*/
 
         // Create application collection
         Set<Application> applications = new HashSet<>();

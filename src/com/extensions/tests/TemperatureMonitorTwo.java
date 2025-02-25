@@ -136,17 +136,13 @@ public class TemperatureMonitorTwo {
         application.addAppEdge("temperature", "processing", 5000, 2000, "temperature", Tuple.UP, AppEdge.SENSOR);
         application.addAppEdge("processing", "updateDisplay", 1000, 2000, "updateDisplay", Tuple.DOWN, AppEdge.ACTUATOR);
 
-        application.addAppEdge("processing", "showAlert", 480, 700, "showAlert", Tuple.DOWN, AppEdge.ACTUATOR);
-
         // Tuple Mappings
         application.addTupleMapping("processing", "temperature", "updateDisplay", new FractionalSelectivity(1.0));
-        application.addTupleMapping("processing", "temperature", "showAlert", new FractionalSelectivity(1.0));
 
         // Define Application Loops
         final AppLoop loop = new AppLoop(Arrays.asList("temperature", "processing", "updateDisplay"));
-        final AppLoop loop1 = new AppLoop(Arrays.asList("temperature", "processing", "showAlert"));
 
-        application.setLoops(new ArrayList<>(){{add(loop);add(loop1);}});
+        application.setLoops(new ArrayList<>(){{add(loop);}});
 
         return application;
     }

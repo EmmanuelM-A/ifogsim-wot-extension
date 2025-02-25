@@ -129,15 +129,15 @@ public class CustomController extends SimEntity{
         simulationData.recordExecutionTime();
 
         // Application Loop Delays
-        /*for(Integer loopId : TimeKeeper.getInstance().getLoopIdToTupleIds().keySet()){
+        for(Integer loopId : TimeKeeper.getInstance().getLoopIdToTupleIds().keySet()){
             simulationData.recordApplicationLoopDelays(getStringForLoopId(loopId), TimeKeeper.getInstance().getLoopIdToCurrentAverage().get(loopId));
             //System.out.println(loopId);
-        }*/
+        }
 
-        for(AppLoop appLoop : application.getLoops()) {
+        /*for(AppLoop appLoop : application.getLoops()) {
             simulationData.recordApplicationLoopDelays(getStringForLoopId(appLoop.getLoopId()), TimeKeeper.getInstance().getLoopIdToCurrentAverage().get(appLoop.getLoopId()));
             //System.out.println(appLoop.getLoopId());
-        }
+        }*/
 
         // Tuple CPU Execution Delays
         for(String tupleType : TimeKeeper.getInstance().getTupleTypeToAverageCpuTime().keySet()){
