@@ -107,52 +107,53 @@ public class DoorSecurityApplication {
             allActuators = physicalTopology.getActuators();
 
             // Create the application model for the application
-            Application application = createApplication(appId, broker.getId());
-            //Application application = jsonToApplication.createApplicationModel(appId, broker.getId());
+            //Application application = createApplication(appId, broker.getId());
+            List<Application> applications = jsonToApplication.createApplicationModels(appId, broker.getId(), allSensors);
 
-            System.out.println("AppModules: " + application.getModules().size());
-            System.out.println("AppEdges: " + application.getEdges().size());
-            //System.out.println("AppModules: " + application.getModules().size());
+            for(int index = 0; index < applications.size(); index++) {
+                // Get application
+                Application application = applications.get(index);
 
-            // Set the application for VD's sensors and actuators
-            for(VirtualDevice virtualDevice : virtualDevices) {
-                for(Sensor sensorProperty : virtualDevice.getSensorProperties()) {
-                    sensorProperty.setApp(application);
+                // Set the application for VD's sensors and actuators
+                for (VirtualDevice virtualDevice : virtualDevices) {
+                    for (Sensor sensorProperty : virtualDevice.getSensorProperties()) {
+                        sensorProperty.setApp(application);
+                    }
+                    for (Actuator actuatorAction : virtualDevice.getActuatorActions()) {
+                        actuatorAction.setApp(application);
+                    }
+                    for (Sensor eventSensor : virtualDevice.getEventSensors()) {
+                        eventSensor.setApp(application);
+                    }
                 }
-                for(Actuator actuatorAction : virtualDevice.getActuatorActions()) {
-                    actuatorAction.setApp(application);
+
+                // Create the controller for managing the simulation
+                CustomController controller = new CustomController("master-controller", physicalTopology.getFogDevices(), physicalTopology.getSensors(), physicalTopology.getActuators());
+
+                // Set up module mapping
+                ModuleMapping moduleMapping = ModuleMapping.createModuleMapping();
+
+                // If cloud based deployment then connect all app modules to the cloud device/node
+                if (CLOUD) {
+                    for (AppModule appModule : application.getModules()) {
+                        moduleMapping.addModuleToDevice(appModule.getName(), "cloud");
+                    }
                 }
-                for(Sensor eventSensor : virtualDevice.getEventSensors()) {
-                    eventSensor.setApp(application);
-                }
+
+                // Submit the application to the controller with the appropriate placement strategy
+                controller.submitApplication(
+                        application,
+                        (index + 1) * 100,
+                        (CLOUD) ? (new ModulePlacementMapping(physicalTopology.getFogDevices(), application, moduleMapping))
+                                : (new ModulePlacementEdgewards(
+                                physicalTopology.getFogDevices(),
+                                physicalTopology.getSensors(),
+                                physicalTopology.getActuators(),
+                                application,
+                                moduleMapping
+                        ))
+                );
             }
-
-            // Create the controller for managing the simulation
-            CustomController controller = new CustomController("master-controller", physicalTopology.getFogDevices(), physicalTopology.getSensors(), physicalTopology.getActuators());
-
-            // Set up module mapping
-            ModuleMapping moduleMapping = ModuleMapping.createModuleMapping();
-
-            // If cloud based deployment then connect all app modules to the cloud device/node
-            if(CLOUD) {
-                for(AppModule appModule : application.getModules()) {
-                    moduleMapping.addModuleToDevice(appModule.getName(), "cloud");
-                }
-            }
-
-            // Submit the application to the controller with the appropriate placement strategy
-            controller.submitApplication(
-                    application,
-                    0,
-                    (CLOUD)?(new ModulePlacementMapping(physicalTopology.getFogDevices(), application, moduleMapping))
-                            :(new ModulePlacementEdgewards(
-                            physicalTopology.getFogDevices(),
-                            physicalTopology.getSensors(),
-                            physicalTopology.getActuators(),
-                            application,
-                            moduleMapping
-                    ))
-            );
 
             //////////////////////////////// REGISTER CUSTOM PERFORMANCE METRICS ////////////////////////////////
 

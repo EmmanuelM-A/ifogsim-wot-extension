@@ -14,6 +14,7 @@ import com.extensions.utils.Utility;
 import com.extensions.utils.presets.ApplicationPreset;
 import com.extensions.utils.presets.CloudNodePreset;
 import com.extensions.utils.presets.EdgeNodePreset;
+import com.extensions.vdcreation.core.VD;
 import com.extensions.vdcreation.core.VirtualDevice;
 import org.fog.application.AppEdge;
 import org.fog.application.AppLoop;
@@ -28,7 +29,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-public class JsonToApplication {
+public class JsonToApplication2 {
     /**
      * Presets for defining the characteristics of cloud nodes in the application
      */
@@ -92,7 +93,7 @@ public class JsonToApplication {
     /**
      * A list of all virtual devices used in the application
      */
-    private final List<VirtualDevice> selectedVirtualDevices;
+    private final List<VD> selectedVirtualDevices;
 
     /**
      * A count used to keep track of all processing modules created
@@ -120,7 +121,7 @@ public class JsonToApplication {
     // Keep tracks of the number of worker modules created
     private int eventWorkerModuleCount = 1;
 
-    public JsonToApplication(
+    public JsonToApplication2(
             CloudNodePreset cloudNodePreset,
             EdgeNodePreset edgeNodePreset,
             ApplicationPreset applicationPreset,
@@ -168,226 +169,211 @@ public class JsonToApplication {
 
     //////////////////////////////////////////// APPLICATION MODEL CONSTRUCTION ////////////////////////////////////////////
 
-    public List<Application> createApplicationModels(String appId, int userId, List<Sensor> allSensors) {
-        // Create a list of application models
-        List<Application> applicationModels = new ArrayList<>();
-
-        List<TopologyNodeTree> trees = new ArrayList<>();
-
-        trees.addAll(dataFlows);
-        trees.addAll(eventFlows);
-
-        // Create the application model for all data flows
-        for(TopologyNodeTree dataFlow : trees) {
-            applicationModels.addAll(setupDataFlowForApplication(appId, userId, dataFlow));
-        }
-
-        // Set all the event flows for the application model
-        /*for(TopologyNodeTree eventFlow : eventFlows) {
-            applicationModels.addAll(setupEventFlowForApplication(appId, userId, eventFlow, allSensors));
-        }*/
-
-        return applicationModels;
+    public Application createApplicationModel(String appId, int userId) {
+        return mapAppTopologyToAppModel(appId, userId, topologyNodeTrees);
     }
 
-    // IGNORED FOR NOW, BUT IF YOU IMPLEMENT INJECT SUB FLOWS INTO THE APPLICATION MODEL GO FOR IT :)
-    public void setupInjectFlowInApplication(Application application, TopologyNodeTree injectFlow) {}
-
-    private List<Application> setupDataFlowForApplication(String appId, int userId, TopologyNodeTree dataFlow) {
-        // Check if the data flow exists
-        if(dataFlow == null) {
+    private Application mapAppTopologyToAppModel(String appId, int userId, List<TopologyNodeTree> topologyNodeTrees) {
+        // Check if the sub-flow flow exists
+        if(topologyNodeTrees == null) {
             System.out.println("Dataflow passed in is null!");
             return null;
         }
 
-        // Make sure the data flow is actually a data flow. If not return
-        /*if(dataFlow.rootNode().type().equals(NodeRedJSONParser.TYPE_INJECT) || dataFlow.rootNode().type().equals(NodeRedJSONParser.TYPE_SUBSCRIBE_EVENT)) {
-            System.out.println("Sub Flow " + dataFlow.rootNode().id() + " is not a data flow");
-            return null;
-        }*/
+        // Create application
+        Application application = Application.createApplication(appId, userId);
 
-        // Checks if the data flow's branches list is set
-        if(dataFlow.branches() == null || dataFlow.branches().isEmpty()) {
-            System.out.println("Sub Flow " + dataFlow.rootNode().id() + "'s branches list is not available!");
-            return null;
-        }
+        // Create master module
+        String MASTER_MODULE = "MasterModule";
+        application.addAppModule(MASTER_MODULE, applicationPreset.APP_MODULE_RAM);
 
-        // Create application collection
-        Set<Application> applications = new HashSet<>();
+        // Keeps track of sensor-actuator pairs that have been made
+        Set<VD> virtualDevicesUsedSoFar = new HashSet<>();
 
-        // Get the rootNode
-        TopologyNode rootNode = dataFlow.rootNode();
+        // Keep track of the last used VD
+        VD prevVD = null;
 
-        // Get branches
-        List<List<TopologyNode>> branches = dataFlow.branches();
+        for(TopologyNodeTree topologyNodeTree : topologyNodeTrees) {
+            // Check if the sub flow is not null
+            if(topologyNodeTree == null) continue;
 
-        // Check if the rootNode is a wot node, if so get its type
-        if(!isWoTNode(rootNode)) {
-            System.out.println("Sub Flow " + dataFlow.rootNode().id() + "'s root node is not a WoT node!");
-            return null;
-        }
+            // If the sub flow is an inject sub-flow, skip (as only data flows and event flows are used)
+            if(topologyNodeTree.rootNode().type().equals(NodeRedJSONParser.TYPE_INJECT)) continue;
 
-        // Iterate through one branch at a time
-        for(List<TopologyNode> branch : branches) {
-            // Get the src and dst node
-            TopologyNode src = branch.getFirst(); // Assumed to be sensor
-            TopologyNode dst = branch.getLast(); // Assumed to actuator
+            // If the sub-flow's branches list is not set, skip
+            if(topologyNodeTree.branches() == null || topologyNodeTree.branches().isEmpty()) continue;
 
-            // Check if the src node is a sensor and if the dst node is an actuator
-            if(isSensor(src) && isActuator(dst)) {
-                // Create application
-                Application application = Application.createApplication(appId, userId);
-                application.setLoops(new ArrayList<>());
+            // Get the rootNode
+            TopologyNode rootNode = topologyNodeTree.rootNode();
 
-                String MASTER_MODULE = "MasterModule";
-                application.addAppModule(MASTER_MODULE, applicationPreset.APP_MODULE_RAM);
+            // Get branches
+            List<List<TopologyNode>> branches = topologyNodeTree.branches();
 
-                // Check the connectivity between the src and dst nodes
-                TopologyNodeConnectionStatus connectionStatus = TopologyNodeConnectionChecker.areNodesConnected(src.id(), dst.id());
+            // Iterate through one branch at a time
+            for(List<TopologyNode> branch : branches) {
+                // Get the src and dst node
+                TopologyNode src = branch.getFirst(); // Assumed to be sensor
+                TopologyNode dst = branch.getLast(); // Assumed to actuator
 
-                // For this level of complexity, I only care if there exists some connection between two nodes (whether its direct or indirect)
-                if(connectionStatus.isThereAConnection()) {
-                    //if(connectionStatus.isDirectionConnection()) {} // You can change it to handle direct connections
+                // Check if the src node is a sensor and if the dst node is an actuator
+                if(isSensor(src) && isActuator(dst)) {
+                    // Check the connectivity between the src and dst nodes
+                    TopologyNodeConnectionStatus connectionStatus = TopologyNodeConnectionChecker.areNodesConnected(src.id(), dst.id());
 
-                    // Get the property/action name of the src and dst node
-                    String srcName = src.uniqueAttribute();
-                    String dstName = dst.uniqueAttribute();
+                    // For this level of complexity, I only care if there exists some connection between two nodes (whether its direct or indirect)
+                    if(connectionStatus.isThereAConnection()) {
+                        //if(connectionStatus.isDirectionConnection()) {} // You can change it to handle direct connections
 
-                    // Connect src to master module
-                    addAppEdge(application, srcName, MASTER_MODULE, srcName, Tuple.UP, AppEdge.SENSOR);
+                        // Get the VD that holds the src node (sensor)
+                        VD virtualDevice = getVDUsed(src, selectedVirtualDevices);
 
-                    // Connect master module to dst
-                    addAppEdge(application, MASTER_MODULE, dstName, dstName, Tuple.DOWN, AppEdge.ACTUATOR);
+                        // Determines if the sub flow is an event flow or not
+                        boolean isEventful = rootNode.type().equals(NodeRedJSONParser.TYPE_SUBSCRIBE_EVENT);
 
-                    // Always assumed there is some processing between the src and dst node, and such a worker module is created and connected
-                    connectWorkerModule(application, workerModuleCount, srcName, dstName, MASTER_MODULE, false);
-                    workerModuleCount++;
+                        // Check if VD exists
+                        if(virtualDevice != null) {
+                            // Get the VD_SENSOR and VD_ACTUATOR, which both represent all sensors and actuator for that VD respectively
+                            String VD_SENSOR = virtualDevice.getSensor().getName();
+                            String VD_ACTUATOR = virtualDevice.getActuator().getName();
 
-                    System.out.println(srcName + " ----> " + dstName);
+                            // Check if the VD has not been used before (means VD SENSOR-MODULE-ACTUATOR for that sub-flow has not been created yet)
+                            if(!virtualDevicesUsedSoFar.contains(virtualDevice)) {
+                                // Make an edge from VD_SENSOR to MASTER_MODULE carrying tuple types of VD_SENSOR
+                                addAppEdge(application, VD_SENSOR, MASTER_MODULE, VD_SENSOR, Tuple.UP, AppEdge.SENSOR);
 
-                    applications.add(application);
+                                // Make an edge from MASTER_MODULE to VD_ACTUATOR, carrying tuple types of VD_ACTUATOR
+                                addAppEdge(application, MASTER_MODULE, VD_ACTUATOR, VD_ACTUATOR, Tuple.DOWN, AppEdge.ACTUATOR);
+
+                                // Record the VD
+                                virtualDevicesUsedSoFar.add(virtualDevice);
+
+                                /*
+                                Once the VD_SENSOR -> MASTER_MODULE -> VD_ACTUATOR connection is set up for a given VD, all branches (from that
+                                sub-flow) that use that VD (meaning the sensor is from that VD), will be converted into a worker module, so that
+                                data flowing through the sub-flow is still incorporated into the application model. If a sub-flow branch has an existing
+                                VD SENSOR-MODULE-ACTUATOR connection already, the sub-flow branch is just converted into another WORKER_MODULE-MASTER_MODULE
+                                connection for the existing VD SENSOR-MODULE-ACTUATOR connection.
+                                */
+
+                                // Get the property/action name of the src and dst node which is used as the name for sensor and actuator
+                                String srcName = src.uniqueAttribute();
+                                String dstName = dst.uniqueAttribute();
+
+                                // Convert the branch (sub-flow) into a WORKER_MODULE -> MASTER_MODULE connection
+                                String workerModuleConnection = srcName + " --> " + "WM-" + workerModuleCount + " --> " + dstName;
+
+                                connectWorkerModule(
+                                        application,
+                                        VD_SENSOR,
+                                        VD_ACTUATOR,
+                                        srcName,
+                                        dstName,
+                                        MASTER_MODULE,
+                                        isEventful
+                                );
+
+                                System.out.println("New VD SENSOR-MODULE-ACTUATOR connection made for " + virtualDevice.getFogDevice().getName());
+                                System.out.println("W-M connection: " + workerModuleConnection + " added for " + virtualDevice.getFogDevice().getName());
+                            } else {
+                                /*
+                                VD SENSOR-MODULE-ACTUATOR connection already exists for the sub-flow and as such just create
+                                a new WORKER_MODULE-MASTER_MODULE connection using sub-flow branch
+                                 */
+
+                                // Get the property/action name of the src and dst node which is used as the name for sensor and actuator
+                                String srcName = src.uniqueAttribute();
+                                String dstName = dst.uniqueAttribute();
+
+                                // Convert the branch (sub-flow) into a WORKER_MODULE -> MASTER_MODULE connection
+                                String workerModuleConnection = srcName + " --> " + "WM-" + workerModuleCount + " --> " + dstName;
+
+                                connectWorkerModule(
+                                        application,
+                                        VD_SENSOR,
+                                        VD_ACTUATOR,
+                                        srcName,
+                                        dstName,
+                                        MASTER_MODULE,
+                                        isEventful
+                                );
+
+                                System.out.println("W-M connection: " + workerModuleConnection + " added to existing " + virtualDevice.getFogDevice().getName() + " SENSOR-MODULE-ACTUATOR connection.");
+                            }
+                        }
+                    }
                 }
             }
         }
-        return new ArrayList<>(applications);
+        return application;
     }
 
-    private List<Application> setupEventFlowForApplication(String appId, int userId, TopologyNodeTree eventFlow, List<Sensor> allSensors) {
-        // Check if the event flow exists
-        if(eventFlow == null) {
-            System.out.println("Dataflow passed in is null!");
-            return null;
+    private VD getVDUsed(TopologyNode node, List<VD> vds) {
+        // Get the thing referenced by the node
+        TopologyNode thingUsed = null;
+        for(TopologyNode thing : things) {
+            if(thing.id().equals(node.thing())) thingUsed = thing;
         }
 
-        // Make sure the event flow is actually an event flow. If not return
-        if(!eventFlow.rootNode().type().equals(NodeRedJSONParser.TYPE_SUBSCRIBE_EVENT)) {
-            System.out.println("Sub Flow " + eventFlow.rootNode().id() + " is not a event flow");
-            return null;
-        }
-
-        // Checks if the event flow's branches list is set
-        if(eventFlow.branches() == null || eventFlow.branches().isEmpty()) {
-            System.out.println("Sub Flow " + eventFlow.rootNode().id() + "'s branches list is not available!");
-            return null;
-        }
-
-        // Create application collection
-        Set<Application> applications = new HashSet<>();
-
-        // Get the rootNode
-        TopologyNode rootNode = eventFlow.rootNode();
-
-        // Get branches
-        List<List<TopologyNode>> branches = eventFlow.branches();
-
-        // Check if the rootNode is a wot node, if so get its type
-        if(!isWoTNode(rootNode)) {
-            System.out.println("Sub Flow " + eventFlow.rootNode().id() + "'s root node is not a WoT node!");
-            return null;
-        }
-
-        // All event sensors
-        Set<EventSensor> eventSensors = new HashSet<>();
-
-        // Iterate through one branch at a time
-        for(List<TopologyNode> branch : branches) {
-            // Get the src and dst node
-            TopologyNode src = branch.getFirst(); // Assumed to be sensor
-            TopologyNode dst = branch.getLast(); // Assumed to actuator
-
-            // Check if the src node is a sensor and if the dst node is an actuator
-            if(isSensor(src) && isActuator(dst)) {
-                // Create application
-                Application application = Application.createApplication(appId, userId);
-                application.setLoops(new ArrayList<>());
-
-                String MASTER_MODULE = "MasterModule";
-                application.addAppModule(MASTER_MODULE, applicationPreset.APP_MODULE_RAM);
-
-                // Check the connectivity between the src and dst nodes
-                TopologyNodeConnectionStatus connectionStatus = TopologyNodeConnectionChecker.areNodesConnected(src.id(), dst.id());
-
-                // For this level of complexity, I only care if there exists some connection between two nodes (whether its direct or indirect)
-                if(connectionStatus.isThereAConnection()) {
-                    //if(connectionStatus.isDirectionConnection()) {} // You can change it to handle direct connections
-
-                    // Get the property/action name of the src and dst node
-                    String srcName = src.uniqueAttribute();
-                    String dstName = dst.uniqueAttribute();
-
-                    // Register event
-                    EventSensor eventSensor =  (EventSensor) getSensorBy(srcName, allSensors);
-                    eventSensors.add(eventSensor);
-                    EventManager.getInstance().registerEventSensor(eventSensor);
-
-                    // Connect src to master module
-                    addAppEdge(application, srcName, MASTER_MODULE, srcName, Tuple.UP, AppEdge.SENSOR);
-
-                    // Connect master module to
-                    addAppEdge(application, MASTER_MODULE, dstName, dstName, Tuple.DOWN, AppEdge.ACTUATOR);
-
-                    // Always assumed there is some processing between the src and dst node, and such a worker module is created and connected
-                    connectWorkerModule(application, eventWorkerModuleCount, srcName, dstName, MASTER_MODULE, true);
-                    eventWorkerModuleCount++;
-
-                    System.out.println(srcName + " ----> " + dstName);
-
-                    applications.add(application);
+        // Using the thing node's name find its corresponding VD
+        if(thingUsed != null) {
+            for(VD vd : vds) {
+                if(vd.getFogDevice().getName().equals(thingUsed.name())) {
+                    return vd;
                 }
             }
         }
 
-        // Trigger all events
-        for(EventSensor eventSensor : eventSensors) {
-            EventManager.getInstance().triggerEvent(eventSensor.getName());
-        }
-
-        return new ArrayList<>(applications);
-    }
-
-    private Sensor getSensorBy(String name, List<Sensor> sensors) {
-        for(Sensor sensor : sensors) {
-            if(sensor.getName().equals(name)) return sensor;
-        }
         return null;
     }
 
-    private void connectWorkerModule(Application application, int k, String sensor, String actuator, String masterModule, boolean isEventful) {
-        // App module
-        String WORKER_MODULE_K = isEventful ? "EventProcessor-" + k : "WorkerModule-" + k;
+    private void connectWorkerModule(
+            Application application,
+            String VD_SENSOR,
+            String VD_ACTUATOR,
+            String subFlowSensor,
+            String subFlowActuator,
+            String MASTER_MODULE,
+            boolean isEventful
+    ) {
+        ////////// App Modules //////////
+
+        String WORKER_MODULE_K;
+
+        if(isEventful) {
+            WORKER_MODULE_K = "EventWorkerModule-" + eventWorkerModuleCount;
+            eventWorkerModuleCount++;
+        } else {
+            WORKER_MODULE_K = "WorkerModule-" + workerModuleCount;
+            workerModuleCount++;
+        }
+
         application.addAppModule(WORKER_MODULE_K, applicationPreset.APP_MODULE_RAM);
 
-        // App Edges
-        addAppEdge(application, masterModule, WORKER_MODULE_K, "Task-" + k, Tuple.UP, AppEdge.MODULE);
-        addAppEdge(application, WORKER_MODULE_K, masterModule, "Response-" + k, Tuple.DOWN, AppEdge.MODULE);
+        ////////// App Edges //////////
 
-        // Tuple mappings
-        application.addTupleMapping(masterModule, sensor, "Task-" + k, new FractionalSelectivity(1.0));
-        application.addTupleMapping(WORKER_MODULE_K, "Task-" + k, "Response-" + k, new FractionalSelectivity(1.0));
-        application.addTupleMapping(masterModule, "Response-" + k, actuator, new FractionalSelectivity(1.0));
+        // From MASTER_MODULE to WORKER_MODULE_K carrying tuple types of customSensor (from sub flow)
+        addAppEdge(application, MASTER_MODULE, WORKER_MODULE_K, subFlowSensor, Tuple.UP, AppEdge.MODULE);
 
-        // App Loop
-        final AppLoop loop = new AppLoop(new ArrayList<>(){{add(sensor);add(masterModule);add(WORKER_MODULE_K);add(masterModule);add(actuator);}});
+        // From WORKER_MODULE_K to MASTER_MODULE carrying tuple types of actuatorAction (from sub flow)
+        addAppEdge(application, WORKER_MODULE_K, MASTER_MODULE, subFlowActuator, Tuple.DOWN, AppEdge.MODULE);
+
+        ////////// Tuple Mappings //////////
+
+        // For every incoming tuple of type VD_SENSOR into the MASTER_MODULE, 1.0 tuples of type subFlowSensor are emitted
+        application.addTupleMapping(MASTER_MODULE, VD_SENSOR, subFlowSensor, new FractionalSelectivity(1.0));
+
+        // For every incoming tuple of type subFlowSensor into the WORKER_MODULE_K, 1.0 tuples of type subFlowActuator are emitted
+        application.addTupleMapping(WORKER_MODULE_K, subFlowSensor, subFlowActuator, new FractionalSelectivity(1.0));
+
+        // For every incoming tuple of type subFlowActuator into the MASTER_MODULE, 1.0 tuples of type VD_ACTUATOR are emitted
+        application.addTupleMapping(MASTER_MODULE, subFlowActuator, VD_ACTUATOR, new FractionalSelectivity(1.0));
+
+        ////////// App Loop //////////
+
+        // Create the app loop which defines the flow of tuples from component to component
+        final AppLoop loop = new AppLoop(new ArrayList<>(){{add(VD_SENSOR);add(MASTER_MODULE);/*add(subFlowSensor);*/add(WORKER_MODULE_K);/*add(subFlowActuator);*/add(MASTER_MODULE);add(VD_ACTUATOR);}});
+
+        // Add the created app loop to the appLoops list
         application.getLoops().add(loop);
     }
 
@@ -401,22 +387,6 @@ public class JsonToApplication {
         if(!isWoTNode(node)) return false;
 
         return node.type().equals(NodeRedJSONParser.TYPE_READ_PROPERTY) || node.type().equals(NodeRedJSONParser.TYPE_SUBSCRIBE_EVENT);
-    }
-
-    /**
-     * Adds a new app loop to the app loop list in application.
-     * @param application The application instance
-     * @param loopToAdd The app loop to add
-     */
-    private static void addLoopToAppLoops(Application application, List<String> loopToAdd) {
-        AppLoop loop = new AppLoop(loopToAdd);
-
-        if(application.getLoops() != null) {
-            application.getLoops().add(loop);
-            System.out.println("Application loop set: " + loop.getModules());
-        } else {
-            System.out.println("Application loops are null!");
-        }
     }
 
     private static boolean isWoTNode(TopologyNode node) {
@@ -434,38 +404,11 @@ public class JsonToApplication {
                 edgeDirection,
                 edgeType
         );
-
-        //System.out.println("Connected: " + srcModuleName + " --> " + dstModuleName);
-    }
-
-    private String determineTupleType(TopologyNode node) {
-        return node.uniqueAttribute();
-    }
-
-    private int determineDirection(TopologyNode node) {
-        // Assume upward tuple flow for sensors and downward for actuators
-        if (node.type().equals(NodeRedJSONParser.TYPE_READ_PROPERTY) || node.type().equals(NodeRedJSONParser.TYPE_SUBSCRIBE_EVENT)) {
-            return Tuple.UP;
-        } else if (node.type().equals(NodeRedJSONParser.TYPE_INVOKE_ACTION) || node.type().equals(NodeRedJSONParser.TYPE_WRITE_PROPERTY)) {
-            return Tuple.DOWN;
-        } else {
-            return Tuple.UP;  // Default for other module connections
-        }
-    }
-
-    private int determineEdgeType(TopologyNode node) {
-        if (node.type().equals(NodeRedJSONParser.TYPE_READ_PROPERTY) || node.type().equals(NodeRedJSONParser.TYPE_SUBSCRIBE_EVENT)) {
-            return AppEdge.SENSOR;
-        } else if (node.type().equals(NodeRedJSONParser.TYPE_INVOKE_ACTION) || node.type().equals(NodeRedJSONParser.TYPE_WRITE_PROPERTY)) {
-            return AppEdge.ACTUATOR;
-        } else {
-            return AppEdge.MODULE;
-        }
     }
 
     ////////////////////////////////////// APPLICATION PHYSICAL TOPOLOGY CONSTRUCTION //////////////////////////////////////
 
-    public ApplicationPhysicalTopology createApplicationPhysicalTopology(List<VirtualDevice> virtualDevices) {
+    public ApplicationPhysicalTopology createApplicationPhysicalTopology(List<VD> virtualDevices) {
         // Will store all fog devices used in the application
         List<FogDevice> fogDevices = new ArrayList<>();
 
@@ -474,37 +417,22 @@ public class JsonToApplication {
 
         try {
             // Search for selected VDs based on things list
-            List<VirtualDevice> allSelectedVirtualDevices = getSelectedVirtualDevices(virtualDevices, things);
+            List<VD> allSelectedVirtualDevices = getSelectedVirtualDevices(virtualDevices, things);
 
             if(allSelectedVirtualDevices == null) throw new Error("No virtual devices exist for things specified!");
 
             // Set the selected virtual devices
             selectedVirtualDevices.addAll(allSelectedVirtualDevices);
 
-            // Get the names of all sensors and actuators used in the application
-            Set<String> sensorsAndActuatorsUsed = new HashSet<>(getAllSensorsAndActuatorsUsed(allTopologyNodes));
-
             // Lists to store used sensors and actuators
             List<Sensor> allSensorsUsedInApplication = new ArrayList<>();
             List<Actuator> allActuatorsUsedInApplication = new ArrayList<>();
 
             // Iterate once over VDs to collect sensors & actuators
-            for (VirtualDevice virtualDevice : selectedVirtualDevices) {
-                for (Sensor sensor : virtualDevice.getSensorProperties()) { // Sensor Properties
-                    if (sensorsAndActuatorsUsed.contains(sensor.getName())) {
-                        allSensorsUsedInApplication.add(sensor);
-                    }
-                }
-                for (Actuator actuator : virtualDevice.getActuatorActions()) { // Actuator Actions
-                    if (sensorsAndActuatorsUsed.contains(actuator.getName())) {
-                        allActuatorsUsedInApplication.add(actuator);
-                    }
-                }
-                for (Sensor sensor : virtualDevice.getEventSensors()) { // Event Sensors
-                    if (sensorsAndActuatorsUsed.contains(sensor.getName())) {
-                        allSensorsUsedInApplication.add(sensor);
-                    }
-                }
+            for (VD virtualDevice : selectedVirtualDevices) {
+                allSensorsUsedInApplication.add(virtualDevice.getSensor());
+
+                allActuatorsUsedInApplication.add(virtualDevice.getActuator());
             }
 
             // Create cloud node/device at the top of the hierarchy
@@ -539,10 +467,10 @@ public class JsonToApplication {
                     fogDevices.add(edgeNode);
                     edgeNodes.add(edgeNode);
 
-                    List<VirtualDevice> virtualDevicesUsed = getVirtualDeviceWithMatchingTopic(allTopologyNodes, allSelectedVirtualDevices, topic);
+                    List<VD> virtualDevicesUsed = getVirtualDeviceWithMatchingTopic(allTopologyNodes, allSelectedVirtualDevices, topic);
 
                     assert virtualDevicesUsed != null;
-                    for(VirtualDevice virtualDevice : virtualDevicesUsed) {
+                    for(VD virtualDevice : virtualDevicesUsed) {
                         FogDevice vdFogDevice = null;
 
                         if(virtualDevice != null) {
@@ -562,7 +490,7 @@ public class JsonToApplication {
                 int numberOfEdgeNodes = Math.max(1, calculateNoOfEdgeNodes(selectedVirtualDevices.size(), applicationPreset.MAX_VDS_FOR_ONE_EDE_NODE));
 
                 // Create a list of edge nodes (each edge node is represented as a list of VDs)
-                List<List<VirtualDevice>> edgeNodeList = new ArrayList<>();
+                List<List<VD>> edgeNodeList = new ArrayList<>();
 
                 // Distribute virtual devices among edge nodes
                 for (int i = 0; i < numberOfEdgeNodes; i++) {
@@ -587,7 +515,7 @@ public class JsonToApplication {
                     edgeNodes.add(edgeNode);
 
                     // Connect the VDs to the edge node
-                    for(VirtualDevice virtualDevice : edgeNodeList.get(index)) {
+                    for(VD virtualDevice : edgeNodeList.get(index)) {
                         FogDevice vdFogDevice = virtualDevice.getFogDevice();
 
                         vdFogDevice.setParentId(edgeNode.getId());
@@ -639,10 +567,10 @@ public class JsonToApplication {
         return (int)(numberOfVDs - maxNoVDsForOneEdgeNode) / 2;
     }
 
-    private List<VirtualDevice> getSelectedVirtualDevices(List<VirtualDevice> virtualDevices, List<TopologyNode> things) {
-        List<VirtualDevice> selectedVirtualDevices = new ArrayList<>();
+    private List<VD> getSelectedVirtualDevices(List<VD> virtualDevices, List<TopologyNode> things) {
+        List<VD> selectedVirtualDevices = new ArrayList<>();
 
-        for(VirtualDevice virtualDevice : virtualDevices) {
+        for(VD virtualDevice : virtualDevices) {
             String name = virtualDevice.getFogDevice().getName();
 
             for(TopologyNode thing : things) {
@@ -676,24 +604,24 @@ public class JsonToApplication {
      * @param targetTopic The target topic to search for
      * @return A list of all virtual devices counterparts of the (referenced) things that contain the matching topic
      */
-    private List<VirtualDevice> getVirtualDeviceWithMatchingTopic(List<TopologyNode> nodes, List<VirtualDevice> allVirtualDevices, String targetTopic) {
+    private List<VD> getVirtualDeviceWithMatchingTopic(List<TopologyNode> nodes, List<VD> allVirtualDevices, String targetTopic) {
         if (targetTopic == null || targetTopic.isEmpty()) {
             System.out.println("Topic must not be empty!");
             return null;
         }
-        
+
         // Get all nodes that have a matching topic attribute
         Set<TopologyNode> matchingNodesWithTopic = new HashSet<>();
-        
+
         for(TopologyNode topologyNode : nodes) {
             if(topologyNode.topic() != null && topologyNode.topic().equals(targetTopic)) {
                 matchingNodesWithTopic.add(topologyNode);
             }
         }
-        
+
         // Get all things referenced (stores thing id) by the nodes with a matching topic
         Set<String> thingsRef = new HashSet<>();
-        
+
         for(TopologyNode node : matchingNodesWithTopic) {
             if(node.thing() != null && !node.thing().isEmpty()) {
                 thingsRef.add(node.thing());
@@ -709,12 +637,12 @@ public class JsonToApplication {
         }
 
         // Get the corresponding virtual devices of the things
-        Set<VirtualDevice> virtualDevices = new HashSet<>();
+        Set<VD> virtualDevices = new HashSet<>();
 
         // Get all things used for that topic (topic-node) and get its corresponding virtual device
         for(TopologyNode thing : thingNodes) {
             String formattedThingName = thing.name().replace(" ", "");
-            virtualDevices.add(Utility.getVirtualDevice(allVirtualDevices, formattedThingName));
+            virtualDevices.add(Utility.getVD(allVirtualDevices, formattedThingName));
         }
 
         return !virtualDevices.isEmpty() ? new ArrayList<>(virtualDevices) : null;
@@ -779,7 +707,7 @@ public class JsonToApplication {
         return applicationTopologyParser;
     }
 
-    public List<VirtualDevice> getSelectedVirtualDevices() {
+    public List<VD> getSelectedVirtualDevices() {
         return selectedVirtualDevices;
     }
 
@@ -799,3 +727,4 @@ public class JsonToApplication {
         return existingProcessingModules;
     }
 }
+

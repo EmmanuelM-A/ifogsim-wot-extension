@@ -47,7 +47,7 @@ public final class App2 {
      * Contains all related code and is where the simulation set up and running occurs
      * @param args Arguments (Never used)
      */
-    public static void main(String[] args) {
+    /*public static void main(String[] args) {
         Log.printLine("Starting Simulation...");
         try {
             //////////////////////////////// INITIAL SETUP ////////////////////////////////
@@ -150,7 +150,7 @@ public final class App2 {
 
             customMetricManager.registerMetric(new LongestApplicationLoopDelay());
             customMetricManager.registerMetric(new PeakEnergyConsumptionDevice());
-            customMetricManager.registerMetric(new TotalEnergyConsumptionEfficiency());*/
+            customMetricManager.registerMetric(new TotalEnergyConsumptionEfficiency());
 
             //////////////////////////////// SIMULATION ////////////////////////////////
 
@@ -167,5 +167,5 @@ public final class App2 {
             e.printStackTrace();
             System.out.println(e.getMessage());
         }
-    }
+    }*/
 }

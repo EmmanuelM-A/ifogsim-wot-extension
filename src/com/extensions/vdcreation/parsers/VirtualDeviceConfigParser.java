@@ -26,6 +26,8 @@ public class VirtualDeviceConfigParser implements FileProcessor<List<VirtualDevi
         // Create an ObjectMapper instance for parsing JSON
         ObjectMapper objectMapper = new ObjectMapper();
 
+        if(file == null || file.getName().isEmpty()) return null;
+
         // Parse the JSON file into a JsonNode
         JsonNode rootNode = objectMapper.readTree(file);
 

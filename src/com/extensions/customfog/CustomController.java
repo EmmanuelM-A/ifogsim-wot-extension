@@ -113,11 +113,6 @@ public class CustomController extends SimEntity{
                 // Print simulation data
                 simulationData.printResults();
 
-                /*printTimeDetails();
-                printPowerDetails();
-                printCostDetails();
-                printNetworkUsageDetails();*/
-
                 // Run custom metrics using simulation data
                 customMetricManager.evaluateMetrics(simulationData);
 
@@ -127,13 +122,21 @@ public class CustomController extends SimEntity{
         }
     }
 
+    private Application application;
+
     private void recordSimulationData() {
         // Execution time
         simulationData.recordExecutionTime();
 
         // Application Loop Delays
-        for(Integer loopId : TimeKeeper.getInstance().getLoopIdToTupleIds().keySet()){
+        /*for(Integer loopId : TimeKeeper.getInstance().getLoopIdToTupleIds().keySet()){
             simulationData.recordApplicationLoopDelays(getStringForLoopId(loopId), TimeKeeper.getInstance().getLoopIdToCurrentAverage().get(loopId));
+            //System.out.println(loopId);
+        }*/
+
+        for(AppLoop appLoop : application.getLoops()) {
+            simulationData.recordApplicationLoopDelays(getStringForLoopId(appLoop.getLoopId()), TimeKeeper.getInstance().getLoopIdToCurrentAverage().get(appLoop.getLoopId()));
+            //System.out.println(appLoop.getLoopId());
         }
 
         // Tuple CPU Execution Delays
@@ -228,6 +231,8 @@ public class CustomController extends SimEntity{
     }
 
     public void submitApplication(Application application, int delay, ModulePlacement modulePlacement){
+        this.application = application;
+
         FogUtils.appIdToGeoCoverageMap.put(application.getAppId(), application.getGeoCoverage());
         getApplications().put(application.getAppId(), application);
         getAppLaunchDelays().put(application.getAppId(), delay);

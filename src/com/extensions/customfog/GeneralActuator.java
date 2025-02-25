@@ -21,7 +21,7 @@ public class GeneralActuator extends ActuatorAction {
         this.parentFogDeviceId = parentFogDeviceId;
     }
 
-    @Override
+    /*@Override
     public void processEvent(SimEvent ev) {
         if (ev.getTag() == FogEvents.TUPLE_ARRIVAL) {
             Tuple tuple = (Tuple) ev.getData();
@@ -45,7 +45,7 @@ public class GeneralActuator extends ActuatorAction {
                 System.out.println("Broadcast tuple: " + copiedTuple.getTupleType() + " to " + actuator.getName());
             }
         }
-    }
+    }*/
 
     private Tuple makeCopy(Tuple tuple) {
         return new Tuple(

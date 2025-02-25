@@ -2,6 +2,7 @@ package com.extensions.utils;
 
 import com.extensions.sysconstructor.topology.TopologyNode;
 import com.extensions.sysconstructor.topology.TopologyNodeTree;
+import com.extensions.vdcreation.core.VD;
 import com.extensions.vdcreation.core.VirtualDevice;
 import org.fog.application.AppLoop;
 
@@ -23,6 +24,13 @@ public class Utility {
 
     public static VirtualDevice getVirtualDevice(List<VirtualDevice> virtualDevices, String name) {
         for(VirtualDevice virtualDevice : virtualDevices) {
+            if(virtualDevice.getFogDevice().getName().equals(name)) return virtualDevice;
+        }
+        return null;
+    }
+
+    public static VD getVD(List<VD> virtualDevices, String name) {
+        for(VD virtualDevice : virtualDevices) {
             if(virtualDevice.getFogDevice().getName().equals(name)) return virtualDevice;
         }
         return null;
