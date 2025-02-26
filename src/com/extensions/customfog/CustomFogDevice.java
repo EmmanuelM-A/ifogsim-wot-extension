@@ -15,6 +15,8 @@ import org.fog.application.Application;
 import org.fog.entities.FogDevice;
 import org.fog.entities.FogDeviceCharacteristics;
 import org.fog.entities.Tuple;
+import org.fog.utils.FogEvents;
+import org.fog.utils.FogUtils;
 import org.fog.utils.Logger;
 import org.fog.utils.TimeKeeper;
 
@@ -32,9 +34,10 @@ public class CustomFogDevice extends FogDevice {
         Object data = ev.getData();
 
         // Check if it's an instance of EventTuple
-        if (data instanceof EventTuple eventTuple) {
-            processEventTuple(eventTuple);
-        } else if (data instanceof Tuple tuple) {
+        if (data instanceof EventTuple) {
+            // Process as event
+            processEventTupleArrival(ev);
+        } else if (data instanceof Tuple) {
             // Default iFogSim Tuple Handling
             super.processTupleArrival(ev);
         } else {
@@ -42,9 +45,90 @@ public class CustomFogDevice extends FogDevice {
         }
     }
 
-    public void processEventTuple(EventTuple tuple) {
-        System.out.println(getName() + " processing event tuple: " + tuple.getEventType());
-        ///.getInstance().routeEvent(tuple);
+    public void processEventTupleArrival(SimEvent ev) {
+        EventTuple eventTuple = (EventTuple) ev.getData();
+
+        if (getName().equals("cloud")) {
+            updateCloudTraffic();
+        }
+
+		/*if(getName().equals("d-0") && tuple.getTupleType().equals("_SENSOR")){
+			System.out.println(++numClients);
+		}*/
+        Logger.debug(getName(), "Received tuple " + eventTuple.getCloudletId() + "with tupleType = " + eventTuple.getTupleType() + "\t| Source : " +
+                CloudSim.getEntityName(ev.getSource()) + "|Dest : " + CloudSim.getEntityName(ev.getDestination()));
+
+		/*if(CloudSim.getEntityName(ev.getSource()).equals("drone_0")||CloudSim.getEntityName(ev.getDestination()).equals("drone_0"))
+			System.out.println(CloudSim.clock()+" "+getName()+" Received tuple "+tuple.getCloudletId()+" with tupleType = "+tuple.getTupleType()+"\t| Source : "+
+		CloudSim.getEntityName(ev.getSource())+"|Dest : "+CloudSim.getEntityName(ev.getDestination()));*/
+
+        send(ev.getSource(), CloudSim.getMinTimeBetweenEvents(), FogEvents.TUPLE_ACK);
+
+        if (FogUtils.appIdToGeoCoverageMap.containsKey(eventTuple.getAppId())) {
+        }
+
+        if (eventTuple.getDirection() == Tuple.ACTUATOR) {
+            sendTupleToActuator(eventTuple);
+            return;
+        }
+
+        if (getHost().getVmList().size() > 0) {
+            final AppModule operator = (AppModule) getHost().getVmList().getFirst();
+            if (CloudSim.clock() > 0) {
+                getHost().getVmScheduler().deallocatePesForVm(operator);
+                getHost().getVmScheduler().allocatePesForVm(operator, new ArrayList<Double>() {
+                    protected static final long serialVersionUID = 1L;
+
+                    {
+                        add((double) getHost().getTotalMips());
+                    }
+                });
+            }
+        }
+
+
+        if (getName().equals("cloud") && eventTuple.getDestModuleName() == null) {
+            sendNow(getControllerId(), FogEvents.TUPLE_FINISHED, null);
+        }
+
+        if (appToModulesMap.containsKey(eventTuple.getAppId())) {
+            if (appToModulesMap.get(eventTuple.getAppId()).contains(eventTuple.getDestModuleName())) {
+                int vmId = -1;
+                for (Vm vm : getHost().getVmList()) {
+                    if (((AppModule) vm).getName().equals(eventTuple.getDestModuleName()))
+                        vmId = vm.getId();
+                }
+                if (vmId < 0
+                        || (eventTuple.getModuleCopyMap().containsKey(eventTuple.getDestModuleName()) &&
+                        eventTuple.getModuleCopyMap().get(eventTuple.getDestModuleName()) != vmId)) {
+                    return;
+                }
+                eventTuple.setVmId(vmId);
+                //Logger.error(getName(), "Executing tuple for operator " + moduleName);
+
+                updateTimingsOnReceipt(eventTuple);
+
+                executeTuple(ev, eventTuple.getDestModuleName());
+            } else if (eventTuple.getDestModuleName() != null) {
+                if (eventTuple.getDirection() == Tuple.UP)
+                    sendUp(eventTuple);
+                else if (eventTuple.getDirection() == Tuple.DOWN) {
+                    for (int childId : getChildrenIds())
+                        sendDown(eventTuple, childId);
+                }
+            } else {
+                sendUp(eventTuple);
+            }
+        } else {
+            if (eventTuple.getDirection() == Tuple.UP)
+                sendUp(eventTuple);
+            else if (eventTuple.getDirection() == Tuple.DOWN) {
+                for (int childId : getChildrenIds())
+                    sendDown(eventTuple, childId);
+            }
+        }
+
+        System.out.println(getName() + " processing event tuple: " + eventTuple.getEventType());
     }
 
     @Override

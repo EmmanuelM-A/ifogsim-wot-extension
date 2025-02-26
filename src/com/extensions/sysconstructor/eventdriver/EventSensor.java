@@ -3,6 +3,13 @@ package com.extensions.sysconstructor.eventdriver;
 import com.extensions.customfog.CustomSensor;
 import com.extensions.utils.presets.SensorPreset;
 import com.extensions.vdcreation.models.Event;
+import org.cloudbus.cloudsim.UtilizationModelFull;
+import org.fog.application.AppEdge;
+import org.fog.entities.Tuple;
+import org.fog.utils.FogEvents;
+import org.fog.utils.FogUtils;
+import org.fog.utils.Logger;
+import org.fog.utils.TimeKeeper;
 
 /**
  *
@@ -27,9 +34,39 @@ public class EventSensor extends CustomSensor {
     @Override
     public void transmit() {
         if (eventTriggered) {
-            super.transmit();
+            transmitEventTuple();
             eventTriggered = false; // Reset event trigger after transmission
-            //System.out.println("Event " + getName() + " triggered!");
+            System.out.println("Event " + getName() + " triggered!");
+        }
+    }
+
+    private void transmitEventTuple() {
+        AppEdge _edge = null;
+        for(AppEdge edge : getApp().getEdges()){
+            if(edge.getSource().equals(getTupleType()))
+                _edge = edge;
+        }
+
+        if(_edge != null) {
+            long cpuLength = (long) _edge.getTupleCpuLength();
+            long nwLength = (long) _edge.getTupleNwLength();
+
+            EventTuple eventTuple = new EventTuple(getAppId(), FogUtils.generateTupleId(), Tuple.UP, cpuLength, 1, nwLength, getOutputSize(),
+                    new UtilizationModelFull(), new UtilizationModelFull(), new UtilizationModelFull(), getName());
+
+            eventTuple.setUserId(getUserId());
+            eventTuple.setTupleType(getTupleType());
+
+            eventTuple.setDestModuleName(_edge.getDestination());
+            eventTuple.setSrcModuleName(getSensorName());
+            Logger.debug(getName(), "Sending tuple with tupleId = "+eventTuple.getCloudletId());
+
+            eventTuple.setDestinationDeviceId(getGatewayDeviceId());
+
+            int actualTupleId = updateTimings(getSensorName(), eventTuple.getDestModuleName());
+            eventTuple.setActualTupleId(actualTupleId);
+
+            send(getGatewayDeviceId(), getLatency(), FogEvents.TUPLE_ARRIVAL,eventTuple);
         }
     }
 

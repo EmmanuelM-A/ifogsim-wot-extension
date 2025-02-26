@@ -29,4 +29,8 @@ public class EventManager {
             }
         }
     }
+
+    public List<EventSensor> getEventSensors() {
+        return eventSensors;
+    }
 }
