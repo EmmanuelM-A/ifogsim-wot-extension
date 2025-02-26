@@ -17,9 +17,6 @@ import org.fog.entities.Tuple;
 
 import java.util.*;
 
-// TODO - COMPLETE THE INJECT NODE DATA FLOW
-// TODO - FINALISE CLASSES AND ADD COMMENTS TO CODE
-
 public class JsonToApplicationModel {
     /**
      * Contains all the information needed to run the application
@@ -198,8 +195,6 @@ public class JsonToApplicationModel {
                 }
             }
         }
-
-        // TODO CONSIDER ITS IMPORTANCE - IS IT ACTUALLY NEEDED - MUST I MAP USER DATA FLOW IN THE APPLICATION
 
         // Set tuple mappings
         for(Map.Entry<String, TupleMapping> tupleMapping : tupleMappings.entrySet()) {

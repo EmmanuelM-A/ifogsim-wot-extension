@@ -250,8 +250,7 @@ public class JsonToApplication {
                                         VD_ACTUATOR,
                                         srcName,
                                         dstName,
-                                        MASTER_MODULE,
-                                        isEventful
+                                        MASTER_MODULE
                                 );
 
                                 //System.out.println("New VD SENSOR-MODULE-ACTUATOR connection made for " + virtualDevice.getFogDevice().getName());
@@ -269,8 +268,7 @@ public class JsonToApplication {
                                         VD_ACTUATOR,
                                         srcName,
                                         dstName,
-                                        MASTER_MODULE,
-                                        isEventful
+                                        MASTER_MODULE
                                 );
 
                                 //System.out.println("WORKER-MODULE connection: " + workerModuleConnection + " added to existing " + virtualDevice.getFogDevice().getName() + " SENSOR-MODULE-ACTUATOR connection.");
@@ -394,30 +392,18 @@ public class JsonToApplication {
         return null;
     }
 
-    // TODO - TIDY UP CODE EVERYWHERE
-    // TODO - FINALISE DESIGNS
-    // TODO - TRY AND INCORPORATE EVENT HANDLING
-
     private String connectWorkerModule(
             Application application,
             String VD_SENSOR,
             String VD_ACTUATOR,
             String subFlowSensor,
             String subFlowActuator,
-            String MASTER_MODULE,
-            boolean isEventful
+            String MASTER_MODULE
     ) {
         ////////// App Modules //////////
 
-        String WORKER_MODULE_K;
-
-        //if(isEventful) {
-            //WORKER_MODULE_K = "EventWorkerModule-" + eventWorkerModuleCount;
-            //eventWorkerModuleCount++;
-        //} else {
-            WORKER_MODULE_K = "WorkerModule-" + workerModuleCount;
-            workerModuleCount++;
-        //}
+        String WORKER_MODULE_K = "WorkerModule-" + workerModuleCount;
+        workerModuleCount++;
 
         application.addAppModule(WORKER_MODULE_K, applicationPreset.APP_MODULE_RAM);
 

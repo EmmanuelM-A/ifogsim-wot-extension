@@ -9,7 +9,6 @@ import java.util.Map;
 import com.extensions.customfog.ActuatorAction;
 import com.extensions.customfog.CustomActuator;
 import com.extensions.customfog.CustomSensor;
-import com.extensions.customfog.GeneralActuator;
 import com.extensions.sysconstructor.eventdriver.EventSensor;
 import com.extensions.utils.presets.ActuatorPreset;
 import com.extensions.utils.presets.FogDevicePreset;
@@ -19,8 +18,6 @@ import com.extensions.vdcreation.models.Property;
 import com.extensions.vdcreation.models.ThingDescription;
 import com.extensions.vdcreation.models.Action;
 import com.extensions.vdcreation.parsers.ThingDescriptionParser;
-import org.fog.entities.Actuator;
-import org.fog.entities.Sensor;
 
 /**
  * Responsible for creating the virtual devices (VDs) from the thing descriptions.

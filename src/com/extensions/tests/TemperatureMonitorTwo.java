@@ -32,8 +32,6 @@ public class TemperatureMonitorTwo {
      */
     private static final boolean CLOUD = true;
 
-    // TODO - LOOK INTO WHY TUPLE EXECUTION DELAY & APP LOOP DELAY DON'T DISPLAY WHEN CLOUD = FALSE
-
     public static void main(String[] args) {
         try {
             //////////////////////////////// INITIAL SETUP ////////////////////////////////

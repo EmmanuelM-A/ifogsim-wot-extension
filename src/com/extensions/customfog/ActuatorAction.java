@@ -7,8 +7,8 @@ import org.fog.entities.Actuator;
 public class ActuatorAction extends Actuator {
     private final Action action;
     private final ActuatorPreset preset;
-    private String name;
-    private String actuatorType;
+    private final String name;
+    private final String actuatorType;
 
     public ActuatorAction(String name, int userId, String appId, Action action, ActuatorPreset preset) {
         super(name, userId, appId, name);

@@ -1,0 +1,583 @@
+[
+    {
+        "id": "0c12932c84101dae",
+        "type": "tab",
+        "label": "Smart Soil Irrigation System",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "8e24d66fae5a1072",
+        "type": "subscribe-event",
+        "z": "0c12932c84101dae",
+        "name": "",
+        "topic": "",
+        "thing": "3e11a9770f66de8a",
+        "event": "lowWaterLevel",
+        "x": 220,
+        "y": 940,
+        "wires": [
+            [
+                "b21b1280ab4bccdc",
+                "9b17526e2d616250"
+            ]
+        ]
+    },
+    {
+        "id": "459281c92eb86090",
+        "type": "subscribe-event",
+        "z": "0c12932c84101dae",
+        "name": "",
+        "topic": "",
+        "thing": "0a58653b1d429a97",
+        "event": "nutritionDepleted",
+        "x": 220,
+        "y": 1100,
+        "wires": [
+            [
+                "dd2f6f12bdfe714f",
+                "732854a4775eeb85"
+            ]
+        ]
+    },
+    {
+        "id": "b21b1280ab4bccdc",
+        "type": "invoke-action",
+        "z": "0c12932c84101dae",
+        "name": "",
+        "topic": "",
+        "thing": "3e11a9770f66de8a",
+        "action": "stopPump",
+        "uriVariables": "",
+        "x": 530,
+        "y": 980,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "5e6c061be81b4058",
+        "type": "invoke-action",
+        "z": "0c12932c84101dae",
+        "name": "",
+        "topic": "",
+        "thing": "0a58653b1d429a97",
+        "action": "calibrateSensor",
+        "uriVariables": "",
+        "x": 830,
+        "y": 1180,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "4aac32190ca874e3",
+        "type": "comment",
+        "z": "0c12932c84101dae",
+        "name": "Simulates data retrieval",
+        "info": "",
+        "x": 220,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "c741bdd94e8c3e63",
+        "type": "read-property",
+        "z": "0c12932c84101dae",
+        "name": "",
+        "topic": "",
+        "thing": "3e11a9770f66de8a",
+        "property": "status",
+        "uriVariables": "",
+        "observe": true,
+        "x": 200,
+        "y": 800,
+        "wires": [
+            [
+                "2b1362c86abb3a47"
+            ]
+        ]
+    },
+    {
+        "id": "9b17526e2d616250",
+        "type": "invoke-action",
+        "z": "0c12932c84101dae",
+        "name": "",
+        "topic": "",
+        "thing": "dc99cc6070d7f6fe",
+        "action": "showAlert",
+        "uriVariables": "",
+        "x": 530,
+        "y": 920,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "b07bd186fe8226dd",
+        "type": "comment",
+        "z": "0c12932c84101dae",
+        "name": "If it reaches a certain threshold",
+        "info": "",
+        "x": 570,
+        "y": 260,
+        "wires": []
+    },
+    {
+        "id": "dd2f6f12bdfe714f",
+        "type": "invoke-action",
+        "z": "0c12932c84101dae",
+        "name": "",
+        "topic": "",
+        "thing": "dc99cc6070d7f6fe",
+        "action": "showAlert",
+        "uriVariables": "",
+        "x": 510,
+        "y": 1100,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "2b1362c86abb3a47",
+        "type": "invoke-action",
+        "z": "0c12932c84101dae",
+        "name": "",
+        "topic": "",
+        "thing": "dc99cc6070d7f6fe",
+        "action": "updateDisplay",
+        "uriVariables": "",
+        "x": 520,
+        "y": 800,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "874f6a0dad9db103",
+        "type": "comment",
+        "z": "0c12932c84101dae",
+        "name": "Logs water pump status",
+        "info": "",
+        "x": 220,
+        "y": 760,
+        "wires": []
+    },
+    {
+        "id": "f276c3313e404391",
+        "type": "comment",
+        "z": "0c12932c84101dae",
+        "name": "Handles nutrition depleted event",
+        "info": "",
+        "x": 250,
+        "y": 1060,
+        "wires": []
+    },
+    {
+        "id": "ace2390623f0309d",
+        "type": "comment",
+        "z": "0c12932c84101dae",
+        "name": "Handles low water level",
+        "info": "",
+        "x": 220,
+        "y": 900,
+        "wires": []
+    },
+    {
+        "id": "732854a4775eeb85",
+        "type": "function",
+        "z": "0c12932c84101dae",
+        "name": "Some processing",
+        "func": "\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 510,
+        "y": 1180,
+        "wires": [
+            [
+                "5e6c061be81b4058"
+            ]
+        ]
+    },
+    {
+        "id": "7a4ebbbb138b58b8",
+        "type": "read-property",
+        "z": "0c12932c84101dae",
+        "name": "",
+        "topic": "",
+        "thing": "0a58653b1d429a97",
+        "property": "nitrogenLevel",
+        "uriVariables": "",
+        "observe": true,
+        "x": 230,
+        "y": 300,
+        "wires": [
+            [
+                "de068eddfcbf5ce9"
+            ]
+        ]
+    },
+    {
+        "id": "de068eddfcbf5ce9",
+        "type": "function",
+        "z": "0c12932c84101dae",
+        "name": "Some Processing",
+        "func": "if(msg.nitrogenLevel < 10 || msg.phosphorusLevel < 20 || msg.potassiumLevel < 15) {\n    msg.payload = true;\n} else {\n    msg.payload = false;\n}\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 530,
+        "y": 300,
+        "wires": [
+            [
+                "c363067e0693d9ec"
+            ]
+        ]
+    },
+    {
+        "id": "ae8f4caf877d6d8b",
+        "type": "invoke-action",
+        "z": "0c12932c84101dae",
+        "name": "",
+        "topic": "",
+        "thing": "3e11a9770f66de8a",
+        "action": "startPump",
+        "uriVariables": "",
+        "x": 1030,
+        "y": 240,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "c363067e0693d9ec",
+        "type": "switch",
+        "z": "0c12932c84101dae",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "true"
+            },
+            {
+                "t": "false"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 770,
+        "y": 300,
+        "wires": [
+            [
+                "ae8f4caf877d6d8b"
+            ],
+            [
+                "14ba1bb6500a227e"
+            ]
+        ]
+    },
+    {
+        "id": "14ba1bb6500a227e",
+        "type": "invoke-action",
+        "z": "0c12932c84101dae",
+        "name": "",
+        "topic": "",
+        "thing": "3e11a9770f66de8a",
+        "action": "stopPump",
+        "uriVariables": "",
+        "x": 1030,
+        "y": 340,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "be08167542aa8ade",
+        "type": "read-property",
+        "z": "0c12932c84101dae",
+        "name": "",
+        "topic": "",
+        "thing": "0a58653b1d429a97",
+        "property": "phosphorusLevel",
+        "uriVariables": "",
+        "observe": true,
+        "x": 240,
+        "y": 460,
+        "wires": [
+            [
+                "af83691442644691"
+            ]
+        ]
+    },
+    {
+        "id": "af83691442644691",
+        "type": "function",
+        "z": "0c12932c84101dae",
+        "name": "Some Processing",
+        "func": "if(msg.nitrogenLevel < 10 || msg.phosphorusLevel < 20 || msg.potassiumLevel < 15) {\n    msg.payload = true;\n} else {\n    msg.payload = false;\n}\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 530,
+        "y": 460,
+        "wires": [
+            [
+                "be8dce98be08cd62"
+            ]
+        ]
+    },
+    {
+        "id": "8e2d5cea6773ad66",
+        "type": "invoke-action",
+        "z": "0c12932c84101dae",
+        "name": "",
+        "topic": "",
+        "thing": "3e11a9770f66de8a",
+        "action": "startPump",
+        "uriVariables": "",
+        "x": 1030,
+        "y": 400,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "be8dce98be08cd62",
+        "type": "switch",
+        "z": "0c12932c84101dae",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "true"
+            },
+            {
+                "t": "false"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 770,
+        "y": 460,
+        "wires": [
+            [
+                "8e2d5cea6773ad66"
+            ],
+            [
+                "8e914a0dcff02b79"
+            ]
+        ]
+    },
+    {
+        "id": "8e914a0dcff02b79",
+        "type": "invoke-action",
+        "z": "0c12932c84101dae",
+        "name": "",
+        "topic": "",
+        "thing": "3e11a9770f66de8a",
+        "action": "stopPump",
+        "uriVariables": "",
+        "x": 1030,
+        "y": 500,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "1bc07077f20f6a41",
+        "type": "read-property",
+        "z": "0c12932c84101dae",
+        "name": "",
+        "topic": "",
+        "thing": "0a58653b1d429a97",
+        "property": "potassiumLevel",
+        "uriVariables": "",
+        "observe": true,
+        "x": 230,
+        "y": 620,
+        "wires": [
+            [
+                "50a9a5dde2c202d7"
+            ]
+        ]
+    },
+    {
+        "id": "50a9a5dde2c202d7",
+        "type": "function",
+        "z": "0c12932c84101dae",
+        "name": "Some Processing",
+        "func": "if(msg.nitrogenLevel < 10 || msg.phosphorusLevel < 20 || msg.potassiumLevel < 15) {\n    msg.payload = true;\n} else {\n    msg.payload = false;\n}\n\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 530,
+        "y": 620,
+        "wires": [
+            [
+                "dc6dde043e0a1ba9"
+            ]
+        ]
+    },
+    {
+        "id": "94dfcdde77507b43",
+        "type": "invoke-action",
+        "z": "0c12932c84101dae",
+        "name": "",
+        "topic": "",
+        "thing": "3e11a9770f66de8a",
+        "action": "startPump",
+        "uriVariables": "",
+        "x": 1030,
+        "y": 560,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "dc6dde043e0a1ba9",
+        "type": "switch",
+        "z": "0c12932c84101dae",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "true"
+            },
+            {
+                "t": "false"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 770,
+        "y": 620,
+        "wires": [
+            [
+                "94dfcdde77507b43"
+            ],
+            [
+                "46cf0dbc953e7ec3"
+            ]
+        ]
+    },
+    {
+        "id": "46cf0dbc953e7ec3",
+        "type": "invoke-action",
+        "z": "0c12932c84101dae",
+        "name": "",
+        "topic": "",
+        "thing": "3e11a9770f66de8a",
+        "action": "stopPump",
+        "uriVariables": "",
+        "x": 1030,
+        "y": 660,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "8888429b8fcf14d9",
+        "type": "comment",
+        "z": "0c12932c84101dae",
+        "name": "Simulates data retrieval",
+        "info": "",
+        "x": 220,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "3064ce0a18876716",
+        "type": "comment",
+        "z": "0c12932c84101dae",
+        "name": "If it reaches a certain threshold",
+        "info": "",
+        "x": 570,
+        "y": 420,
+        "wires": []
+    },
+    {
+        "id": "2e8ef11e6cc1e567",
+        "type": "comment",
+        "z": "0c12932c84101dae",
+        "name": "Simulates data retrieval",
+        "info": "",
+        "x": 220,
+        "y": 580,
+        "wires": []
+    },
+    {
+        "id": "6d6eefc1ccb9b0ee",
+        "type": "comment",
+        "z": "0c12932c84101dae",
+        "name": "If it reaches a certain threshold",
+        "info": "",
+        "x": 570,
+        "y": 580,
+        "wires": []
+    },
+    {
+        "id": "3e11a9770f66de8a",
+        "type": "consumed-thing",
+        "tdLink": "http://10.32.154.144:8081/water-pump",
+        "td": "{\"@context\":[\"https://www.w3.org/2019/wot/td/v1\",{\"@language\":\"en\"}],\"@type\":\"Thing\",\"title\":\"Water Pump\",\"securityDefinitions\":{\"nosec\":{\"scheme\":\"nosec\"}},\"security\":[\"nosec\"],\"properties\":{\"status\":{\"type\":\"string\",\"enum\":[\"on\",\"off\"],\"description\":\"The current status of the water pump.\",\"observable\":true,\"forms\":[{\"href\":\"http://10.32.154.144:8081/water-pump/properties/status\",\"contentType\":\"application/json\",\"op\":[\"readproperty\",\"writeproperty\"]},{\"href\":\"http://10.32.154.144:8081/water-pump/properties/status/observable\",\"contentType\":\"application/json\",\"op\":[\"observeproperty\",\"unobserveproperty\"],\"subprotocol\":\"longpoll\"},{\"href\":\"http://10.32.154.144:8081/water-pump/properties/status\",\"contentType\":\"application/cbor\",\"op\":[\"readproperty\",\"writeproperty\"]},{\"href\":\"http://10.32.154.144:8081/water-pump/properties/status/observable\",\"contentType\":\"application/cbor\",\"op\":[\"observeproperty\",\"unobserveproperty\"],\"subprotocol\":\"longpoll\"}],\"readOnly\":false,\"writeOnly\":false},\"waterLevel\":{\"type\":\"number\",\"description\":\"The current water level in the reservoir (in liters).\",\"minimum\":0,\"maximum\":100,\"readOnly\":true,\"observable\":true,\"forms\":[{\"href\":\"http://10.32.154.144:8081/water-pump/properties/waterLevel\",\"contentType\":\"application/json\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"},{\"href\":\"http://10.32.154.144:8081/water-pump/properties/waterLevel/observable\",\"contentType\":\"application/json\",\"op\":[\"observeproperty\",\"unobserveproperty\"],\"subprotocol\":\"longpoll\"},{\"href\":\"http://10.32.154.144:8081/water-pump/properties/waterLevel\",\"contentType\":\"application/cbor\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"},{\"href\":\"http://10.32.154.144:8081/water-pump/properties/waterLevel/observable\",\"contentType\":\"application/cbor\",\"op\":[\"observeproperty\",\"unobserveproperty\"],\"subprotocol\":\"longpoll\"}],\"writeOnly\":false}},\"actions\":{\"startPump\":{\"description\":\"Starts the water pump.\",\"forms\":[{\"href\":\"http://10.32.154.144:8081/water-pump/actions/startPump\",\"contentType\":\"application/json\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"},{\"href\":\"http://10.32.154.144:8081/water-pump/actions/startPump\",\"contentType\":\"application/cbor\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"}],\"safe\":false,\"idempotent\":false},\"stopPump\":{\"description\":\"Stops the water pump.\",\"forms\":[{\"href\":\"http://10.32.154.144:8081/water-pump/actions/stopPump\",\"contentType\":\"application/json\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"},{\"href\":\"http://10.32.154.144:8081/water-pump/actions/stopPump\",\"contentType\":\"application/cbor\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"}],\"safe\":false,\"idempotent\":false}},\"events\":{\"lowWaterLevel\":{\"description\":\"Triggered when the water level falls below 10 liters.\",\"data\":{\"type\":\"string\"},\"forms\":[{\"href\":\"http://10.32.154.144:8081/water-pump/events/lowWaterLevel\",\"contentType\":\"application/json\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]},{\"href\":\"http://10.32.154.144:8081/water-pump/events/lowWaterLevel\",\"contentType\":\"application/cbor\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]}]}},\"id\":\"urn:uuid:803ca958-504b-4d28-b5cd-d91ecf310ec0\",\"description\":\"A pump for irrigating soil.\",\"forms\":[{\"href\":\"http://10.32.154.144:8081/water-pump/properties\",\"contentType\":\"application/json\",\"op\":[\"readallproperties\",\"readmultipleproperties\",\"writeallproperties\",\"writemultipleproperties\"]},{\"href\":\"http://10.32.154.144:8081/water-pump/properties\",\"contentType\":\"application/cbor\",\"op\":[\"readallproperties\",\"readmultipleproperties\",\"writeallproperties\",\"writemultipleproperties\"]}]}",
+        "http": true,
+        "ws": false,
+        "coap": false,
+        "mqtt": false,
+        "opcua": false,
+        "modbus": false,
+        "basicAuth": false,
+        "username": "",
+        "password": ""
+    },
+    {
+        "id": "0a58653b1d429a97",
+        "type": "consumed-thing",
+        "tdLink": "http://10.32.154.144:8081/soil-nutrition-monitor",
+        "td": "{\"@context\":[\"https://www.w3.org/2019/wot/td/v1\",{\"@language\":\"en\"}],\"@type\":\"Thing\",\"title\":\"Soil Nutrition Monitor\",\"securityDefinitions\":{\"nosec\":{\"scheme\":\"nosec\"}},\"security\":[\"nosec\"],\"properties\":{\"nitrogenLevel\":{\"type\":\"number\",\"description\":\"The current nitrogen level (mg/kg).\",\"minimum\":0,\"maximum\":50,\"observable\":true,\"forms\":[{\"href\":\"http://10.32.154.144:8081/soil-nutrition-monitor/properties/nitrogenLevel\",\"contentType\":\"application/json\",\"op\":[\"readproperty\",\"writeproperty\"]},{\"href\":\"http://10.32.154.144:8081/soil-nutrition-monitor/properties/nitrogenLevel/observable\",\"contentType\":\"application/json\",\"op\":[\"observeproperty\",\"unobserveproperty\"],\"subprotocol\":\"longpoll\"},{\"href\":\"http://10.32.154.144:8081/soil-nutrition-monitor/properties/nitrogenLevel\",\"contentType\":\"application/cbor\",\"op\":[\"readproperty\",\"writeproperty\"]},{\"href\":\"http://10.32.154.144:8081/soil-nutrition-monitor/properties/nitrogenLevel/observable\",\"contentType\":\"application/cbor\",\"op\":[\"observeproperty\",\"unobserveproperty\"],\"subprotocol\":\"longpoll\"}],\"readOnly\":false,\"writeOnly\":false},\"phosphorusLevel\":{\"type\":\"number\",\"description\":\"The current phosphorus level (mg/kg).\",\"minimum\":0,\"maximum\":50,\"observable\":true,\"forms\":[{\"href\":\"http://10.32.154.144:8081/soil-nutrition-monitor/properties/phosphorusLevel\",\"contentType\":\"application/json\",\"op\":[\"readproperty\",\"writeproperty\"]},{\"href\":\"http://10.32.154.144:8081/soil-nutrition-monitor/properties/phosphorusLevel/observable\",\"contentType\":\"application/json\",\"op\":[\"observeproperty\",\"unobserveproperty\"],\"subprotocol\":\"longpoll\"},{\"href\":\"http://10.32.154.144:8081/soil-nutrition-monitor/properties/phosphorusLevel\",\"contentType\":\"application/cbor\",\"op\":[\"readproperty\",\"writeproperty\"]},{\"href\":\"http://10.32.154.144:8081/soil-nutrition-monitor/properties/phosphorusLevel/observable\",\"contentType\":\"application/cbor\",\"op\":[\"observeproperty\",\"unobserveproperty\"],\"subprotocol\":\"longpoll\"}],\"readOnly\":false,\"writeOnly\":false},\"potassiumLevel\":{\"type\":\"number\",\"description\":\"The current potassium level (mg/kg).\",\"minimum\":0,\"maximum\":50,\"observable\":true,\"forms\":[{\"href\":\"http://10.32.154.144:8081/soil-nutrition-monitor/properties/potassiumLevel\",\"contentType\":\"application/json\",\"op\":[\"readproperty\",\"writeproperty\"]},{\"href\":\"http://10.32.154.144:8081/soil-nutrition-monitor/properties/potassiumLevel/observable\",\"contentType\":\"application/json\",\"op\":[\"observeproperty\",\"unobserveproperty\"],\"subprotocol\":\"longpoll\"},{\"href\":\"http://10.32.154.144:8081/soil-nutrition-monitor/properties/potassiumLevel\",\"contentType\":\"application/cbor\",\"op\":[\"readproperty\",\"writeproperty\"]},{\"href\":\"http://10.32.154.144:8081/soil-nutrition-monitor/properties/potassiumLevel/observable\",\"contentType\":\"application/cbor\",\"op\":[\"observeproperty\",\"unobserveproperty\"],\"subprotocol\":\"longpoll\"}],\"readOnly\":false,\"writeOnly\":false},\"status\":{\"type\":\"string\",\"enum\":[\"active\",\"inactive\",\"error\"],\"description\":\"The current status of the monitor.\",\"forms\":[{\"href\":\"http://10.32.154.144:8081/soil-nutrition-monitor/properties/status\",\"contentType\":\"application/json\",\"op\":[\"readproperty\",\"writeproperty\"]},{\"href\":\"http://10.32.154.144:8081/soil-nutrition-monitor/properties/status\",\"contentType\":\"application/cbor\",\"op\":[\"readproperty\",\"writeproperty\"]}],\"readOnly\":false,\"writeOnly\":false,\"observable\":false}},\"actions\":{\"calibrateSensor\":{\"description\":\"Calibrates the sensor to reset nutrition readings.\",\"forms\":[{\"href\":\"http://10.32.154.144:8081/soil-nutrition-monitor/actions/calibrateSensor\",\"contentType\":\"application/json\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"},{\"href\":\"http://10.32.154.144:8081/soil-nutrition-monitor/actions/calibrateSensor\",\"contentType\":\"application/cbor\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"}],\"safe\":false,\"idempotent\":false}},\"events\":{\"nutritionDepleted\":{\"description\":\"Triggered when one or more nutrition levels are critically low.\",\"data\":{\"type\":\"string\"},\"forms\":[{\"href\":\"http://10.32.154.144:8081/soil-nutrition-monitor/events/nutritionDepleted\",\"contentType\":\"application/json\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]},{\"href\":\"http://10.32.154.144:8081/soil-nutrition-monitor/events/nutritionDepleted\",\"contentType\":\"application/cbor\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]}]}},\"id\":\"urn:uuid:ef029b40-fd20-42a4-ae49-7323f9e5e9f3\",\"description\":\"Monitors soil nutrition levels (NPK).\",\"forms\":[{\"href\":\"http://10.32.154.144:8081/soil-nutrition-monitor/properties\",\"contentType\":\"application/json\",\"op\":[\"readallproperties\",\"readmultipleproperties\",\"writeallproperties\",\"writemultipleproperties\"]},{\"href\":\"http://10.32.154.144:8081/soil-nutrition-monitor/properties\",\"contentType\":\"application/cbor\",\"op\":[\"readallproperties\",\"readmultipleproperties\",\"writeallproperties\",\"writemultipleproperties\"]}]}",
+        "http": true,
+        "ws": false,
+        "coap": false,
+        "mqtt": false,
+        "opcua": false,
+        "modbus": false,
+        "basicAuth": false,
+        "username": "",
+        "password": ""
+    },
+    {
+        "id": "dc99cc6070d7f6fe",
+        "type": "consumed-thing",
+        "tdLink": "http://10.32.147.97:8080/smart-display",
+        "td": "{\"@context\":[\"https://www.w3.org/2019/wot/td/v1\",{\"@language\":\"en\"}],\"@type\":\"Thing\",\"title\":\"Smart Display\",\"securityDefinitions\":{\"nosec\":{\"scheme\":\"nosec\"}},\"security\":[\"nosec\"],\"properties\":{\"displayedMessage\":{\"type\":\"string\",\"description\":\"The current message displayed on the screen.\",\"readOnly\":true,\"forms\":[{\"href\":\"http://10.32.147.97:8080/smart-display/properties/displayedMessage\",\"contentType\":\"application/json\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"},{\"href\":\"http://10.32.147.97:8080/smart-display/properties/displayedMessage\",\"contentType\":\"application/cbor\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"}],\"writeOnly\":false,\"observable\":false},\"alertMessage\":{\"type\":\"string\",\"description\":\"The current alert message displayed on the screen.\",\"readOnly\":true,\"forms\":[{\"href\":\"http://10.32.147.97:8080/smart-display/properties/alertMessage\",\"contentType\":\"application/json\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"},{\"href\":\"http://10.32.147.97:8080/smart-display/properties/alertMessage\",\"contentType\":\"application/cbor\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"}],\"writeOnly\":false,\"observable\":false},\"isDisplayActive\":{\"type\":\"boolean\",\"description\":\"Determines if the display is currently on or off.\",\"forms\":[{\"href\":\"http://10.32.147.97:8080/smart-display/properties/isDisplayActive\",\"contentType\":\"application/json\",\"op\":[\"readproperty\",\"writeproperty\"]},{\"href\":\"http://10.32.147.97:8080/smart-display/properties/isDisplayActive\",\"contentType\":\"application/cbor\",\"op\":[\"readproperty\",\"writeproperty\"]}],\"readOnly\":false,\"writeOnly\":false,\"observable\":false}},\"actions\":{\"updateDisplay\":{\"description\":\"Updates the message shown on smart display.\",\"input\":{\"type\":\"string\",\"description\":\"The message to display.\"},\"forms\":[{\"href\":\"http://10.32.147.97:8080/smart-display/actions/updateDisplay\",\"contentType\":\"application/json\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"},{\"href\":\"http://10.32.147.97:8080/smart-display/actions/updateDisplay\",\"contentType\":\"application/cbor\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"}],\"safe\":false,\"idempotent\":false},\"showAlert\":{\"description\":\"Displays an alert message on the screen.\",\"input\":{\"type\":\"string\",\"description\":\"The alert message to display.\"},\"forms\":[{\"href\":\"http://10.32.147.97:8080/smart-display/actions/showAlert\",\"contentType\":\"application/json\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"},{\"href\":\"http://10.32.147.97:8080/smart-display/actions/showAlert\",\"contentType\":\"application/cbor\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"}],\"safe\":false,\"idempotent\":false},\"clearDisplay\":{\"description\":\"Clears all information from the screen.\",\"forms\":[{\"href\":\"http://10.32.147.97:8080/smart-display/actions/clearDisplay\",\"contentType\":\"application/json\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"},{\"href\":\"http://10.32.147.97:8080/smart-display/actions/clearDisplay\",\"contentType\":\"application/cbor\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"}],\"safe\":false,\"idempotent\":false}},\"events\":{\"displayUpdated\":{\"description\":\"Triggered when the displayed message is updated.\",\"data\":{\"type\":\"string\"},\"forms\":[{\"href\":\"http://10.32.147.97:8080/smart-display/events/displayUpdated\",\"contentType\":\"application/json\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]},{\"href\":\"http://10.32.147.97:8080/smart-display/events/displayUpdated\",\"contentType\":\"application/cbor\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]}]},\"alertDisplayed\":{\"description\":\"Triggered when an alert message is displayed.\",\"data\":{\"type\":\"string\"},\"forms\":[{\"href\":\"http://10.32.147.97:8080/smart-display/events/alertDisplayed\",\"contentType\":\"application/json\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]},{\"href\":\"http://10.32.147.97:8080/smart-display/events/alertDisplayed\",\"contentType\":\"application/cbor\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]}]},\"displayCleared\":{\"description\":\"Triggered when the display is cleared.\",\"forms\":[{\"href\":\"http://10.32.147.97:8080/smart-display/events/displayCleared\",\"contentType\":\"application/json\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]},{\"href\":\"http://10.32.147.97:8080/smart-display/events/displayCleared\",\"contentType\":\"application/cbor\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]}]}},\"id\":\"urn:uuid:fc14185f-8385-4abf-b9ab-11a5599d5769\",\"description\":\"A smart display for display messages and related alerts.\",\"support\":\"\",\"forms\":[{\"href\":\"http://10.32.147.97:8080/smart-display/properties\",\"contentType\":\"application/json\",\"op\":[\"readallproperties\",\"readmultipleproperties\",\"writeallproperties\",\"writemultipleproperties\"]},{\"href\":\"http://10.32.147.97:8080/smart-display/properties\",\"contentType\":\"application/cbor\",\"op\":[\"readallproperties\",\"readmultipleproperties\",\"writeallproperties\",\"writemultipleproperties\"]}]}",
+        "http": true,
+        "ws": false,
+        "coap": false,
+        "mqtt": false,
+        "opcua": false,
+        "modbus": false,
+        "basicAuth": false,
+        "username": "",
+        "password": ""
+    }
+]

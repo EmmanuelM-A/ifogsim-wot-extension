@@ -37,15 +37,23 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 
+// TODO - FINALISE AND TIDY UP CODE EVERYWHERE, CLEAN UP PROJECT FOLDER, DELETE UNNECESSARY CODE
+// TODO - INVESTIGATE OUTPUT DATA
+// TODO - ADD MORE ERROR HANDLING
+// TODO - SORT OUT CONFIGURATIONS, PRESETS AND INPUT VALUES
+// TODO - LOOK INTO WHY TUPLE EXECUTION DELAY & APP LOOP DELAY DON'T DISPLAY WHEN CLOUD = FALSE
+
 public final class App {
     /**
      * Determines if the application is cloud-based
      */
     private static final boolean CLOUD = true;
 
-    private static List<Sensor> allSensors;
+    private static final String NODE_RED_APPLICATION_JSON = "src/com/extensions/input/application/door-security-application.json";
 
-    private static List<Actuator> allActuators;
+    private static final String THINGS_REPO = "src/com/extensions/input/things/repo2";
+
+    private static final String VDS_CONFIG_FILE = "src/com/extensions/input/configs/repo2-vd-configs.json";
 
     public static void main(String[] args) {
         Log.printLine("Starting Simulation...");
@@ -58,7 +66,7 @@ public final class App {
                     CloudNodePreset.DEFAULT,
                     EdgeNodePreset.DEFAULT,
                     ApplicationPreset.DEFAULT,
-                    new File("src/com/extensions/input/application/door-security-application.json") // The file path of the Node-RED application design
+                    new File(NODE_RED_APPLICATION_JSON) // The file path of the Node-RED application design
             );
 
             // Disables iFogSim's logging mechanism, only displaying simulation results
@@ -93,8 +101,8 @@ public final class App {
                     FogDevicePreset.DEFAULT,
                     SensorPreset.DEFAULT,
                     ActuatorPreset.DEFAULT,
-                    "src/com/extensions/input/things/repo2", // SET THINGS REPO HERE
-                    vdConfigParser.process(new File("src/com/extensions/input/configs/repo2-vd-configs.json")) // SET VDS CONFIG FILE HERE
+                    THINGS_REPO, // SET THINGS REPO HERE
+                    vdConfigParser.process(new File(VDS_CONFIG_FILE)) // SET VDS CONFIG FILE HERE
             );
 
             //////////////////////////////// APPLICATION SETUP ////////////////////////////////

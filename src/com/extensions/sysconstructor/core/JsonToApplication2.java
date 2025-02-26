@@ -338,10 +338,6 @@ public class JsonToApplication2 {
         return null;
     }
 
-    // TODO - TIDY UP CODE EVERYWHERE
-    // TODO - FINALISE DESIGNS
-    // TODO - TRY AND INCOPORATE EVENT HANDLING
-
     private String connectWorkerModule(
             Application application,
             String VD_SENSOR,
