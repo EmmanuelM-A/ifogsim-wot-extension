@@ -1,4 +1,4 @@
-package com.extensions.tests;
+package com.extensions.tests.examples.temperatureMonitor;
 
 import com.extensions.customfog.CustomController;
 import com.extensions.customfog.FogDeviceFactory;
@@ -8,8 +8,6 @@ import com.extensions.utils.presets.SensorPreset;
 import com.extensions.utils.presets.ActuatorPreset;
 import com.extensions.vdcreation.core.VirtualDevice;
 import com.extensions.vdcreation.core.VirtualDeviceFactory;
-import com.extensions.vdcreation.models.ThingDescription;
-import com.extensions.vdcreation.parsers.ThingDescriptionParser;
 import com.extensions.vdcreation.parsers.VirtualDeviceConfigParser;
 import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.core.CloudSim;

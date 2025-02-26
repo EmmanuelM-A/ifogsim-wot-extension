@@ -1,34 +1,17 @@
-package com.extensions.tests;
+package com.extensions.tests.examples.SmartHealthcareApplication;
 
 import com.extensions.customfog.FogDeviceFactory;
 import com.extensions.utils.Utility;
-import com.extensions.utils.presets.ActuatorPreset;
 import com.extensions.utils.presets.FogDevicePreset;
-import com.extensions.utils.presets.SensorPreset;
-import com.extensions.vdcreation.core.JsonFileProcessor;
 import com.extensions.vdcreation.core.VirtualDevice;
-import com.extensions.vdcreation.core.VirtualDeviceFactory;
-import com.extensions.vdcreation.models.ThingDescription;
-import com.extensions.vdcreation.parsers.ThingDescriptionParser;
-import com.extensions.vdcreation.parsers.VirtualDeviceConfigParser;
-import com.extensions.vdcreation.validation.VirtualDeviceValidationManager;
 import org.cloudbus.cloudsim.Log;
-import org.cloudbus.cloudsim.core.CloudSim;
 import org.fog.application.AppEdge;
 import org.fog.application.AppLoop;
 import org.fog.application.Application;
 import org.fog.application.selectivity.FractionalSelectivity;
 import org.fog.entities.*;
-import org.fog.placement.Controller;
-import org.fog.placement.ModuleMapping;
-import org.fog.placement.ModulePlacementEdgewards;
-import org.fog.placement.ModulePlacementMapping;
-import org.fog.utils.TimeKeeper;
 
-import javax.naming.ldap.Control;
-import java.io.File;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 
 /**

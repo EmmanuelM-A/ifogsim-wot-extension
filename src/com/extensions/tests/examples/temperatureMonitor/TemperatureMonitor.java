@@ -1,4 +1,4 @@
-package com.extensions.tests;
+package com.extensions.tests.examples.temperatureMonitor;
 
 import com.extensions.customfog.CustomController;
 import com.extensions.customfog.FogDeviceFactory;
@@ -7,17 +7,12 @@ import com.extensions.custommetrics.metrics.LongestApplicationLoopDelay;
 import com.extensions.custommetrics.metrics.PeakEnergyConsumptionDevice;
 import com.extensions.custommetrics.metrics.TotalEnergyConsumptionEfficiency;
 import com.extensions.sysconstructor.core.ApplicationPhysicalTopology;
-import com.extensions.sysconstructor.core.JsonToPhysicalTopology;
 import com.extensions.utils.FilePaths;
 import com.extensions.utils.presets.ActuatorPreset;
-import com.extensions.utils.presets.FogDeviceHostPreset;
 import com.extensions.utils.presets.FogDevicePreset;
 import com.extensions.utils.presets.SensorPreset;
 import com.extensions.vdcreation.core.VirtualDevice;
-import com.extensions.vdcreation.core.VirtualDeviceConfig;
 import com.extensions.vdcreation.core.VirtualDeviceFactory;
-import com.extensions.vdcreation.models.ThingDescription;
-import com.extensions.vdcreation.parsers.ThingDescriptionParser;
 import com.extensions.vdcreation.parsers.VirtualDeviceConfigParser;
 import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.core.CloudSim;
@@ -27,14 +22,12 @@ import org.fog.application.AppModule;
 import org.fog.application.Application;
 import org.fog.application.selectivity.FractionalSelectivity;
 import org.fog.entities.*;
-import org.fog.placement.Controller;
 import org.fog.placement.ModuleMapping;
 import org.fog.placement.ModulePlacementEdgewards;
 import org.fog.placement.ModulePlacementMapping;
 import org.fog.utils.TimeKeeper;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;

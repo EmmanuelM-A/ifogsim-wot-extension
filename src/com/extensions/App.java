@@ -49,11 +49,11 @@ public final class App {
      */
     private static final boolean CLOUD = true;
 
-    private static final String NODE_RED_APPLICATION_JSON = "src/com/extensions/input/application/door-security-application.json";
+    private static final String NODE_RED_APPLICATION_JSON = "src/com/extensions/tests/examples/doorSecurityApplication/door-security-application.json";
 
-    private static final String THINGS_REPO = "src/com/extensions/input/things/repo2";
+    private static final String THINGS_REPO = "src/com/extensions/tests/examples/doorSecurityApplication/things";
 
-    private static final String VDS_CONFIG_FILE = "src/com/extensions/input/configs/repo2-vd-configs.json";
+    private static final String VDS_CONFIG_FILE = "src/com/extensions/tests/examples/doorSecurityApplication/configs/vd-configs.json";
 
     public static void main(String[] args) {
         Log.printLine("Starting Simulation...");
@@ -72,16 +72,11 @@ public final class App {
             // Disables iFogSim's logging mechanism, only displaying simulation results
             Log.disable();
 
-            // The number of cloud users
+            // The number of cloud users/the number of components (or individuals) that interact with the cloud
             int numUsers = 1;
 
-            // An instance of the calendar
-            Calendar calendar = Calendar.getInstance();
-
-            // Mean trace events
-            boolean trace_flag = false;
-
-            CloudSim.init(numUsers, calendar, trace_flag);
+            // Initialise the CloudSim Simulation engine
+            CloudSim.init(numUsers, Calendar.getInstance(), false);
 
             // Identifier of the application
             String appId = jsonToApplication.getApplicationTopologyParser().parseApplicationTitle();
