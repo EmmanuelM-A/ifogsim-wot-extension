@@ -128,7 +128,7 @@ public class CustomFogDevice extends FogDevice {
             }
         }
 
-        System.out.println(getName() + " processing event tuple: " + eventTuple.getEventType());
+        //System.out.println(getName() + " processing event tuple: " + eventTuple.getEventType());
     }
 
     @Override

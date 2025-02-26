@@ -1,6 +1,5 @@
 package com.extensions.sysconstructor.core;
 
-import com.extensions.customfog.CustomSensor;
 import com.extensions.customfog.FogDeviceFactory;
 import com.extensions.sysconstructor.eventdriver.EventManager;
 import com.extensions.sysconstructor.eventdriver.EventSensor;
@@ -15,7 +14,6 @@ import com.extensions.utils.Utility;
 import com.extensions.utils.presets.ApplicationPreset;
 import com.extensions.utils.presets.CloudNodePreset;
 import com.extensions.utils.presets.EdgeNodePreset;
-import com.extensions.vdcreation.core.VD;
 import com.extensions.vdcreation.core.VirtualDevice;
 import org.fog.application.AppEdge;
 import org.fog.application.AppLoop;
@@ -94,31 +92,15 @@ public class JsonToApplication {
     /**
      * A count used to keep track of all processing modules created
      */
-    private int processingModuleCount;
+    private final int processingModuleCount;
 
     /**
      * A count used to keep track of all event processing modules created
      */
     private int eventProcessingModuleCount;
 
-    /**
-     * Used to keep track of all modules made and ensure no duplicate
-     */
-    private HashMap<String, TupleMapping> moduleTupleMappings;
-
-    /**
-     * Helps keep track of all processingModules.
-     */
-    private Map<String, String> existingProcessingModules;
-
     // Keep tracks of the number of worker modules created
     private int workerModuleCount = 1;
-
-    // Keep tracks of the number of worker modules created
-    private int eventWorkerModuleCount = 1;
-
-    // All event sensors
-    Set<EventSensor> eventSensors;
 
     List<Sensor> allSensors;
 
@@ -137,11 +119,8 @@ public class JsonToApplication {
         this.eventFlows = new ArrayList<>();
         this.injectFlows = new ArrayList<>();
         this.selectedVirtualDevices = new ArrayList<>();
-        this.moduleTupleMappings = new HashMap<>();
-        this.existingProcessingModules = new HashMap<>();
         this.processingModuleCount = 0;
         this.eventProcessingModuleCount = 0;
-        this.eventSensors = new HashSet<>();
         this.allSensors = null;
 
         // Convert the Node-RED application description into a structured input format
@@ -172,7 +151,13 @@ public class JsonToApplication {
     //////////////////////////////////////////// APPLICATION MODEL CONSTRUCTION ////////////////////////////////////////////
 
     public Application createApplicationModel(String appId, int userId) {
-        return mapAppTopologyToAppModel(appId, userId, topologyNodeTrees);
+        Application application = mapAppTopologyToAppModel(appId, userId, dataFlows);
+
+        addEventFlowToApplication(application);
+
+        System.out.println("Application's application model formed!");
+
+        return application;
     }
 
     private Application mapAppTopologyToAppModel(String appId, int userId, List<TopologyNodeTree> topologyNodeTrees) {
@@ -239,11 +224,6 @@ public class JsonToApplication {
                             String srcName = src.uniqueAttribute();
                             String dstName = dst.uniqueAttribute();
 
-                            // If the sub flow is an event flow, add the event flow to the application model
-                            if(isEventful) {
-                                recordEventFlow(application, srcName, dstName, VD_ACTUATOR, branches);
-                            }
-
                             // Check if the VD has not been used before (means VD SENSOR-MODULE-ACTUATOR for that sub-flow has not been created yet)
                             if(!virtualDevicesUsedSoFar.contains(virtualDevice)) {
                                 // Make an edge from VD_SENSOR to MASTER_MODULE carrying tuple types of VD_SENSOR
@@ -274,8 +254,8 @@ public class JsonToApplication {
                                         isEventful
                                 );
 
-                                System.out.println("New VD SENSOR-MODULE-ACTUATOR connection made for " + virtualDevice.getFogDevice().getName());
-                                System.out.println("WORKER-MODULE connection: " + workerModuleConnection + " added for " + virtualDevice.getFogDevice().getName());
+                                //System.out.println("New VD SENSOR-MODULE-ACTUATOR connection made for " + virtualDevice.getFogDevice().getName());
+                                //System.out.println("WORKER-MODULE connection: " + workerModuleConnection + " added for " + virtualDevice.getFogDevice().getName());
                             } else {
                                 /*
                                 VD SENSOR-MODULE-ACTUATOR connection already exists for the sub-flow and as such just create
@@ -293,50 +273,102 @@ public class JsonToApplication {
                                         isEventful
                                 );
 
-                                System.out.println("WORKER-MODULE connection: " + workerModuleConnection + " added to existing " + virtualDevice.getFogDevice().getName() + " SENSOR-MODULE-ACTUATOR connection.");
+                                //System.out.println("WORKER-MODULE connection: " + workerModuleConnection + " added to existing " + virtualDevice.getFogDevice().getName() + " SENSOR-MODULE-ACTUATOR connection.");
                             }
                         }
                     }
                 }
             }
         }
-        // Trigger all events
-        for(EventSensor eventSensor : EventManager.getInstance().getEventSensors()) {
-            EventManager.getInstance().triggerEvent(eventSensor.getName());
-        }
-
-        System.out.println("Application's application model formed!");
 
         return application;
     }
 
-    private void recordEventFlow(Application application, String srcName, String dstName, String VD_ACTUATOR,  List<List<TopologyNode>> branches) {
-        String eventProcessor = "EventProcessor-" + eventProcessingModuleCount;
-        application.addAppModule(eventProcessor, 10);
+    private void addEventFlowToApplication(Application application) {
+        for(TopologyNodeTree topologyNodeTree : eventFlows) {
+            // Check if the sub flow is not null
+            if(topologyNodeTree == null) continue;
 
-        if (branches.size() == 1) {
-            // Connect src to event processor
-            addAppEdge(application, srcName, eventProcessor, srcName, Tuple.UP, AppEdge.SENSOR);
+            // If the sub flow is an inject sub-flow, skip (as only data flows and event flows are used)
+            if(topologyNodeTree.rootNode().type().equals(NodeRedJSONParser.TYPE_INJECT)) continue;
 
-            // Connect event processor to dst
-            addAppEdge(application, eventProcessor, dstName, dstName, Tuple.DOWN, AppEdge.ACTUATOR);
+            // If the sub-flow's branches list is not set, skip
+            if(topologyNodeTree.branches() == null || topologyNodeTree.branches().isEmpty()) continue;
 
-            application.addTupleMapping(eventProcessor, srcName, dstName, new FractionalSelectivity(1.0));
+            // Get the rootNode
+            TopologyNode rootNode = topologyNodeTree.rootNode();
 
-            final AppLoop loop = new AppLoop(new ArrayList<>(){{add(srcName);add(eventProcessor);add(dstName);}});
-            application.getLoops().add(loop);
-        } else if (branches.size() > 1) {
-            // Connect src to event processor
-            addAppEdge(application, srcName, srcName, srcName, Tuple.UP, AppEdge.SENSOR);
+            // Get branches
+            List<List<TopologyNode>> branches = topologyNodeTree.branches();
 
-            // Connect event processor to dst
-            addAppEdge(application, eventProcessor, VD_ACTUATOR, VD_ACTUATOR, Tuple.DOWN, AppEdge.ACTUATOR);
+            // Get first branch
+            List<TopologyNode> branch = branches.getFirst();
 
-            application.addTupleMapping(eventProcessor, srcName, VD_ACTUATOR, new FractionalSelectivity(1.0));
+            // Get the src and dst node
+            TopologyNode src = branch.getFirst(); // Assumed to be sensor
+            TopologyNode dst = branch.getLast(); // Assumed to be actuator
 
-            final AppLoop loop = new AppLoop(new ArrayList<>(){{add(srcName);add(eventProcessor);add(VD_ACTUATOR);}});
-            application.getLoops().add(loop);
+            // Check if the src node is a sensor and if the dst node is an actuator
+            if(isSensor(src) && isActuator(dst)) {
+                // Check the connectivity between the src and dst nodes
+                TopologyNodeConnectionStatus connectionStatus = TopologyNodeConnectionChecker.areNodesConnected(src.id(), dst.id());
+
+                // For this level of complexity, I only care if there exists some connection between two nodes (whether its direct or indirect)
+                if(connectionStatus.isThereAConnection()) {
+                    //if(connectionStatus.isDirectionConnection()) {} // You can change it to handle direct connections
+
+                    // Get the VD that holds the src node (sensor)
+                    VirtualDevice virtualDevice = getVDUsed(src, selectedVirtualDevices);
+
+                    // Check if VD exists
+                    if(virtualDevice != null) {
+                        // Get the VD_ACTUATOR, which represents all actuators for that VD respectively
+                        String VD_ACTUATOR = virtualDevice.getActuator().getName();
+
+                        // Get the property/action name of the src and dst node which is used as the name for sensor and actuator
+                        String srcName = src.uniqueAttribute();
+                        String dstName = dst.uniqueAttribute();
+
+                        // If the sub flow is an event flow, add the event flow to the application model
+                        if(branches.size() == 1) {
+                            recordEventFlow(application, srcName, VD_ACTUATOR);
+                        } else if(branches.size() > 1) {
+                            recordEventFlow(application, srcName, dstName);
+                        }
+                    }
+                }
+            }
         }
+
+        // Trigger all events
+        for(EventSensor eventSensor : EventManager.getInstance().getEventSensors()) {
+            EventManager.getInstance().triggerEvent(eventSensor.getName());
+        }
+    }
+
+    private void recordEventFlow(Application application, String srcName, String dstName) {
+        String eventProcessor = "EventProcessor";
+
+        if(!application.getModules().contains(application.getModuleByName(eventProcessor))) {
+            application.addAppModule(eventProcessor, applicationPreset.APP_MODULE_RAM);
+        }
+
+        // Register event
+        EventSensor eventSensor =  (EventSensor) getSensorBy(srcName, allSensors);
+        EventManager.getInstance().registerEventSensor(eventSensor);
+
+        // Connect src to event processor
+        addAppEdge(application, srcName, eventProcessor, srcName, Tuple.UP, AppEdge.SENSOR);
+
+        // Connect event processor to dst
+        addAppEdge(application, eventProcessor, dstName, dstName, Tuple.DOWN, AppEdge.ACTUATOR);
+
+        application.addTupleMapping(eventProcessor, srcName, dstName, new FractionalSelectivity(1.0));
+
+        final AppLoop loop = new AppLoop(new ArrayList<>(){{add(srcName);add(eventProcessor);add(dstName);}});
+        application.getLoops().add(loop);
+
+        eventProcessingModuleCount++;
     }
 
     public void setAllSensors(List<Sensor> sensors) {
@@ -375,23 +407,17 @@ public class JsonToApplication {
             String MASTER_MODULE,
             boolean isEventful
     ) {
-        if(isEventful) {
-            // Register event
-            EventSensor eventSensor =  (EventSensor) getSensorBy(subFlowSensor, allSensors);
-            EventManager.getInstance().registerEventSensor(eventSensor);
-        }
-
         ////////// App Modules //////////
 
         String WORKER_MODULE_K;
 
-        if(isEventful) {
-            WORKER_MODULE_K = "EventWorkerModule-" + eventWorkerModuleCount;
-            eventWorkerModuleCount++;
-        } else {
+        //if(isEventful) {
+            //WORKER_MODULE_K = "EventWorkerModule-" + eventWorkerModuleCount;
+            //eventWorkerModuleCount++;
+        //} else {
             WORKER_MODULE_K = "WorkerModule-" + workerModuleCount;
             workerModuleCount++;
-        }
+        //}
 
         application.addAppModule(WORKER_MODULE_K, applicationPreset.APP_MODULE_RAM);
 
@@ -791,13 +817,5 @@ public class JsonToApplication {
 
     public int getEventProcessingModuleCount() {
         return eventProcessingModuleCount;
-    }
-
-    public HashMap<String, TupleMapping> getModuleTupleMappings() {
-        return moduleTupleMappings;
-    }
-
-    public Map<String, String> getExistingProcessingModules() {
-        return existingProcessingModules;
     }
 }

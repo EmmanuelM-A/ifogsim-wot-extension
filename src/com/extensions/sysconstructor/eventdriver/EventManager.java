@@ -25,7 +25,7 @@ public class EventManager {
         for (EventSensor sensor : eventSensors) {
             if (sensor.getTupleType().equals(eventType)) {
                 sensor.triggerEvent();
-                System.out.println("Event triggered: " + eventType);
+                //System.out.println("Event triggered: " + eventType);
             }
         }
     }

@@ -36,7 +36,7 @@ public class EventSensor extends CustomSensor {
         if (eventTriggered) {
             transmitEventTuple();
             eventTriggered = false; // Reset event trigger after transmission
-            System.out.println("Event " + getName() + " transmitted!");
+            System.out.println("Event " + getName() + " triggered!");
         }
     }
 

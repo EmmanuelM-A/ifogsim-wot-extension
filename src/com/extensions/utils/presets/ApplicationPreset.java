@@ -5,8 +5,8 @@ public enum ApplicationPreset {
            10,
            0,
            0,
-           10000,
            100,
+           500,
            100,
            10,
            6
