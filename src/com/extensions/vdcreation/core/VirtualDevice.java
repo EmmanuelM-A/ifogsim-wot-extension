@@ -1,9 +1,6 @@
 package com.extensions.vdcreation.core;
 
-import com.extensions.customfog.ActuatorAction;
-import com.extensions.customfog.CustomFogDevice;
-import com.extensions.customfog.CustomSensor;
-import com.extensions.customfog.FogDeviceFactory;
+import com.extensions.customfog.*;
 import com.extensions.sysconstructor.eventdriver.EventSensor;
 import com.extensions.utils.presets.FogDevicePreset;
 import com.extensions.vdcreation.models.Event;
@@ -15,37 +12,49 @@ import org.fog.entities.Sensor;
 import java.util.*;
 
 /**
- * This class acts as a high level representation of a Thing Description (TD) in iFogSim. When simulated it will be able
- * to simulate the behaviour of the device as described by its TD.
+ * This class acts as a high level representation of a Thing, consisting of iFogSim entities. When simulated it will be able
+ * behaviour similar to the device as described by its TD.
  */
 public class VirtualDevice {
     /**
-     * Represents the core virtual device in the simulation, mapping to the actual IoT device.
+     * Represents the core virtual device in the simulation, mapping to the actual IoT device (Thing).
      */
     private CustomFogDevice fogDevice;
 
     /**
-     * Represents properties of the TD.
+     * Acts as a centralized entity that represents all sensor (properties) for the VD.
+     */
+    private CustomSensor sensor;
+
+    /**
+     * Acts as a centralized entity that represents all actuator (actions) for the VD.
+     */
+    private CustomActuator actuator;
+
+    /**
+     * Represents all properties of the TD as if they were iFogSim sensors.
      */
     private final List<CustomSensor> sensorProperties;
 
     /**
-     * Represents actions in the TD.
+     * Represents all actions from the TD as if they were iFogSim actuators.
      */
     private final List<ActuatorAction> actuatorActions;
 
     /**
-     * Represents events in the TD.
+     * Represents all events from the TD as if they were iFogSim sensors.
      */
     private final List<CustomSensor> eventSensors;
 
     /**
-     * Represents the TD used to create this virtual device.
+     * Records the TD used to create this virtual device.
      */
     private ThingDescription thingDescription;
 
     public VirtualDevice(String name, FogDevicePreset preset) {
         this.fogDevice = FogDeviceFactory.createFogDevice(name, preset);
+        this.sensor = null;
+        this.actuator = null;
         this.sensorProperties = new ArrayList<>();
         this.actuatorActions = new ArrayList<>();
         this.eventSensors = new ArrayList<>();
@@ -54,6 +63,8 @@ public class VirtualDevice {
 
     public VirtualDevice(String name, FogDevicePreset preset, VirtualDeviceConfig config) {
         this.fogDevice = FogDeviceFactory.createFogDevice(name, preset, config);
+        this.sensor = null;
+        this.actuator = null;
         this.sensorProperties = new ArrayList<>();
         this.actuatorActions = new ArrayList<>();
         this.eventSensors = new ArrayList<>();
@@ -66,6 +77,22 @@ public class VirtualDevice {
 
     public void setFogDevice(CustomFogDevice fogDevice) {
         this.fogDevice = fogDevice;
+    }
+
+    public CustomSensor getSensor() {
+        return sensor;
+    }
+
+    public void setSensor(CustomSensor sensor) {
+        this.sensor = sensor;
+    }
+
+    public CustomActuator getActuator() {
+        return actuator;
+    }
+
+    public void setActuator(CustomActuator actuator) {
+        this.actuator = actuator;
     }
 
     public List<CustomSensor> getSensorProperties() {
@@ -103,7 +130,7 @@ public class VirtualDevice {
     }
 
     /**
-     * Prints the data of the Virtual Device (VD).
+     * Prints the data of the Virtual Device (VD), excluding the sensor and actuator variables.
      * This static method accesses the fields of a VD and outputs their data.
      *
      * @param virtualDevice the instance of VirtualDevice to print its data

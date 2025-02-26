@@ -53,8 +53,8 @@ public final class App {
         try {
             //////////////////////////////// INITIAL SETUP ////////////////////////////////
 
-            // This instance is responsible for loading in the node red application and setting up related data
-            JsonToApplication2 jsonToApplication = new JsonToApplication2(
+            // This instance is responsible for loading in the node red application, creating the application topology and model and setting up related data
+            JsonToApplication jsonToApplication = new JsonToApplication(
                     CloudNodePreset.DEFAULT,
                     EdgeNodePreset.DEFAULT,
                     ApplicationPreset.DEFAULT,
@@ -63,7 +63,6 @@ public final class App {
 
             // Disables iFogSim's logging mechanism, only displaying simulation results
             Log.disable();
-
 
             // The number of cloud users
             int numUsers = 1;
@@ -88,30 +87,42 @@ public final class App {
             VirtualDeviceConfigParser vdConfigParser = new VirtualDeviceConfigParser();
 
             // Create the virtual devices using the thing descriptions repo folder
-            List<VD> virtualDevices = VDFactory.createVirtualDevices(
+            List<VirtualDevice> virtualDevices = VirtualDeviceFactory.createVirtualDevices(
                     broker.getId(),
                     appId,
                     FogDevicePreset.DEFAULT,
                     SensorPreset.DEFAULT,
                     ActuatorPreset.DEFAULT,
                     "src/com/extensions/input/things/repo2", // SET THINGS REPO HERE
-                    vdConfigParser.process(new File("src/com/extensions/input/configs/repo2-vd-configs.json")) // SET VD'S CONFIG FILE HERE
+                    vdConfigParser.process(new File("src/com/extensions/input/configs/repo2-vd-configs.json")) // SET VDS CONFIG FILE HERE
             );
 
             //////////////////////////////// APPLICATION SETUP ////////////////////////////////
 
             // Create the physical topology for the application
             ApplicationPhysicalTopology physicalTopology = jsonToApplication.createApplicationPhysicalTopology(virtualDevices);
-            //PhysicalTopology physicalTopology = createPhysicalTopology(virtualDevices);
+
+            // Set the sensors list (NEEDED TO CREATE THE APPLICATION MODEL BELOW)
+            jsonToApplication.setAllSensors(physicalTopology.getSensors());
 
             // Create the application model for the application
-            //Application application = createApplication(appId, broker.getId());
             Application application = jsonToApplication.createApplicationModel(appId, broker.getId());
 
-            // Set the application for VD's sensors and actuators
-            for (VD virtualDevice : virtualDevices) {
+            // Set the application value for VD
+            for(VirtualDevice virtualDevice : virtualDevices) {
                 virtualDevice.getSensor().setApp(application);
+
                 virtualDevice.getActuator().setApp(application);
+
+                for(Sensor sensorProperty : virtualDevice.getSensorProperties()) {
+                    sensorProperty.setApp(application);
+                }
+                for(Actuator actuatorAction : virtualDevice.getActuatorActions()) {
+                    actuatorAction.setApp(application);
+                }
+                for(Sensor eventSensor : virtualDevice.getEventSensors()) {
+                    eventSensor.setApp(application);
+                }
             }
 
             // Create the controller for managing the simulation
@@ -164,92 +175,5 @@ public final class App {
             e.printStackTrace();
             System.out.println(e.getMessage());
         }
-    }
-
-    private static PhysicalTopology createPhysicalTopology(List<VD> vds) {
-        List<FogDevice> fogDevices = new ArrayList<>();
-        List<Actuator> actuators = new ArrayList<>();
-        List<Sensor> sensors = new ArrayList<>();
-
-        // Cloud Device
-        FogDevice cloud = FogDeviceFactory.createFogDevice("cloud", FogDevicePreset.DEFAULT);
-        fogDevices.add(cloud);
-
-        // Edge Node
-        FogDevice edgeNode = FogDeviceFactory.createFogDevice("edge-node", FogDevicePreset.DEFAULT);
-
-        if(edgeNode != null) {
-            assert cloud != null;
-            edgeNode.setParentId(cloud.getId());
-            fogDevices.add(edgeNode);
-        }
-
-        // Connect Virtual Devices (VDs) to the Edge Node
-        for (VD vd : vds) {
-            FogDevice vdFogDevice = vd.getFogDevice();
-            sensors.add(vd.getSensor());
-            actuators.add(vd.getActuator());
-            assert edgeNode != null;
-            vdFogDevice.setParentId(edgeNode.getId());
-            fogDevices.add(vdFogDevice);
-        }
-
-        PhysicalTopology physicalTopology = new PhysicalTopology();
-
-        physicalTopology.setActuators(actuators);
-        physicalTopology.setSensors(sensors);
-        physicalTopology.setFogDevices(fogDevices);
-
-        return physicalTopology;
-    }
-
-    private static Application createApplication(String appId, int brokerId) {
-        Application application = Application.createApplication(appId, brokerId);
-
-        String VD_SENSOR = "TemperatureSensor_SENSOR";
-        String VD_ACTUATOR = "TemperatureSensor_ACTUATOR";
-
-        String MM = "MasterModule";
-        String WM1 = "WorkerModule-1";
-        String WM2 = "WorkerModule-2";
-        String WM3 = "WorkerModule-3";
-
-        application.addAppModule(MM, 10);
-        application.addAppModule(WM1, 10);
-        application.addAppModule(WM2, 10);
-        application.addAppModule(WM3, 10);
-
-       application.addAppEdge(VD_SENSOR, MM, 3000, 500, VD_SENSOR, Tuple.UP, AppEdge.SENSOR);
-       application.addAppEdge(MM, VD_ACTUATOR, 500, 4000, VD_ACTUATOR, Tuple.DOWN, AppEdge.ACTUATOR);
-
-       application.addAppEdge(MM, WM1, 4034, 4590, "temperature", Tuple.UP, AppEdge.MODULE);
-       application.addAppEdge(WM1, MM, 300, 500, "updateDisplay", Tuple.DOWN, AppEdge.MODULE);
-
-        application.addAppEdge(MM, WM2, 4034, 4590, "overheat", Tuple.UP, AppEdge.MODULE);
-        application.addAppEdge(WM2, MM, 300, 500, "showAlert", Tuple.DOWN, AppEdge.MODULE);
-
-        application.addAppEdge(MM, WM3, 4034, 4590, "lowBattery", Tuple.UP, AppEdge.MODULE);
-        application.addAppEdge(WM3, MM, 300, 500, "showAlert", Tuple.DOWN, AppEdge.MODULE);
-
-        // Tuple Mappings
-        application.addTupleMapping(MM, VD_SENSOR, "temperature", new FractionalSelectivity(1.0));
-        application.addTupleMapping(MM, VD_SENSOR, "overheat", new FractionalSelectivity(1.0));
-        application.addTupleMapping(MM, VD_SENSOR, "lowBattery", new FractionalSelectivity(1.0));
-        application.addTupleMapping(WM1, "temperature", "updateDisplay", new FractionalSelectivity(1.0));
-        application.addTupleMapping(WM2, "overheat", "showAlert", new FractionalSelectivity(1.0));
-        application.addTupleMapping(WM3, "lowBattery", "showAlert", new FractionalSelectivity(1.0));
-        application.addTupleMapping(MM, "updateDisplay", VD_ACTUATOR, new FractionalSelectivity(1.0));
-        application.addTupleMapping(MM, "showAlert", VD_ACTUATOR, new FractionalSelectivity(1.0));
-
-        // Application Loops
-        List<String> loop1 = Arrays.asList(VD_SENSOR, MM, WM1, MM, VD_ACTUATOR);
-        List<String> loop2 = Arrays.asList(VD_SENSOR, MM, WM2, MM, VD_ACTUATOR);
-        List<String> loop3 = Arrays.asList(VD_SENSOR, MM, WM3, MM, VD_ACTUATOR);
-
-        application.getLoops().add(new AppLoop(loop1));
-        application.getLoops().add(new AppLoop(loop2));
-        application.getLoops().add(new AppLoop(loop3));
-
-        return application;
     }
 }

@@ -49,7 +49,7 @@ public class DoorSecurityApplication {
     private static List<Actuator> allActuators;
 
     public static void main(String[] args) {
-        Log.printLine("Starting Simulation....");
+        /*Log.printLine("Starting Simulation....");
 
         try {
             //////////////////////////////// INITIAL SETUP ////////////////////////////////
@@ -107,8 +107,8 @@ public class DoorSecurityApplication {
             allActuators = physicalTopology.getActuators();
 
             // Create the application model for the application
-            //Application application = createApplication(appId, broker.getId());
-            List<Application> applications = jsonToApplication.createApplicationModels(appId, broker.getId(), allSensors);
+            Application application = createApplication(appId, broker.getId());
+            //List<Application> applications = jsonToApplication.createApplicationModels(appId, broker.getId(), allSensors);
 
             for(int index = 0; index < applications.size(); index++) {
                 // Get application
@@ -161,7 +161,7 @@ public class DoorSecurityApplication {
 
             customMetricManager.registerMetric(new LongestApplicationLoopDelay());
             customMetricManager.registerMetric(new PeakEnergyConsumptionDevice());
-            customMetricManager.registerMetric(new TotalEnergyConsumptionEfficiency());*/
+            customMetricManager.registerMetric(new TotalEnergyConsumptionEfficiency());
 
             //////////////////////////////// SIMULATION ////////////////////////////////
 
@@ -176,7 +176,7 @@ public class DoorSecurityApplication {
 
         } catch (Exception e) {
             throw new RuntimeException(e);
-        }
+        }*/
     }
 
     private static Application createApplication(String appId, int userId) {

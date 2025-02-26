@@ -28,7 +28,7 @@ public class EventTuple extends Tuple {
         this.eventType = eventType;
 
         // Set Tuple Type as an Event Tuple
-        this.setTupleType(FogEntityPrefixes.EVENT_TUPLE_PREFIX + eventType);
+        this.setTupleType(eventType);
     }
 
     public String getEventType() {

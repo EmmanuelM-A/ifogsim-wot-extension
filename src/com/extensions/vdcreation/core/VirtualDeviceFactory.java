@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.extensions.customfog.ActuatorAction;
+import com.extensions.customfog.CustomActuator;
 import com.extensions.customfog.CustomSensor;
 import com.extensions.customfog.GeneralActuator;
 import com.extensions.sysconstructor.eventdriver.EventSensor;
@@ -19,6 +20,7 @@ import com.extensions.vdcreation.models.ThingDescription;
 import com.extensions.vdcreation.models.Action;
 import com.extensions.vdcreation.parsers.ThingDescriptionParser;
 import org.fog.entities.Actuator;
+import org.fog.entities.Sensor;
 
 /**
  * Responsible for creating the virtual devices (VDs) from the thing descriptions.
@@ -33,8 +35,6 @@ public class VirtualDeviceFactory {
     private final SensorPreset sensorPreset;
 
     private final ActuatorPreset actuatorPreset;
-
-    public static String GENERAL_ACTUATOR = "GENERAL-ACTUATOR";
 
     private VirtualDeviceFactory(int userId, String appId, FogDevicePreset fogDevicePreset, SensorPreset sensorPreset, ActuatorPreset actuatorPreset) {
         this.userId = userId;
@@ -129,7 +129,6 @@ public class VirtualDeviceFactory {
             for(Map.Entry<String, Property> writeableProperty : writeProperties.entrySet()) {
                 // Extract entry data
                 String propertyName = writeableProperty.getKey();
-                //Property property = writeableProperty.getValue();
 
                 // Create a writeable property actuator action
                 ActuatorAction writePropertyAction = new ActuatorAction(propertyName, userId, appId, null, actuatorPreset);
@@ -181,19 +180,43 @@ public class VirtualDeviceFactory {
             virtualDevice.getEventSensors().add(eventSensor);
         }
 
-        // Connect General Actuator to VD
-        GeneralActuator generalActuator = new GeneralActuator(GENERAL_ACTUATOR, userId, appId, actuatorPreset, virtualDevice.getFogDevice().getId());
-
-        // Set the actuator's gateway device ID to the VD's ID
-        generalActuator.setGatewayDeviceId(virtualDevice.getFogDevice().getId());
-
-        // Set the latency of the actuator communication
-        generalActuator.setLatency(actuatorPreset.LATENCY);
-
-        // Add actuator action to the virtual device
-        virtualDevice.getActuatorActions().add(generalActuator);
+        // Initialize and set the VD sensor and actuator
+        initVDSensorAndVDActuator(virtualDevice);
 
         return virtualDevice;
+    }
+
+    private void initVDSensorAndVDActuator(VirtualDevice virtualDevice) {
+        // Get the name of the virtual device
+        String vdName = virtualDevice.getFogDevice().getName();
+
+        // Represent all senors
+        String vdSensorName = vdName + "_SENSOR";
+
+        CustomSensor vdSensor = new CustomSensor(vdSensorName, userId, appId, sensorPreset);
+
+        // Set the sensor's gateway device ID to the VD's ID
+        vdSensor.setGatewayDeviceId(virtualDevice.getFogDevice().getId());
+
+        // Set the latency of the sensor communication
+        vdSensor.setLatency(sensorPreset.LATENCY);
+
+        // Set the VD's sensor
+        virtualDevice.setSensor(vdSensor);
+
+        // Represent all actuators
+        String vdActuatorName = vdName + "_ACTUATOR";
+
+        CustomActuator vdActuator = new CustomActuator(vdActuatorName, userId, appId, actuatorPreset);
+
+        // Set the actuator's gateway device ID to the VD's ID
+        vdActuator.setGatewayDeviceId(virtualDevice.getFogDevice().getId());
+
+        // Set the latency of the actuator communication
+        vdActuator.setLatency(actuatorPreset.LATENCY);
+
+        // Set the VD's actuator
+        virtualDevice.setActuator(vdActuator);
     }
 
     /**
