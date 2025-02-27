@@ -330,10 +330,8 @@ public class JsonToApplication {
                         // If the sub flow is an event flow, add the event flow to the application model
                         if(branches.size() == 1) {
                             recordEventFlow(application, srcName, dstName);
-                            System.out.println("TARGETED!");
                         } else if(branches.size() > 1) {
                             recordEventFlow(application, srcName, VD_ACTUATOR);
-                            System.out.println("GENERAL!");
                         }
                     }
                 }
