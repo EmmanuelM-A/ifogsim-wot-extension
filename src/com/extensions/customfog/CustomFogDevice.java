@@ -1,27 +1,18 @@
 package com.extensions.customfog;
 
-import com.extensions.sysconstructor.eventdriver.EventManager;
 import com.extensions.sysconstructor.eventdriver.EventTuple;
-import com.extensions.utils.FogEntityPrefixes;
 import org.cloudbus.cloudsim.*;
 import org.cloudbus.cloudsim.core.CloudSim;
-import org.cloudbus.cloudsim.core.CloudSimTags;
 import org.cloudbus.cloudsim.core.SimEvent;
-import org.cloudbus.cloudsim.power.PowerHost;
-import org.cloudbus.cloudsim.power.models.PowerModel;
-import org.fog.application.AppLoop;
 import org.fog.application.AppModule;
-import org.fog.application.Application;
 import org.fog.entities.FogDevice;
 import org.fog.entities.FogDeviceCharacteristics;
 import org.fog.entities.Tuple;
 import org.fog.utils.FogEvents;
 import org.fog.utils.FogUtils;
 import org.fog.utils.Logger;
-import org.fog.utils.TimeKeeper;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 
 public class CustomFogDevice extends FogDevice {

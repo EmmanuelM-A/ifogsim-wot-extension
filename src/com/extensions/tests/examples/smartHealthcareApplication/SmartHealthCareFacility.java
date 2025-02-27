@@ -1,4 +1,4 @@
-package com.extensions.tests.examples.SmartHealthcareApplication;
+package com.extensions.tests.examples.smartHealthcareApplication;
 
 import com.extensions.customfog.FogDeviceFactory;
 import com.extensions.utils.Utility;

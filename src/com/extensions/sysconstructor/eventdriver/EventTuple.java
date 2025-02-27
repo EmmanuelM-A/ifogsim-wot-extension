@@ -1,9 +1,7 @@
 package com.extensions.sysconstructor.eventdriver;
 
-import com.extensions.utils.FogEntityPrefixes;
 import org.cloudbus.cloudsim.UtilizationModel;
 import org.fog.entities.Tuple;
-import java.util.List;
 
 public class EventTuple extends Tuple {
     private final String eventType;

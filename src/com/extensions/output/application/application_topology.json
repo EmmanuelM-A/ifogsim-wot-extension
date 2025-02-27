@@ -1,233 +1,277 @@
 {
   "applicationDetails" : {
-    "title" : "Smart Coffee Machine Application"
+    "title" : "Door Security Application"
   },
   "things" : [ {
-    "id" : "28de068b74624cd3",
-    "name" : "Smart Coffee Machine",
+    "id" : "263d2ff2376b823c",
+    "name" : "Smart Door Lock",
+    "type" : "consumed-thing"
+  }, {
+    "id" : "60ec5509eed581fd",
+    "name" : "Alarm",
+    "type" : "consumed-thing"
+  }, {
+    "id" : "b7c9cdf5487520a3",
+    "name" : "Smart Camera",
     "type" : "consumed-thing"
   }, {
     "id" : "dc99cc6070d7f6fe",
     "name" : "Smart Display",
     "type" : "consumed-thing"
   } ],
-  "topics" : [ ],
+  "topics" : [ "access-control", "security-monitoring" ],
   "subFlows" : {
     "subFlow-0" : {
       "rootNode" : {
-        "id" : "d83e3f089f367355",
-        "name" : "N secs",
+        "id" : "9db12d6115952391",
+        "name" : "onTamperAlertEvent()",
+        "type" : "subscribe-event",
+        "topic" : "access-control",
+        "thing" : "263d2ff2376b823c",
+        "event" : "tamperAlert"
+      },
+      "branches" : {
+        "branch-0" : [ {
+          "id" : "9db12d6115952391",
+          "name" : "onTamperAlertEvent()",
+          "type" : "subscribe-event",
+          "topic" : "access-control",
+          "thing" : "263d2ff2376b823c",
+          "event" : "tamperAlert"
+        }, {
+          "id" : "f3e4a7e45b1528ec",
+          "name" : "activateAlarm()",
+          "type" : "invoke-action",
+          "topic" : "security-monitoring",
+          "thing" : "60ec5509eed581fd",
+          "action" : "activate"
+        } ],
+        "branch-1" : [ {
+          "id" : "9db12d6115952391",
+          "name" : "onTamperAlertEvent()",
+          "type" : "subscribe-event",
+          "topic" : "access-control",
+          "thing" : "263d2ff2376b823c",
+          "event" : "tamperAlert"
+        }, {
+          "id" : "d3db99b0f35b81ce",
+          "name" : "takePhoto()",
+          "type" : "invoke-action",
+          "topic" : "security-monitoring",
+          "thing" : "b7c9cdf5487520a3",
+          "action" : "takeSnapshot"
+        } ]
+      }
+    },
+    "subFlow-1" : {
+      "rootNode" : {
+        "id" : "c5fdbc67d85cfe4b",
+        "name" : "getLockState()",
+        "type" : "read-property",
+        "topic" : "access-control",
+        "thing" : "263d2ff2376b823c",
+        "property" : "lockState"
+      },
+      "branches" : {
+        "branch-0" : [ {
+          "id" : "c5fdbc67d85cfe4b",
+          "name" : "getLockState()",
+          "type" : "read-property",
+          "topic" : "access-control",
+          "thing" : "263d2ff2376b823c",
+          "property" : "lockState"
+        }, {
+          "id" : "4751a14ba955c435",
+          "name" : "",
+          "type" : "switch",
+          "topic" : null,
+          "thing" : null
+        }, {
+          "id" : "75e9a24f35463920",
+          "name" : "lockDoor()",
+          "type" : "invoke-action",
+          "topic" : "access-control",
+          "thing" : "263d2ff2376b823c",
+          "action" : "lockDoor"
+        } ],
+        "branch-1" : [ {
+          "id" : "c5fdbc67d85cfe4b",
+          "name" : "getLockState()",
+          "type" : "read-property",
+          "topic" : "access-control",
+          "thing" : "263d2ff2376b823c",
+          "property" : "lockState"
+        }, {
+          "id" : "4751a14ba955c435",
+          "name" : "",
+          "type" : "switch",
+          "topic" : null,
+          "thing" : null
+        }, {
+          "id" : "03ed1574430869f3",
+          "name" : "debug 5",
+          "type" : "debug",
+          "topic" : null,
+          "thing" : null
+        } ]
+      }
+    },
+    "subFlow-2" : {
+      "rootNode" : {
+        "id" : "9d94164d06b0710c",
+        "name" : "onSnapshotTakenEvent()",
+        "type" : "subscribe-event",
+        "topic" : "security-monitoring",
+        "thing" : "b7c9cdf5487520a3",
+        "event" : "snapshotTaken"
+      },
+      "branches" : {
+        "branch-0" : [ {
+          "id" : "9d94164d06b0710c",
+          "name" : "onSnapshotTakenEvent()",
+          "type" : "subscribe-event",
+          "topic" : "security-monitoring",
+          "thing" : "b7c9cdf5487520a3",
+          "event" : "snapshotTaken"
+        }, {
+          "id" : "ed04d7ad2e16b730",
+          "name" : "getStreamURL()",
+          "type" : "read-property",
+          "topic" : "security-monitoring",
+          "thing" : "b7c9cdf5487520a3",
+          "property" : "streamURL"
+        }, {
+          "id" : "6715a35ba36fd344",
+          "name" : "Some Processing",
+          "type" : "function",
+          "topic" : null,
+          "thing" : null
+        }, {
+          "id" : "80359b6e0dae8f0d",
+          "name" : "logData()",
+          "type" : "invoke-action",
+          "topic" : "security-monitoring",
+          "thing" : "dc99cc6070d7f6fe",
+          "action" : "updateDisplay"
+        } ],
+        "branch-1" : [ {
+          "id" : "9d94164d06b0710c",
+          "name" : "onSnapshotTakenEvent()",
+          "type" : "subscribe-event",
+          "topic" : "security-monitoring",
+          "thing" : "b7c9cdf5487520a3",
+          "event" : "snapshotTaken"
+        }, {
+          "id" : "836ea1adc6c4f940",
+          "name" : "getLastSnapshot()",
+          "type" : "read-property",
+          "topic" : "security-monitoring",
+          "thing" : "b7c9cdf5487520a3",
+          "property" : "lastSnapshot"
+        }, {
+          "id" : "9a4be8e1136190c1",
+          "name" : "Some Processing",
+          "type" : "function",
+          "topic" : null,
+          "thing" : null
+        }, {
+          "id" : "0f5c64a7567a5548",
+          "name" : "logData()",
+          "type" : "invoke-action",
+          "topic" : "security-monitoring",
+          "thing" : "dc99cc6070d7f6fe",
+          "action" : "updateDisplay"
+        } ]
+      }
+    },
+    "subFlow-3" : {
+      "rootNode" : {
+        "id" : "6d0c0d10e6a07442",
+        "name" : "",
         "type" : "inject",
         "topic" : "",
         "thing" : null
       },
       "branches" : {
         "branch-0" : [ {
-          "id" : "d83e3f089f367355",
-          "name" : "N secs",
+          "id" : "6d0c0d10e6a07442",
+          "name" : "",
           "type" : "inject",
           "topic" : "",
           "thing" : null
         }, {
-          "id" : "8d846ee672079de5",
-          "name" : "makeDrink()",
+          "id" : "ab799136aebc7a6f",
+          "name" : "unlockDoor()",
           "type" : "invoke-action",
-          "topic" : "",
-          "thing" : "28de068b74624cd3",
-          "action" : "makeDrink"
-        }, {
-          "id" : "8308e0174e7dfe0a",
-          "name" : "",
-          "type" : "invoke-action",
-          "topic" : "",
-          "thing" : "dc99cc6070d7f6fe",
-          "action" : "updateDisplay"
+          "topic" : "access-control",
+          "thing" : "263d2ff2376b823c",
+          "action" : "unlockDoor"
         } ]
       }
     },
-    "subFlow-1" : {
+    "subFlow-4" : {
       "rootNode" : {
-        "id" : "351d16e5f28e6880",
-        "name" : "onOutOfResourceEvent",
+        "id" : "9587c249258c0e5e",
+        "name" : "",
         "type" : "subscribe-event",
-        "topic" : "",
-        "thing" : "28de068b74624cd3",
-        "event" : "outOfResource"
+        "topic" : "access-control",
+        "thing" : "263d2ff2376b823c",
+        "event" : "doorLocked"
       },
       "branches" : {
         "branch-0" : [ {
-          "id" : "351d16e5f28e6880",
-          "name" : "onOutOfResourceEvent",
-          "type" : "subscribe-event",
-          "topic" : "",
-          "thing" : "28de068b74624cd3",
-          "event" : "outOfResource"
-        }, {
-          "id" : "95b1ce51b770fb4c",
-          "name" : "Top up resources",
-          "type" : "function",
-          "topic" : null,
-          "thing" : null
-        }, {
-          "id" : "e6bb996ac7894d67",
-          "name" : "setAvailableResourceLevel(water)",
-          "type" : "write-property",
-          "topic" : "",
-          "thing" : "28de068b74624cd3",
-          "property" : "availableResourceLevel"
-        } ],
-        "branch-1" : [ {
-          "id" : "351d16e5f28e6880",
-          "name" : "onOutOfResourceEvent",
-          "type" : "subscribe-event",
-          "topic" : "",
-          "thing" : "28de068b74624cd3",
-          "event" : "outOfResource"
-        }, {
-          "id" : "95b1ce51b770fb4c",
-          "name" : "Top up resources",
-          "type" : "function",
-          "topic" : null,
-          "thing" : null
-        }, {
-          "id" : "455d27ca3bc1f5a2",
-          "name" : "setAvailableResourceLevel(milk)",
-          "type" : "write-property",
-          "topic" : "",
-          "thing" : "28de068b74624cd3",
-          "property" : "availableResourceLevel"
-        } ],
-        "branch-2" : [ {
-          "id" : "351d16e5f28e6880",
-          "name" : "onOutOfResourceEvent",
-          "type" : "subscribe-event",
-          "topic" : "",
-          "thing" : "28de068b74624cd3",
-          "event" : "outOfResource"
-        }, {
-          "id" : "95b1ce51b770fb4c",
-          "name" : "Top up resources",
-          "type" : "function",
-          "topic" : null,
-          "thing" : null
-        }, {
-          "id" : "c7d8b3784d1b66e0",
-          "name" : "setAvailableResourceLevel(chocolate)",
-          "type" : "write-property",
-          "topic" : "",
-          "thing" : "28de068b74624cd3",
-          "property" : "availableResourceLevel"
-        } ],
-        "branch-3" : [ {
-          "id" : "351d16e5f28e6880",
-          "name" : "onOutOfResourceEvent",
-          "type" : "subscribe-event",
-          "topic" : "",
-          "thing" : "28de068b74624cd3",
-          "event" : "outOfResource"
-        }, {
-          "id" : "95b1ce51b770fb4c",
-          "name" : "Top up resources",
-          "type" : "function",
-          "topic" : null,
-          "thing" : null
-        }, {
-          "id" : "a73b307e7c2f1e74",
-          "name" : "setAvailableResourceLevel(coffeeBeans)",
-          "type" : "write-property",
-          "topic" : "",
-          "thing" : "28de068b74624cd3",
-          "property" : "availableResourceLevel"
-        } ],
-        "branch-4" : [ {
-          "id" : "351d16e5f28e6880",
-          "name" : "onOutOfResourceEvent",
-          "type" : "subscribe-event",
-          "topic" : "",
-          "thing" : "28de068b74624cd3",
-          "event" : "outOfResource"
-        }, {
-          "id" : "95b1ce51b770fb4c",
-          "name" : "Top up resources",
-          "type" : "function",
-          "topic" : null,
-          "thing" : null
-        }, {
-          "id" : "8c1c23970f1f2314",
+          "id" : "9587c249258c0e5e",
           "name" : "",
-          "type" : "invoke-action",
-          "topic" : "",
-          "thing" : "dc99cc6070d7f6fe",
-          "action" : "updateDisplay"
-        } ],
-        "branch-5" : [ {
-          "id" : "351d16e5f28e6880",
-          "name" : "onOutOfResourceEvent",
           "type" : "subscribe-event",
-          "topic" : "",
-          "thing" : "28de068b74624cd3",
-          "event" : "outOfResource"
+          "topic" : "access-control",
+          "thing" : "263d2ff2376b823c",
+          "event" : "doorLocked"
         }, {
-          "id" : "013706ebd7906d95",
-          "name" : "",
+          "id" : "13bd4e8359ce1a5f",
+          "name" : "Do something",
+          "type" : "function",
+          "topic" : null,
+          "thing" : null
+        }, {
+          "id" : "6abec97a066fa433",
+          "name" : "logEvent()",
           "type" : "invoke-action",
-          "topic" : "",
+          "topic" : "access-control",
           "thing" : "dc99cc6070d7f6fe",
           "action" : "showAlert"
         } ]
       }
     },
-    "subFlow-2" : {
+    "subFlow-5" : {
       "rootNode" : {
-        "id" : "8ca2ca1e68fe4df3",
-        "name" : "isMaintenceNeeded",
-        "type" : "read-property",
-        "topic" : "",
-        "thing" : "28de068b74624cd3",
-        "property" : "maintenanceNeeded"
+        "id" : "3b6935d22bd00ead",
+        "name" : "onAlarmTriggeredEvent()",
+        "type" : "subscribe-event",
+        "topic" : "security-monitoring",
+        "thing" : "60ec5509eed581fd",
+        "event" : "alarmTriggered"
       },
       "branches" : {
         "branch-0" : [ {
-          "id" : "8ca2ca1e68fe4df3",
-          "name" : "isMaintenceNeeded",
-          "type" : "read-property",
-          "topic" : "",
-          "thing" : "28de068b74624cd3",
-          "property" : "maintenanceNeeded"
+          "id" : "3b6935d22bd00ead",
+          "name" : "onAlarmTriggeredEvent()",
+          "type" : "subscribe-event",
+          "topic" : "security-monitoring",
+          "thing" : "60ec5509eed581fd",
+          "event" : "alarmTriggered"
         }, {
-          "id" : "bff185a4d3f4406b",
-          "name" : "",
-          "type" : "change",
+          "id" : "f961cb5a16678a6e",
+          "name" : "Do something",
+          "type" : "function",
           "topic" : null,
           "thing" : null
         }, {
-          "id" : "a0fab46b54d60caf",
-          "name" : "setServedCounter()",
-          "type" : "write-property",
-          "topic" : "",
-          "thing" : "28de068b74624cd3",
-          "property" : "servedCounter"
-        } ],
-        "branch-1" : [ {
-          "id" : "8ca2ca1e68fe4df3",
-          "name" : "isMaintenceNeeded",
-          "type" : "read-property",
-          "topic" : "",
-          "thing" : "28de068b74624cd3",
-          "property" : "maintenanceNeeded"
-        }, {
-          "id" : "bff185a4d3f4406b",
-          "name" : "",
-          "type" : "change",
-          "topic" : null,
-          "thing" : null
-        }, {
-          "id" : "9c3f3a6cdc444539",
-          "name" : "",
+          "id" : "99879b685f3d65b8",
+          "name" : "logEvent()",
           "type" : "invoke-action",
-          "topic" : "",
+          "topic" : "security-monitoring",
           "thing" : "dc99cc6070d7f6fe",
-          "action" : "updateDisplay"
+          "action" : "showAlert"
         } ]
       }
     }

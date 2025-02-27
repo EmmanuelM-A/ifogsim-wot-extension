@@ -1,6 +1,5 @@
 package com.extensions.sysconstructor.nodered;
 
-import com.extensions.utils.FilePaths;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
@@ -9,6 +8,7 @@ import java.io.IOException;
 import java.util.List;
 
 public class NodeRedTranslator {
+    public static String APPLICATION_TOPOLOGY = "src/com/extensions/output/application/application_topology.json";
     public static void nodeRedToInputJson(File nodeRedApplicationJsonFile) {
         try {
             // Parse Node-RED JSON into Nodes
@@ -22,10 +22,11 @@ public class NodeRedTranslator {
             // Write to file using Jackson's ObjectMapper
             ObjectMapper mapper = new ObjectMapper();
             mapper.writerWithDefaultPrettyPrinter()
-                    .writeValue(new File(FilePaths.APPLICATION_TOPOLOGY), outputJson);
+                    .writeValue(new File(APPLICATION_TOPOLOGY), outputJson);
 
             System.out.println("Node Red Application Parsed Successfully!");
         } catch (IOException e) {
+            System.out.println("Node Red Application Parsed Unsuccessfully! Error: " + e.getMessage());
             e.printStackTrace();
         }
     }

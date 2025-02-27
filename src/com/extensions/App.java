@@ -1,39 +1,26 @@
 package com.extensions;
 
-import com.extensions.customfog.CustomActuator;
 import com.extensions.customfog.CustomController;
-import com.extensions.customfog.CustomSensor;
-import com.extensions.customfog.FogDeviceFactory;
 import com.extensions.custommetrics.CustomMetricManager;
-import com.extensions.custommetrics.metrics.LongestApplicationLoopDelay;
 import com.extensions.custommetrics.metrics.PeakEnergyConsumptionDevice;
 import com.extensions.custommetrics.metrics.TotalEnergyConsumptionEfficiency;
 import com.extensions.sysconstructor.core.ApplicationPhysicalTopology;
 import com.extensions.sysconstructor.core.JsonToApplication;
-import com.extensions.sysconstructor.core.JsonToApplication2;
 import com.extensions.utils.presets.*;
-import com.extensions.vdcreation.core.VD;
-import com.extensions.vdcreation.core.VDFactory;
 import com.extensions.vdcreation.core.VirtualDevice;
 import com.extensions.vdcreation.core.VirtualDeviceFactory;
 import com.extensions.vdcreation.parsers.VirtualDeviceConfigParser;
 import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.core.CloudSim;
-import org.fog.application.AppEdge;
-import org.fog.application.AppLoop;
 import org.fog.application.AppModule;
 import org.fog.application.Application;
-import org.fog.application.selectivity.FractionalSelectivity;
 import org.fog.entities.*;
 import org.fog.placement.ModuleMapping;
 import org.fog.placement.ModulePlacementEdgewards;
 import org.fog.placement.ModulePlacementMapping;
-import org.fog.utils.Logger;
 import org.fog.utils.TimeKeeper;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.List;
 

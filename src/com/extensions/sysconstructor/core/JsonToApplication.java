@@ -9,7 +9,6 @@ import com.extensions.sysconstructor.topology.TopologyNode;
 import com.extensions.sysconstructor.topology.TopologyNodeConnectionChecker;
 import com.extensions.sysconstructor.topology.TopologyNodeConnectionStatus;
 import com.extensions.sysconstructor.topology.TopologyNodeTree;
-import com.extensions.utils.FilePaths;
 import com.extensions.utils.Utility;
 import com.extensions.utils.presets.ApplicationPreset;
 import com.extensions.utils.presets.CloudNodePreset;
@@ -127,7 +126,7 @@ public class JsonToApplication {
         NodeRedTranslator.nodeRedToInputJson(nodeRedApplicationJsonFile);
 
         // Initialize the topology parser using the generated application topology file
-        this.applicationTopologyParser = new ApplicationTopologyParser(new File(FilePaths.APPLICATION_TOPOLOGY));
+        this.applicationTopologyParser = new ApplicationTopologyParser(new File(NodeRedTranslator.APPLICATION_TOPOLOGY));
 
         // Parse and construct topology node trees for hierarchical organization
         this.topologyNodeTrees = applicationTopologyParser.parseTopologyNodeTrees();

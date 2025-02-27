@@ -2,7 +2,6 @@ package com.extensions.tests.examples.temperatureMonitorApplication;
 
 import com.extensions.customfog.CustomController;
 import com.extensions.customfog.FogDeviceFactory;
-import com.extensions.utils.FilePaths;
 import com.extensions.utils.presets.FogDevicePreset;
 import com.extensions.utils.presets.SensorPreset;
 import com.extensions.utils.presets.ActuatorPreset;
@@ -63,7 +62,7 @@ public class TemperatureMonitorTwo {
                     SensorPreset.DEFAULT,
                     ActuatorPreset.DEFAULT,
                     "src/com/extensions/input/things/repo1",
-                    vdConfigParser.process(new File(FilePaths.VD_CONFIG_FILE)) // SET VD'S CONFIG FILE HERE
+                    vdConfigParser.process(new File("")) // SET VD'S CONFIG FILE HERE
             );
 
             //////////////////////////////// APPLICATION SETUP ////////////////////////////////
