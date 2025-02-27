@@ -1,33 +1,47 @@
 package com.extensions.utils.presets;
 
+/**
+ * Defines presets for fog device host configurations in the iFogSim simulation.
+ * These presets provide common configurations for host resources.
+ */
 public enum FogDeviceHostPreset {
-    DEFAULT(
-            2048,
-            1000000,
-            10000,
-            100,
-            40
-    );
+    /**
+     * The default fog device host preset with typical resource parameters.
+     */
+    DEFAULT(1000000, 10000),
 
-    public final int HOST_RAM;
+    /**
+     * A fog device host preset that simulates a high-performing host with ample resources.
+     */
+    ASSUMED_PERFECT(10000000, 500000),
+
+    /**
+     * A fog device host preset that simulates a constrained host with limited resources.
+     */
+    CONSTRAINED(100000, 5000);
+
+    /**
+     * The storage capacity of the host in MB.
+     */
     public final long HOST_STORAGE;
-    public final int HOST_BANDWIDTH;
-    public final int HOST_BUSY_POWER;
-    public final int HOST_IDLE_POWER;
 
+    /**
+     * The network bandwidth of the host in KBps.
+     */
+    public final int HOST_BANDWIDTH;
+
+    /**
+     * Constructs a FogDeviceHostPreset with the specified parameters.
+     *
+     * @param hostStorage   The storage capacity of the host in MB.
+     * @param hostBandwidth The network bandwidth of the host in KBps.
+     */
     FogDeviceHostPreset(
-            int hostRam,
             long hostStorage,
-            int hostBandwidth,
-            int hostBusyPower,
-            int hostIdlePower
+            int hostBandwidth
+
     ) {
-        this.HOST_RAM = hostRam;
         this.HOST_STORAGE = hostStorage;
         this.HOST_BANDWIDTH = hostBandwidth;
-        this.HOST_BUSY_POWER = hostBusyPower;
-        this.HOST_IDLE_POWER = hostIdlePower;
     }
-
-
 }

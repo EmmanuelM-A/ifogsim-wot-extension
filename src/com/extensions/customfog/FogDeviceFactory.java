@@ -158,7 +158,7 @@ public class FogDeviceFactory {
                     storageList,
                     preset.SCHEDULING_INTERVAL,
                     preset.UPLINK_BW,
-                    preset.DOWNLINK_BW,
+                    preset.DOWN_LINK_BW,
                     preset.UPLINK_LATENCY,
                     preset.RATE_PER_MIPS
             );

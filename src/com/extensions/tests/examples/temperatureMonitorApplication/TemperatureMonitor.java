@@ -80,7 +80,7 @@ public class TemperatureMonitor {
                     SensorPreset.DEFAULT,
                     ActuatorPreset.DEFAULT,
                     "src/com/extensions/input/things/repo1",
-                    vdConfigParser.process(new File(FilePaths.VD_CONFIG_FILE)) // SET VD'S CONFIG FILE HERE
+                    vdConfigParser.process(new File("")) // SET VD'S CONFIG FILE HERE
             );
 
             //////////////////////////////// APPLICATION SETUP ////////////////////////////////

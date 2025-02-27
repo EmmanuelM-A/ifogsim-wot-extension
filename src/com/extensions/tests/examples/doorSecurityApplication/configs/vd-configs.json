@@ -8,8 +8,8 @@
 	  "downBw": 1500,
 	  "level": 3,
 	  "ratePerMips": 0.3,
-	  "busyPower": 4.0,
-	  "idlePower": 1.5
+	  "busyPower": 40.0,
+	  "idlePower": 10.5
 	},
 	{
 	  "tagNames": ["SmartDisplay"],
@@ -19,8 +19,8 @@
 	  "downBw": 1200,
 	  "level": 3,
 	  "ratePerMips": 0.25,
-	  "busyPower": 6.0,
-	  "idlePower": 2.5
+	  "busyPower": 60.0,
+	  "idlePower": 20.5
 	},
 	{
 	  "tagNames": ["Alarm"],
@@ -30,8 +30,8 @@
 	  "downBw": 1000,
 	  "level": 3,
 	  "ratePerMips": 0.2,
-	  "busyPower": 3.5,
-	  "idlePower": 1.2
+	  "busyPower": 30.5,
+	  "idlePower": 10.2
 	},
 	{
 	  "tagNames": ["SmartCamera"],
@@ -41,8 +41,8 @@
 	  "downBw": 2000,
 	  "level": 3,
 	  "ratePerMips": 0.4,
-	  "busyPower": 7.0,
-	  "idlePower": 3.0
+	  "busyPower": 70.0,
+	  "idlePower": 30.0
 	}
   ]
 }

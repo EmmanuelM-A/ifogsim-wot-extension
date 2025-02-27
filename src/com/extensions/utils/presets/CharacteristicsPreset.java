@@ -1,5 +1,9 @@
 package com.extensions.utils.presets;
 
+/**
+ * Defines presets for FogDeviceCharacteristics in the iFogSim simulation.
+ * These presets provide common configurations for fog device characteristics like architecture, OS, and VM type.
+ */
 public class CharacteristicsPreset {
     /**
      * The hardware architecture of the system.

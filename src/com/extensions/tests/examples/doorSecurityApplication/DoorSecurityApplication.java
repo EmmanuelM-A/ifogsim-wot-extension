@@ -1,6 +1,7 @@
 package com.extensions.tests.examples.doorSecurityApplication;
 
 import com.extensions.customfog.CustomController;
+import com.extensions.customfog.CustomFogDevice;
 import com.extensions.custommetrics.CustomMetricManager;
 import com.extensions.custommetrics.metrics.PeakEnergyConsumptionDevice;
 import com.extensions.custommetrics.metrics.TotalEnergyConsumptionEfficiency;
@@ -54,7 +55,7 @@ public final class DoorSecurityApplication {
             Log.disable();
 
             // The number of cloud users/the number of components (or individuals) that interact with the cloud
-            int numUsers = 1;
+            int numUsers = 10;
 
             // Initialise the CloudSim Simulation engine
             CloudSim.init(numUsers, Calendar.getInstance(), false);
@@ -117,9 +118,11 @@ public final class DoorSecurityApplication {
 
             // If cloud based deployment then connect all app modules to the cloud device/node
             if (CLOUD) {
+                //moduleMapping.addModuleToDevice("WorkerModule-1", "cloud");
                 for (AppModule appModule : application.getModules()) {
-                    //if(appModule.getName().equals("MasterModule") || appModule.getName().startsWith("WorkerModule-")) {
+                    //if(appModule.getName().startsWith("WorkerModule-")) {
                     moduleMapping.addModuleToDevice(appModule.getName(), "cloud");
+                    //System.out.println(appModule.getName());
                     //}
                 }
             }
