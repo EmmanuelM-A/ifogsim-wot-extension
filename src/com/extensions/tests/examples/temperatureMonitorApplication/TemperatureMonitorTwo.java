@@ -29,6 +29,11 @@ public class TemperatureMonitorTwo {
      */
     private static final boolean CLOUD = true;
 
+    private static final String THINGS_REPO = "src/com/extensions/tests/examples/temperatureMonitorApplication/things";
+
+    private static final String VDS_CONFIG_FILE = "src/com/extensions/tests/examples/temperatureMonitorApplication/configs/vd-configs.json";
+
+
     public static void main(String[] args) {
         try {
             //////////////////////////////// INITIAL SETUP ////////////////////////////////
@@ -61,8 +66,8 @@ public class TemperatureMonitorTwo {
                     FogDevicePreset.DEFAULT,
                     SensorPreset.DEFAULT,
                     ActuatorPreset.DEFAULT,
-                    "src/com/extensions/input/things/repo1",
-                    vdConfigParser.process(new File("")) // SET VD'S CONFIG FILE HERE
+                    THINGS_REPO,
+                    vdConfigParser.process(new File(VDS_CONFIG_FILE))
             );
 
             //////////////////////////////// APPLICATION SETUP ////////////////////////////////

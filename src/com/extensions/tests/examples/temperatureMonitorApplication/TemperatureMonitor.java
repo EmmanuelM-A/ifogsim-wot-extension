@@ -32,15 +32,20 @@ import java.util.Calendar;
 import java.util.List;
 
 /**
- A simple IoT application which consists of one Virtual Device, a temperature sensor. This application is a basic Temperature
- Monitoring System, where a temperature sensor reads data and sends it to a processing node which then sends data
- to a smart display. The processed data is also sent to the cloud.
+ A simple IoT application which consists of two Virtual Devices, a temperature sensor and a smart display. This application
+ is a basic Temperature Monitoring System, where a temperature sensor reads data, processes it and then displays it on a smart display.
+ The processed data is also sent to the cloud.
  */
 public class TemperatureMonitor {
     /**
      * Determines if the application is cloud-based
      */
     private static final boolean CLOUD = true;
+
+    private static final String THINGS_REPO = "src/com/extensions/tests/examples/temperatureMonitorApplication/things";
+
+    private static final String VDS_CONFIG_FILE = "src/com/extensions/tests/examples/temperatureMonitorApplication/configs/vd-configs.json";
+
 
     public static void main(String[] args) {
         Log.printLine("Starting Temperature Monitor....");
@@ -79,8 +84,8 @@ public class TemperatureMonitor {
                     FogDevicePreset.DEFAULT,
                     SensorPreset.DEFAULT,
                     ActuatorPreset.DEFAULT,
-                    "src/com/extensions/input/things/repo1",
-                    vdConfigParser.process(new File("")) // SET VD'S CONFIG FILE HERE
+                    THINGS_REPO,
+                    vdConfigParser.process(new File(VDS_CONFIG_FILE))
             );
 
             //////////////////////////////// APPLICATION SETUP ////////////////////////////////
@@ -93,6 +98,8 @@ public class TemperatureMonitor {
 
             // Set the application for all sensors and actuators
             for(VirtualDevice virtualDevice : virtualDevices) {
+                virtualDevice.getSensor().setApp(application);
+                virtualDevice.getActuator().setApp(application);
                 for(Sensor sensorProperty : virtualDevice.getSensorProperties()) {
                     sensorProperty.setApp(application);
                 }

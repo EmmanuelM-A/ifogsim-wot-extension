@@ -92,6 +92,7 @@ public final class DoorSecurityApplication {
 
             // Create the application model for the application
             Application application = jsonToApplication.createApplicationModel(appId, broker.getId());
+            //application.setUserId(broker.getId());
 
             // Set the application value for VD
             for(VirtualDevice virtualDevice : virtualDevices) {
@@ -116,13 +117,14 @@ public final class DoorSecurityApplication {
             // Set up module mapping
             ModuleMapping moduleMapping = ModuleMapping.createModuleMapping();
 
+            //moduleMapping.addModuleToDevice("MasterModule", "cloud");
+
             // If cloud based deployment then connect all app modules to the cloud device/node
             if (CLOUD) {
                 //moduleMapping.addModuleToDevice("WorkerModule-1", "cloud");
                 for (AppModule appModule : application.getModules()) {
                     //if(appModule.getName().startsWith("WorkerModule-")) {
-                    moduleMapping.addModuleToDevice(appModule.getName(), "cloud");
-                    //System.out.println(appModule.getName());
+                        moduleMapping.addModuleToDevice(appModule.getName(), "cloud");
                     //}
                 }
             }
