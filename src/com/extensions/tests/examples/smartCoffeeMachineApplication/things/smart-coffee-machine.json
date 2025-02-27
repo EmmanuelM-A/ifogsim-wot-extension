@@ -6,7 +6,7 @@
 	}
   ],
   "@type": "Thing",
-  "title": "Smart-Coffee-Machine",
+  "title": "Smart Coffee Machine",
   "securityDefinitions": {
 	"nosec": {
 	  "scheme": "nosec"
@@ -45,7 +45,7 @@
 	  },
 	  "forms": [
 		{
-		  "href": "http://10.32.149.227:8081/smart-coffee-machine/properties/allAvailableResources",
+		  "href": "http://10.32.145.89:8081/smart-coffee-machine/properties/allAvailableResources",
 		  "contentType": "application/json",
 		  "op": [
 			"readproperty"
@@ -53,7 +53,7 @@
 		  "htv:methodName": "GET"
 		},
 		{
-		  "href": "http://10.32.149.227:8081/smart-coffee-machine/properties/allAvailableResources/observable",
+		  "href": "http://10.32.145.89:8081/smart-coffee-machine/properties/allAvailableResources/observable",
 		  "contentType": "application/json",
 		  "op": [
 			"observeproperty",
@@ -62,7 +62,7 @@
 		  "subprotocol": "longpoll"
 		},
 		{
-		  "href": "http://10.32.149.227:8081/smart-coffee-machine/properties/allAvailableResources",
+		  "href": "http://10.32.145.89:8081/smart-coffee-machine/properties/allAvailableResources",
 		  "contentType": "application/cbor",
 		  "op": [
 			"readproperty"
@@ -70,7 +70,7 @@
 		  "htv:methodName": "GET"
 		},
 		{
-		  "href": "http://10.32.149.227:8081/smart-coffee-machine/properties/allAvailableResources/observable",
+		  "href": "http://10.32.145.89:8081/smart-coffee-machine/properties/allAvailableResources/observable",
 		  "contentType": "application/cbor",
 		  "op": [
 			"observeproperty",
@@ -97,7 +97,7 @@
 	  },
 	  "forms": [
 		{
-		  "href": "http://10.32.149.227:8081/smart-coffee-machine/properties/availableResourceLevel{?id}",
+		  "href": "http://10.32.145.89:8081/smart-coffee-machine/properties/availableResourceLevel{?id}",
 		  "contentType": "application/json",
 		  "op": [
 			"readproperty",
@@ -105,7 +105,7 @@
 		  ]
 		},
 		{
-		  "href": "http://10.32.149.227:8081/smart-coffee-machine/properties/availableResourceLevel{?id}",
+		  "href": "http://10.32.145.89:8081/smart-coffee-machine/properties/availableResourceLevel{?id}",
 		  "contentType": "application/cbor",
 		  "op": [
 			"readproperty",
@@ -126,7 +126,7 @@
 	  },
 	  "forms": [
 		{
-		  "href": "http://10.32.149.227:8081/smart-coffee-machine/properties/possibleDrinks",
+		  "href": "http://10.32.145.89:8081/smart-coffee-machine/properties/possibleDrinks",
 		  "contentType": "application/json",
 		  "op": [
 			"readproperty"
@@ -134,7 +134,7 @@
 		  "htv:methodName": "GET"
 		},
 		{
-		  "href": "http://10.32.149.227:8081/smart-coffee-machine/properties/possibleDrinks",
+		  "href": "http://10.32.145.89:8081/smart-coffee-machine/properties/possibleDrinks",
 		  "contentType": "application/cbor",
 		  "op": [
 			"readproperty"
@@ -151,7 +151,7 @@
 	  "minimum": 0,
 	  "forms": [
 		{
-		  "href": "http://10.32.149.227:8081/smart-coffee-machine/properties/servedCounter",
+		  "href": "http://10.32.145.89:8081/smart-coffee-machine/properties/servedCounter",
 		  "contentType": "application/json",
 		  "op": [
 			"readproperty",
@@ -159,7 +159,7 @@
 		  ]
 		},
 		{
-		  "href": "http://10.32.149.227:8081/smart-coffee-machine/properties/servedCounter",
+		  "href": "http://10.32.145.89:8081/smart-coffee-machine/properties/servedCounter",
 		  "contentType": "application/cbor",
 		  "op": [
 			"readproperty",
@@ -177,7 +177,7 @@
 	  "observable": true,
 	  "forms": [
 		{
-		  "href": "http://10.32.149.227:8081/smart-coffee-machine/properties/maintenanceNeeded",
+		  "href": "http://10.32.145.89:8081/smart-coffee-machine/properties/maintenanceNeeded",
 		  "contentType": "application/json",
 		  "op": [
 			"readproperty",
@@ -185,7 +185,7 @@
 		  ]
 		},
 		{
-		  "href": "http://10.32.149.227:8081/smart-coffee-machine/properties/maintenanceNeeded/observable",
+		  "href": "http://10.32.145.89:8081/smart-coffee-machine/properties/maintenanceNeeded/observable",
 		  "contentType": "application/json",
 		  "op": [
 			"observeproperty",
@@ -194,7 +194,7 @@
 		  "subprotocol": "longpoll"
 		},
 		{
-		  "href": "http://10.32.149.227:8081/smart-coffee-machine/properties/maintenanceNeeded",
+		  "href": "http://10.32.145.89:8081/smart-coffee-machine/properties/maintenanceNeeded",
 		  "contentType": "application/cbor",
 		  "op": [
 			"readproperty",
@@ -202,7 +202,7 @@
 		  ]
 		},
 		{
-		  "href": "http://10.32.149.227:8081/smart-coffee-machine/properties/maintenanceNeeded/observable",
+		  "href": "http://10.32.145.89:8081/smart-coffee-machine/properties/maintenanceNeeded/observable",
 		  "contentType": "application/cbor",
 		  "op": [
 			"observeproperty",
@@ -263,7 +263,7 @@
 	  },
 	  "forms": [
 		{
-		  "href": "http://10.32.149.227:8081/smart-coffee-machine/properties/schedules",
+		  "href": "http://10.32.145.89:8081/smart-coffee-machine/properties/schedules",
 		  "contentType": "application/json",
 		  "op": [
 			"readproperty"
@@ -271,7 +271,7 @@
 		  "htv:methodName": "GET"
 		},
 		{
-		  "href": "http://10.32.149.227:8081/smart-coffee-machine/properties/schedules",
+		  "href": "http://10.32.145.89:8081/smart-coffee-machine/properties/schedules",
 		  "contentType": "application/cbor",
 		  "op": [
 			"readproperty"
@@ -321,7 +321,7 @@
 	  },
 	  "forms": [
 		{
-		  "href": "http://10.32.149.227:8081/smart-coffee-machine/actions/makeDrink{?drinkId,size,quantity}",
+		  "href": "http://10.32.145.89:8081/smart-coffee-machine/actions/makeDrink{?drinkId,size,quantity}",
 		  "contentType": "application/json",
 		  "op": [
 			"invokeaction"
@@ -329,7 +329,7 @@
 		  "htv:methodName": "POST"
 		},
 		{
-		  "href": "http://10.32.149.227:8081/smart-coffee-machine/actions/makeDrink{?drinkId,size,quantity}",
+		  "href": "http://10.32.145.89:8081/smart-coffee-machine/actions/makeDrink{?drinkId,size,quantity}",
 		  "contentType": "application/cbor",
 		  "op": [
 			"invokeaction"
@@ -403,7 +403,7 @@
 	  },
 	  "forms": [
 		{
-		  "href": "http://10.32.149.227:8081/smart-coffee-machine/actions/setSchedule",
+		  "href": "http://10.32.145.89:8081/smart-coffee-machine/actions/setSchedule",
 		  "contentType": "application/json",
 		  "op": [
 			"invokeaction"
@@ -411,7 +411,7 @@
 		  "htv:methodName": "POST"
 		},
 		{
-		  "href": "http://10.32.149.227:8081/smart-coffee-machine/actions/setSchedule",
+		  "href": "http://10.32.145.89:8081/smart-coffee-machine/actions/setSchedule",
 		  "contentType": "application/cbor",
 		  "op": [
 			"invokeaction"
@@ -431,7 +431,7 @@
 	  },
 	  "forms": [
 		{
-		  "href": "http://10.32.149.227:8081/smart-coffee-machine/events/outOfResource",
+		  "href": "http://10.32.145.89:8081/smart-coffee-machine/events/outOfResource",
 		  "contentType": "application/json",
 		  "subprotocol": "longpoll",
 		  "op": [
@@ -440,7 +440,7 @@
 		  ]
 		},
 		{
-		  "href": "http://10.32.149.227:8081/smart-coffee-machine/events/outOfResource",
+		  "href": "http://10.32.145.89:8081/smart-coffee-machine/events/outOfResource",
 		  "contentType": "application/cbor",
 		  "subprotocol": "longpoll",
 		  "op": [
@@ -451,12 +451,12 @@
 	  ]
 	}
   },
-  "id": "urn:uuid:33af8352-49ba-49dc-86d3-e7054fbaec2b",
+  "id": "urn:uuid:5c461ffb-3763-4e57-8036-4c2fbaf9730d",
   "description": "A smart coffee machine with a range of capabilities.",
   "support": "https://github.com/eclipse-thingweb/node-wot/",
   "forms": [
 	{
-	  "href": "http://10.32.149.227:8081/smart-coffee-machine/properties",
+	  "href": "http://10.32.145.89:8081/smart-coffee-machine/properties",
 	  "contentType": "application/json",
 	  "op": [
 		"readallproperties",
@@ -466,7 +466,7 @@
 	  ]
 	},
 	{
-	  "href": "http://10.32.149.227:8081/smart-coffee-machine/properties",
+	  "href": "http://10.32.145.89:8081/smart-coffee-machine/properties",
 	  "contentType": "application/cbor",
 	  "op": [
 		"readallproperties",

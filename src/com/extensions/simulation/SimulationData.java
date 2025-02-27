@@ -90,7 +90,7 @@ public class SimulationData {
         // Application Loop Delays
         System.out.println("APPLICATION LOOP DELAYS:");
         for (Map.Entry<String, Double> entry : applicationLoopDelays.entrySet()) {
-            System.out.printf("%s ---> %.3f ms%n", entry.getKey(), entry.getValue());
+            System.out.printf("AppLoop %s ---> %.3f ms%n", entry.getKey(), entry.getValue());
         }
         System.out.println("==========================================");
 

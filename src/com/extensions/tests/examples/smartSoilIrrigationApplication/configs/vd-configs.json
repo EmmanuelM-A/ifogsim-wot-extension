@@ -1,0 +1,37 @@
+{
+  "configs": [
+	{
+	  "tagNames": ["SmartDisplay"],
+	  "mips": 1000,
+	  "ram": 2048,
+	  "upBw": 5000,
+	  "downBw": 5000,
+	  "level": 3,
+	  "ratePerMips": 0.5,
+	  "busyPower": 100.0,
+	  "idlePower": 40.0
+	},
+	{
+	  "tagNames": ["SoilNutritionMonitor"],
+	  "mips": 400,
+	  "ram": 512,
+	  "upBw": 500,
+	  "downBw": 500,
+	  "level": 3,
+	  "ratePerMips": 0.15,
+	  "busyPower": 350.0,
+	  "idlePower": 150.0
+	},
+	{
+	  "tagNames": ["WaterPump"],
+	  "mips": 800,
+	  "ram": 1024,
+	  "upBw": 1000,
+	  "downBw": 1000,
+	  "level": 2,
+	  "ratePerMips": 0.3,
+	  "busyPower": 200.0,
+	  "idlePower": 130.0
+	}
+  ]
+}

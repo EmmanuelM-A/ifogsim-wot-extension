@@ -38,9 +38,8 @@ import java.util.Calendar;
 import java.util.List;
 
 // TODO - FINALISE AND TIDY UP CODE EVERYWHERE, CLEAN UP PROJECT FOLDER, DELETE UNNECESSARY CODE
-// TODO - INVESTIGATE OUTPUT DATA
-// TODO - ADD MORE ERROR HANDLING
-// TODO - SORT OUT CONFIGURATIONS, PRESETS AND INPUT VALUES
+// TODO - ADD MORE/CHECK ERROR HANDLING ????
+// TODO - SORT OUT CONFIGURATIONS, PRESETS AND INPUT VALUES & INVESTIGATE OUTPUT DATA
 // TODO - LOOK INTO WHY TUPLE EXECUTION DELAY & APP LOOP DELAY DON'T DISPLAY WHEN CLOUD = FALSE
 
 public final class App {
@@ -63,10 +62,10 @@ public final class App {
 
             // This instance is responsible for loading in the node red application, creating the application topology and model and setting up related data
             JsonToApplication jsonToApplication = new JsonToApplication(
-                    CloudNodePreset.DEFAULT,
-                    EdgeNodePreset.DEFAULT,
-                    ApplicationPreset.DEFAULT,
-                    new File(NODE_RED_APPLICATION_JSON) // The file path of the Node-RED application design
+                    CloudNodePreset.DEFAULT, // CHANGEABLE
+                    EdgeNodePreset.DEFAULT, // CHANGEABLE
+                    ApplicationPreset.DEFAULT, // CHANGEABLE
+                    new File(NODE_RED_APPLICATION_JSON)
             );
 
             // Disables iFogSim's logging mechanism, only displaying simulation results
@@ -93,11 +92,11 @@ public final class App {
             List<VirtualDevice> virtualDevices = VirtualDeviceFactory.createVirtualDevices(
                     broker.getId(),
                     appId,
-                    FogDevicePreset.DEFAULT,
-                    SensorPreset.DEFAULT,
-                    ActuatorPreset.DEFAULT,
-                    THINGS_REPO, // SET THINGS REPO HERE
-                    vdConfigParser.process(new File(VDS_CONFIG_FILE)) // SET VDS CONFIG FILE HERE
+                    FogDevicePreset.DEFAULT, // CHANGEABLE
+                    SensorPreset.DEFAULT, // CHANGEABLE
+                    ActuatorPreset.DEFAULT, // CHANGEABLE
+                    THINGS_REPO,
+                    vdConfigParser.process(new File(VDS_CONFIG_FILE))
             );
 
             //////////////////////////////// APPLICATION SETUP ////////////////////////////////

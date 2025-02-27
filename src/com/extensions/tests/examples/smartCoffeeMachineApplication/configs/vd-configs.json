@@ -1,0 +1,15 @@
+{
+  "configs": [
+	{
+	  "tagNames": ["SmartCoffeeMachine"],
+	  "mips": 700,
+	  "ram": 1536,
+	  "upBw": 2000,
+	  "downBw": 2000,
+	  "level": 3,
+	  "ratePerMips": 0.25,
+	  "busyPower": 700,
+	  "idlePower": 250
+	}
+  ]
+}

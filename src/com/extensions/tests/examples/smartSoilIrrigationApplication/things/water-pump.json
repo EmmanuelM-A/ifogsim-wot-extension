@@ -1,0 +1,212 @@
+{
+  "@context": [
+	"https://www.w3.org/2019/wot/td/v1",
+	{
+	  "@language": "en"
+	}
+  ],
+  "@type": "Thing",
+  "title": "Water Pump",
+  "securityDefinitions": {
+	"nosec": {
+	  "scheme": "nosec"
+	}
+  },
+  "security": [
+	"nosec"
+  ],
+  "properties": {
+	"status": {
+	  "type": "string",
+	  "enum": [
+		"on",
+		"off"
+	  ],
+	  "description": "The current status of the water pump.",
+	  "observable": true,
+	  "forms": [
+		{
+		  "href": "http://10.32.145.89:8081/water-pump/properties/status",
+		  "contentType": "application/json",
+		  "op": [
+			"readproperty",
+			"writeproperty"
+		  ]
+		},
+		{
+		  "href": "http://10.32.145.89:8081/water-pump/properties/status/observable",
+		  "contentType": "application/json",
+		  "op": [
+			"observeproperty",
+			"unobserveproperty"
+		  ],
+		  "subprotocol": "longpoll"
+		},
+		{
+		  "href": "http://10.32.145.89:8081/water-pump/properties/status",
+		  "contentType": "application/cbor",
+		  "op": [
+			"readproperty",
+			"writeproperty"
+		  ]
+		},
+		{
+		  "href": "http://10.32.145.89:8081/water-pump/properties/status/observable",
+		  "contentType": "application/cbor",
+		  "op": [
+			"observeproperty",
+			"unobserveproperty"
+		  ],
+		  "subprotocol": "longpoll"
+		}
+	  ],
+	  "readOnly": false,
+	  "writeOnly": false
+	},
+	"waterLevel": {
+	  "type": "number",
+	  "description": "The current water level in the reservoir (in liters).",
+	  "minimum": 0,
+	  "maximum": 100,
+	  "readOnly": true,
+	  "observable": true,
+	  "forms": [
+		{
+		  "href": "http://10.32.145.89:8081/water-pump/properties/waterLevel",
+		  "contentType": "application/json",
+		  "op": [
+			"readproperty"
+		  ],
+		  "htv:methodName": "GET"
+		},
+		{
+		  "href": "http://10.32.145.89:8081/water-pump/properties/waterLevel/observable",
+		  "contentType": "application/json",
+		  "op": [
+			"observeproperty",
+			"unobserveproperty"
+		  ],
+		  "subprotocol": "longpoll"
+		},
+		{
+		  "href": "http://10.32.145.89:8081/water-pump/properties/waterLevel",
+		  "contentType": "application/cbor",
+		  "op": [
+			"readproperty"
+		  ],
+		  "htv:methodName": "GET"
+		},
+		{
+		  "href": "http://10.32.145.89:8081/water-pump/properties/waterLevel/observable",
+		  "contentType": "application/cbor",
+		  "op": [
+			"observeproperty",
+			"unobserveproperty"
+		  ],
+		  "subprotocol": "longpoll"
+		}
+	  ],
+	  "writeOnly": false
+	}
+  },
+  "actions": {
+	"startPump": {
+	  "description": "Starts the water pump.",
+	  "forms": [
+		{
+		  "href": "http://10.32.145.89:8081/water-pump/actions/startPump",
+		  "contentType": "application/json",
+		  "op": [
+			"invokeaction"
+		  ],
+		  "htv:methodName": "POST"
+		},
+		{
+		  "href": "http://10.32.145.89:8081/water-pump/actions/startPump",
+		  "contentType": "application/cbor",
+		  "op": [
+			"invokeaction"
+		  ],
+		  "htv:methodName": "POST"
+		}
+	  ],
+	  "safe": false,
+	  "idempotent": false
+	},
+	"stopPump": {
+	  "description": "Stops the water pump.",
+	  "forms": [
+		{
+		  "href": "http://10.32.145.89:8081/water-pump/actions/stopPump",
+		  "contentType": "application/json",
+		  "op": [
+			"invokeaction"
+		  ],
+		  "htv:methodName": "POST"
+		},
+		{
+		  "href": "http://10.32.145.89:8081/water-pump/actions/stopPump",
+		  "contentType": "application/cbor",
+		  "op": [
+			"invokeaction"
+		  ],
+		  "htv:methodName": "POST"
+		}
+	  ],
+	  "safe": false,
+	  "idempotent": false
+	}
+  },
+  "events": {
+	"lowWaterLevel": {
+	  "description": "Triggered when the water level falls below 10 liters.",
+	  "data": {
+		"type": "string"
+	  },
+	  "forms": [
+		{
+		  "href": "http://10.32.145.89:8081/water-pump/events/lowWaterLevel",
+		  "contentType": "application/json",
+		  "subprotocol": "longpoll",
+		  "op": [
+			"subscribeevent",
+			"unsubscribeevent"
+		  ]
+		},
+		{
+		  "href": "http://10.32.145.89:8081/water-pump/events/lowWaterLevel",
+		  "contentType": "application/cbor",
+		  "subprotocol": "longpoll",
+		  "op": [
+			"subscribeevent",
+			"unsubscribeevent"
+		  ]
+		}
+	  ]
+	}
+  },
+  "id": "urn:uuid:9258efe7-c5e9-4c35-8df9-4a5821670218",
+  "description": "A pump for irrigating soil.",
+  "forms": [
+	{
+	  "href": "http://10.32.145.89:8081/water-pump/properties",
+	  "contentType": "application/json",
+	  "op": [
+		"readallproperties",
+		"readmultipleproperties",
+		"writeallproperties",
+		"writemultipleproperties"
+	  ]
+	},
+	{
+	  "href": "http://10.32.145.89:8081/water-pump/properties",
+	  "contentType": "application/cbor",
+	  "op": [
+		"readallproperties",
+		"readmultipleproperties",
+		"writeallproperties",
+		"writemultipleproperties"
+	  ]
+	}
+  ]
+}

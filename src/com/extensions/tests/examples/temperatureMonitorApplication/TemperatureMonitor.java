@@ -1,4 +1,4 @@
-package com.extensions.tests.examples.temperatureMonitor;
+package com.extensions.tests.examples.temperatureMonitorApplication;
 
 import com.extensions.customfog.CustomController;
 import com.extensions.customfog.FogDeviceFactory;

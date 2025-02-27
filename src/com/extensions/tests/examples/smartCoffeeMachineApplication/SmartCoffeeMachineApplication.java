@@ -1,4 +1,4 @@
-package com.extensions.tests.examples.doorSecurityApplication;
+package com.extensions.tests.examples.smartCoffeeMachineApplication;
 
 import com.extensions.customfog.CustomController;
 import com.extensions.custommetrics.CustomMetricManager;
@@ -24,17 +24,17 @@ import java.io.File;
 import java.util.Calendar;
 import java.util.List;
 
-public final class DoorSecurityApplication {
+public final class SmartCoffeeMachineApplication {
     /**
      * Determines if the application is cloud-based
      */
     private static final boolean CLOUD = true;
 
-    private static final String NODE_RED_APPLICATION_JSON = "src/com/extensions/tests/examples/doorSecurityApplication/door-security-application.json";
+    private static final String NODE_RED_APPLICATION_JSON = "src/com/extensions/tests/examples/smartCoffeeMachineApplication/smart-coffee-machine-application.json";
 
-    private static final String THINGS_REPO = "src/com/extensions/tests/examples/doorSecurityApplication/things";
+    private static final String THINGS_REPO = "src/com/extensions/tests/examples/smartCoffeeMachineApplication/things";
 
-    private static final String VDS_CONFIG_FILE = "src/com/extensions/tests/examples/doorSecurityApplication/configs/vd-configs.json";
+    private static final String VDS_CONFIG_FILE = "src/com/extensions/tests/examples/smartCoffeeMachineApplication/configs/vd-configs.json";
 
     public static void main(String[] args) {
         Log.printLine("Starting Simulation...");
@@ -115,6 +115,8 @@ public final class DoorSecurityApplication {
             // Set up module mapping
             ModuleMapping moduleMapping = ModuleMapping.createModuleMapping();
 
+            //moduleMapping.addModuleToDevice("MasterModule", "cloud");
+
             // If cloud based deployment then connect all app modules to the cloud device/node
             if (CLOUD) {
                 for (AppModule appModule : application.getModules()) {
@@ -163,3 +165,4 @@ public final class DoorSecurityApplication {
         }
     }
 }
+
