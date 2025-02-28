@@ -8,34 +8,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-/**
- * This class is responsible for processing a JSON file containing IoT device distributions
- * and mapping them to edge nodes.
- * <p>
- * This class implements {@code FileProcessor} to process a given JSON file and return
- * a structured representation of IoT devices per edge node.
- * <p>
- * JSON Format Example:
- * <pre>
- * {
- *   "edge-1": {
- *     "things": {
- *       "thing1": 3,
- *       "thing2": 1,
- *       "thing3": 4
- *     }
- *   },
- *   "edge-2": {
- *     "things": {
- *       "thing1": 3,
- *       "thing2": 2,
- *       "thing3": 1
- *     }
- *   }
- * }
- * </pre>
- *
- */
+
 public class VDQuantityParser implements FileProcessor<Map<String, List<String>>> {
     private final Map<String, Integer> thingFrequencies;
     private final Map<String, List<String>> vdsConnectedToEdgeNodes;
@@ -44,23 +17,6 @@ public class VDQuantityParser implements FileProcessor<Map<String, List<String>>
         this.thingFrequencies = new HashMap<>();
         this.vdsConnectedToEdgeNodes = process(file);
     }
-
-    /**
-     * Processes a JSON file containing IoT device allocations to edge nodes and extracts
-     * a mapping of edge nodes to their associated virtual device (VD) names.
-     * <p>
-     * The JSON file follows a structure where each edge node contains a "things" section
-     * listing IoT devices and their quantities. This method 1) extracts only the combined frequency of all
-     * things from all edge nodes and stores it a frequency table and 2) extracts the VD (names) connected
-     * to a specific edge node, returning a map where each edge node is associated with
-     * a list of VD names.
-     * </p>
-     *
-     * @param file The JSON file containing the IoT device information.
-     * @return A map where each key is an edge node name, and the value is a list of VD names.
-     * @throws IOException If an error occurs while reading or parsing the file.
-     * @throws IllegalArgumentException If the JSON structure is invalid or missing required fields.
-     */
     @Override
     public Map<String, List<String>> process(File file) throws IOException {
         // Initialize Jackson's ObjectMapper to parse JSON

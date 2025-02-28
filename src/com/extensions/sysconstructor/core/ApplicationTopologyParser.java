@@ -153,9 +153,9 @@ public class ApplicationTopologyParser implements FileProcessor<JsonNode> {
                     case NodeRedJSONParser.TYPE_READ_PROPERTY, NodeRedJSONParser.TYPE_WRITE_PROPERTY -> uniqueAttribute = node.path("property").asText(null);
                 }
 
-                if(type.equals("consumed-thing")) {
+                /*if(type.equals("consumed-thing")) {
                     name = name.replace(" ", "");
-                }
+                }*/
 
                 // Create TopologyNode instance
                 TopologyNode topologyNode = new TopologyNode(id, name, topic, type, thing, uniqueAttribute, null);
