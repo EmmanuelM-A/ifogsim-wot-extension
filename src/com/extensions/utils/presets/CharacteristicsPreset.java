@@ -28,7 +28,7 @@ public class CharacteristicsPreset {
     /**
      * The cost of using processing in the resource.
      */
-    public static final double COST = 3.0;
+    public static final double COST = 1.6;
 
     /**
      * The cost of using memory in this resource.

@@ -81,6 +81,8 @@ public class TemperatureMonitorTwo {
 
             // Step 5: Set the application for VD's sensors and actuators
             for(VirtualDevice virtualDevice : virtualDevices) {
+                virtualDevice.getSensor().setApp(application);
+                virtualDevice.getActuator().setApp(application);
                 for(Sensor sensorProperty : virtualDevice.getSensorProperties()) {
                     sensorProperty.setApp(application);
                 }

@@ -15,7 +15,7 @@ public enum FogDevicePreset {
             10,
             2000,
             1000,
-            4,
+            3,
             0.05,
             70.0,
             20.0
@@ -31,7 +31,7 @@ public enum FogDevicePreset {
             1,
             500000,
             500000,
-            1,
+            0,
             0.01,
             300.0,
             70.0

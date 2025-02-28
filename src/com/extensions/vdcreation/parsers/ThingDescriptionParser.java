@@ -5,7 +5,6 @@ import java.io.IOException;
 
 import com.extensions.utils.processors.FileProcessor;
 import com.extensions.vdcreation.models.ThingDescription;
-import com.fasterxml.jackson.core.StreamReadFeature;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 

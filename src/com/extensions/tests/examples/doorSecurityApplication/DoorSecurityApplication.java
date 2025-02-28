@@ -121,7 +121,8 @@ public final class DoorSecurityApplication {
 
             // If cloud based deployment then connect all app modules to the cloud device/node
             if (CLOUD) {
-                //moduleMapping.addModuleToDevice("WorkerModule-1", "cloud");
+                //moduleMapping.addModuleToDevice("edgeNode-access-control", "cloud");
+                //moduleMapping.addModuleToDevice("edgeNode-security-monitoring", "cloud");
                 for (AppModule appModule : application.getModules()) {
                     //if(appModule.getName().startsWith("WorkerModule-")) {
                         moduleMapping.addModuleToDevice(appModule.getName(), "cloud");
@@ -147,7 +148,6 @@ public final class DoorSecurityApplication {
 
             CustomMetricManager customMetricManager = controller.getCustomMetricManager();
 
-            //customMetricManager.registerMetric(new LongestApplicationLoopDelay());
             customMetricManager.registerMetric(new PeakEnergyConsumptionDevice());
             customMetricManager.registerMetric(new TotalEnergyConsumptionEfficiency());
 

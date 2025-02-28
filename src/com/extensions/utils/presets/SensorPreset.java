@@ -29,7 +29,7 @@ public enum SensorPreset {
      */
     CONSTRAINED(
             50.0,
-            new UniformDistribution(1, 10)
+            new DeterministicDistribution(0.5)
     );
 
     /**

@@ -1,184 +1,134 @@
 {
   "applicationDetails" : {
-    "title" : "Door Security Application"
+    "title" : "Smart Soil Irrigation System"
   },
   "things" : [ {
-    "id" : "263d2ff2376b823c",
-    "name" : "Smart Door Lock",
+    "id" : "3e11a9770f66de8a",
+    "name" : "Water Pump",
     "type" : "consumed-thing"
   }, {
-    "id" : "60ec5509eed581fd",
-    "name" : "Alarm",
-    "type" : "consumed-thing"
-  }, {
-    "id" : "b7c9cdf5487520a3",
-    "name" : "Smart Camera",
+    "id" : "0a58653b1d429a97",
+    "name" : "Soil Nutrition Monitor",
     "type" : "consumed-thing"
   }, {
     "id" : "dc99cc6070d7f6fe",
     "name" : "Smart Display",
     "type" : "consumed-thing"
   } ],
-  "topics" : [ "access-control", "security-monitoring" ],
+  "topics" : [ ],
   "subFlows" : {
     "subFlow-0" : {
       "rootNode" : {
-        "id" : "9db12d6115952391",
-        "name" : "onTamperAlertEvent()",
+        "id" : "8e24d66fae5a1072",
+        "name" : "",
         "type" : "subscribe-event",
-        "topic" : "access-control",
-        "thing" : "263d2ff2376b823c",
-        "event" : "tamperAlert"
+        "topic" : "",
+        "thing" : "3e11a9770f66de8a",
+        "event" : "lowWaterLevel"
       },
       "branches" : {
         "branch-0" : [ {
-          "id" : "9db12d6115952391",
-          "name" : "onTamperAlertEvent()",
+          "id" : "8e24d66fae5a1072",
+          "name" : "",
           "type" : "subscribe-event",
-          "topic" : "access-control",
-          "thing" : "263d2ff2376b823c",
-          "event" : "tamperAlert"
+          "topic" : "",
+          "thing" : "3e11a9770f66de8a",
+          "event" : "lowWaterLevel"
         }, {
-          "id" : "f3e4a7e45b1528ec",
-          "name" : "activateAlarm()",
+          "id" : "b21b1280ab4bccdc",
+          "name" : "",
           "type" : "invoke-action",
-          "topic" : "security-monitoring",
-          "thing" : "60ec5509eed581fd",
-          "action" : "activate"
+          "topic" : "",
+          "thing" : "3e11a9770f66de8a",
+          "action" : "stopPump"
         } ],
         "branch-1" : [ {
-          "id" : "9db12d6115952391",
-          "name" : "onTamperAlertEvent()",
+          "id" : "8e24d66fae5a1072",
+          "name" : "",
           "type" : "subscribe-event",
-          "topic" : "access-control",
-          "thing" : "263d2ff2376b823c",
-          "event" : "tamperAlert"
+          "topic" : "",
+          "thing" : "3e11a9770f66de8a",
+          "event" : "lowWaterLevel"
         }, {
-          "id" : "d3db99b0f35b81ce",
-          "name" : "takePhoto()",
+          "id" : "9b17526e2d616250",
+          "name" : "",
           "type" : "invoke-action",
-          "topic" : "security-monitoring",
-          "thing" : "b7c9cdf5487520a3",
-          "action" : "takeSnapshot"
+          "topic" : "",
+          "thing" : "dc99cc6070d7f6fe",
+          "action" : "showAlert"
         } ]
       }
     },
     "subFlow-1" : {
       "rootNode" : {
-        "id" : "c5fdbc67d85cfe4b",
-        "name" : "getLockState()",
-        "type" : "read-property",
-        "topic" : "access-control",
-        "thing" : "263d2ff2376b823c",
-        "property" : "lockState"
+        "id" : "459281c92eb86090",
+        "name" : "",
+        "type" : "subscribe-event",
+        "topic" : "",
+        "thing" : "0a58653b1d429a97",
+        "event" : "nutritionDepleted"
       },
       "branches" : {
         "branch-0" : [ {
-          "id" : "c5fdbc67d85cfe4b",
-          "name" : "getLockState()",
-          "type" : "read-property",
-          "topic" : "access-control",
-          "thing" : "263d2ff2376b823c",
-          "property" : "lockState"
-        }, {
-          "id" : "4751a14ba955c435",
+          "id" : "459281c92eb86090",
           "name" : "",
-          "type" : "switch",
-          "topic" : null,
-          "thing" : null
+          "type" : "subscribe-event",
+          "topic" : "",
+          "thing" : "0a58653b1d429a97",
+          "event" : "nutritionDepleted"
         }, {
-          "id" : "75e9a24f35463920",
-          "name" : "lockDoor()",
+          "id" : "dd2f6f12bdfe714f",
+          "name" : "",
           "type" : "invoke-action",
-          "topic" : "access-control",
-          "thing" : "263d2ff2376b823c",
-          "action" : "lockDoor"
+          "topic" : "",
+          "thing" : "dc99cc6070d7f6fe",
+          "action" : "showAlert"
         } ],
         "branch-1" : [ {
-          "id" : "c5fdbc67d85cfe4b",
-          "name" : "getLockState()",
-          "type" : "read-property",
-          "topic" : "access-control",
-          "thing" : "263d2ff2376b823c",
-          "property" : "lockState"
-        }, {
-          "id" : "4751a14ba955c435",
+          "id" : "459281c92eb86090",
           "name" : "",
-          "type" : "switch",
+          "type" : "subscribe-event",
+          "topic" : "",
+          "thing" : "0a58653b1d429a97",
+          "event" : "nutritionDepleted"
+        }, {
+          "id" : "732854a4775eeb85",
+          "name" : "Some processing",
+          "type" : "function",
           "topic" : null,
           "thing" : null
         }, {
-          "id" : "03ed1574430869f3",
-          "name" : "debug 5",
-          "type" : "debug",
-          "topic" : null,
-          "thing" : null
+          "id" : "5e6c061be81b4058",
+          "name" : "",
+          "type" : "invoke-action",
+          "topic" : "",
+          "thing" : "0a58653b1d429a97",
+          "action" : "calibrateSensor"
         } ]
       }
     },
     "subFlow-2" : {
       "rootNode" : {
-        "id" : "9d94164d06b0710c",
-        "name" : "onSnapshotTakenEvent()",
-        "type" : "subscribe-event",
-        "topic" : "security-monitoring",
-        "thing" : "b7c9cdf5487520a3",
-        "event" : "snapshotTaken"
+        "id" : "c741bdd94e8c3e63",
+        "name" : "",
+        "type" : "read-property",
+        "topic" : "",
+        "thing" : "3e11a9770f66de8a",
+        "property" : "status"
       },
       "branches" : {
         "branch-0" : [ {
-          "id" : "9d94164d06b0710c",
-          "name" : "onSnapshotTakenEvent()",
-          "type" : "subscribe-event",
-          "topic" : "security-monitoring",
-          "thing" : "b7c9cdf5487520a3",
-          "event" : "snapshotTaken"
-        }, {
-          "id" : "ed04d7ad2e16b730",
-          "name" : "getStreamURL()",
+          "id" : "c741bdd94e8c3e63",
+          "name" : "",
           "type" : "read-property",
-          "topic" : "security-monitoring",
-          "thing" : "b7c9cdf5487520a3",
-          "property" : "streamURL"
+          "topic" : "",
+          "thing" : "3e11a9770f66de8a",
+          "property" : "status"
         }, {
-          "id" : "6715a35ba36fd344",
-          "name" : "Some Processing",
-          "type" : "function",
-          "topic" : null,
-          "thing" : null
-        }, {
-          "id" : "80359b6e0dae8f0d",
-          "name" : "logData()",
+          "id" : "2b1362c86abb3a47",
+          "name" : "",
           "type" : "invoke-action",
-          "topic" : "security-monitoring",
-          "thing" : "dc99cc6070d7f6fe",
-          "action" : "updateDisplay"
-        } ],
-        "branch-1" : [ {
-          "id" : "9d94164d06b0710c",
-          "name" : "onSnapshotTakenEvent()",
-          "type" : "subscribe-event",
-          "topic" : "security-monitoring",
-          "thing" : "b7c9cdf5487520a3",
-          "event" : "snapshotTaken"
-        }, {
-          "id" : "836ea1adc6c4f940",
-          "name" : "getLastSnapshot()",
-          "type" : "read-property",
-          "topic" : "security-monitoring",
-          "thing" : "b7c9cdf5487520a3",
-          "property" : "lastSnapshot"
-        }, {
-          "id" : "9a4be8e1136190c1",
-          "name" : "Some Processing",
-          "type" : "function",
-          "topic" : null,
-          "thing" : null
-        }, {
-          "id" : "0f5c64a7567a5548",
-          "name" : "logData()",
-          "type" : "invoke-action",
-          "topic" : "security-monitoring",
+          "topic" : "",
           "thing" : "dc99cc6070d7f6fe",
           "action" : "updateDisplay"
         } ]
@@ -186,92 +136,199 @@
     },
     "subFlow-3" : {
       "rootNode" : {
-        "id" : "6d0c0d10e6a07442",
+        "id" : "7a4ebbbb138b58b8",
         "name" : "",
-        "type" : "inject",
+        "type" : "read-property",
         "topic" : "",
-        "thing" : null
+        "thing" : "0a58653b1d429a97",
+        "property" : "nitrogenLevel"
       },
       "branches" : {
         "branch-0" : [ {
-          "id" : "6d0c0d10e6a07442",
+          "id" : "7a4ebbbb138b58b8",
           "name" : "",
-          "type" : "inject",
+          "type" : "read-property",
           "topic" : "",
+          "thing" : "0a58653b1d429a97",
+          "property" : "nitrogenLevel"
+        }, {
+          "id" : "de068eddfcbf5ce9",
+          "name" : "Some Processing",
+          "type" : "function",
+          "topic" : null,
           "thing" : null
         }, {
-          "id" : "ab799136aebc7a6f",
-          "name" : "unlockDoor()",
+          "id" : "c363067e0693d9ec",
+          "name" : "",
+          "type" : "switch",
+          "topic" : null,
+          "thing" : null
+        }, {
+          "id" : "ae8f4caf877d6d8b",
+          "name" : "",
           "type" : "invoke-action",
-          "topic" : "access-control",
-          "thing" : "263d2ff2376b823c",
-          "action" : "unlockDoor"
+          "topic" : "",
+          "thing" : "3e11a9770f66de8a",
+          "action" : "startPump"
+        } ],
+        "branch-1" : [ {
+          "id" : "7a4ebbbb138b58b8",
+          "name" : "",
+          "type" : "read-property",
+          "topic" : "",
+          "thing" : "0a58653b1d429a97",
+          "property" : "nitrogenLevel"
+        }, {
+          "id" : "de068eddfcbf5ce9",
+          "name" : "Some Processing",
+          "type" : "function",
+          "topic" : null,
+          "thing" : null
+        }, {
+          "id" : "c363067e0693d9ec",
+          "name" : "",
+          "type" : "switch",
+          "topic" : null,
+          "thing" : null
+        }, {
+          "id" : "14ba1bb6500a227e",
+          "name" : "",
+          "type" : "invoke-action",
+          "topic" : "",
+          "thing" : "3e11a9770f66de8a",
+          "action" : "stopPump"
         } ]
       }
     },
     "subFlow-4" : {
       "rootNode" : {
-        "id" : "9587c249258c0e5e",
+        "id" : "be08167542aa8ade",
         "name" : "",
-        "type" : "subscribe-event",
-        "topic" : "access-control",
-        "thing" : "263d2ff2376b823c",
-        "event" : "doorLocked"
+        "type" : "read-property",
+        "topic" : "",
+        "thing" : "0a58653b1d429a97",
+        "property" : "phosphorusLevel"
       },
       "branches" : {
         "branch-0" : [ {
-          "id" : "9587c249258c0e5e",
+          "id" : "be08167542aa8ade",
           "name" : "",
-          "type" : "subscribe-event",
-          "topic" : "access-control",
-          "thing" : "263d2ff2376b823c",
-          "event" : "doorLocked"
+          "type" : "read-property",
+          "topic" : "",
+          "thing" : "0a58653b1d429a97",
+          "property" : "phosphorusLevel"
         }, {
-          "id" : "13bd4e8359ce1a5f",
-          "name" : "Do something",
+          "id" : "af83691442644691",
+          "name" : "Some Processing",
           "type" : "function",
           "topic" : null,
           "thing" : null
         }, {
-          "id" : "6abec97a066fa433",
-          "name" : "logEvent()",
+          "id" : "be8dce98be08cd62",
+          "name" : "",
+          "type" : "switch",
+          "topic" : null,
+          "thing" : null
+        }, {
+          "id" : "8e2d5cea6773ad66",
+          "name" : "",
           "type" : "invoke-action",
-          "topic" : "access-control",
-          "thing" : "dc99cc6070d7f6fe",
-          "action" : "showAlert"
+          "topic" : "",
+          "thing" : "3e11a9770f66de8a",
+          "action" : "startPump"
+        } ],
+        "branch-1" : [ {
+          "id" : "be08167542aa8ade",
+          "name" : "",
+          "type" : "read-property",
+          "topic" : "",
+          "thing" : "0a58653b1d429a97",
+          "property" : "phosphorusLevel"
+        }, {
+          "id" : "af83691442644691",
+          "name" : "Some Processing",
+          "type" : "function",
+          "topic" : null,
+          "thing" : null
+        }, {
+          "id" : "be8dce98be08cd62",
+          "name" : "",
+          "type" : "switch",
+          "topic" : null,
+          "thing" : null
+        }, {
+          "id" : "8e914a0dcff02b79",
+          "name" : "",
+          "type" : "invoke-action",
+          "topic" : "",
+          "thing" : "3e11a9770f66de8a",
+          "action" : "stopPump"
         } ]
       }
     },
     "subFlow-5" : {
       "rootNode" : {
-        "id" : "3b6935d22bd00ead",
-        "name" : "onAlarmTriggeredEvent()",
-        "type" : "subscribe-event",
-        "topic" : "security-monitoring",
-        "thing" : "60ec5509eed581fd",
-        "event" : "alarmTriggered"
+        "id" : "1bc07077f20f6a41",
+        "name" : "",
+        "type" : "read-property",
+        "topic" : "",
+        "thing" : "0a58653b1d429a97",
+        "property" : "potassiumLevel"
       },
       "branches" : {
         "branch-0" : [ {
-          "id" : "3b6935d22bd00ead",
-          "name" : "onAlarmTriggeredEvent()",
-          "type" : "subscribe-event",
-          "topic" : "security-monitoring",
-          "thing" : "60ec5509eed581fd",
-          "event" : "alarmTriggered"
+          "id" : "1bc07077f20f6a41",
+          "name" : "",
+          "type" : "read-property",
+          "topic" : "",
+          "thing" : "0a58653b1d429a97",
+          "property" : "potassiumLevel"
         }, {
-          "id" : "f961cb5a16678a6e",
-          "name" : "Do something",
+          "id" : "50a9a5dde2c202d7",
+          "name" : "Some Processing",
           "type" : "function",
           "topic" : null,
           "thing" : null
         }, {
-          "id" : "99879b685f3d65b8",
-          "name" : "logEvent()",
+          "id" : "dc6dde043e0a1ba9",
+          "name" : "",
+          "type" : "switch",
+          "topic" : null,
+          "thing" : null
+        }, {
+          "id" : "94dfcdde77507b43",
+          "name" : "",
           "type" : "invoke-action",
-          "topic" : "security-monitoring",
-          "thing" : "dc99cc6070d7f6fe",
-          "action" : "showAlert"
+          "topic" : "",
+          "thing" : "3e11a9770f66de8a",
+          "action" : "startPump"
+        } ],
+        "branch-1" : [ {
+          "id" : "1bc07077f20f6a41",
+          "name" : "",
+          "type" : "read-property",
+          "topic" : "",
+          "thing" : "0a58653b1d429a97",
+          "property" : "potassiumLevel"
+        }, {
+          "id" : "50a9a5dde2c202d7",
+          "name" : "Some Processing",
+          "type" : "function",
+          "topic" : null,
+          "thing" : null
+        }, {
+          "id" : "dc6dde043e0a1ba9",
+          "name" : "",
+          "type" : "switch",
+          "topic" : null,
+          "thing" : null
+        }, {
+          "id" : "46cf0dbc953e7ec3",
+          "name" : "",
+          "type" : "invoke-action",
+          "topic" : "",
+          "thing" : "3e11a9770f66de8a",
+          "action" : "stopPump"
         } ]
       }
     }
