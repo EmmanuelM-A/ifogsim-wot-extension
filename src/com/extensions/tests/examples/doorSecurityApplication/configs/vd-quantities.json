@@ -1,0 +1,15 @@
+{
+	"access-control": {
+		"things": {
+			"Smart Door Lock": 2,
+			"Smart Display": 1
+		}
+	},
+	"security-monitoring": {
+		"things": {
+			"Smart Camera": 3,
+			"Alarm": 1,
+			"Smart Display" : 1
+		}
+	}
+}

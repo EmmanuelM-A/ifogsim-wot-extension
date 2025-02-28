@@ -40,6 +40,7 @@ public final class App {
 
     private static final String VDS_CONFIG_FILE = "src/com/extensions/tests/examples/doorSecurityApplication/configs/vd-configs.json";
 
+    private static final String VD_QUANTITIES_FILE = "src/com/extensions/tests/examples/doorSecurityApplication/configs/vd-quantities.json";
     public static void main(String[] args) {
         Log.printLine("Starting Simulation...");
 
@@ -88,7 +89,7 @@ public final class App {
             //////////////////////////////// APPLICATION SETUP ////////////////////////////////
 
             // Create the physical topology for the application
-            ApplicationPhysicalTopology physicalTopology = jsonToApplication.createApplicationPhysicalTopology(virtualDevices);
+            ApplicationPhysicalTopology physicalTopology = jsonToApplication.createApplicationPhysicalTopology(virtualDevices, new File(VD_QUANTITIES_FILE));
 
             // Set the sensors list (NEEDED TO CREATE THE APPLICATION MODEL BELOW)
             jsonToApplication.setAllSensors(physicalTopology.getSensors());

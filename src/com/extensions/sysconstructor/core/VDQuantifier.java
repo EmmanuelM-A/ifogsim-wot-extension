@@ -57,6 +57,8 @@ public class VDQuantifier implements FileProcessor<Map<String, List<Pair<String,
             // Read and parse the JSON file
             JsonNode rootNode = objectMapper.readTree(file);
 
+            if(rootNode.isEmpty()) throw new Error("VD Quantities file is empty of missing!");
+
             // Iterate through edge nodes in the JSON structure
             for (Iterator<String> it = rootNode.fieldNames(); it.hasNext(); ) {
                 String edgeNode = it.next();
@@ -64,8 +66,7 @@ public class VDQuantifier implements FileProcessor<Map<String, List<Pair<String,
 
                 // Validate edgeDataNode structure
                 if (edgeDataNode == null || !edgeDataNode.has("things")) {
-                    System.err.println("Warning: Missing 'things' section in edge node: " + edgeNode);
-                    continue; // Skip invalid entries
+                    throw new Error("Warning: Missing 'things' section in edge node: " + edgeNode);
                 }
 
                 JsonNode thingsNode = edgeDataNode.get("things");
@@ -73,16 +74,19 @@ public class VDQuantifier implements FileProcessor<Map<String, List<Pair<String,
 
                 // Iterate through the IoT devices in the "things" section
                 for (Iterator<String> thingsIt = thingsNode.fieldNames(); thingsIt.hasNext(); ) {
-                    String vdName = thingsIt.next();
+                    String tdName = thingsIt.next();
 
                     // Extract and validate the quantity
-                    JsonNode quantityNode = thingsNode.get(vdName);
-                    if (quantityNode == null || !quantityNode.isInt()) {
-                        System.err.println("Warning: Invalid quantity for device '" + vdName + "' in edge node: " + edgeNode);
-                        continue; // Skip invalid entries
+                    JsonNode quantityNode = thingsNode.get(tdName);
+                    if (quantityNode == null || !quantityNode.isInt() || quantityNode.asInt() < 0) {
+                        throw new Error("Warning: Invalid quantity for device '" + tdName + "' in edge node: " + edgeNode);
                     }
 
                     int quantity = quantityNode.asInt();
+
+                    // Thing name --> VD name is as such Temperature Sensor --> TemperatureSensor
+                    String vdName = tdName.replace(" ", "");
+
                     vdList.add(new Pair<>(vdName, quantity));
                 }
 

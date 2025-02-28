@@ -37,9 +37,9 @@ public final class DoorSecurityApplication {
 
     private static final String VDS_CONFIG_FILE = "src/com/extensions/tests/examples/doorSecurityApplication/configs/vd-configs.json";
 
-    public static void main(String[] args) {
-        Log.printLine("Starting Simulation...");
+    private static final String VD_QUANTITIES_FILE = "src/com/extensions/tests/examples/doorSecurityApplication/configs/vd-quantities.json";
 
+    public static void main(String[] args) {
         try {
             //////////////////////////////// INITIAL SETUP ////////////////////////////////
 
@@ -50,6 +50,8 @@ public final class DoorSecurityApplication {
                     ApplicationPreset.DEFAULT, // CHANGEABLE
                     new File(NODE_RED_APPLICATION_JSON) // The file path of the Node-RED application design
             );
+
+            Log.printLine("Starting Simulation...");
 
             // Disables iFogSim's logging mechanism, only displaying simulation results
             Log.disable();
@@ -85,7 +87,7 @@ public final class DoorSecurityApplication {
             //////////////////////////////// APPLICATION SETUP ////////////////////////////////
 
             // Create the physical topology for the application
-            ApplicationPhysicalTopology physicalTopology = jsonToApplication.createApplicationPhysicalTopology(virtualDevices);
+            ApplicationPhysicalTopology physicalTopology = jsonToApplication.createApplicationPhysicalTopology(virtualDevices, new File(VD_QUANTITIES_FILE));
 
             // Set the sensors list (NEEDED TO CREATE THE APPLICATION MODEL BELOW)
             jsonToApplication.setAllSensors(physicalTopology.getSensors());

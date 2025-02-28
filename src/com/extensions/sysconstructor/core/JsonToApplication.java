@@ -1,5 +1,6 @@
 package com.extensions.sysconstructor.core;
 
+import com.extensions.customfog.CustomFogDevice;
 import com.extensions.customfog.FogDeviceFactory;
 import com.extensions.sysconstructor.eventdriver.EventManager;
 import com.extensions.sysconstructor.eventdriver.EventSensor;
@@ -9,6 +10,7 @@ import com.extensions.sysconstructor.topology.TopologyNode;
 import com.extensions.sysconstructor.topology.TopologyNodeConnectionChecker;
 import com.extensions.sysconstructor.topology.TopologyNodeConnectionStatus;
 import com.extensions.sysconstructor.topology.TopologyNodeTree;
+import com.extensions.utils.Pair;
 import com.extensions.utils.Utility;
 import com.extensions.utils.presets.ApplicationPreset;
 import com.extensions.utils.presets.CloudNodePreset;
@@ -79,7 +81,7 @@ public class JsonToApplication {
     private final List<TopologyNodeTree> eventFlows;
 
     /**
-     * The parser responsible for extracting information from application topology file
+     * The parser responsible for extracting information from application topology file.
      */
     private final ApplicationTopologyParser applicationTopologyParser;
 
@@ -150,7 +152,7 @@ public class JsonToApplication {
     //////////////////////////////////////////// APPLICATION MODEL CONSTRUCTION ////////////////////////////////////////////
 
     public Application createApplicationModel(String appId, int userId) {
-        Application application = mapAppTopologyToAppModel(appId, userId, dataFlows);
+        Application application = mapAppTopologyToAppModel(appId, userId);
 
         addEventFlowToApplication(application);
 
@@ -159,7 +161,7 @@ public class JsonToApplication {
         return application;
     }
 
-    private Application mapAppTopologyToAppModel(String appId, int userId, List<TopologyNodeTree> topologyNodeTrees) {
+    private Application mapAppTopologyToAppModel(String appId, int userId) {
         // Check if the sub-flow flow exists
         if(topologyNodeTrees == null) {
             System.out.println("Dataflow passed in is null!");
@@ -176,7 +178,7 @@ public class JsonToApplication {
         // Keeps track of sensor-actuator pairs that have been made
         Set<VirtualDevice> virtualDevicesUsedSoFar = new HashSet<>();
 
-        for(TopologyNodeTree topologyNodeTree : topologyNodeTrees) {
+        for(TopologyNodeTree topologyNodeTree : dataFlows) {
             // Check if the sub flow is not null
             if(topologyNodeTree == null) continue;
 
@@ -216,6 +218,8 @@ public class JsonToApplication {
                             String VD_SENSOR = virtualDevice.getSensor().getName();
                             String VD_ACTUATOR = virtualDevice.getActuator().getName();
 
+                            System.out.println(VD_SENSOR);
+
                             // Get the property/action name of the src and dst node which is used as the name for sensor and actuator
                             String srcName = src.uniqueAttribute();
                             String dstName = dst.uniqueAttribute();
@@ -249,8 +253,8 @@ public class JsonToApplication {
                                         MASTER_MODULE
                                 );
 
-                                //System.out.println("New VD SENSOR-MODULE-ACTUATOR connection made for " + virtualDevice.getFogDevice().getName());
-                                //System.out.println("WORKER-MODULE connection: " + workerModuleConnection + " added for " + virtualDevice.getFogDevice().getName());
+                                System.out.println("New VD SENSOR-MODULE-ACTUATOR connection made for " + virtualDevice.getFogDevice().getName());
+                                System.out.println("WORKER-MODULE connection: " + workerModuleConnection + " added for " + virtualDevice.getFogDevice().getName());
                             } else {
                                 /*
                                 VD SENSOR-MODULE-ACTUATOR connection already exists for the sub-flow and as such just create
@@ -267,7 +271,7 @@ public class JsonToApplication {
                                         MASTER_MODULE
                                 );
 
-                                //System.out.println("WORKER-MODULE connection: " + workerModuleConnection + " added to existing " + virtualDevice.getFogDevice().getName() + " SENSOR-MODULE-ACTUATOR connection.");
+                                System.out.println("WORKER-MODULE connection: " + workerModuleConnection + " added to existing " + virtualDevice.getFogDevice().getName() + " SENSOR-MODULE-ACTUATOR connection.");
                             }
                         }
                     }
@@ -323,7 +327,6 @@ public class JsonToApplication {
                         String srcName = src.uniqueAttribute();
                         String dstName = dst.uniqueAttribute();
 
-                        // If the sub flow is an event flow, add the event flow to the application model
                         if(branches.size() == 1) {
                             recordEventFlow(application, srcName, dstName);
                         } else if(branches.size() > 1) {
@@ -361,8 +364,6 @@ public class JsonToApplication {
 
         final AppLoop loop = new AppLoop(new ArrayList<>(){{add(srcName);add(eventProcessor);add(dstName);}});
         application.getLoops().add(loop);
-
-        eventProcessingModuleCount++;
     }
 
     public void setAllSensors(List<Sensor> sensors) {
@@ -379,6 +380,8 @@ public class JsonToApplication {
         // Using the thing node's name find its corresponding VD
         if(thingUsed != null) {
             for(VirtualDevice vd : vds) {
+                //System.out.println("VD: " + vd.getFogDevice().getName());
+                //System.out.println("Thing: " + thingUsed.name());
                 if(vd.getFogDevice().getName().equals(thingUsed.name())) {
                     return vd;
                 }
@@ -471,7 +474,7 @@ public class JsonToApplication {
 
     ////////////////////////////////////// APPLICATION PHYSICAL TOPOLOGY CONSTRUCTION //////////////////////////////////////
 
-    public ApplicationPhysicalTopology createApplicationPhysicalTopology(List<VirtualDevice> virtualDevices) {
+    public ApplicationPhysicalTopology createApplicationPhysicalTopology(List<VirtualDevice> virtualDevices, File vdQuantitiesFile) {
         // Will store all fog devices used in the application
         List<FogDevice> fogDevices = new ArrayList<>();
 
@@ -517,6 +520,9 @@ public class JsonToApplication {
                 }
             }
 
+            // The map that stores the VD quantities for each edge node
+            Map<String, List<Pair<String, Integer>>> vdQuantitiesForEdgeNodes = new VDQuantifier().process(vdQuantitiesFile);
+
             // Create cloud node/device at the top of the hierarchy
             FogDevice cloud = FogDeviceFactory.createFogDevice(
                     "cloud",
@@ -538,9 +544,9 @@ public class JsonToApplication {
 
             if(!nodeTopics.isEmpty()) { // If the topics array is set
                 // Assign VDs to edge nodes based on topics
-                for(String topic : nodeTopics) {
+                for(String edgeNodeName : nodeTopics) {
                     // Create the edge node for that topic
-                    FogDevice edgeNode = createEdgeNode(topic);
+                    FogDevice edgeNode = createEdgeNode(edgeNodeName);
 
                     // Link the edge node to the cloud
                     edgeNode.setParentId(cloud.getId());
@@ -549,25 +555,71 @@ public class JsonToApplication {
                     fogDevices.add(edgeNode);
                     edgeNodes.add(edgeNode);
 
-                    List<VirtualDevice> virtualDevicesUsed = getVirtualDeviceWithMatchingTopic(allTopologyNodes, allSelectedVirtualDevices, topic);
+                    List<VirtualDevice> virtualDevicesUsed = getVirtualDeviceWithMatchingTopic(allTopologyNodes, allSelectedVirtualDevices, edgeNodeName);
 
-                    assert virtualDevicesUsed != null;
-                    for(VirtualDevice virtualDevice : virtualDevicesUsed) {
-                        FogDevice vdFogDevice = null;
+                    // Get VD quantities for this edge node
+                    List<Pair<String, Integer>> vdQuantities = vdQuantitiesForEdgeNodes.getOrDefault(edgeNodeName, null);
 
-                        if(virtualDevice != null) {
-                            vdFogDevice = virtualDevice.getFogDevice();
+                    if(vdQuantities != null) {
+                        assert virtualDevicesUsed != null;
+                        for(VirtualDevice virtualDevice : virtualDevicesUsed) {
+                            CustomFogDevice vdFogDevice = null;
+
+                            if(virtualDevice != null) {
+                                vdFogDevice = virtualDevice.getFogDevice();
+                            }
+
+                            if(vdFogDevice != null) {
+                                // Get the VD's quantity
+                                Integer vdFogDeviceQuantity = -1;
+                                for(Pair<String, Integer> vdQuantity : vdQuantities) {
+                                    if(vdQuantity.getKey().equals(vdFogDevice.getName())) {
+                                        vdFogDeviceQuantity = vdQuantity.getValue();
+                                    }
+                                }
+
+                                if(vdFogDeviceQuantity == -1) throw new Error("VD quantity not found! Check VD quantities file!");
+
+                                String vdFogDeviceName = vdFogDevice.getName();
+
+                                if(vdFogDeviceQuantity > 1) {
+                                    // Connect the N fog devices
+                                    for(int index = 0; index < vdFogDeviceQuantity; index++) {
+                                        vdFogDevice.setName(vdFogDeviceName + "-" + index);
+                                        vdFogDevice.setParentId(edgeNode.getId());
+                                        vdFogDevice.setUplinkLatency(applicationPreset.UPLINK_LATENCY_VD_TO_EDGE);
+                                        vdFogDevice.setLevel(3);
+                                        fogDevices.add(vdFogDevice);
+                                        System.out.println("VD " + vdFogDevice.getName() + " connected to " + edgeNode.getName());
+                                    }
+                                } else {
+                                    vdFogDevice.setName(vdFogDeviceName + "-00");
+                                    vdFogDevice.setParentId(edgeNode.getId());
+                                    vdFogDevice.setUplinkLatency(applicationPreset.UPLINK_LATENCY_VD_TO_EDGE);
+                                    vdFogDevice.setLevel(3);
+                                    fogDevices.add(vdFogDevice);
+                                    System.out.println("VD " + vdFogDevice.getName() + " connected to " + edgeNode.getName());
+                                }
+
+                                /*while(vdFogDeviceQuantity > 0) {
+                                    vdFogDevice.setName(vdFogDeviceName + "-" + vdFogDeviceQuantity);
+                                    vdFogDevice.setParentId(edgeNode.getId());
+                                    vdFogDevice.setUplinkLatency(applicationPreset.UPLINK_LATENCY_VD_TO_EDGE);
+                                    vdFogDevice.setLevel(3);
+                                    fogDevices.add(vdFogDevice);
+                                    System.out.println("VD " + vdFogDevice.getName() + " connected to " + edgeNode.getName());
+                                    vdFogDeviceQuantity--;
+                                }*/
+                            }
                         }
-
-                        if(vdFogDevice != null) {
-                            vdFogDevice.setParentId(edgeNode.getId());
-                            vdFogDevice.setUplinkLatency(applicationPreset.UPLINK_LATENCY_VD_TO_EDGE);
-                            vdFogDevice.setLevel(3);
-                            fogDevices.add(vdFogDevice);
-                        }
+                    } else {
+                        throw new Error("The edge node edge-" + edgeNodeName + " does not exist!");
                     }
                 }
-            } else { // If the topics array is not set, distribute nodes normally
+                //for(FogDevice fogDevice : fogDevices) {
+                   // System.out.println(fogDevice.getName());
+                //}
+            } else { // If the topics array is not set, use default node distribution
                 // Calculate the number of edge nodes needed
                 int numberOfEdgeNodes = Math.max(1, calculateNoOfEdgeNodes(selectedVirtualDevices.size(), applicationPreset.MAX_VDS_FOR_ONE_EDE_NODE));
 
@@ -619,13 +671,18 @@ public class JsonToApplication {
             applicationPhysicalTopology.setActuators(allActuatorsUsedInApplication);
             applicationPhysicalTopology.setEdgeNodes(edgeNodes);
 
-            System.out.println("Application's physical topology formed!");
+            System.out.println("Application's Physical Topology Construction SUCCESSFUL!");
 
             return applicationPhysicalTopology;
         } catch(Exception e) {
+            System.out.println("Application's Physical Topology Construction UNSUCCESSFUL!");
             System.out.println(e.getMessage());
         }
         return null;
+    }
+
+    private void updateVDDetails(VirtualDevice virtualDevice) {
+
     }
 
     private List<String> getAllSensorsAndActuatorsUsed(List<TopologyNode> nodes) {
