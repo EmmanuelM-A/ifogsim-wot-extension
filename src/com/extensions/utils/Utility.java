@@ -28,6 +28,13 @@ public class Utility {
         return null;
     }
 
+    public static VirtualDevice getVirtualDeviceThatMatches(String criteria, List<VirtualDevice> virtualDevices) {
+        for(VirtualDevice virtualDevice : virtualDevices) {
+            if(virtualDevice.getFogDevice().getName().contains(criteria)) return virtualDevice;
+        }
+        return null;
+    }
+
     public static VirtualDevice getVirtualDevice(List<TopologyNode> things, List<VirtualDevice> virtualDevices, TopologyNode node) {
         String thingNode = null;
 

@@ -474,7 +474,7 @@ public class JsonToApplication {
 
     ////////////////////////////////////// APPLICATION PHYSICAL TOPOLOGY CONSTRUCTION //////////////////////////////////////
 
-    public ApplicationPhysicalTopology createApplicationPhysicalTopology(List<VirtualDevice> virtualDevices, File vdQuantitiesFile) {
+    public ApplicationPhysicalTopology createApplicationPhysicalTopology(List<VirtualDevice> virtualDevices, Map<String, List<String>> edgeNodeVDConnections) {
         // Will store all fog devices used in the application
         List<FogDevice> fogDevices = new ArrayList<>();
 
@@ -520,9 +520,6 @@ public class JsonToApplication {
                 }
             }
 
-            // The map that stores the VD quantities for each edge node
-            Map<String, List<Pair<String, Integer>>> vdQuantitiesForEdgeNodes = new VDQuantifier().process(vdQuantitiesFile);
-
             // Create cloud node/device at the top of the hierarchy
             FogDevice cloud = FogDeviceFactory.createFogDevice(
                     "cloud",
@@ -555,70 +552,36 @@ public class JsonToApplication {
                     fogDevices.add(edgeNode);
                     edgeNodes.add(edgeNode);
 
-                    List<VirtualDevice> virtualDevicesUsed = getVirtualDeviceWithMatchingTopic(allTopologyNodes, allSelectedVirtualDevices, edgeNodeName);
+                    List<VirtualDevice> virtualDevicesUsed = getVirtualDevicesWithMatchingEdgeNodeName(allTopologyNodes, allSelectedVirtualDevices, edgeNodeName);
 
-                    // Get VD quantities for this edge node
-                    List<Pair<String, Integer>> vdQuantities = vdQuantitiesForEdgeNodes.getOrDefault(edgeNodeName, null);
+                    System.out.println("No. of VDs: " + virtualDevicesUsed.size() + " for the edge node " + edgeNodeName);
 
-                    if(vdQuantities != null) {
-                        assert virtualDevicesUsed != null;
-                        for(VirtualDevice virtualDevice : virtualDevicesUsed) {
-                            CustomFogDevice vdFogDevice = null;
+                    // Get VD (names) that connect to this edge node
+                    List<String> vdConnections = edgeNodeVDConnections.getOrDefault(edgeNodeName, null);
 
-                            if(virtualDevice != null) {
-                                vdFogDevice = virtualDevice.getFogDevice();
-                            }
+                    if(vdConnections == null) throw new Error("The edge node " + edgeNodeName + " does not exist! Check VD quantities file!");
 
-                            if(vdFogDevice != null) {
-                                // Get the VD's quantity
-                                Integer vdFogDeviceQuantity = -1;
-                                for(Pair<String, Integer> vdQuantity : vdQuantities) {
-                                    if(vdQuantity.getKey().equals(vdFogDevice.getName())) {
-                                        vdFogDeviceQuantity = vdQuantity.getValue();
-                                    }
-                                }
+                    assert virtualDevicesUsed != null;
+                    for(VirtualDevice virtualDevice : virtualDevicesUsed) {
+                        CustomFogDevice vdFogDevice = null;
 
-                                if(vdFogDeviceQuantity == -1) throw new Error("VD quantity not found! Check VD quantities file!");
+                        if(virtualDevice != null) {
+                            vdFogDevice = virtualDevice.getFogDevice();
+                        }
 
-                                String vdFogDeviceName = vdFogDevice.getName();
-
-                                if(vdFogDeviceQuantity > 1) {
-                                    // Connect the N fog devices
-                                    for(int index = 0; index < vdFogDeviceQuantity; index++) {
-                                        vdFogDevice.setName(vdFogDeviceName + "-" + index);
-                                        vdFogDevice.setParentId(edgeNode.getId());
-                                        vdFogDevice.setUplinkLatency(applicationPreset.UPLINK_LATENCY_VD_TO_EDGE);
-                                        vdFogDevice.setLevel(3);
-                                        fogDevices.add(vdFogDevice);
-                                        System.out.println("VD " + vdFogDevice.getName() + " connected to " + edgeNode.getName());
-                                    }
-                                } else {
-                                    vdFogDevice.setName(vdFogDeviceName + "-00");
-                                    vdFogDevice.setParentId(edgeNode.getId());
-                                    vdFogDevice.setUplinkLatency(applicationPreset.UPLINK_LATENCY_VD_TO_EDGE);
-                                    vdFogDevice.setLevel(3);
-                                    fogDevices.add(vdFogDevice);
-                                    System.out.println("VD " + vdFogDevice.getName() + " connected to " + edgeNode.getName());
-                                }
-
-                                /*while(vdFogDeviceQuantity > 0) {
-                                    vdFogDevice.setName(vdFogDeviceName + "-" + vdFogDeviceQuantity);
-                                    vdFogDevice.setParentId(edgeNode.getId());
-                                    vdFogDevice.setUplinkLatency(applicationPreset.UPLINK_LATENCY_VD_TO_EDGE);
-                                    vdFogDevice.setLevel(3);
-                                    fogDevices.add(vdFogDevice);
-                                    System.out.println("VD " + vdFogDevice.getName() + " connected to " + edgeNode.getName());
-                                    vdFogDeviceQuantity--;
-                                }*/
+                        if(vdFogDevice != null) {
+                            // Search for the VD fog device that is connected to this edge node
+                            if(vdConnections.contains(vdFogDevice.getName())) {
+                                // Connect the VD's fog device to the specified edge node
+                                vdFogDevice.setParentId(edgeNode.getId());
+                                vdFogDevice.setUplinkLatency(applicationPreset.UPLINK_LATENCY_VD_TO_EDGE);
+                                vdFogDevice.setLevel(3);
+                                fogDevices.add(vdFogDevice);
+                                System.out.println("VD " + vdFogDevice.getName() + " connected to " + edgeNode.getName());
                             }
                         }
-                    } else {
-                        throw new Error("The edge node edge-" + edgeNodeName + " does not exist!");
                     }
                 }
-                //for(FogDevice fogDevice : fogDevices) {
-                   // System.out.println(fogDevice.getName());
-                //}
             } else { // If the topics array is not set, use default node distribution
                 // Calculate the number of edge nodes needed
                 int numberOfEdgeNodes = Math.max(1, calculateNoOfEdgeNodes(selectedVirtualDevices.size(), applicationPreset.MAX_VDS_FOR_ONE_EDE_NODE));
@@ -714,8 +677,10 @@ public class JsonToApplication {
 
             for(TopologyNode thing : things) {
                 String thingName = thing.name();
+                //System.out.println("Thing: " + thingName);
+                //System.out.println("VD: " + name);
 
-                if(name.equals(thingName)) selectedVirtualDevices.add(virtualDevice);
+                if(name.contains(thingName)) selectedVirtualDevices.add(virtualDevice);
             }
         }
 
@@ -743,7 +708,7 @@ public class JsonToApplication {
      * @param targetTopic The target topic to search for
      * @return A list of all virtual devices counterparts of the (referenced) things that contain the matching topic
      */
-    private List<VirtualDevice> getVirtualDeviceWithMatchingTopic(List<TopologyNode> nodes, List<VirtualDevice> allVirtualDevices, String targetTopic) {
+    private List<VirtualDevice> getVirtualDevicesWithMatchingEdgeNodeName(List<TopologyNode> nodes, List<VirtualDevice> allVirtualDevices, String targetTopic) {
         if (targetTopic == null || targetTopic.isEmpty()) {
             System.out.println("Topic must not be empty!");
             return null;
@@ -781,7 +746,15 @@ public class JsonToApplication {
         // Get all things used for that topic (topic-node) and get its corresponding virtual device
         for(TopologyNode thing : thingNodes) {
             String formattedThingName = thing.name().replace(" ", "");
-            virtualDevices.add(Utility.getVirtualDevice(allVirtualDevices, formattedThingName));
+
+            VirtualDevice vdFound = Utility.getVirtualDeviceThatMatches(formattedThingName, allVirtualDevices);
+
+            virtualDevices.add(vdFound);
+
+            System.out.println("The VD: " + vdFound.getFogDevice().getName() + " found for the edge node " + targetTopic);
+
+            // Prevents the same VD always being found
+            allVirtualDevices.remove(vdFound);
         }
 
         return !virtualDevices.isEmpty() ? new ArrayList<>(virtualDevices) : null;

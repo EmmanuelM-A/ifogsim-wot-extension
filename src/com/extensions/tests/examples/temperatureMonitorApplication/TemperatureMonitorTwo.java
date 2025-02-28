@@ -38,7 +38,7 @@ public class TemperatureMonitorTwo {
         try {
             //////////////////////////////// INITIAL SETUP ////////////////////////////////
 
-            // Disables iFogSim's logging mechanism, only display simulation results
+            /*// Disables iFogSim's logging mechanism, only display simulation results
             Log.disable();
 
             int numUsers = 1;
@@ -119,7 +119,7 @@ public class TemperatureMonitorTwo {
 
             // Step 8: Start Simulation
             CloudSim.startSimulation();
-            CloudSim.stopSimulation();
+            CloudSim.stopSimulation();*/
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -21,6 +21,7 @@ import org.fog.placement.ModulePlacementMapping;
 import org.fog.utils.TimeKeeper;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 
@@ -43,7 +44,7 @@ public final class SmartSoilIrrigationApplication {
         try {
             //////////////////////////////// INITIAL SETUP ////////////////////////////////
 
-            // This instance is responsible for loading in the node red application, creating the application topology and model and setting up related data
+            /*// This instance is responsible for loading in the node red application, creating the application topology and model and setting up related data
             JsonToApplication jsonToApplication = new JsonToApplication(
                     CloudNodePreset.DEFAULT, // CHANGEABLE
                     EdgeNodePreset.DEFAULT, // CHANGEABLE
@@ -72,7 +73,7 @@ public final class SmartSoilIrrigationApplication {
             VirtualDeviceConfigParser vdConfigParser = new VirtualDeviceConfigParser();
 
             // Create the virtual devices using the thing descriptions repo folder
-            List<VirtualDevice> virtualDevices = VirtualDeviceFactory.createVirtualDevices(
+            VirtualDeviceFactory.createVirtualDevices(
                     broker.getId(),
                     appId,
                     FogDevicePreset.DEFAULT, // CHANGEABLE
@@ -155,7 +156,7 @@ public final class SmartSoilIrrigationApplication {
             CloudSim.startSimulation();
 
             // Stop the simulation once it completes
-            CloudSim.stopSimulation();
+            CloudSim.stopSimulation();*/
 
         } catch(Exception e) {
             e.printStackTrace();

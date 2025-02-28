@@ -53,7 +53,7 @@ public class TemperatureMonitor {
         try {
             //////////////////////////////// INITIAL SETUP ////////////////////////////////
 
-            // Disables iFogSim's logging mechanism, only display simulation results
+            /*// Disables iFogSim's logging mechanism, only display simulation results
             Log.disable();
 
             // The number of cloud users
@@ -155,7 +155,7 @@ public class TemperatureMonitor {
             CloudSim.startSimulation();
 
             // Stop the simulation once it completes
-            CloudSim.stopSimulation();
+            CloudSim.stopSimulation();*/
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

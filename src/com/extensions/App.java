@@ -47,7 +47,7 @@ public final class App {
         try {
             //////////////////////////////// INITIAL SETUP ////////////////////////////////
 
-            // This instance is responsible for loading in the node red application, creating the application topology and model and setting up related data
+            /*// This instance is responsible for loading in the node red application, creating the application topology and model and setting up related data
             JsonToApplication jsonToApplication = new JsonToApplication(
                     CloudNodePreset.DEFAULT, // CHANGEABLE
                     EdgeNodePreset.DEFAULT, // CHANGEABLE
@@ -160,7 +160,7 @@ public final class App {
             CloudSim.startSimulation();
 
             // Stop the simulation once it completes
-            CloudSim.stopSimulation();
+            CloudSim.stopSimulation();*/
 
         } catch(Exception e) {
             e.printStackTrace();

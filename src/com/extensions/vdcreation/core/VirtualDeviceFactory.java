@@ -48,7 +48,8 @@ public class VirtualDeviceFactory {
             SensorPreset sensorPreset,
             ActuatorPreset actuatorPreset,
             String thingRepoFolder,
-            List<VirtualDeviceConfig> configs
+            List<VirtualDeviceConfig> configs,
+            Map<String, Integer> thingFrequencies
     ) throws IOException {
         // The list to store virtual devices created
         List<VirtualDevice> createdVirtualDevices = new ArrayList<>();
@@ -70,12 +71,21 @@ public class VirtualDeviceFactory {
 
         // Create the virtual devices using the thing descriptions and factory method
         for(ThingDescription thingDescription : thingDescriptions) {
-            VirtualDevice vd = virtualDeviceFactory.createVirtualDevice(
-                    thingDescription,
-                    configs
-            );
-            // IF YOU WISH TO VALIDATE VDS, DO IT HERE
-            createdVirtualDevices.add(vd);
+            // Get the frequency of the thing (using TD)
+            int thingFrequency = thingFrequencies.getOrDefault(thingDescription.getTitle(), -1);
+
+            if(thingFrequency == -1) throw new Error("The thing " + thingDescription.getTitle() + " does not exist in VD quantities file! Please Check the VD quantities file!");
+
+            // Create the same number of VDs as things for the TD
+            for(int id = 0; id < thingFrequency; id++) {
+                VirtualDevice vd = virtualDeviceFactory.createVirtualDevice(
+                        thingDescription,
+                        id,
+                        configs
+                );
+                // IF YOU WISH TO VALIDATE VDS, DO IT HERE
+                createdVirtualDevices.add(vd);
+            }
         }
 
         return createdVirtualDevices;
@@ -89,9 +99,9 @@ public class VirtualDeviceFactory {
      * @param configs A list of VD configurations
      * @return A virtual device that contains all necessary information about the TD.
      */
-    public VirtualDevice createVirtualDevice(ThingDescription thingDescription, List<VirtualDeviceConfig> configs) {
+    private VirtualDevice createVirtualDevice(ThingDescription thingDescription, int identifier, List<VirtualDeviceConfig> configs) {
         // Instantiate a virtual device with no sensors or actuators
-        VirtualDevice virtualDevice = defineVirtualDevice(thingDescription, configs);
+        VirtualDevice virtualDevice = defineVirtualDevice(thingDescription, identifier, configs);
 
         Map<String, Property> writeProperties = new HashMap<>();
 
@@ -223,9 +233,12 @@ public class VirtualDeviceFactory {
      * @param configs A list of VD configurations
      * @return The created VD from the TD with is configurations and components defined and set.
      */
-    private VirtualDevice defineVirtualDevice(ThingDescription thingDescription, List<VirtualDeviceConfig> configs) {
+    private VirtualDevice defineVirtualDevice(ThingDescription thingDescription, int identifier, List<VirtualDeviceConfig> configs) {
+        // Format TD title, so it matches the format of the VD title
+        String tdName = thingDescription.getTitle().replace(" ", "");
+
         // Create a virtual device using defined presets only
-        VirtualDevice virtualDevice = new VirtualDevice(thingDescription.getTitle(), fogDevicePreset);
+        VirtualDevice virtualDevice = new VirtualDevice(tdName + "-" + identifier, fogDevicePreset);
 
         // Store the VD's TD
         virtualDevice.setThingDescription(thingDescription);
@@ -237,13 +250,10 @@ public class VirtualDeviceFactory {
 
         // Search through the configs to find a VD config file for the TD
         for(VirtualDeviceConfig config : configs) {
-            // Format TD title, so it matches the format of the VD title
-            String tdName = thingDescription.getTitle().replace(" ", "");
-
             // Check if the TD has a config file for its VD
             if(config.tags().contains(tdName)) {
                 // Create a virtual device using the defined presets and the config data for this VD
-                virtualDevice = new VirtualDevice(thingDescription.getTitle(), fogDevicePreset, config);
+                virtualDevice = new VirtualDevice(tdName + "-" + identifier, fogDevicePreset, config);
                 break;
             }
         }

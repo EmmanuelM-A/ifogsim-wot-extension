@@ -7,7 +7,7 @@ import org.fog.entities.Actuator;
 public class ActuatorAction extends Actuator {
     private final Action action;
     private final ActuatorPreset preset;
-    private final String name;
+    private String name;
     private final String actuatorType;
 
     public ActuatorAction(String name, int userId, String appId, Action action, ActuatorPreset preset) {
@@ -20,6 +20,15 @@ public class ActuatorAction extends Actuator {
 
         this.action = action;
         this.preset = preset;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override

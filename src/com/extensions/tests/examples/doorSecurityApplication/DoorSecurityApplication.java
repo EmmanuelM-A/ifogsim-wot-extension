@@ -7,6 +7,8 @@ import com.extensions.custommetrics.metrics.PeakEnergyConsumptionDevice;
 import com.extensions.custommetrics.metrics.TotalEnergyConsumptionEfficiency;
 import com.extensions.sysconstructor.core.ApplicationPhysicalTopology;
 import com.extensions.sysconstructor.core.JsonToApplication;
+import com.extensions.sysconstructor.core.VDQuantityParser;
+import com.extensions.utils.Utility;
 import com.extensions.utils.presets.*;
 import com.extensions.vdcreation.core.VirtualDevice;
 import com.extensions.vdcreation.core.VirtualDeviceFactory;
@@ -24,6 +26,7 @@ import org.fog.utils.TimeKeeper;
 import java.io.File;
 import java.util.Calendar;
 import java.util.List;
+import java.util.Map;
 
 public final class DoorSecurityApplication {
     /**
@@ -50,6 +53,19 @@ public final class DoorSecurityApplication {
                     ApplicationPreset.DEFAULT, // CHANGEABLE
                     new File(NODE_RED_APPLICATION_JSON) // The file path of the Node-RED application design
             );
+
+            // Parses the VD quantities file and extracts the quantity of each thing to be used in the application
+            VDQuantityParser vdQuantifier = new VDQuantityParser(new File(VD_QUANTITIES_FILE));
+
+            /*for(Map.Entry<String, List<String>> vdsConnectionEdgeNode : vdQuantifier.getVdsConnectedToEdgeNodes().entrySet()) {
+                String edgeNodeName = vdsConnectionEdgeNode.getKey();
+                List<String> vdNames = vdsConnectionEdgeNode.getValue();
+
+                System.out.println(edgeNodeName);
+                for(String vdName : vdNames) {
+                    System.out.println(vdName);
+                }
+            }*/
 
             Log.printLine("Starting Simulation...");
 
@@ -81,16 +97,21 @@ public final class DoorSecurityApplication {
                     SensorPreset.DEFAULT, // CHANGEABLE
                     ActuatorPreset.DEFAULT, // CHANGEABLE
                     THINGS_REPO,
-                    vdConfigParser.process(new File(VDS_CONFIG_FILE))
+                    vdConfigParser.process(new File(VDS_CONFIG_FILE)),
+                    vdQuantifier.getThingFrequencies()
             );
+
+            System.out.println("Virtual Devices Created Successfully!");
+
+            Utility.printVirtualDevices(virtualDevices, "New VDS");
 
             //////////////////////////////// APPLICATION SETUP ////////////////////////////////
 
             // Create the physical topology for the application
-            ApplicationPhysicalTopology physicalTopology = jsonToApplication.createApplicationPhysicalTopology(virtualDevices, new File(VD_QUANTITIES_FILE));
+            ApplicationPhysicalTopology physicalTopology = jsonToApplication.createApplicationPhysicalTopology(virtualDevices, vdQuantifier.getVdsConnectedToEdgeNodes());
 
             // Set the sensors list (NEEDED TO CREATE THE APPLICATION MODEL BELOW)
-            jsonToApplication.setAllSensors(physicalTopology.getSensors());
+            /*jsonToApplication.setAllSensors(physicalTopology.getSensors());
 
             // Create the application model for the application
             Application application = jsonToApplication.createApplicationModel(appId, broker.getId());
@@ -119,16 +140,10 @@ public final class DoorSecurityApplication {
             // Set up module mapping
             ModuleMapping moduleMapping = ModuleMapping.createModuleMapping();
 
-            //moduleMapping.addModuleToDevice("MasterModule", "cloud");
-
             // If cloud based deployment then connect all app modules to the cloud device/node
             if (CLOUD) {
-                //moduleMapping.addModuleToDevice("edgeNode-access-control", "cloud");
-                //moduleMapping.addModuleToDevice("edgeNode-security-monitoring", "cloud");
                 for (AppModule appModule : application.getModules()) {
-                    //if(appModule.getName().startsWith("WorkerModule-")) {
                         moduleMapping.addModuleToDevice(appModule.getName(), "cloud");
-                    //}
                 }
             }
 
@@ -162,11 +177,11 @@ public final class DoorSecurityApplication {
             CloudSim.startSimulation();
 
             // Stop the simulation once it completes
-            CloudSim.stopSimulation();
+            CloudSim.stopSimulation();*/
 
         } catch(Exception e) {
+            System.out.println("Simulation Terminated! Error: " + e.getMessage());
             e.printStackTrace();
-            System.out.println(e.getMessage());
         }
     }
 }
