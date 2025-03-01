@@ -160,7 +160,7 @@ public class JsonToApplication {
 
         addEventFlowToApplication(application);
 
-        System.out.println("Application's application model formed!");
+        System.out.println("Application's Application Model Constructed Successfully!");
 
         return application;
     }
@@ -255,8 +255,8 @@ public class JsonToApplication {
                                         MASTER_MODULE
                                 );
 
-                                System.out.println("New VD SENSOR-MODULE-ACTUATOR connection made for " + virtualDevice.getFogDevice().getName());
-                                System.out.println("WORKER-MODULE connection: " + workerModuleConnection + " added for " + virtualDevice.getFogDevice().getName());
+                                //System.out.println("New VD SENSOR-MODULE-ACTUATOR connection made for " + virtualDevice.getFogDevice().getName());
+                                //System.out.println("WORKER-MODULE connection: " + workerModuleConnection + " added for " + virtualDevice.getFogDevice().getName());
                             } else {
                                 /*
                                 VD SENSOR-MODULE-ACTUATOR connection already exists for the sub-flow and as such just create
@@ -273,7 +273,7 @@ public class JsonToApplication {
                                         MASTER_MODULE
                                 );
 
-                                System.out.println("WORKER-MODULE connection: " + workerModuleConnection + " added to existing " + virtualDevice.getFogDevice().getName() + " SENSOR-MODULE-ACTUATOR connection.");
+                                //System.out.println("WORKER-MODULE connection: " + workerModuleConnection + " added to existing " + virtualDevice.getFogDevice().getName() + " SENSOR-MODULE-ACTUATOR connection.");
                             }
                         }
                     }
@@ -301,12 +301,14 @@ public class JsonToApplication {
             // Get branches
             List<List<TopologyNode>> branches = topologyNodeTree.branches();
 
-            // Get first branch
+            // Get first branch (Assuming there's always going to be at least one branch)
             List<TopologyNode> branch = branches.getFirst();
 
             // Get the src and dst node
             TopologyNode src = branch.getFirst(); // Assumed to be sensor
             TopologyNode dst = branch.getLast(); // Assumed to be actuator
+
+            //System.out.println("BEFORE: " + src.uniqueAttribute() + " ---> " + dst.uniqueAttribute());
 
             // Check if the src node is a sensor and if the dst node is an actuator
             if(isSensor(src) && isActuator(dst)) {
@@ -317,26 +319,25 @@ public class JsonToApplication {
                 if(connectionStatus.isThereAConnection()) {
                     //if(connectionStatus.isDirectionConnection()) {} // You can change it to handle direct connections
 
-                    System.out.println("Selected VDs Size: " + selectedVirtualDevices.size() + " Src Node: " + src.uniqueAttribute());
+                    // Get the property/action name of the src and dst node which is used as the name for sensor and actuator
+                    String srcName = src.uniqueAttribute();
+                    String dstName = dst.uniqueAttribute();
 
-                    // Get the VD that holds the src node (sensor)
-                    VirtualDevice virtualDevice = getVDUsed(src, selectedVirtualDevices);
+                    if(branches.size() == 1) {
+                        recordEventFlow(application, srcName, dstName);
 
-                    //if(virtualDevice == null) System.out.println("HERE!");
+                        //System.out.println("AFTER: " + srcName + " ---> " + dstName);
+                    } else if(branches.size() > 1) {
+                        // Get the VD that holds the src node (sensor)
+                        VirtualDevice virtualDevice = getVDUsed(src, selectedVirtualDevices);
 
-                    // Check if VD exists
-                    if(virtualDevice != null) {
-                        // Get the VD_ACTUATOR, which represents all actuators for that VD respectively
-                        String VD_ACTUATOR = virtualDevice.getActuator().getName();
+                        if(virtualDevice != null) {
+                            // Get the VD_ACTUATOR, which represents all actuators for that VD respectively
+                            String VD_ACTUATOR = virtualDevice.getActuator().getName();
 
-                        // Get the property/action name of the src and dst node which is used as the name for sensor and actuator
-                        String srcName = src.uniqueAttribute();
-                        String dstName = dst.uniqueAttribute();
-
-                        if(branches.size() == 1) {
-                            recordEventFlow(application, srcName, dstName);
-                        } else if(branches.size() > 1) {
                             recordEventFlow(application, srcName, VD_ACTUATOR);
+
+                            //System.out.println("AFTER: " + srcName + " ---> " + VD_ACTUATOR);
                         }
                     }
                 }
@@ -345,6 +346,7 @@ public class JsonToApplication {
 
         // Trigger all events
         for(EventSensor eventSensor : EventManager.getInstance().getEventSensors()) {
+            //System.out.println(eventSensor + " TRIGGERED!");
             EventManager.getInstance().triggerEvent(eventSensor.getName());
         }
     }
@@ -387,12 +389,9 @@ public class JsonToApplication {
         if(thingUsed != null) {
             for(VirtualDevice vd : vds) {
                 String formattedThingName = thingUsed.name().replace(" ", "");
-                //System.out.println("VD: " + vd.getFogDevice().getName());
-                //System.out.println("Thing: " + formattedThingName);
                 if(vd.getFogDevice().getName().contains(formattedThingName) || vd.getFogDevice().getName().equals(formattedThingName)) {
                     if(vdQuantityParser.getVdsConnectedToEdgeNodes() != null) {
                         vds.remove(vd);
-                        System.out.println(vd.getFogDevice().getName() + " removed!");
                     }
 
                     return vd;
@@ -450,6 +449,7 @@ public class JsonToApplication {
 
     private Sensor getSensorBy(String name, List<Sensor> sensors) {
         for(Sensor sensor : sensors) {
+            //System.out.println(sensor.getName());
             if(sensor.getName().equals(name)) return sensor;
         }
         return null;
@@ -529,6 +529,7 @@ public class JsonToApplication {
                 }
                 for (Sensor sensor : virtualDevice.getEventSensors()) { // Event Sensors
                     if (sensorsAndActuatorsUsed.contains(sensor.getName())) {
+                        //System.out.println(sensor.getName() + " ADDED!");
                         allSensorsUsedInApplication.add(sensor);
                     }
                 }
@@ -639,11 +640,11 @@ public class JsonToApplication {
             applicationPhysicalTopology.setActuators(allActuatorsUsedInApplication);
             applicationPhysicalTopology.setEdgeNodes(edgeNodes);
 
-            System.out.println("Application's Physical Topology Constructed Successful!");
+            System.out.println("Application's Physical Topology Constructed Successfully!");
 
             return applicationPhysicalTopology;
         } catch(Exception e) {
-            System.out.println("Application's Physical Topology Constructed Unsuccessful!");
+            System.out.println("Application's Physical Topology Constructed Unsuccessfully!");
             System.out.println(e.getMessage());
             e.printStackTrace();
         }

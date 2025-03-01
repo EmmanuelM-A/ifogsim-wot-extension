@@ -32,7 +32,7 @@ public final class DoorSecurityApplication {
     /**
      * Determines if the application is cloud-based
      */
-    private static final boolean CLOUD = false;
+    private static final boolean CLOUD = true;
 
     private static final String NODE_RED_APPLICATION_JSON = "src/com/extensions/tests/examples/doorSecurityApplication/door-security-application.json";
 
