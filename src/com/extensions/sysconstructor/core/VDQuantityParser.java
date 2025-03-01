@@ -23,66 +23,58 @@ public class VDQuantityParser implements FileProcessor<Map<String, List<String>>
         ObjectMapper objectMapper = new ObjectMapper();
         Map<String, List<String>> edgeNodeVDMap = new HashMap<>();
 
-        try {
-            // Read and parse the JSON file
-            JsonNode rootNode = objectMapper.readTree(file);
+        if(file == null || file.getName().isEmpty()) return null;
 
-            if (rootNode.isEmpty()) {
-                throw new IllegalArgumentException("VD Quantities file is empty or missing!");
+        // Read and parse the JSON file
+        JsonNode rootNode = objectMapper.readTree(file);
+
+        // Iterate through edge nodes in the JSON structure
+        for (Iterator<String> it = rootNode.fieldNames(); it.hasNext(); ) {
+            String edgeNode = it.next();
+            JsonNode edgeDataNode = rootNode.get(edgeNode);
+
+            // Validate edgeDataNode structure
+            if (edgeDataNode == null || !edgeDataNode.has("things")) {
+                throw new IllegalArgumentException("Missing 'things' section in edge node: " + edgeNode);
             }
 
-            // Iterate through edge nodes in the JSON structure
-            for (Iterator<String> it = rootNode.fieldNames(); it.hasNext(); ) {
-                String edgeNode = it.next();
-                JsonNode edgeDataNode = rootNode.get(edgeNode);
+            JsonNode thingsNode = edgeDataNode.get("things");
+            List<String> vdList = new ArrayList<>();
 
-                // Validate edgeDataNode structure
-                if (edgeDataNode == null || !edgeDataNode.has("things")) {
-                    throw new IllegalArgumentException("Missing 'things' section in edge node: " + edgeNode);
+            // Iterate through the IoT devices in the "things" section
+            for (Iterator<String> thingsIt = thingsNode.fieldNames(); thingsIt.hasNext(); ) {
+                String thingName = thingsIt.next();
+
+                // Extract and validate the quantity
+                JsonNode quantityNode = thingsNode.get(thingName);
+                if (quantityNode == null || !quantityNode.isInt() || quantityNode.asInt() < 0) {
+                    throw new IllegalArgumentException("Invalid quantity for device '" + thingName + "' in edge node: " + edgeNode);
                 }
 
-                JsonNode thingsNode = edgeDataNode.get("things");
-                List<String> vdList = new ArrayList<>();
+                // Thing name --> VD name conversion (e.g., "Temperature Sensor" --> "TemperatureSensor")
+                String vdName = thingName.replace(" ", "");
 
-                // Iterate through the IoT devices in the "things" section
-                for (Iterator<String> thingsIt = thingsNode.fieldNames(); thingsIt.hasNext(); ) {
-                    String thingName = thingsIt.next();
+                int start = thingFrequencies.getOrDefault(thingName, 0);
+                int end = start + quantityNode.asInt();
 
-                    // Extract and validate the quantity
-                    JsonNode quantityNode = thingsNode.get(thingName);
-                    if (quantityNode == null || !quantityNode.isInt() || quantityNode.asInt() < 0) {
-                        throw new IllegalArgumentException("Invalid quantity for device '" + thingName + "' in edge node: " + edgeNode);
-                    }
-
-                    // Thing name --> VD name conversion (e.g., "Temperature Sensor" --> "TemperatureSensor")
-                    String vdName = thingName.replace(" ", "");
-
-                    int start = thingFrequencies.getOrDefault(thingName, 0);
-                    int end = start + quantityNode.asInt();
-
-                    // Add the formatted, quantified VDName to the list
-                    for(int index = start; index < end; index++) {
-                        vdList.add(vdName + "-" + index);
-                    }
-
-                    // Track thing occurrences
-                    if(!thingFrequencies.containsKey(thingName)) {
-                        thingFrequencies.put(thingName, quantityNode.asInt());
-                    } else {
-                        thingFrequencies.compute(thingName, (k, prevFreq) -> prevFreq + quantityNode.asInt());
-                    }
+                // Add the formatted, quantified VDName to the list
+                for(int index = start; index < end; index++) {
+                    vdList.add(vdName + "-" + index);
                 }
 
-                // Store the extracted information
-                edgeNodeVDMap.put(edgeNode, vdList);
+                // Track thing occurrences
+                if(!thingFrequencies.containsKey(thingName)) {
+                    thingFrequencies.put(thingName, quantityNode.asInt());
+                } else {
+                    thingFrequencies.compute(thingName, (k, prevFreq) -> prevFreq + quantityNode.asInt());
+                }
             }
 
-        } catch (IOException e) {
-            System.err.println("Error: Failed to process JSON file - " + e.getMessage());
-            throw e; // Re-throw exception for higher-level handling
+            // Store the extracted information
+            edgeNodeVDMap.put(edgeNode, vdList);
         }
 
-        return edgeNodeVDMap;
+        return edgeNodeVDMap.isEmpty() ? null : edgeNodeVDMap;
     }
 
 

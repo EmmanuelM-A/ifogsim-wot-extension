@@ -34,25 +34,6 @@ public class Utility {
         }
         return null;
     }
-    /*
-    *   {
-            "access-control": {
-                "things": {
-                    "Smart Door Lock": 2,
-                    "Smart Display": 1
-                }
-            },
-            "security-monitoring": {
-                "things": {
-                    "Smart Camera": 3,
-                    "Alarm": 1,
-                    "Smart Display" : 1
-                }
-            }
-        }
-    *
-    *
-    * */
 
     public static VirtualDevice getVirtualDevice(List<TopologyNode> things, List<VirtualDevice> virtualDevices, TopologyNode node) {
         String thingNode = null;

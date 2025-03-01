@@ -55,17 +55,7 @@ public final class DoorSecurityApplication {
             );
 
             // Parses the VD quantities file and extracts the quantity of each thing to be used in the application
-            VDQuantityParser vdQuantifier = new VDQuantityParser(new File(VD_QUANTITIES_FILE));
-
-            /*for(Map.Entry<String, List<String>> vdsConnectionEdgeNode : vdQuantifier.getVdsConnectedToEdgeNodes().entrySet()) {
-                String edgeNodeName = vdsConnectionEdgeNode.getKey();
-                List<String> vdNames = vdsConnectionEdgeNode.getValue();
-
-                System.out.println(edgeNodeName);
-                for(String vdName : vdNames) {
-                    System.out.println(vdName);
-                }
-            }*/
+            VDQuantityParser vdQuantities = new VDQuantityParser(new File(VD_QUANTITIES_FILE));
 
             Log.printLine("Starting Simulation...");
 
@@ -73,7 +63,7 @@ public final class DoorSecurityApplication {
             Log.disable();
 
             // The number of cloud users/the number of components (or individuals) that interact with the cloud
-            int numUsers = 10;
+            int numUsers = 1;
 
             // Initialise the CloudSim Simulation engine
             CloudSim.init(numUsers, Calendar.getInstance(), false);
@@ -98,20 +88,20 @@ public final class DoorSecurityApplication {
                     ActuatorPreset.DEFAULT, // CHANGEABLE
                     THINGS_REPO,
                     vdConfigParser.process(new File(VDS_CONFIG_FILE)),
-                    vdQuantifier.getThingFrequencies()
+                    vdQuantities.getThingFrequencies()
             );
 
             System.out.println("Virtual Devices Created Successfully!");
 
-            Utility.printVirtualDevices(virtualDevices, "New VDS");
+            //Utility.printVirtualDevices(virtualDevices, "New VDS");
 
             //////////////////////////////// APPLICATION SETUP ////////////////////////////////
 
             // Create the physical topology for the application
-            ApplicationPhysicalTopology physicalTopology = jsonToApplication.createApplicationPhysicalTopology(virtualDevices, vdQuantifier.getVdsConnectedToEdgeNodes());
+            ApplicationPhysicalTopology physicalTopology = jsonToApplication.createApplicationPhysicalTopology(virtualDevices, vdQuantities.getVdsConnectedToEdgeNodes());
 
             // Set the sensors list (NEEDED TO CREATE THE APPLICATION MODEL BELOW)
-            /*jsonToApplication.setAllSensors(physicalTopology.getSensors());
+            jsonToApplication.setAllSensors(physicalTopology.getSensors());
 
             // Create the application model for the application
             Application application = jsonToApplication.createApplicationModel(appId, broker.getId());
@@ -177,7 +167,7 @@ public final class DoorSecurityApplication {
             CloudSim.startSimulation();
 
             // Stop the simulation once it completes
-            CloudSim.stopSimulation();*/
+            CloudSim.stopSimulation();
 
         } catch(Exception e) {
             System.out.println("Simulation Terminated! Error: " + e.getMessage());

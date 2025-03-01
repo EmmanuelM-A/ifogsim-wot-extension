@@ -74,17 +74,27 @@ public class VirtualDeviceFactory {
             // Get the frequency of the thing (using TD)
             int thingFrequency = thingFrequencies.getOrDefault(thingDescription.getTitle(), -1);
 
-            if(thingFrequency == -1) throw new Error("The thing " + thingDescription.getTitle() + " does not exist in VD quantities file! Please Check the VD quantities file!");
+            //if(thingFrequency == -1) throw new Error("The thing " + thingDescription.getTitle() + " does not exist in VD quantities file! Please Check the VD quantities file!");
 
-            // Create the same number of VDs as things for the TD
-            for(int id = 0; id < thingFrequency; id++) {
+            if(thingFrequency == -1) {
                 VirtualDevice vd = virtualDeviceFactory.createVirtualDevice(
                         thingDescription,
-                        id,
+                        -1,
                         configs
                 );
                 // IF YOU WISH TO VALIDATE VDS, DO IT HERE
                 createdVirtualDevices.add(vd);
+            } else {
+                // Create the same number of VDs as things for the TD
+                for(int id = 0; id < thingFrequency; id++) {
+                    VirtualDevice vd = virtualDeviceFactory.createVirtualDevice(
+                            thingDescription,
+                            id,
+                            configs
+                    );
+                    // IF YOU WISH TO VALIDATE VDS, DO IT HERE
+                    createdVirtualDevices.add(vd);
+                }
             }
         }
 
@@ -237,8 +247,15 @@ public class VirtualDeviceFactory {
         // Format TD title, so it matches the format of the VD title
         String tdName = thingDescription.getTitle().replace(" ", "");
 
+        String vdName;
+        if(identifier == -1) {
+            vdName = tdName;
+        } else {
+            vdName = tdName + "-" + identifier;
+        }
+
         // Create a virtual device using defined presets only
-        VirtualDevice virtualDevice = new VirtualDevice(tdName + "-" + identifier, fogDevicePreset);
+        VirtualDevice virtualDevice = new VirtualDevice(vdName, fogDevicePreset);
 
         // Store the VD's TD
         virtualDevice.setThingDescription(thingDescription);
@@ -253,7 +270,7 @@ public class VirtualDeviceFactory {
             // Check if the TD has a config file for its VD
             if(config.tags().contains(tdName)) {
                 // Create a virtual device using the defined presets and the config data for this VD
-                virtualDevice = new VirtualDevice(tdName + "-" + identifier, fogDevicePreset, config);
+                virtualDevice = new VirtualDevice(vdName, fogDevicePreset, config);
                 break;
             }
         }

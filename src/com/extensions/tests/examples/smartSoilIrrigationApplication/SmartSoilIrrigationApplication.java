@@ -1,4 +1,4 @@
-package com.extensions.tests.examples.doorSecurityApplication;
+package com.extensions.tests.examples.smartSoilIrrigationApplication;
 
 import com.extensions.customfog.CustomController;
 import com.extensions.custommetrics.CustomMetricManager;
@@ -6,6 +6,7 @@ import com.extensions.custommetrics.metrics.PeakEnergyConsumptionDevice;
 import com.extensions.custommetrics.metrics.TotalEnergyConsumptionEfficiency;
 import com.extensions.sysconstructor.core.ApplicationPhysicalTopology;
 import com.extensions.sysconstructor.core.JsonToApplication;
+import com.extensions.sysconstructor.core.VDQuantityParser;
 import com.extensions.utils.presets.*;
 import com.extensions.vdcreation.core.VirtualDevice;
 import com.extensions.vdcreation.core.VirtualDeviceFactory;
@@ -44,13 +45,16 @@ public final class SmartSoilIrrigationApplication {
         try {
             //////////////////////////////// INITIAL SETUP ////////////////////////////////
 
-            /*// This instance is responsible for loading in the node red application, creating the application topology and model and setting up related data
+            // This instance is responsible for loading in the node red application, creating the application topology and model and setting up related data
             JsonToApplication jsonToApplication = new JsonToApplication(
                     CloudNodePreset.DEFAULT, // CHANGEABLE
                     EdgeNodePreset.DEFAULT, // CHANGEABLE
                     ApplicationPreset.DEFAULT, // CHANGEABLE
                     new File(NODE_RED_APPLICATION_JSON) // The file path of the Node-RED application design
             );
+
+            // Parses the VD quantities file and extracts the quantity of each thing to be used in the application
+            VDQuantityParser vdQuantities = new VDQuantityParser(new File(VD_QUANTITIES_FILE));
 
             // Disables iFogSim's logging mechanism, only displaying simulation results
             Log.disable();
@@ -73,20 +77,23 @@ public final class SmartSoilIrrigationApplication {
             VirtualDeviceConfigParser vdConfigParser = new VirtualDeviceConfigParser();
 
             // Create the virtual devices using the thing descriptions repo folder
-            VirtualDeviceFactory.createVirtualDevices(
+            List<VirtualDevice> virtualDevices = VirtualDeviceFactory.createVirtualDevices(
                     broker.getId(),
                     appId,
                     FogDevicePreset.DEFAULT, // CHANGEABLE
                     SensorPreset.DEFAULT, // CHANGEABLE
                     ActuatorPreset.DEFAULT, // CHANGEABLE
                     THINGS_REPO,
-                    vdConfigParser.process(new File(VDS_CONFIG_FILE))
+                    vdConfigParser.process(new File(VDS_CONFIG_FILE)),
+                    vdQuantities.getThingFrequencies()
             );
+
+            System.out.println("Virtual Devices Created Successfully!");
 
             //////////////////////////////// APPLICATION SETUP ////////////////////////////////
 
             // Create the physical topology for the application
-            ApplicationPhysicalTopology physicalTopology = jsonToApplication.createApplicationPhysicalTopology(virtualDevices, new File(VD_QUANTITIES_FILE));
+            ApplicationPhysicalTopology physicalTopology = jsonToApplication.createApplicationPhysicalTopology(virtualDevices, vdQuantities.getVdsConnectedToEdgeNodes());
 
             // Set the sensors list (NEEDED TO CREATE THE APPLICATION MODEL BELOW)
             jsonToApplication.setAllSensors(physicalTopology.getSensors());
@@ -156,7 +163,7 @@ public final class SmartSoilIrrigationApplication {
             CloudSim.startSimulation();
 
             // Stop the simulation once it completes
-            CloudSim.stopSimulation();*/
+            CloudSim.stopSimulation();
 
         } catch(Exception e) {
             e.printStackTrace();

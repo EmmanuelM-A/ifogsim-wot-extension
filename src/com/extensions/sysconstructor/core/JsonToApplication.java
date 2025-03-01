@@ -175,6 +175,9 @@ public class JsonToApplication {
         String MASTER_MODULE = "MasterModule";
         application.addAppModule(MASTER_MODULE, applicationPreset.APP_MODULE_RAM);
 
+        // Make a copy of the selected VD list
+        List<VirtualDevice> selectedVDsCopy = new ArrayList<>(selectedVirtualDevices);
+
         // Keeps track of sensor-actuator pairs that have been made
         Set<VirtualDevice> virtualDevicesUsedSoFar = new HashSet<>();
 
@@ -210,15 +213,13 @@ public class JsonToApplication {
                         //if(connectionStatus.isDirectionConnection()) {} // You can change it to handle direct connections
 
                         // Get the VD that holds the src node (sensor)
-                        VirtualDevice virtualDevice = getVDUsed(src, selectedVirtualDevices);
+                        VirtualDevice virtualDevice = getVDUsed(src, selectedVDsCopy);
 
                         // Check if VD exists
                         if(virtualDevice != null) {
                             // Get the VD_SENSOR and VD_ACTUATOR, which both represent all sensors and actuator for that VD respectively
                             String VD_SENSOR = virtualDevice.getSensor().getName();
                             String VD_ACTUATOR = virtualDevice.getActuator().getName();
-
-                            System.out.println(VD_SENSOR);
 
                             // Get the property/action name of the src and dst node which is used as the name for sensor and actuator
                             String srcName = src.uniqueAttribute();
@@ -315,8 +316,12 @@ public class JsonToApplication {
                 if(connectionStatus.isThereAConnection()) {
                     //if(connectionStatus.isDirectionConnection()) {} // You can change it to handle direct connections
 
+                    System.out.println("Selected VDs Size: " + selectedVirtualDevices.size() + " Src Node: " + src.uniqueAttribute());
+
                     // Get the VD that holds the src node (sensor)
                     VirtualDevice virtualDevice = getVDUsed(src, selectedVirtualDevices);
+
+                    //if(virtualDevice == null) System.out.println("HERE!");
 
                     // Check if VD exists
                     if(virtualDevice != null) {
@@ -380,9 +385,13 @@ public class JsonToApplication {
         // Using the thing node's name find its corresponding VD
         if(thingUsed != null) {
             for(VirtualDevice vd : vds) {
+                String formattedThingName = thingUsed.name().replace(" ", "");
                 //System.out.println("VD: " + vd.getFogDevice().getName());
-                //System.out.println("Thing: " + thingUsed.name());
-                if(vd.getFogDevice().getName().equals(thingUsed.name())) {
+                //System.out.println("Thing: " + formattedThingName);
+                if(vd.getFogDevice().getName().contains(formattedThingName) || vd.getFogDevice().getName().equals(formattedThingName)) {
+                    vds.remove(vd);
+                    System.out.println(vd.getFogDevice().getName() + " removed!");
+
                     return vd;
                 }
             }
@@ -490,6 +499,8 @@ public class JsonToApplication {
             // Set the selected virtual devices
             selectedVirtualDevices.addAll(allSelectedVirtualDevices);
 
+            //selectedVirtualDevicesForTopology.addAll(allSelectedVirtualDevices);
+
             // Get the names of all sensors and actuators used in the application
             Set<String> sensorsAndActuatorsUsed = new HashSet<>(getAllSensorsAndActuatorsUsed(allTopologyNodes));
 
@@ -498,7 +509,7 @@ public class JsonToApplication {
             List<Actuator> allActuatorsUsedInApplication = new ArrayList<>();
 
             // Iterate once over VDs to collect sensors & actuators
-            for (VirtualDevice virtualDevice : selectedVirtualDevices) {
+            for (VirtualDevice virtualDevice : allSelectedVirtualDevices) {
                 allSensorsUsedInApplication.add(virtualDevice.getSensor()); // General sensor
 
                 allActuatorsUsedInApplication.add(virtualDevice.getActuator()); // General actuator
@@ -569,13 +580,13 @@ public class JsonToApplication {
                             vdFogDevice.setUplinkLatency(applicationPreset.UPLINK_LATENCY_VD_TO_EDGE);
                             vdFogDevice.setLevel(3);
                             fogDevices.add(vdFogDevice);
-                            System.out.println("VD: " + vdFogDevice.getName() + " connected to " + edgeNodeName);
+                            //System.out.println("The VD " + vdFogDevice.getName() + " has been connected to " + edgeNodeName);
                         }
                     }
                 }
             } else { // If the topics array is not set, use default node distribution
                 // Calculate the number of edge nodes needed
-                int numberOfEdgeNodes = Math.max(1, calculateNoOfEdgeNodes(selectedVirtualDevices.size(), applicationPreset.MAX_VDS_FOR_ONE_EDE_NODE));
+                int numberOfEdgeNodes = Math.max(1, calculateNoOfEdgeNodes(allSelectedVirtualDevices.size()));
 
                 // Create a list of edge nodes (each edge node is represented as a list of VDs)
                 List<List<VirtualDevice>> edgeNodeList = new ArrayList<>();
@@ -585,9 +596,9 @@ public class JsonToApplication {
                     edgeNodeList.add(new ArrayList<>());
                 }
 
-                for (int i = 0; i < selectedVirtualDevices.size(); i++) {
+                for (int i = 0; i < allSelectedVirtualDevices.size(); i++) {
                     // Assign each virtual device to an edge node in a round-robin manner
-                    edgeNodeList.get(i % numberOfEdgeNodes).add(selectedVirtualDevices.get(i));
+                    edgeNodeList.get(i % numberOfEdgeNodes).add(allSelectedVirtualDevices.get(i));
                 }
 
                 // Connect the VDs to the edge nodes
@@ -625,19 +636,15 @@ public class JsonToApplication {
             applicationPhysicalTopology.setActuators(allActuatorsUsedInApplication);
             applicationPhysicalTopology.setEdgeNodes(edgeNodes);
 
-            System.out.println("Application's Physical Topology Construction Successful!");
+            System.out.println("Application's Physical Topology Constructed Successful!");
 
             return applicationPhysicalTopology;
         } catch(Exception e) {
-            System.out.println("Application's Physical Topology Construction Unsuccessful!");
+            System.out.println("Application's Physical Topology Constructed Unsuccessful!");
             System.out.println(e.getMessage());
             e.printStackTrace();
         }
         return null;
-    }
-
-    private void updateVDDetails(VirtualDevice virtualDevice) {
-
     }
 
     private List<String> getAllSensorsAndActuatorsUsed(List<TopologyNode> nodes) {
@@ -656,9 +663,9 @@ public class JsonToApplication {
         return attributeNames;
     }
 
-    private int calculateNoOfEdgeNodes(int numberOfVDs, int maxNoVDsForOneEdgeNode) {
+    private int calculateNoOfEdgeNodes(int numberOfVDs) {
         // CHANGE FORMULA AS YOU SEE FIT
-        return (int)(numberOfVDs - maxNoVDsForOneEdgeNode) / 2;
+        return (numberOfVDs - applicationPreset.MAX_VDS_FOR_ONE_EDE_NODE) / 2;
     }
 
     private List<VirtualDevice> getSelectedVirtualDevices(List<VirtualDevice> virtualDevices, List<TopologyNode> things) {
@@ -695,6 +702,8 @@ public class JsonToApplication {
         if (edgeNodeName == null || edgeNodeName.isEmpty()) throw new Error("The edge node " + edgeNodeName + " does not exist! Ensure edge nodes specified in the VD Quantities file match the edge nodes specified in the Node-RED application topics field.");
 
         Set<VirtualDevice> virtualDevices = new HashSet<>();
+
+        if(vdsConnectedToEdgeNodes == null) throw new IllegalArgumentException("VD Quantities file is empty or missing!");
 
         // Get the VD (names) connected to this edge node
         List<String> vdsConnectedToEdgeNode = vdsConnectedToEdgeNodes.getOrDefault(edgeNodeName, null);
