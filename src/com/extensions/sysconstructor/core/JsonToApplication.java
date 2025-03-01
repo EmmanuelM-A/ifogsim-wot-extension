@@ -153,6 +153,8 @@ public class JsonToApplication {
         TopologyNodeConnectionChecker.initializeChecker(topologyNodeTrees);
     }
 
+    // TODO - LOOK INTO WHY TUPLE EXECUTION DELAY & APP LOOP DELAY DON'T DISPLAY WHEN CLOUD = FALSE
+
     //////////////////////////////////////////// APPLICATION MODEL CONSTRUCTION ////////////////////////////////////////////
 
     public Application createApplicationModel(String appId, int userId) {
@@ -225,8 +227,11 @@ public class JsonToApplication {
                             application.addAppModule(WORKER_MODULE_K, applicationPreset.APP_MODULE_RAM);
 
                             // Data Flow Edges
-                            application.addAppEdge(srcName, WORKER_MODULE_K, 5000, 2000, srcName, Tuple.UP, AppEdge.SENSOR);
-                            application.addAppEdge(WORKER_MODULE_K, dstName, 1000, 2000, dstName, Tuple.DOWN, AppEdge.ACTUATOR);
+                            //application.addAppEdge(srcName, WORKER_MODULE_K, 5000, 2000, srcName, Tuple.UP, AppEdge.SENSOR);
+                            //application.addAppEdge(WORKER_MODULE_K, dstName, 1000, 2000, dstName, Tuple.DOWN, AppEdge.ACTUATOR);
+
+                            addAppEdge(application, srcName, WORKER_MODULE_K, srcName, Tuple.UP, AppEdge.SENSOR);
+                            addAppEdge(application, WORKER_MODULE_K, dstName, dstName, Tuple.DOWN, AppEdge.ACTUATOR);
 
                             // Tuple Mappings
                             application.addTupleMapping(WORKER_MODULE_K, srcName, dstName, new FractionalSelectivity(1.0));
@@ -265,7 +270,7 @@ public class JsonToApplication {
                                     // Record the VD
                                     virtualDevicesUsedSoFar.add(virtualDevice);
 
-                                    System.out.println("New VD SENSOR-MODULE-ACTUATOR connection made for " + virtualDevice.getFogDevice().getName());
+                                    //System.out.println("New VD SENSOR-MODULE-ACTUATOR connection made for " + virtualDevice.getFogDevice().getName());
                                 }
 
                                 /*
@@ -281,69 +286,9 @@ public class JsonToApplication {
                                         MASTER_MODULE,
                                         WORKER_MODULE_K
                                 );
-                                System.out.println("WORKER-MODULE connection: " + workerModuleConnection + " added for " + virtualDevice.getFogDevice().getName());
+                                //System.out.println("WORKER-MODULE connection: " + workerModuleConnection + " added for " + virtualDevice.getFogDevice().getName());
                             }
                         }
-
-                        // Get the VD that holds the src node (sensor)
-                        /*VirtualDevice virtualDevice = getVDUsed(src, selectedVirtualDevices);
-
-                        // Check if VD exists
-                        if(virtualDevice != null) {
-                            // Get the VD_SENSOR and VD_ACTUATOR, which both represent all sensors and actuator for that VD respectively
-                            String VD_SENSOR = virtualDevice.getSensor().getName();
-                            String VD_ACTUATOR = virtualDevice.getActuator().getName();
-
-                            // Get the property/action name of the src and dst node which is used as the name for sensor and actuator
-                            String srcName = src.uniqueAttribute();
-                            String dstName = dst.uniqueAttribute();
-
-                            // Check if the VD has not been used before (means VD SENSOR-MODULE-ACTUATOR for that sub-flow has not been created yet)
-                            if(!virtualDevicesUsedSoFar.contains(virtualDevice)) {
-                                // Make an edge from VD_SENSOR to MASTER_MODULE carrying tuple types of VD_SENSOR
-                                addAppEdge(application, VD_SENSOR, MASTER_MODULE, VD_SENSOR, Tuple.UP, AppEdge.SENSOR);
-
-                                // Make an edge from MASTER_MODULE to VD_ACTUATOR, carrying tuple types of VD_ACTUATOR
-                                addAppEdge(application, MASTER_MODULE, VD_ACTUATOR, VD_ACTUATOR, Tuple.DOWN, AppEdge.ACTUATOR);
-
-                                // Record the VD
-                                virtualDevicesUsedSoFar.add(virtualDevice);
-
-                                // Once the VD_SENSOR -> MASTER_MODULE -> VD_ACTUATOR connection is set up for a given VD, all branches (from that
-                                // sub-flow) that use that VD (meaning the sensor is from that VD), will be converted into a worker module, so that
-                                // data flowing through the sub-flow is still incorporated into the application model. If a sub-flow branch has an existing
-                                // VD SENSOR-MODULE-ACTUATOR connection already, the sub-flow branch is just converted into another WORKER_MODULE-MASTER_MODULE
-                                // connection for the existing VD SENSOR-MODULE-ACTUATOR connection.
-
-                                // Convert the branch (sub-flow) into a WORKER_MODULE -> MASTER_MODULE connection
-                                String workerModuleConnection = connectWorkerModule(
-                                        application,
-                                        VD_SENSOR,
-                                        VD_ACTUATOR,
-                                        srcName,
-                                        dstName,
-                                        MASTER_MODULE
-                                );
-
-                                //System.out.println("New VD SENSOR-MODULE-ACTUATOR connection made for " + virtualDevice.getFogDevice().getName());
-                                //System.out.println("WORKER-MODULE connection: " + workerModuleConnection + " added for " + virtualDevice.getFogDevice().getName());
-                            } else {
-                                // VD SENSOR-MODULE-ACTUATOR connection already exists for the sub-flow and as such just create
-                                // a new WORKER_MODULE-MASTER_MODULE connection using sub-flow branch
-
-                                // Convert the branch (sub-flow) into a WORKER_MODULE -> MASTER_MODULE connection
-                                String workerModuleConnection = connectWorkerModule(
-                                        application,
-                                        VD_SENSOR,
-                                        VD_ACTUATOR,
-                                        srcName,
-                                        dstName,
-                                        MASTER_MODULE
-                                );
-
-                                //System.out.println("WORKER-MODULE connection: " + workerModuleConnection + " added to existing " + virtualDevice.getFogDevice().getName() + " SENSOR-MODULE-ACTUATOR connection.");
-                            }
-                        }*/
                     }
                 }
             }
@@ -576,29 +521,45 @@ public class JsonToApplication {
             // Get the names of all sensors and actuators used in the application
             Set<String> sensorsAndActuatorsUsed = new HashSet<>(getAllSensorsAndActuatorsUsed(allTopologyNodes));
 
-            // Lists to store used sensors and actuators
-            List<Sensor> allSensorsUsedInApplication = new ArrayList<>();
-            List<Actuator> allActuatorsUsedInApplication = new ArrayList<>();
+            // Sets to store unique sensors and actuators used in the application
+            Set<Sensor> allSensorsUsedInApplication = new HashSet<>();
+            Set<Actuator> allActuatorsUsedInApplication = new HashSet<>();
 
-            // Iterate once over VDs to collect sensors & actuators
+            // Additional sets to track sensor and actuator names (for preventing duplicates)
+            Set<String> uniqueSensorNames = new HashSet<>();
+            Set<String> uniqueActuatorNames = new HashSet<>();
+
+            // Iterate once over Virtual Devices to collect sensors & actuators uniquely
             for (VirtualDevice virtualDevice : allSelectedVirtualDevices) {
-                allSensorsUsedInApplication.add(virtualDevice.getSensor()); // General sensor
+                // Add the general sensor (if not already added)
+                Sensor generalSensor = virtualDevice.getSensor();
+                if (uniqueSensorNames.add(generalSensor.getName())) {  // If new, add to set
+                    allSensorsUsedInApplication.add(generalSensor);
+                }
 
-                allActuatorsUsedInApplication.add(virtualDevice.getActuator()); // General actuator
+                // Add the general actuator (if not already added)
+                Actuator generalActuator = virtualDevice.getActuator();
+                if (uniqueActuatorNames.add(generalActuator.getName())) {
+                    allActuatorsUsedInApplication.add(generalActuator);
+                }
 
-                for (Sensor sensor : virtualDevice.getSensorProperties()) { // Sensor Properties
-                    if (sensorsAndActuatorsUsed.contains(sensor.getName())) {
+                // Iterate over sensor properties
+                for (Sensor sensor : virtualDevice.getSensorProperties()) {
+                    if (sensorsAndActuatorsUsed.contains(sensor.getName()) && uniqueSensorNames.add(sensor.getName())) {
                         allSensorsUsedInApplication.add(sensor);
                     }
                 }
-                for (Actuator actuator : virtualDevice.getActuatorActions()) { // Actuator Actions
-                    if (sensorsAndActuatorsUsed.contains(actuator.getName())) {
+
+                // Iterate over actuator actions
+                for (Actuator actuator : virtualDevice.getActuatorActions()) {
+                    if (sensorsAndActuatorsUsed.contains(actuator.getName()) && uniqueActuatorNames.add(actuator.getName())) {
                         allActuatorsUsedInApplication.add(actuator);
                     }
                 }
-                for (Sensor sensor : virtualDevice.getEventSensors()) { // Event Sensors
-                    if (sensorsAndActuatorsUsed.contains(sensor.getName())) {
-                        //System.out.println(sensor.getName() + " ADDED!");
+
+                // Iterate over event sensors
+                for (Sensor sensor : virtualDevice.getEventSensors()) {
+                    if (sensorsAndActuatorsUsed.contains(sensor.getName()) && uniqueSensorNames.add(sensor.getName())) {
                         allSensorsUsedInApplication.add(sensor);
                     }
                 }
@@ -705,8 +666,8 @@ public class JsonToApplication {
             ApplicationPhysicalTopology applicationPhysicalTopology = new ApplicationPhysicalTopology();
 
             applicationPhysicalTopology.setFogDevices(fogDevices);
-            applicationPhysicalTopology.setSensors(allSensorsUsedInApplication);
-            applicationPhysicalTopology.setActuators(allActuatorsUsedInApplication);
+            applicationPhysicalTopology.setSensors(new ArrayList<>(allSensorsUsedInApplication));
+            applicationPhysicalTopology.setActuators(new ArrayList<>(allActuatorsUsedInApplication));
             applicationPhysicalTopology.setEdgeNodes(edgeNodes);
 
             System.out.println("Application's Physical Topology Constructed Successfully!");

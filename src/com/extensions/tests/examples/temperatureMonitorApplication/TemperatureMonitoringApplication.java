@@ -133,6 +133,7 @@ public class TemperatureMonitoringApplication {
             // If cloud based deployment then connect all app modules to the cloud device/node
             if (CLOUD) {
                 for (AppModule appModule : application.getModules()) {
+                    //if(appModule.getName().equals("MasterModule")) continue;
                     moduleMapping.addModuleToDevice(appModule.getName(), "cloud");
                 }
             }

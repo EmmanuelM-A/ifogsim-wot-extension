@@ -131,7 +131,8 @@ public final class DoorSecurityApplication {
             // If cloud based deployment then connect all app modules to the cloud device/node
             if (CLOUD) {
                 for (AppModule appModule : application.getModules()) {
-                        moduleMapping.addModuleToDevice(appModule.getName(), "cloud");
+                    //if(appModule.getName().equals("MasterModule")) continue;
+                    moduleMapping.addModuleToDevice(appModule.getName(), "cloud");
                 }
             }
 

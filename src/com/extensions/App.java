@@ -6,6 +6,7 @@ import com.extensions.custommetrics.metrics.PeakEnergyConsumptionDevice;
 import com.extensions.custommetrics.metrics.TotalEnergyConsumptionEfficiency;
 import com.extensions.sysconstructor.core.ApplicationPhysicalTopology;
 import com.extensions.sysconstructor.core.JsonToApplication;
+import com.extensions.sysconstructor.core.VDQuantityParser;
 import com.extensions.utils.presets.*;
 import com.extensions.vdcreation.core.VirtualDevice;
 import com.extensions.vdcreation.core.VirtualDeviceFactory;
@@ -23,10 +24,6 @@ import org.fog.utils.TimeKeeper;
 import java.io.File;
 import java.util.Calendar;
 import java.util.List;
-
-// TODO - FINALISE AND TIDY UP CODE EVERYWHERE, CLEAN UP PROJECT FOLDER, DELETE UNNECESSARY CODE, ADD JAVADOC
-// TODO - SORT OUT CONFIGURATIONS, PRESETS AND INPUT VALUES & INVESTIGATE OUTPUT DATA
-// TODO - LOOK INTO WHY TUPLE EXECUTION DELAY & APP LOOP DELAY DON'T DISPLAY WHEN CLOUD = FALSE
 
 public final class App {
     /**
@@ -47,12 +44,16 @@ public final class App {
         try {
             //////////////////////////////// INITIAL SETUP ////////////////////////////////
 
-            /*// This instance is responsible for loading in the node red application, creating the application topology and model and setting up related data
+            // Parses the VD quantities file and extracts the quantity of each thing to be used in the application
+            VDQuantityParser vdQuantities = new VDQuantityParser(new File(VD_QUANTITIES_FILE));
+
+            // This instance is responsible for loading in the node red application, creating the application topology and model and setting up related data
             JsonToApplication jsonToApplication = new JsonToApplication(
                     CloudNodePreset.DEFAULT, // CHANGEABLE
                     EdgeNodePreset.DEFAULT, // CHANGEABLE
                     ApplicationPreset.DEFAULT, // CHANGEABLE
-                    new File(NODE_RED_APPLICATION_JSON)
+                    new File(NODE_RED_APPLICATION_JSON),
+                    vdQuantities
             );
 
             // Disables iFogSim's logging mechanism, only displaying simulation results
@@ -83,13 +84,14 @@ public final class App {
                     SensorPreset.DEFAULT, // CHANGEABLE
                     ActuatorPreset.DEFAULT, // CHANGEABLE
                     THINGS_REPO,
-                    vdConfigParser.process(new File(VDS_CONFIG_FILE))
+                    vdConfigParser.process(new File(VDS_CONFIG_FILE)),
+                    vdQuantities.getThingFrequencies()
             );
 
             //////////////////////////////// APPLICATION SETUP ////////////////////////////////
 
             // Create the physical topology for the application
-            ApplicationPhysicalTopology physicalTopology = jsonToApplication.createApplicationPhysicalTopology(virtualDevices, new File(VD_QUANTITIES_FILE));
+            ApplicationPhysicalTopology physicalTopology = jsonToApplication.createApplicationPhysicalTopology(virtualDevices);
 
             // Set the sensors list (NEEDED TO CREATE THE APPLICATION MODEL BELOW)
             jsonToApplication.setAllSensors(physicalTopology.getSensors());
@@ -160,7 +162,7 @@ public final class App {
             CloudSim.startSimulation();
 
             // Stop the simulation once it completes
-            CloudSim.stopSimulation();*/
+            CloudSim.stopSimulation();
 
         } catch(Exception e) {
             e.printStackTrace();

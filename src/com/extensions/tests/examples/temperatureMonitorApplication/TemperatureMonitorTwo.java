@@ -2,6 +2,7 @@ package com.extensions.tests.examples.temperatureMonitorApplication;
 
 import com.extensions.customfog.CustomController;
 import com.extensions.customfog.FogDeviceFactory;
+import com.extensions.sysconstructor.core.VDQuantityParser;
 import com.extensions.utils.presets.FogDevicePreset;
 import com.extensions.utils.presets.SensorPreset;
 import com.extensions.utils.presets.ActuatorPreset;
@@ -33,12 +34,16 @@ public class TemperatureMonitorTwo {
 
     private static final String VDS_CONFIG_FILE = "src/com/extensions/tests/examples/temperatureMonitorApplication/configs/vd-configs.json";
 
+    private static final String VD_QUANTITIES_FILE = "";
 
     public static void main(String[] args) {
         try {
             //////////////////////////////// INITIAL SETUP ////////////////////////////////
 
-            /*// Disables iFogSim's logging mechanism, only display simulation results
+            // Parses the VD quantities file and extracts the quantity of each thing to be used in the application
+            VDQuantityParser vdQuantities = new VDQuantityParser(new File(VD_QUANTITIES_FILE));
+
+            // Disables iFogSim's logging mechanism, only display simulation results
             Log.disable();
 
             int numUsers = 1;
@@ -67,7 +72,8 @@ public class TemperatureMonitorTwo {
                     SensorPreset.DEFAULT,
                     ActuatorPreset.DEFAULT,
                     THINGS_REPO,
-                    vdConfigParser.process(new File(VDS_CONFIG_FILE))
+                    vdConfigParser.process(new File(VDS_CONFIG_FILE)),
+                    vdQuantities.getThingFrequencies()
             );
 
             //////////////////////////////// APPLICATION SETUP ////////////////////////////////
@@ -119,7 +125,7 @@ public class TemperatureMonitorTwo {
 
             // Step 8: Start Simulation
             CloudSim.startSimulation();
-            CloudSim.stopSimulation();*/
+            CloudSim.stopSimulation();
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -5,11 +5,12 @@ public enum ApplicationPreset {
            10,
            1000,
            1000,
-           500,
-           200,
+           1000,
+           1000,
            10,
            5,
-           6
+           6,
+           100
     );
 
     /**
@@ -52,6 +53,8 @@ public enum ApplicationPreset {
      */
     public final int MAX_VDS_FOR_ONE_EDE_NODE;
 
+    public final double PERIODICITY;
+
     /**
      * Constructs an ApplicationPreset with the specified parameters.
      *
@@ -72,7 +75,8 @@ public enum ApplicationPreset {
             int appEdgeTupleNwLength,
             int upLinkEdgeToCloud,
             int uplinkVdToEdge,
-            int maxNoVDsForOneEdgeNode
+            int maxNoVDsForOneEdgeNode,
+            double periodicity
     ) {
         this.APP_MODULE_RAM = appModuleRam;
         this.APP_MODULE_MIPS = appModuleMips;
@@ -82,5 +86,6 @@ public enum ApplicationPreset {
         this.UPLINK_LATENCY_EDGE_TO_CLOUD = upLinkEdgeToCloud;
         this.UPLINK_LATENCY_VD_TO_EDGE = uplinkVdToEdge;
         this.MAX_VDS_FOR_ONE_EDE_NODE = maxNoVDsForOneEdgeNode;
+        this.PERIODICITY = periodicity;
     }
 }
