@@ -213,8 +213,80 @@ public class JsonToApplication {
                     if(connectionStatus.isThereAConnection()) {
                         //if(connectionStatus.isDirectionConnection()) {} // You can change it to handle direct connections
 
+                        // Get the property/action name of the src and dst node which is used as the name for sensor and actuator
+                        String srcName = src.uniqueAttribute();
+                        String dstName = dst.uniqueAttribute();
+
+                        String WORKER_MODULE_K = "WorkerModule-" + workerModuleCount;
+                        workerModuleCount++;
+
+                        if(topologyNodeTree.branches().size() == 1) {
+                            // Processing Module
+                            application.addAppModule(WORKER_MODULE_K, applicationPreset.APP_MODULE_RAM);
+
+                            // Data Flow Edges
+                            application.addAppEdge(srcName, WORKER_MODULE_K, 5000, 2000, srcName, Tuple.UP, AppEdge.SENSOR);
+                            application.addAppEdge(WORKER_MODULE_K, dstName, 1000, 2000, dstName, Tuple.DOWN, AppEdge.ACTUATOR);
+
+                            // Tuple Mappings
+                            application.addTupleMapping(WORKER_MODULE_K, srcName, dstName, new FractionalSelectivity(1.0));
+
+                            // Define Application Loops
+                            final AppLoop loop = new AppLoop(Arrays.asList(srcName, WORKER_MODULE_K, dstName));
+
+                            application.setLoops(new ArrayList<>(){{add(loop);}});
+
+                            break;
+                        } else if(branches.size() > 1) {
+                            VirtualDevice virtualDevice = getVDUsed(src, selectedVirtualDevices);
+
+                            // Check if VD exists
+                            if(virtualDevice != null) {
+                                // Get the VD_SENSOR and VD_ACTUATOR, which both represent all sensors and actuator for that VD respectively
+                                String VD_SENSOR = virtualDevice.getSensor().getName();
+                                String VD_ACTUATOR = virtualDevice.getActuator().getName();
+
+                                // Check if the VD has not been used before (means VD SENSOR-MODULE-ACTUATOR for that sub-flow has not been created yet)
+                                if(!virtualDevicesUsedSoFar.contains(virtualDevice)) {
+                                    /*
+                                        Once the VD_SENSOR -> MASTER_MODULE -> VD_ACTUATOR connection is set up for a given VD, all branches (from that
+                                        sub-flow) that use that VD (meaning the sensor is from that VD), will be converted into a worker module, so that
+                                        data flowing through the sub-flow is still incorporated into the application model. If a sub-flow branch has an existing
+                                        VD SENSOR-MODULE-ACTUATOR connection already, the sub-flow branch is just converted into another WORKER_MODULE-MASTER_MODULE
+                                        connection for the existing VD SENSOR-MODULE-ACTUATOR connection.
+                                    */
+
+                                    // Make an edge from VD_SENSOR to MASTER_MODULE carrying tuple types of VD_SENSOR
+                                    addAppEdge(application, VD_SENSOR, MASTER_MODULE, VD_SENSOR, Tuple.UP, AppEdge.SENSOR);
+
+                                    // Make an edge from MASTER_MODULE to VD_ACTUATOR, carrying tuple types of VD_ACTUATOR
+                                    addAppEdge(application, MASTER_MODULE, VD_ACTUATOR, VD_ACTUATOR, Tuple.DOWN, AppEdge.ACTUATOR);
+
+                                    // Record the VD
+                                    virtualDevicesUsedSoFar.add(virtualDevice);
+
+                                    System.out.println("New VD SENSOR-MODULE-ACTUATOR connection made for " + virtualDevice.getFogDevice().getName());
+                                }
+
+                                /*
+                                    VD SENSOR-MODULE-ACTUATOR connection already exists for the sub-flow and as such just create
+                                    a new WORKER_MODULE-MASTER_MODULE connection using sub-flow branch
+                                 */
+                                String workerModuleConnection = connectWorkerModule(
+                                        application,
+                                        VD_SENSOR,
+                                        VD_ACTUATOR,
+                                        srcName,
+                                        dstName,
+                                        MASTER_MODULE,
+                                        WORKER_MODULE_K
+                                );
+                                System.out.println("WORKER-MODULE connection: " + workerModuleConnection + " added for " + virtualDevice.getFogDevice().getName());
+                            }
+                        }
+
                         // Get the VD that holds the src node (sensor)
-                        VirtualDevice virtualDevice = getVDUsed(src, selectedVirtualDevices);
+                        /*VirtualDevice virtualDevice = getVDUsed(src, selectedVirtualDevices);
 
                         // Check if VD exists
                         if(virtualDevice != null) {
@@ -237,13 +309,11 @@ public class JsonToApplication {
                                 // Record the VD
                                 virtualDevicesUsedSoFar.add(virtualDevice);
 
-                                /*
-                                Once the VD_SENSOR -> MASTER_MODULE -> VD_ACTUATOR connection is set up for a given VD, all branches (from that
-                                sub-flow) that use that VD (meaning the sensor is from that VD), will be converted into a worker module, so that
-                                data flowing through the sub-flow is still incorporated into the application model. If a sub-flow branch has an existing
-                                VD SENSOR-MODULE-ACTUATOR connection already, the sub-flow branch is just converted into another WORKER_MODULE-MASTER_MODULE
-                                connection for the existing VD SENSOR-MODULE-ACTUATOR connection.
-                                */
+                                // Once the VD_SENSOR -> MASTER_MODULE -> VD_ACTUATOR connection is set up for a given VD, all branches (from that
+                                // sub-flow) that use that VD (meaning the sensor is from that VD), will be converted into a worker module, so that
+                                // data flowing through the sub-flow is still incorporated into the application model. If a sub-flow branch has an existing
+                                // VD SENSOR-MODULE-ACTUATOR connection already, the sub-flow branch is just converted into another WORKER_MODULE-MASTER_MODULE
+                                // connection for the existing VD SENSOR-MODULE-ACTUATOR connection.
 
                                 // Convert the branch (sub-flow) into a WORKER_MODULE -> MASTER_MODULE connection
                                 String workerModuleConnection = connectWorkerModule(
@@ -258,10 +328,8 @@ public class JsonToApplication {
                                 //System.out.println("New VD SENSOR-MODULE-ACTUATOR connection made for " + virtualDevice.getFogDevice().getName());
                                 //System.out.println("WORKER-MODULE connection: " + workerModuleConnection + " added for " + virtualDevice.getFogDevice().getName());
                             } else {
-                                /*
-                                VD SENSOR-MODULE-ACTUATOR connection already exists for the sub-flow and as such just create
-                                a new WORKER_MODULE-MASTER_MODULE connection using sub-flow branch
-                                 */
+                                // VD SENSOR-MODULE-ACTUATOR connection already exists for the sub-flow and as such just create
+                                // a new WORKER_MODULE-MASTER_MODULE connection using sub-flow branch
 
                                 // Convert the branch (sub-flow) into a WORKER_MODULE -> MASTER_MODULE connection
                                 String workerModuleConnection = connectWorkerModule(
@@ -275,7 +343,7 @@ public class JsonToApplication {
 
                                 //System.out.println("WORKER-MODULE connection: " + workerModuleConnection + " added to existing " + virtualDevice.getFogDevice().getName() + " SENSOR-MODULE-ACTUATOR connection.");
                             }
-                        }
+                        }*/
                     }
                 }
             }
@@ -408,12 +476,13 @@ public class JsonToApplication {
             String VD_ACTUATOR,
             String subFlowSensor,
             String subFlowActuator,
-            String MASTER_MODULE
+            String MASTER_MODULE,
+            String WORKER_MODULE_K
     ) {
         ////////// App Modules //////////
 
-        String WORKER_MODULE_K = "WorkerModule-" + workerModuleCount;
-        workerModuleCount++;
+        //String WORKER_MODULE_K = "WorkerModule-" + workerModuleCount;
+        //workerModuleCount++;
 
         application.addAppModule(WORKER_MODULE_K, applicationPreset.APP_MODULE_RAM);
 

@@ -1,14 +1,12 @@
 package com.extensions.tests.examples.doorSecurityApplication;
 
 import com.extensions.customfog.CustomController;
-import com.extensions.customfog.CustomFogDevice;
 import com.extensions.custommetrics.CustomMetricManager;
 import com.extensions.custommetrics.metrics.PeakEnergyConsumptionDevice;
 import com.extensions.custommetrics.metrics.TotalEnergyConsumptionEfficiency;
 import com.extensions.sysconstructor.core.ApplicationPhysicalTopology;
 import com.extensions.sysconstructor.core.JsonToApplication;
 import com.extensions.sysconstructor.core.VDQuantityParser;
-import com.extensions.utils.Utility;
 import com.extensions.utils.presets.*;
 import com.extensions.vdcreation.core.VirtualDevice;
 import com.extensions.vdcreation.core.VirtualDeviceFactory;
@@ -26,7 +24,6 @@ import org.fog.utils.TimeKeeper;
 import java.io.File;
 import java.util.Calendar;
 import java.util.List;
-import java.util.Map;
 
 public final class DoorSecurityApplication {
     /**

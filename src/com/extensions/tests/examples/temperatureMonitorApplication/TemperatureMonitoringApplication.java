@@ -1,4 +1,4 @@
-package com.extensions.tests.examples.smartCoffeeMachineApplication;
+package com.extensions.tests.examples.temperatureMonitorApplication;
 
 import com.extensions.customfog.CustomController;
 import com.extensions.custommetrics.CustomMetricManager;
@@ -15,7 +15,9 @@ import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.core.CloudSim;
 import org.fog.application.AppModule;
 import org.fog.application.Application;
-import org.fog.entities.*;
+import org.fog.entities.Actuator;
+import org.fog.entities.FogBroker;
+import org.fog.entities.Sensor;
 import org.fog.placement.ModuleMapping;
 import org.fog.placement.ModulePlacementEdgewards;
 import org.fog.placement.ModulePlacementMapping;
@@ -25,22 +27,21 @@ import java.io.File;
 import java.util.Calendar;
 import java.util.List;
 
-public final class SmartCoffeeMachineApplication {
+public class TemperatureMonitoringApplication {
     /**
-     * Determines if the application is cloud-based (RIGHT NOW ONLY WORKS IF TRUE)
+     * Determines if the application is cloud-based
      */
     private static final boolean CLOUD = true;
 
-    private static final String NODE_RED_APPLICATION_JSON = "src/com/extensions/tests/examples/smartCoffeeMachineApplication/smart-coffee-machine-application.json";
+    private static final String NODE_RED_APPLICATION_JSON = "src/com/extensions/tests/examples/temperatureMonitorApplication/temperature-monitor-application.json";
 
-    private static final String THINGS_REPO = "src/com/extensions/tests/examples/smartCoffeeMachineApplication/things";
+    private static final String THINGS_REPO = "src/com/extensions/tests/examples/temperatureMonitorApplication/things";
 
-    private static final String VDS_CONFIG_FILE = "src/com/extensions/tests/examples/smartCoffeeMachineApplication/configs/vd-configs.json";
+    private static final String VDS_CONFIG_FILE = "src/com/extensions/tests/examples/temperatureMonitorApplication/configs/vd-configs.json";
 
     private static final String VD_QUANTITIES_FILE = "";
-    public static void main(String[] args) {
-        Log.printLine("Starting Simulation...");
 
+    public static void main(String[] args) {
         try {
             //////////////////////////////// INITIAL SETUP ////////////////////////////////
 
@@ -52,9 +53,11 @@ public final class SmartCoffeeMachineApplication {
                     CloudNodePreset.DEFAULT, // CHANGEABLE
                     EdgeNodePreset.DEFAULT, // CHANGEABLE
                     ApplicationPreset.DEFAULT, // CHANGEABLE
-                    new File(NODE_RED_APPLICATION_JSON), // The file path of the Node-RED application design
+                    new File(NODE_RED_APPLICATION_JSON),
                     vdQuantities
             );
+
+            Log.printLine("Starting Simulation...");
 
             // Disables iFogSim's logging mechanism, only displaying simulation results
             Log.disable();
@@ -88,6 +91,10 @@ public final class SmartCoffeeMachineApplication {
                     vdQuantities.getThingFrequencies()
             );
 
+            System.out.println("Virtual Devices Created Successfully!");
+
+            //Utility.printVirtualDevices(virtualDevices, "New VDS");
+
             //////////////////////////////// APPLICATION SETUP ////////////////////////////////
 
             // Create the physical topology for the application
@@ -98,6 +105,7 @@ public final class SmartCoffeeMachineApplication {
 
             // Create the application model for the application
             Application application = jsonToApplication.createApplicationModel(appId, broker.getId());
+            //application.setUserId(broker.getId());
 
             // Set the application value for VD
             for(VirtualDevice virtualDevice : virtualDevices) {
@@ -122,14 +130,10 @@ public final class SmartCoffeeMachineApplication {
             // Set up module mapping
             ModuleMapping moduleMapping = ModuleMapping.createModuleMapping();
 
-            //moduleMapping.addModuleToDevice("MasterModule", "cloud");
-
             // If cloud based deployment then connect all app modules to the cloud device/node
             if (CLOUD) {
                 for (AppModule appModule : application.getModules()) {
-                    //if(appModule.getName().equals("MasterModule") || appModule.getName().startsWith("WorkerModule-")) {
                     moduleMapping.addModuleToDevice(appModule.getName(), "cloud");
-                    //}
                 }
             }
 
@@ -151,7 +155,6 @@ public final class SmartCoffeeMachineApplication {
 
             CustomMetricManager customMetricManager = controller.getCustomMetricManager();
 
-            //customMetricManager.registerMetric(new LongestApplicationLoopDelay());
             customMetricManager.registerMetric(new PeakEnergyConsumptionDevice());
             customMetricManager.registerMetric(new TotalEnergyConsumptionEfficiency());
 
@@ -167,9 +170,7 @@ public final class SmartCoffeeMachineApplication {
             CloudSim.stopSimulation();
 
         } catch(Exception e) {
-            //e.printStackTrace();
-            System.out.println(e.getMessage());
+            e.printStackTrace();
         }
     }
 }
-

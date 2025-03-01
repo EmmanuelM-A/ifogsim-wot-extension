@@ -1,14 +1,10 @@
 {
   "applicationDetails" : {
-    "title" : "Smart Soil Irrigation System"
+    "title" : "Temperature Monitor"
   },
   "things" : [ {
-    "id" : "3e11a9770f66de8a",
-    "name" : "Water Pump",
-    "type" : "consumed-thing"
-  }, {
-    "id" : "0a58653b1d429a97",
-    "name" : "Soil Nutrition Monitor",
+    "id" : "097e18567aff7548",
+    "name" : "Temperature Sensor",
     "type" : "consumed-thing"
   }, {
     "id" : "dc99cc6070d7f6fe",
@@ -19,113 +15,29 @@
   "subFlows" : {
     "subFlow-0" : {
       "rootNode" : {
-        "id" : "8e24d66fae5a1072",
+        "id" : "b209047eeffd90cf",
         "name" : "",
-        "type" : "subscribe-event",
+        "type" : "read-property",
         "topic" : "",
-        "thing" : "3e11a9770f66de8a",
-        "event" : "lowWaterLevel"
+        "thing" : "097e18567aff7548",
+        "property" : "temperature"
       },
       "branches" : {
         "branch-0" : [ {
-          "id" : "8e24d66fae5a1072",
+          "id" : "b209047eeffd90cf",
           "name" : "",
-          "type" : "subscribe-event",
+          "type" : "read-property",
           "topic" : "",
-          "thing" : "3e11a9770f66de8a",
-          "event" : "lowWaterLevel"
+          "thing" : "097e18567aff7548",
+          "property" : "temperature"
         }, {
-          "id" : "b21b1280ab4bccdc",
-          "name" : "",
-          "type" : "invoke-action",
-          "topic" : "",
-          "thing" : "3e11a9770f66de8a",
-          "action" : "stopPump"
-        } ],
-        "branch-1" : [ {
-          "id" : "8e24d66fae5a1072",
-          "name" : "",
-          "type" : "subscribe-event",
-          "topic" : "",
-          "thing" : "3e11a9770f66de8a",
-          "event" : "lowWaterLevel"
-        }, {
-          "id" : "9b17526e2d616250",
-          "name" : "",
-          "type" : "invoke-action",
-          "topic" : "",
-          "thing" : "dc99cc6070d7f6fe",
-          "action" : "showAlert"
-        } ]
-      }
-    },
-    "subFlow-1" : {
-      "rootNode" : {
-        "id" : "459281c92eb86090",
-        "name" : "",
-        "type" : "subscribe-event",
-        "topic" : "",
-        "thing" : "0a58653b1d429a97",
-        "event" : "nutritionDepleted"
-      },
-      "branches" : {
-        "branch-0" : [ {
-          "id" : "459281c92eb86090",
-          "name" : "",
-          "type" : "subscribe-event",
-          "topic" : "",
-          "thing" : "0a58653b1d429a97",
-          "event" : "nutritionDepleted"
-        }, {
-          "id" : "dd2f6f12bdfe714f",
-          "name" : "",
-          "type" : "invoke-action",
-          "topic" : "",
-          "thing" : "dc99cc6070d7f6fe",
-          "action" : "showAlert"
-        } ],
-        "branch-1" : [ {
-          "id" : "459281c92eb86090",
-          "name" : "",
-          "type" : "subscribe-event",
-          "topic" : "",
-          "thing" : "0a58653b1d429a97",
-          "event" : "nutritionDepleted"
-        }, {
-          "id" : "732854a4775eeb85",
-          "name" : "Some processing",
+          "id" : "2de28d3e9bc3826a",
+          "name" : "Some Processing",
           "type" : "function",
           "topic" : null,
           "thing" : null
         }, {
-          "id" : "5e6c061be81b4058",
-          "name" : "",
-          "type" : "invoke-action",
-          "topic" : "",
-          "thing" : "0a58653b1d429a97",
-          "action" : "calibrateSensor"
-        } ]
-      }
-    },
-    "subFlow-2" : {
-      "rootNode" : {
-        "id" : "c741bdd94e8c3e63",
-        "name" : "",
-        "type" : "read-property",
-        "topic" : "",
-        "thing" : "3e11a9770f66de8a",
-        "property" : "status"
-      },
-      "branches" : {
-        "branch-0" : [ {
-          "id" : "c741bdd94e8c3e63",
-          "name" : "",
-          "type" : "read-property",
-          "topic" : "",
-          "thing" : "3e11a9770f66de8a",
-          "property" : "status"
-        }, {
-          "id" : "2b1362c86abb3a47",
+          "id" : "33e67c9c33ae2202",
           "name" : "",
           "type" : "invoke-action",
           "topic" : "",
@@ -134,201 +46,57 @@
         } ]
       }
     },
-    "subFlow-3" : {
+    "subFlow-1" : {
       "rootNode" : {
-        "id" : "7a4ebbbb138b58b8",
+        "id" : "49f32fc818c156df",
         "name" : "",
-        "type" : "read-property",
+        "type" : "subscribe-event",
         "topic" : "",
-        "thing" : "0a58653b1d429a97",
-        "property" : "nitrogenLevel"
+        "thing" : "097e18567aff7548",
+        "event" : "overheat"
       },
       "branches" : {
         "branch-0" : [ {
-          "id" : "7a4ebbbb138b58b8",
+          "id" : "49f32fc818c156df",
           "name" : "",
-          "type" : "read-property",
+          "type" : "subscribe-event",
           "topic" : "",
-          "thing" : "0a58653b1d429a97",
-          "property" : "nitrogenLevel"
+          "thing" : "097e18567aff7548",
+          "event" : "overheat"
         }, {
-          "id" : "de068eddfcbf5ce9",
-          "name" : "Some Processing",
-          "type" : "function",
-          "topic" : null,
-          "thing" : null
-        }, {
-          "id" : "c363067e0693d9ec",
-          "name" : "",
-          "type" : "switch",
-          "topic" : null,
-          "thing" : null
-        }, {
-          "id" : "ae8f4caf877d6d8b",
+          "id" : "702787bcbba504c8",
           "name" : "",
           "type" : "invoke-action",
           "topic" : "",
-          "thing" : "3e11a9770f66de8a",
-          "action" : "startPump"
-        } ],
-        "branch-1" : [ {
-          "id" : "7a4ebbbb138b58b8",
-          "name" : "",
-          "type" : "read-property",
-          "topic" : "",
-          "thing" : "0a58653b1d429a97",
-          "property" : "nitrogenLevel"
-        }, {
-          "id" : "de068eddfcbf5ce9",
-          "name" : "Some Processing",
-          "type" : "function",
-          "topic" : null,
-          "thing" : null
-        }, {
-          "id" : "c363067e0693d9ec",
-          "name" : "",
-          "type" : "switch",
-          "topic" : null,
-          "thing" : null
-        }, {
-          "id" : "14ba1bb6500a227e",
-          "name" : "",
-          "type" : "invoke-action",
-          "topic" : "",
-          "thing" : "3e11a9770f66de8a",
-          "action" : "stopPump"
+          "thing" : "dc99cc6070d7f6fe",
+          "action" : "showAlert"
         } ]
       }
     },
-    "subFlow-4" : {
+    "subFlow-2" : {
       "rootNode" : {
-        "id" : "be08167542aa8ade",
+        "id" : "b69940d0053f0860",
         "name" : "",
-        "type" : "read-property",
+        "type" : "subscribe-event",
         "topic" : "",
-        "thing" : "0a58653b1d429a97",
-        "property" : "phosphorusLevel"
+        "thing" : "097e18567aff7548",
+        "event" : "lowBattery"
       },
       "branches" : {
         "branch-0" : [ {
-          "id" : "be08167542aa8ade",
+          "id" : "b69940d0053f0860",
           "name" : "",
-          "type" : "read-property",
+          "type" : "subscribe-event",
           "topic" : "",
-          "thing" : "0a58653b1d429a97",
-          "property" : "phosphorusLevel"
+          "thing" : "097e18567aff7548",
+          "event" : "lowBattery"
         }, {
-          "id" : "af83691442644691",
-          "name" : "Some Processing",
-          "type" : "function",
-          "topic" : null,
-          "thing" : null
-        }, {
-          "id" : "be8dce98be08cd62",
-          "name" : "",
-          "type" : "switch",
-          "topic" : null,
-          "thing" : null
-        }, {
-          "id" : "8e2d5cea6773ad66",
+          "id" : "0f6ec1befc255f8e",
           "name" : "",
           "type" : "invoke-action",
           "topic" : "",
-          "thing" : "3e11a9770f66de8a",
-          "action" : "startPump"
-        } ],
-        "branch-1" : [ {
-          "id" : "be08167542aa8ade",
-          "name" : "",
-          "type" : "read-property",
-          "topic" : "",
-          "thing" : "0a58653b1d429a97",
-          "property" : "phosphorusLevel"
-        }, {
-          "id" : "af83691442644691",
-          "name" : "Some Processing",
-          "type" : "function",
-          "topic" : null,
-          "thing" : null
-        }, {
-          "id" : "be8dce98be08cd62",
-          "name" : "",
-          "type" : "switch",
-          "topic" : null,
-          "thing" : null
-        }, {
-          "id" : "8e914a0dcff02b79",
-          "name" : "",
-          "type" : "invoke-action",
-          "topic" : "",
-          "thing" : "3e11a9770f66de8a",
-          "action" : "stopPump"
-        } ]
-      }
-    },
-    "subFlow-5" : {
-      "rootNode" : {
-        "id" : "1bc07077f20f6a41",
-        "name" : "",
-        "type" : "read-property",
-        "topic" : "",
-        "thing" : "0a58653b1d429a97",
-        "property" : "potassiumLevel"
-      },
-      "branches" : {
-        "branch-0" : [ {
-          "id" : "1bc07077f20f6a41",
-          "name" : "",
-          "type" : "read-property",
-          "topic" : "",
-          "thing" : "0a58653b1d429a97",
-          "property" : "potassiumLevel"
-        }, {
-          "id" : "50a9a5dde2c202d7",
-          "name" : "Some Processing",
-          "type" : "function",
-          "topic" : null,
-          "thing" : null
-        }, {
-          "id" : "dc6dde043e0a1ba9",
-          "name" : "",
-          "type" : "switch",
-          "topic" : null,
-          "thing" : null
-        }, {
-          "id" : "94dfcdde77507b43",
-          "name" : "",
-          "type" : "invoke-action",
-          "topic" : "",
-          "thing" : "3e11a9770f66de8a",
-          "action" : "startPump"
-        } ],
-        "branch-1" : [ {
-          "id" : "1bc07077f20f6a41",
-          "name" : "",
-          "type" : "read-property",
-          "topic" : "",
-          "thing" : "0a58653b1d429a97",
-          "property" : "potassiumLevel"
-        }, {
-          "id" : "50a9a5dde2c202d7",
-          "name" : "Some Processing",
-          "type" : "function",
-          "topic" : null,
-          "thing" : null
-        }, {
-          "id" : "dc6dde043e0a1ba9",
-          "name" : "",
-          "type" : "switch",
-          "topic" : null,
-          "thing" : null
-        }, {
-          "id" : "46cf0dbc953e7ec3",
-          "name" : "",
-          "type" : "invoke-action",
-          "topic" : "",
-          "thing" : "3e11a9770f66de8a",
-          "action" : "stopPump"
+          "thing" : "dc99cc6070d7f6fe",
+          "action" : "showAlert"
         } ]
       }
     }
