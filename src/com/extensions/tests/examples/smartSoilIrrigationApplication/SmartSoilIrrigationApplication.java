@@ -45,16 +45,18 @@ public final class SmartSoilIrrigationApplication {
         try {
             //////////////////////////////// INITIAL SETUP ////////////////////////////////
 
+            // Parses the VD quantities file and extracts the quantity of each thing to be used in the application
+            VDQuantityParser vdQuantities = new VDQuantityParser(new File(VD_QUANTITIES_FILE));
+
             // This instance is responsible for loading in the node red application, creating the application topology and model and setting up related data
             JsonToApplication jsonToApplication = new JsonToApplication(
                     CloudNodePreset.DEFAULT, // CHANGEABLE
                     EdgeNodePreset.DEFAULT, // CHANGEABLE
                     ApplicationPreset.DEFAULT, // CHANGEABLE
-                    new File(NODE_RED_APPLICATION_JSON) // The file path of the Node-RED application design
+                    new File(NODE_RED_APPLICATION_JSON), // The file path of the Node-RED application design
+                    vdQuantities
             );
 
-            // Parses the VD quantities file and extracts the quantity of each thing to be used in the application
-            VDQuantityParser vdQuantities = new VDQuantityParser(new File(VD_QUANTITIES_FILE));
 
             // Disables iFogSim's logging mechanism, only displaying simulation results
             Log.disable();
@@ -93,7 +95,7 @@ public final class SmartSoilIrrigationApplication {
             //////////////////////////////// APPLICATION SETUP ////////////////////////////////
 
             // Create the physical topology for the application
-            ApplicationPhysicalTopology physicalTopology = jsonToApplication.createApplicationPhysicalTopology(virtualDevices, vdQuantities.getVdsConnectedToEdgeNodes());
+            ApplicationPhysicalTopology physicalTopology = jsonToApplication.createApplicationPhysicalTopology(virtualDevices);
 
             // Set the sensors list (NEEDED TO CREATE THE APPLICATION MODEL BELOW)
             jsonToApplication.setAllSensors(physicalTopology.getSensors());

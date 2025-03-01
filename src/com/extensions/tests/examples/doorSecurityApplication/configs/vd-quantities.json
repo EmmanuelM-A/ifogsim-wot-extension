@@ -7,8 +7,8 @@
 	},
 	"security-monitoring": {
 		"things": {
-			"Smart Camera": 3,
-			"Alarm": 1,
+			"Smart Camera": 2,
+			"Alarm": 2,
 			"Smart Display" : 1
 		}
 	}

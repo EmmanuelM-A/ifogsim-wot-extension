@@ -85,6 +85,8 @@ public class JsonToApplication {
      */
     private final ApplicationTopologyParser applicationTopologyParser;
 
+    private final VDQuantityParser vdQuantityParser;
+
     /**
      * A list of all virtual devices used in the application
      */
@@ -109,11 +111,13 @@ public class JsonToApplication {
             CloudNodePreset cloudNodePreset,
             EdgeNodePreset edgeNodePreset,
             ApplicationPreset applicationPreset,
-            File nodeRedApplicationJsonFile
+            File nodeRedApplicationJsonFile,
+            VDQuantityParser vdQuantityParser
     ) throws IOException {
         this.cloudNodePreset = cloudNodePreset;
         this.edgeNodePreset = edgeNodePreset;
         this.applicationPreset = applicationPreset;
+        this.vdQuantityParser = vdQuantityParser;
 
         // Initialize variables and data structures
         this.dataFlows = new ArrayList<>();
@@ -175,9 +179,6 @@ public class JsonToApplication {
         String MASTER_MODULE = "MasterModule";
         application.addAppModule(MASTER_MODULE, applicationPreset.APP_MODULE_RAM);
 
-        // Make a copy of the selected VD list
-        List<VirtualDevice> selectedVDsCopy = new ArrayList<>(selectedVirtualDevices);
-
         // Keeps track of sensor-actuator pairs that have been made
         Set<VirtualDevice> virtualDevicesUsedSoFar = new HashSet<>();
 
@@ -213,7 +214,7 @@ public class JsonToApplication {
                         //if(connectionStatus.isDirectionConnection()) {} // You can change it to handle direct connections
 
                         // Get the VD that holds the src node (sensor)
-                        VirtualDevice virtualDevice = getVDUsed(src, selectedVDsCopy);
+                        VirtualDevice virtualDevice = getVDUsed(src, selectedVirtualDevices);
 
                         // Check if VD exists
                         if(virtualDevice != null) {
@@ -389,8 +390,10 @@ public class JsonToApplication {
                 //System.out.println("VD: " + vd.getFogDevice().getName());
                 //System.out.println("Thing: " + formattedThingName);
                 if(vd.getFogDevice().getName().contains(formattedThingName) || vd.getFogDevice().getName().equals(formattedThingName)) {
-                    vds.remove(vd);
-                    System.out.println(vd.getFogDevice().getName() + " removed!");
+                    if(vdQuantityParser.getVdsConnectedToEdgeNodes() != null) {
+                        vds.remove(vd);
+                        System.out.println(vd.getFogDevice().getName() + " removed!");
+                    }
 
                     return vd;
                 }
@@ -483,7 +486,7 @@ public class JsonToApplication {
 
     ////////////////////////////////////// APPLICATION PHYSICAL TOPOLOGY CONSTRUCTION //////////////////////////////////////
 
-    public ApplicationPhysicalTopology createApplicationPhysicalTopology(List<VirtualDevice> virtualDevices, Map<String, List<String>> vdsConnectedToEdgeNodes) {
+    public ApplicationPhysicalTopology createApplicationPhysicalTopology(List<VirtualDevice> virtualDevices) {
         // Will store all fog devices used in the application
         List<FogDevice> fogDevices = new ArrayList<>();
 
@@ -563,7 +566,7 @@ public class JsonToApplication {
                     fogDevices.add(edgeNode);
                     edgeNodes.add(edgeNode);
 
-                    List<VirtualDevice> virtualDevicesUsed = getVirtualDevicesWithMatchingEdgeNodeName(allSelectedVirtualDevices, vdsConnectedToEdgeNodes, edgeNodeName);
+                    List<VirtualDevice> virtualDevicesUsed = getVirtualDevicesWithMatchingEdgeNodeName(allSelectedVirtualDevices, vdQuantityParser.getVdsConnectedToEdgeNodes(), edgeNodeName);
 
                     assert virtualDevicesUsed != null;
 
