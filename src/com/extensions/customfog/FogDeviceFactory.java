@@ -21,6 +21,9 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+/**
+ * This class is responsible for creating fog devices
+ */
 public class FogDeviceFactory {
     /**
      * Creates a vanilla FogDevice in the simulation with the specified attributes.
@@ -28,7 +31,7 @@ public class FogDeviceFactory {
      * @param name the name of the FogDevice
      * @param mips the Millions of Instructions Per Second (MIPS) capacity of the FogDevice
      * @param uplinkBandwidth the uplink bandwidth (in Mbps) of the FogDevice for communication with its parent
-     * @param downlinkBandwidth the down link bandwidth (in Mbps) of the FogDevice for communication with its children
+     * @param downLinkBandwidth the down link bandwidth (in Mbps) of the FogDevice for communication with its children
      * @param latency the network latency (in milliseconds) between the FogDevice and its parent
      * @param ratePerMips the cost rate (in currency units) per MIPS for executing tasks on this FogDevice
      * @return the created FogDevice instance with the specified configuration
@@ -38,7 +41,7 @@ public class FogDeviceFactory {
             long mips,
             int ram,
             double uplinkBandwidth,
-            double downlinkBandwidth,
+            double downLinkBandwidth,
             double latency,
             double ratePerMips,
             double busyPower,
@@ -92,7 +95,7 @@ public class FogDeviceFactory {
                     storageList,
                     10,
                     uplinkBandwidth,
-                    downlinkBandwidth,
+                    downLinkBandwidth,
                     latency,
                     ratePerMips);
         } catch (Exception e) {

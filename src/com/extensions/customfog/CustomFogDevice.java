@@ -15,18 +15,48 @@ import org.fog.utils.Logger;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * Represents a custom {@code FogDevice} which has the added ability to process event tuples along with regular
+ * tuples. It extends iFogSim's {@code FogDevice} class.
+ */
 public class CustomFogDevice extends FogDevice {
+    /**
+     * The name of the fog device.
+     */
     private String name;
-    public CustomFogDevice(String name, FogDeviceCharacteristics characteristics, VmAllocationPolicy vmAllocationPolicy, List<Storage> storageList, double schedulingInterval, double uplinkBandwidth, double downlinkBandwidth, double uplinkLatency, double ratePerMips) throws Exception {
-        super(name, characteristics, vmAllocationPolicy, storageList, schedulingInterval, uplinkBandwidth, downlinkBandwidth, uplinkLatency, ratePerMips);
+
+    /**
+     * Constructs a CustomFogDevice instance with the given parameters
+     *
+     * @param name The name of the fog device.
+     * @param characteristics The characteristics of the fog device, such as CPU, RAM, and storage capabilities.
+     * @param vmAllocationPolicy The policy for allocating virtual machines (VMs) within the fog device.
+     * @param storageList A list of storage devices associated with the fog device.
+     * @param schedulingInterval The interval at which the scheduler updates resource allocations.
+     * @param uplinkBandwidth The maximum bandwidth available for uplink communication.
+     * @param downLinkBandwidth The maximum bandwidth available for down link communication.
+     * @param uplinkLatency The latency for uplink communication in milliseconds.
+     * @param ratePerMips The cost rate per Million Instructions Per Second (MIPS).
+     * @throws Exception If an error occurs during the creation of the fog device.
+     */
+    public CustomFogDevice(String name, FogDeviceCharacteristics characteristics, VmAllocationPolicy vmAllocationPolicy, List<Storage> storageList, double schedulingInterval, double uplinkBandwidth, double downLinkBandwidth, double uplinkLatency, double ratePerMips) throws Exception {
+        super(name, characteristics, vmAllocationPolicy, storageList, schedulingInterval, uplinkBandwidth, downLinkBandwidth, uplinkLatency, ratePerMips);
         this.name = name;
     }
 
+    /**
+     * Retrieves the name of the fog device.
+     * @return The name of the fog device.
+     */
     @Override
     public String getName() {
         return name;
     }
 
+    /**
+     * Sets the name of the fog device.
+     * @param name The new name of the fog device.
+     */
     public void setName(String name) {
         this.name = name;
     }
@@ -47,7 +77,13 @@ public class CustomFogDevice extends FogDevice {
         }
     }
 
+    /**
+     * Process incoming event tuples. This method is very similar to the processTupleArrival method (from the parent), with the
+     * exception that it handles EVENT tuples rather than regular tuples.
+     * @param ev The SimEvent the tuple comes form.
+     */
     public void processEventTupleArrival(SimEvent ev) {
+        // Only part of the code I changed from the parent method
         EventTuple eventTuple = (EventTuple) ev.getData();
 
         if (getName().equals("cloud")) {
@@ -129,135 +165,10 @@ public class CustomFogDevice extends FogDevice {
                     sendDown(eventTuple, childId);
             }
         }
-
-        //System.out.println(getName() + " processing event tuple: " + eventTuple.getEventType());
     }
 
     @Override
     protected void sendDown(Tuple tuple, int childId) {
         super.sendDown(tuple, childId);
     }
-
-    /*@Override
-    protected void updateTimingsOnSending(Tuple resTuple) {
-        String srcModule = resTuple.getSrcModuleName();
-        String destModule = resTuple.getDestModuleName();
-        for (AppLoop loop : getApplicationMap().get(resTuple.getAppId()).getLoops()) {
-            if (loop.hasEdge(srcModule, destModule) && loop.isStartModule(srcModule)) {
-                int tupleId = TimeKeeper.getInstance().getUniqueId();
-                resTuple.setActualTupleId(tupleId);
-                if (!TimeKeeper.getInstance().getLoopIdToTupleIds().containsKey(loop.getLoopId())) {
-                    TimeKeeper.getInstance().getLoopIdToTupleIds().put(loop.getLoopId(), new ArrayList<Integer>());
-
-                    System.out.println("Loop " + loop.getLoopId() + " added!");
-                }
-                TimeKeeper.getInstance().getLoopIdToTupleIds().get(loop.getLoopId()).add(tupleId);
-                TimeKeeper.getInstance().getEmitTimes().put(tupleId, CloudSim.clock());
-
-                //Logger.debug(getName(), "\tSENDING\t"+resTuple.getActualTupleId()+"\tSrc:"+srcModule+"\tDest:"+destModule);
-            } else {
-                //System.out.println(srcModule + " ---> " + destModule);
-            }
-        }
-    }
-
-    @Override
-    protected void checkCloudletCompletion() {
-        boolean cloudletCompleted = false;
-        List<? extends Host> list = getVmAllocationPolicy().getHostList();
-        for (int i = 0; i < list.size(); i++) {
-            Host host = list.get(i);
-            for (Vm vm : host.getVmList()) {
-                while (vm.getCloudletScheduler().isFinishedCloudlets()) {
-                    Cloudlet cl = vm.getCloudletScheduler().getNextFinishedCloudlet();
-                    if (cl != null) {
-
-                        cloudletCompleted = true;
-                        Tuple tuple = (Tuple) cl;
-                        TimeKeeper.getInstance().tupleEndedExecution(tuple);
-                        Application application = getApplicationMap().get(tuple.getAppId());
-                        Logger.debug(getName(), "Completed execution of tuple " + tuple.getCloudletId() + "on " + tuple.getDestModuleName());
-                        List<Tuple> resultantTuples = application.getResultantTuples(tuple.getDestModuleName(), tuple, getId(), vm.getId());
-                        for (Tuple resTuple : resultantTuples) {
-                            resTuple.setModuleCopyMap(new HashMap<String, Integer>(tuple.getModuleCopyMap()));
-                            resTuple.getModuleCopyMap().put(((AppModule) vm).getName(), vm.getId());
-                            updateTimingsOnSending(resTuple);
-                            sendToSelf(resTuple);
-                        }
-                        sendNow(cl.getUserId(), CloudSimTags.CLOUDLET_RETURN, cl);
-                    }
-                }
-            }
-        }
-        if (cloudletCompleted)
-            updateAllocatedMips(null);
-    }
-
-    @Override
-    protected double updateCloudetProcessingWithoutSchedulingFutureEventsForce() {
-        double currentTime = CloudSim.clock();
-        double minTime = Double.MAX_VALUE;
-        double timeDiff = currentTime - getLastProcessTime();
-        double timeFrameDatacenterEnergy = 0.0;
-
-        for (PowerHost host : this.<PowerHost>getHostList()) {
-            Log.printLine();
-
-            double time = host.updateVmsProcessing(currentTime); // inform VMs to update processing
-            if (time < minTime) {
-                minTime = time;
-            }
-
-            Log.formatLine(
-                    "%.2f: [Host #%d] utilization is %.2f%%",
-                    currentTime,
-                    host.getId(),
-                    host.getUtilizationOfCpu() * 100);
-        }
-
-        if (timeDiff > 0) {
-            Log.formatLine(
-                    "\nEnergy consumption for the last time frame from %.2f to %.2f:",
-                    getLastProcessTime(),
-                    currentTime);
-
-            for (PowerHost host : this.<PowerHost>getHostList()) {
-                double previousUtilizationOfCpu = host.getPreviousUtilizationOfCpu();
-                double utilizationOfCpu = host.getUtilizationOfCpu();
-                double timeFrameHostEnergy = host.getEnergyLinearInterpolation(
-                        previousUtilizationOfCpu,
-                        utilizationOfCpu,
-                        timeDiff);
-                timeFrameDatacenterEnergy += timeFrameHostEnergy;
-
-                Log.printLine();
-                Log.formatLine(
-                        "%.2f: [Host #%d] utilization at %.2f was %.2f%%, now is %.2f%%",
-                        currentTime,
-                        host.getId(),
-                        getLastProcessTime(),
-                        previousUtilizationOfCpu * 100,
-                        utilizationOfCpu * 100);
-                Log.formatLine(
-                        "%.2f: [Host #%d] energy is %.2f W*sec",
-                        currentTime,
-                        host.getId(),
-                        timeFrameHostEnergy);
-            }
-
-            Log.formatLine(
-                    "\n%.2f: Data center's energy is %.2f W*sec\n",
-                    currentTime,
-                    timeFrameDatacenterEnergy);
-        }
-
-        setPower(getPower() + timeFrameDatacenterEnergy);
-
-        checkCloudletCompletion();
-
-        Log.printLine();
-
-        setLastProcessTime(currentTime);
-        return minTime;
-    }*/
 }

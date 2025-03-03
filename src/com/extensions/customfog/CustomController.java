@@ -24,7 +24,17 @@ import org.fog.utils.FogUtils;
 import org.fog.utils.NetworkUsageMonitor;
 import org.fog.utils.TimeKeeper;
 
-public class CustomController extends SimEntity{
+/**
+ * This class is responsible for running the application and outputting the data to terminal (transmitting the run command to the CloudSim Engine).
+ * A majority of the code is exactly the same as the iFogSim's {@code Controller} class, with the only differences being that it includes the ability to
+ * record the simulation data as {@code SimulationData} instance and incorporates the {@code CustomMetricManager} to be able to run the custom
+ * performance check, defined by the users.
+ * <p>
+ * NOTE - The only parts of this class that are commented are the blocks/pieces of code that I added/are different from iFogSim's
+ * {@code Controller} class.
+ */
+public class CustomController extends SimEntity {
+    // NOTE - THE ONLY PAR
     private List<FogDevice> fogDevices;
     private List<Sensor> sensors;
     private List<Actuator> actuators;
@@ -34,8 +44,15 @@ public class CustomController extends SimEntity{
 
     private Map<String, ModulePlacement> appModulePlacementPolicy;
 
+    /**
+     * The data structure that stores all the simulation results after the simulation has completed.
+     */
     private final SimulationData simulationData;
 
+    /**
+     * Is responsible for managing all custom metrics registered by the user and running them when the simulation
+     * has completed.
+     */
     private final CustomMetricManager customMetricManager;
 
     public CustomController(String name, List<FogDevice> fogDevices, List<Sensor> sensors, List<Actuator> actuators) {
@@ -131,13 +148,7 @@ public class CustomController extends SimEntity{
         // Application Loop Delays
         for(Integer loopId : TimeKeeper.getInstance().getLoopIdToTupleIds().keySet()){
             simulationData.recordApplicationLoopDelays(getStringForLoopId(loopId), TimeKeeper.getInstance().getLoopIdToCurrentAverage().get(loopId));
-            //System.out.println(loopId);
         }
-
-        /*for(AppLoop appLoop : application.getLoops()) {
-            simulationData.recordApplicationLoopDelays(getStringForLoopId(appLoop.getLoopId()), TimeKeeper.getInstance().getLoopIdToCurrentAverage().get(appLoop.getLoopId()));
-            //System.out.println(appLoop.getLoopId());
-        }*/
 
         // Tuple CPU Execution Delays
         for(String tupleType : TimeKeeper.getInstance().getTupleTypeToAverageCpuTime().keySet()){
@@ -154,25 +165,11 @@ public class CustomController extends SimEntity{
         simulationData.recordEnergyConsumption(fogDevices);
     }
 
-    private void printNetworkUsageDetails() {
-        System.out.println("Total network usage = "+NetworkUsageMonitor.getNetworkUsage()/Config.MAX_SIMULATION_TIME);
-    }
-
     private FogDevice getCloud(){
         for(FogDevice dev : getFogDevices())
             if(dev.getName().equals("cloud"))
                 return dev;
         return null;
-    }
-
-    private void printCostDetails(){
-        System.out.println("Cost of execution in cloud = "+getCloud().getTotalCost());
-    }
-
-    private void printPowerDetails() {
-        for(FogDevice fogDevice : getFogDevices()){
-            System.out.println(fogDevice.getName() + " : Energy Consumed = "+fogDevice.getEnergyConsumption());
-        }
     }
 
     private String getStringForLoopId(int loopId){
@@ -184,39 +181,6 @@ public class CustomController extends SimEntity{
             }
         }
         return null;
-    }
-
-    //private long calculateExecustionTime
-    private void printTimeDetails() {
-        System.out.println("=========================================");
-        System.out.println("============== RESULTS ==================");
-        System.out.println("=========================================");
-        System.out.println("EXECUTION TIME : "+ (Calendar.getInstance().getTimeInMillis() - TimeKeeper.getInstance().getSimulationStartTime()));
-        System.out.println("=========================================");
-        System.out.println("APPLICATION LOOP DELAYS");
-        System.out.println("=========================================");
-        for(Integer loopId : TimeKeeper.getInstance().getLoopIdToTupleIds().keySet()){
-			/*double average = 0, count = 0;
-			for(int tupleId : TimeKeeper.getInstance().getLoopIdToTupleIds().get(loopId)){
-				Double startTime = 	TimeKeeper.getInstance().getEmitTimes().get(tupleId);
-				Double endTime = 	TimeKeeper.getInstance().getEndTimes().get(tupleId);
-				if(startTime == null || endTime == null)
-					break;
-				average += endTime-startTime;
-				count += 1;
-			}
-			System.out.println(getStringForLoopId(loopId) + " ---> "+(average/count));*/
-            System.out.println(getStringForLoopId(loopId) + " ---> "+TimeKeeper.getInstance().getLoopIdToCurrentAverage().get(loopId));
-        }
-        System.out.println("=========================================");
-        System.out.println("TUPLE CPU EXECUTION DELAY");
-        System.out.println("=========================================");
-
-        for(String tupleType : TimeKeeper.getInstance().getTupleTypeToAverageCpuTime().keySet()){
-            System.out.println(tupleType + " ---> "+TimeKeeper.getInstance().getTupleTypeToAverageCpuTime().get(tupleType));
-        }
-
-        System.out.println("=========================================");
     }
 
     protected void manageResources(){
@@ -231,8 +195,6 @@ public class CustomController extends SimEntity{
     }
 
     public void submitApplication(Application application, int delay, ModulePlacement modulePlacement){
-        this.application = application;
-
         FogUtils.appIdToGeoCoverageMap.put(application.getAppId(), application.getGeoCoverage());
         getApplications().put(application.getAppId(), application);
         getAppLaunchDelays().put(application.getAppId(), delay);
@@ -285,6 +247,11 @@ public class CustomController extends SimEntity{
         }
     }
 
+    /**
+     * Retrieves the custom metrics manager instance used to manage performance metrics.
+     *
+     * @return The Custom Metrics Manager instance.
+     */
     public CustomMetricManager getCustomMetricManager() {
         return customMetricManager;
     }
