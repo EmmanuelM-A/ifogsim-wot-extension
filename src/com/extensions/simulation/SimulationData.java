@@ -14,11 +14,34 @@ import java.util.Map;
  * Stores all simulation results for analysis after execution.
  */
 public class SimulationData {
+    /**
+     * The total execution time of the simulation in milliseconds.
+     */
     private long executionTime;
+
+    /**
+     * A map of application loop delays, where the key is the loop name and the value is the delay in milliseconds.
+     */
     private final Map<String, Double> applicationLoopDelays;
+
+    /**
+     * A map of tuple execution delays, where the key is the tuple name and the value is the delay in milliseconds.
+     */
     private final Map<String, Double> tupleExecutionDelays;
+
+    /**
+     *  A map of energy consumption per device, where the key is the device name and the value is the energy consumption in Joules.
+     */
     private final Map<String, Double> energyConsumptionPerDevice;
+
+    /**
+     * The total network usage in KB.
+     */
     private double totalNetworkUsage;
+
+    /**
+     * The total cost of cloud execution in $.
+     */
     private double cloudExecutionCost;
 
     /**
@@ -117,27 +140,56 @@ public class SimulationData {
         System.out.println("==========================================");
     }
 
-    // Getters for access to stored results
+    /**
+     * Retrieves the execution time of the simulation.
+     *
+     * @return The execution time of the simulation in milliseconds.
+     */
     public long getExecutionTime() {
         return executionTime;
     }
 
+    /**
+     * Retrieves the application loop delays from the simulation results.
+     *
+     * @return A map where the key is the loop name and the value is the delay in milliseconds.
+     */
     public Map<String, Double> getApplicationLoopDelays() {
         return applicationLoopDelays;
     }
 
+    /**
+     * Retrieves the tuple execution delays from the simulation results.
+     *
+     * @return A map where the key is the tuple name and the value is the delay in milliseconds.
+     */
     public Map<String, Double> getTupleExecutionDelays() {
         return tupleExecutionDelays;
     }
 
+    /**
+     * Retrieves the energy consumption per device from the simulation results.
+     *
+     * @return A map where the key is the device name and the value is the energy consumption in Joules.
+     */
     public Map<String, Double> getEnergyConsumptionPerDevice() {
         return energyConsumptionPerDevice;
     }
 
+    /**
+     * Retrieves the total network usage from the simulation results.
+     *
+     * @return The total network usage in KB.
+     */
     public double getTotalNetworkUsage() {
         return totalNetworkUsage;
     }
 
+    /**
+     * Retrieves the cloud execution cost from the simulation results.
+     *
+     * @return The total cost of cloud execution in $.
+     */
     public double getCloudExecutionCost() {
         return cloudExecutionCost;
     }
