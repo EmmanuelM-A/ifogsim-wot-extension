@@ -8,15 +8,40 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
-
+/**
+ * Responsible for parsing the VD quantities file and extracting and transforming the data into
+ * a more useful form.
+ */
 public class VDQuantityParser implements FileProcessor<Map<String, List<String>>> {
+    /**
+     * A frequency table that stores the number of times a thing appears.
+     */
     private final Map<String, Integer> thingFrequencies;
+
+    /**
+     * A map of stores the all the VDs connected to an edge node. Where the key is the edge node name and the value
+     * is a list of VDs that connect ot that edge node.
+     */
     private final Map<String, List<String>> vdsConnectedToEdgeNodes;
 
+    /**
+     * Constructs a {@code VDQuantityParser} instance which on initialization parses the JSON file.
+     * @param file The file containing the VD quantities (and their connections to edge devices).
+     * @throws IOException IOException If an error occurs while reading or parsing the file
+     */
     public VDQuantityParser(File file) throws IOException {
         this.thingFrequencies = new HashMap<>();
         this.vdsConnectedToEdgeNodes = process(file);
     }
+
+    /**
+     * Processes the JSON file to extract the mapping of edge nodes to their connected VDs
+     * and the frequencies of different things.
+     *
+     * @param file The JSON file to be processed.
+     * @return A map where the key is the edge node name and the value is a list of VD names connected to it.
+     * @throws IOException If an error occurs while reading or parsing the file.
+     */
     @Override
     public Map<String, List<String>> process(File file) throws IOException {
         // Initialize Jackson's ObjectMapper to parse JSON
@@ -77,11 +102,20 @@ public class VDQuantityParser implements FileProcessor<Map<String, List<String>>
         return edgeNodeVDMap.isEmpty() ? null : edgeNodeVDMap;
     }
 
-
+    /**
+     * Returns the frequencies of different things parsed from the JSON file.
+     *
+     * @return A map where the key is the thing name and the value is its frequency.
+     */
     public Map<String, Integer> getThingFrequencies() {
         return thingFrequencies;
     }
 
+    /**
+     * Returns the mapping of edge nodes to their connected VDs.
+     *
+     * @return A map where the key is the edge node name and the value is a list of VD names connected to it.
+     */
     public Map<String, List<String>> getVdsConnectedToEdgeNodes() {
         return vdsConnectedToEdgeNodes;
     }

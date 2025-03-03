@@ -17,6 +17,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class NodeRedJSONParser implements FileProcessor<List<NodeRedNode>> {
+    /**
+     *  The object mapper instance used to parse JSON files.
+     */
     private final ObjectMapper objectMapper;
 
     public final static String TYPE_INVOKE_ACTION = "invoke-action";

@@ -10,7 +10,6 @@ import com.extensions.sysconstructor.topology.TopologyNode;
 import com.extensions.sysconstructor.topology.TopologyNodeConnectionChecker;
 import com.extensions.sysconstructor.topology.TopologyNodeConnectionStatus;
 import com.extensions.sysconstructor.topology.TopologyNodeTree;
-import com.extensions.utils.Pair;
 import com.extensions.utils.Utility;
 import com.extensions.utils.presets.ApplicationPreset;
 import com.extensions.utils.presets.CloudNodePreset;
@@ -29,6 +28,9 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 
+/**
+ * This class is responsible for construction the application's 1) Physical Topology and its 2) Application Model
+ */
 public class JsonToApplication {
     /**
      * Presets for defining the characteristics of cloud nodes in the application
@@ -85,6 +87,9 @@ public class JsonToApplication {
      */
     private final ApplicationTopologyParser applicationTopologyParser;
 
+    /**
+     * The parser responsible for extracting the data from the VD quantities file.
+     */
     private final VDQuantityParser vdQuantityParser;
 
     /**
@@ -100,13 +105,27 @@ public class JsonToApplication {
     /**
      * A count used to keep track of all event processing modules created
      */
-    private int eventProcessingModuleCount;
+    private final int eventProcessingModuleCount;
 
-    // Keep tracks of the number of worker modules created
+    /**
+     * Keeps track of the number of worker modules created.
+     */
     private int workerModuleCount = 1;
 
-    List<Sensor> allSensors;
+    /**
+     * A list of all sensor used in the application's physical topology (ONLY USED IN THE APPLICATION MODEL).
+     */
+    private List<Sensor> allSensors;
 
+    /**
+     * Initializes all variables and components used to construct the application.
+     * @param cloudNodePreset The preset configurations used to configure a cloud node.
+     * @param edgeNodePreset The preset configurations used to configure the edge nodes.
+     * @param applicationPreset The preset configurations used to configure the application and application components.
+     * @param nodeRedApplicationJsonFile The JSON file that contains the Node-RED application design.
+     * @param vdQuantityParser The parser used to extract and transform the data from the VD quantities file.
+     * @throws IOException Throws an en exception if an error occurs or during processing or whilst reading or parsing the file
+     */
     public JsonToApplication(
             CloudNodePreset cloudNodePreset,
             EdgeNodePreset edgeNodePreset,
@@ -157,6 +176,13 @@ public class JsonToApplication {
 
     //////////////////////////////////////////// APPLICATION MODEL CONSTRUCTION ////////////////////////////////////////////
 
+    /**
+     * Creates the application model for the application.
+     * @param appId The application ID.
+     * @param userId The user ID associated with the application.
+     *
+     * @return The constructed application model from the Node-RED application.
+     */
     public Application createApplicationModel(String appId, int userId) {
         Application application = mapAppTopologyToAppModel(appId, userId);
 
@@ -167,6 +193,13 @@ public class JsonToApplication {
         return application;
     }
 
+    /**
+     * Maps the Node-RED application design to an iFogSim acceptable application model.
+     * @param appId The application ID.
+     * @param userId The user ID associated with the application.
+     *
+     * @return The constructed application model.
+     */
     private Application mapAppTopologyToAppModel(String appId, int userId) {
         // Check if the sub-flow flow exists
         if(topologyNodeTrees == null) {
@@ -227,9 +260,6 @@ public class JsonToApplication {
                             application.addAppModule(WORKER_MODULE_K, applicationPreset.APP_MODULE_RAM);
 
                             // Data Flow Edges
-                            //application.addAppEdge(srcName, WORKER_MODULE_K, 5000, 2000, srcName, Tuple.UP, AppEdge.SENSOR);
-                            //application.addAppEdge(WORKER_MODULE_K, dstName, 1000, 2000, dstName, Tuple.DOWN, AppEdge.ACTUATOR);
-
                             addAppEdge(application, srcName, WORKER_MODULE_K, srcName, Tuple.UP, AppEdge.SENSOR);
                             addAppEdge(application, WORKER_MODULE_K, dstName, dstName, Tuple.DOWN, AppEdge.ACTUATOR);
 
@@ -297,6 +327,11 @@ public class JsonToApplication {
         return application;
     }
 
+    /**
+     * Maps the user-defined event flows (from the Node-RED application design) into iFogSim acceptable application model
+     * components which capture the data flow that occurs when the event is triggered.
+     * @param application The application to add these event flows to.
+     */
     private void addEventFlowToApplication(Application application) {
         for(TopologyNodeTree topologyNodeTree : eventFlows) {
             // Check if the sub flow is not null
@@ -364,6 +399,12 @@ public class JsonToApplication {
         }
     }
 
+    /**
+     * Responsible for adding and registering the events to the application.
+     * @param application The application to add the event to.
+     * @param srcName The source of the event.
+     * @param dstName The destination the event tuple transmitted should travel to.
+     */
     private void recordEventFlow(Application application, String srcName, String dstName) {
         String eventProcessor = "EventProcessor";
 
@@ -387,10 +428,20 @@ public class JsonToApplication {
         application.getLoops().add(loop);
     }
 
+    /**
+     * Sets the list of all sensors used in the application (ONLY USED FOR THE APPLICATION MODEL!).
+     * @param sensors The list of all sensors used in the application.
+     */
     public void setAllSensors(List<Sensor> sensors) {
         this.allSensors = sensors;
     }
 
+    /**
+     * Gets the VDs associated with the topology node.
+     * @param node The node associated with the VD.
+     * @param vds The list of all VDs used in the application.
+     * @return The VD that is linked to the node.
+     */
     private VirtualDevice getVDUsed(TopologyNode node, List<VirtualDevice> vds) {
         // Get the thing referenced by the node
         TopologyNode thingUsed = null;
@@ -404,7 +455,7 @@ public class JsonToApplication {
                 String formattedThingName = thingUsed.name().replace(" ", "");
                 if(vd.getFogDevice().getName().contains(formattedThingName) || vd.getFogDevice().getName().equals(formattedThingName)) {
                     if(vdQuantityParser.getVdsConnectedToEdgeNodes() != null) {
-                        vds.remove(vd);
+                        vds.remove(vd); // Prevents the same VD being selected
                     }
 
                     return vd;
@@ -415,6 +466,17 @@ public class JsonToApplication {
         return null;
     }
 
+    /**
+     * Connects the master module to the worker module.
+     * @param application The application to add this connection to.
+     * @param VD_SENSOR The general sensor that represents the VD.
+     * @param VD_ACTUATOR The general actuator that represents the VD.
+     * @param subFlowSensor The sensor found at the start of sub flow.
+     * @param subFlowActuator The actuator usually found at the end of the sub flow.
+     * @param MASTER_MODULE The name of the master module.
+     * @param WORKER_MODULE_K The name of the worker module to make a connection with the master module.
+     * @return A string detailing the connection and tuple types flowing through the worker module (USED FOR DEBUGGING).
+     */
     private String connectWorkerModule(
             Application application,
             String VD_SENSOR,
@@ -425,9 +487,6 @@ public class JsonToApplication {
             String WORKER_MODULE_K
     ) {
         ////////// App Modules //////////
-
-        //String WORKER_MODULE_K = "WorkerModule-" + workerModuleCount;
-        //workerModuleCount++;
 
         application.addAppModule(WORKER_MODULE_K, applicationPreset.APP_MODULE_RAM);
 
@@ -461,31 +520,60 @@ public class JsonToApplication {
         return subFlowSensor + " --> " + WORKER_MODULE_K + " --> " + subFlowActuator; // USED FOR DEBUGGING
     }
 
+    /**
+     * Gets a sensor by its name form a list of sensors.
+     * @param name The name of the sensor to be found.
+     * @param sensors The list of all sensors to search through.
+     * @return The sensor found.
+     */
     private Sensor getSensorBy(String name, List<Sensor> sensors) {
         for(Sensor sensor : sensors) {
-            //System.out.println(sensor.getName());
             if(sensor.getName().equals(name)) return sensor;
         }
         return null;
     }
 
+    /**
+     * Determines if a topology node is an actuator or not.
+     * @param node The topology node being checked.
+     * @return True if the topology node is an actuator and false otherwise.
+     */
     private boolean isActuator(TopologyNode node) {
         if(!isWoTNode(node)) return false;
 
         return node.type().equals(NodeRedJSONParser.TYPE_INVOKE_ACTION) || node.type().equals(NodeRedJSONParser.TYPE_WRITE_PROPERTY);
     }
 
+    /**
+     * Determines if a topology node is a sensor or not.
+     * @param node The topology node being checked.
+     * @return True if the topology node is an actuator and false otherwise.
+     */
     private boolean isSensor(TopologyNode node) {
         if(!isWoTNode(node)) return false;
 
         return node.type().equals(NodeRedJSONParser.TYPE_READ_PROPERTY) || node.type().equals(NodeRedJSONParser.TYPE_SUBSCRIBE_EVENT);
     }
 
+    /**
+     * Determines if a topology is a WoT node (Does it belong to the palette of nodes found in the node-red-node-wot Node-RED
+     * extension) or not.
+     * @param node The topology node being checked.
+     * @return True if a topology node is a WoT node or false otherwise.
+     */
     private static boolean isWoTNode(TopologyNode node) {
         return node.thing() != null && !node.thing().isEmpty();
     }
 
-
+    /**
+     * Adds an edge between a source and destination and defines all edge parameters need to create an application edge.
+     * @param application The application to add an edge to.
+     * @param srcName The source which the edge starts from.
+     * @param dstName The destination which the edge ends at.
+     * @param tupleType The tuple type being transmitted across the edge from source to destination.
+     * @param edgeDirection Determines the direction the tuple travels.
+     * @param edgeType Determines what type of edge the edge is.
+     */
     private void addAppEdge(Application application, String srcName, String dstName, String tupleType, int edgeDirection, int edgeType) {
         application.addAppEdge(
                 srcName,
@@ -500,6 +588,11 @@ public class JsonToApplication {
 
     ////////////////////////////////////// APPLICATION PHYSICAL TOPOLOGY CONSTRUCTION //////////////////////////////////////
 
+    /**
+     * Constructs the application's physical topology given the list of virtual devices used in the application.
+     * @param virtualDevices The list of all virtual devices used in the application.
+     * @return The psychical topology instance.
+     */
     public ApplicationPhysicalTopology createApplicationPhysicalTopology(List<VirtualDevice> virtualDevices) {
         // Will store all fog devices used in the application
         List<FogDevice> fogDevices = new ArrayList<>();
@@ -697,11 +790,22 @@ public class JsonToApplication {
         return attributeNames;
     }
 
+    /**
+     * Determines the number of edge nodes needed for an application depending on the number of VDs.
+     * @param numberOfVDs The number of VDs used in the application.
+     * @return The number of edge nodes.
+     */
     private int calculateNoOfEdgeNodes(int numberOfVDs) {
         // CHANGE FORMULA AS YOU SEE FIT
         return (numberOfVDs - applicationPreset.MAX_VDS_FOR_ONE_EDE_NODE) / 2;
     }
 
+    /**
+     * Gets all selected virtual devices from the application based on the things used in to construct the Node-RED application.
+     * @param virtualDevices A list of VDs.
+     * @param things The list of things (represented as topology nodes) used in the application.
+     * @return A list of VDs used in the application.
+     */
     private List<VirtualDevice> getSelectedVirtualDevices(List<VirtualDevice> virtualDevices, List<TopologyNode> things) {
         List<VirtualDevice> selectedVirtualDevices = new ArrayList<>();
 
@@ -718,6 +822,11 @@ public class JsonToApplication {
         return selectedVirtualDevices.isEmpty() ? null : selectedVirtualDevices;
     }
 
+    /**
+     * Creates an edge node using the edge node presets.
+     * @param identifier The identifier used to distinguish the edge node amongst other nodes.
+     * @return A fog device which represents the edge node.
+     */
     private FogDevice createEdgeNode(String identifier) {
         return FogDeviceFactory.createFogDevice(
                 "edgeNode-" + identifier,
@@ -732,6 +841,13 @@ public class JsonToApplication {
         );
     }
 
+    /**
+     * Gets a list of virtual devices that are connected to a particular edge node.
+     * @param allVirtualDevices The list of all available VDs in the application.
+     * @param vdsConnectedToEdgeNodes The map that defines the VD names that connect to an edge node.
+     * @param edgeNodeName The name od the edge node to find VDs that connect to it.
+     * @return A list of VDs that connect to the edge node.
+     */
     private List<VirtualDevice> getVirtualDevicesWithMatchingEdgeNodeName(List<VirtualDevice> allVirtualDevices, Map<String, List<String>> vdsConnectedToEdgeNodes, String edgeNodeName) {
         if (edgeNodeName == null || edgeNodeName.isEmpty()) throw new Error("The edge node " + edgeNodeName + " does not exist! Ensure edge nodes specified in the VD Quantities file match the edge nodes specified in the Node-RED application topics field.");
 
@@ -782,48 +898,85 @@ public class JsonToApplication {
 
     ///////////////////////////////////////////////// GETTERS AND SETTERS //////////////////////////////////////////////////
 
-
+    /**
+     * Retrieves all things (parsed from the application topology).
+     *
+     * @return A list of all things extracted.
+     */
     public List<TopologyNode> getThings() {
         return things;
     }
 
+    /**
+     * Retrieves a list of all node topics used (parsed from the application topology).
+     *
+     * @return Al ist of all node topics.
+     */
     public List<String> getNodeTopics() {
         return nodeTopics;
     }
 
+    /**
+     * Retrieves a list of topology nodes (parsed from the application topology).
+     *
+     * @return A list of {@link TopologyNodeTree} representing the topology nodes in the application topology.
+     */
     public List<TopologyNode> getAllTopologyNodes() {
         return allTopologyNodes;
     }
 
+    /**
+     * Retrieves a list of all topology node trees (similar to the structure of the system).
+     *
+     * @return A list of {@link TopologyNodeTree} representing the node trees in the topology.
+     */
     public List<TopologyNodeTree> getTopologyNodeTrees() {
         return topologyNodeTrees;
     }
 
-    public List<TopologyNodeTree> getDataFlows() {
-        return dataFlows;
-    }
-
+    /**
+     * Retrieves a list of injection flows in the system, represented as topology node trees.
+     *
+     * @return A list of {@link TopologyNodeTree} representing the injected flows in the topology.
+     */
     public List<TopologyNodeTree> getInjectFlows() {
         return injectFlows;
     }
 
+    /**
+     * Retrieves a list of event flows in the system, represented as topology node trees.
+     *
+     * @return A list of {@link TopologyNodeTree} representing the event flows in the topology.
+     */
     public List<TopologyNodeTree> getEventFlows() {
         return eventFlows;
     }
 
+    /**
+     * Retrieves the application topology parser responsible for parsing the system's topology.
+     *
+     * @return An instance of {@link ApplicationTopologyParser} used to parse the application's topology.
+     */
     public ApplicationTopologyParser getApplicationTopologyParser() {
         return applicationTopologyParser;
     }
 
+    /**
+     * Retrieves the list of selected virtual devices in the system.
+     *
+     * @return A list of {@link VirtualDevice} representing the virtual devices that have been selected.
+     */
     public List<VirtualDevice> getSelectedVirtualDevices() {
         return selectedVirtualDevices;
     }
 
+    /**
+     * Retrieves the count of processing modules in the system.
+     *
+     * @return The number of processing modules in the system.
+     */
     public int getProcessingModuleCount() {
         return processingModuleCount;
     }
 
-    public int getEventProcessingModuleCount() {
-        return eventProcessingModuleCount;
-    }
 }
