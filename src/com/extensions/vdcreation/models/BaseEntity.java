@@ -234,13 +234,22 @@ public class BaseEntity {
         this.observable = observable;
     }
 
+    /**
+     * Checks if an entity supports writeable operations.
+     * @return True if possible, otherwise false.
+     */
     public boolean isWriteable() {
         return writeable;
     }
 
+    /**
+     * Sets the writeable property for the entity.
+     * @param writeable The writeable property to be set.
+     */
     public void setIsWriteable(boolean writeable) {
         this.writeable = writeable;
     }
+
     /**
      * Checks if the entity is read-only.
      * @return true if read-only, otherwise false

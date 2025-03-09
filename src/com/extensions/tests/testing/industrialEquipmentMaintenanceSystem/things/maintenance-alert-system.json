@@ -1,0 +1,201 @@
+{
+    "@context": [
+      "https://www.w3.org/2019/wot/td/v1",
+      "https://www.w3.org/2019/wot/security/v1"
+    ],
+    "id": "urn:uuid:6def3f42-c763-4bd9-a915-dfb4f4f16161",
+    "title": "Maintenance Alert System",
+    "description": "A system that monitors equipment status and generates maintenance alerts",
+    "securityDefinitions": {
+      "basic_sc": {
+        "scheme": "basic",
+        "in": "header"
+      },
+      "oauth2_sc": {
+        "scheme": "oauth2",
+        "flow": "client_credentials",
+        "authorization": "https://auth.example.com/token",
+        "scopes": [
+          "read:alerts",
+          "write:alerts",
+          "read:status"
+        ]
+      }
+    },
+    "security": ["oauth2_sc"],
+    "properties": {
+      "systemStatus": {
+        "title": "System Status",
+        "description": "Current operational status of the maintenance alert system",
+        "type": "string",
+        "enum": ["online", "offline", "maintenance", "degraded"],
+        "readOnly": true,
+        "observable": true,
+        "forms": [{
+          "href": "https://api.example.com/maintenance-system/status",
+          "op": ["readproperty"],
+          "contentType": "application/json",
+          "security": ["oauth2_sc"]
+        }]
+      },
+      "currentAlerts": {
+        "title": "Current Alerts",
+        "description": "List of active maintenance alerts",
+        "type": "array",
+        "items": {
+          "type": "object",
+          "properties": {
+            "id": {"type": "string"},
+            "severity": {"type": "string", "enum": ["low", "medium", "high", "critical"]},
+            "timestamp": {"type": "string", "format": "date-time"},
+            "equipmentId": {"type": "string"},
+            "description": {"type": "string"}
+          }
+        },
+        "readOnly": true,
+        "observable": true,
+        "forms": [{
+          "href": "https://api.example.com/maintenance-system/alerts/current",
+          "op": ["readproperty"],
+          "contentType": "application/json"
+        }]
+      },
+      "alertThreshold": {
+        "title": "Alert Threshold",
+        "description": "Threshold settings for triggering maintenance alerts",
+        "type": "object",
+        "properties": {
+          "temperature": {"type": "number", "unit": "celsius"},
+          "vibration": {"type": "number", "unit": "mm/s"},
+          "noise": {"type": "number", "unit": "dB"},
+          "pressure": {"type": "number", "unit": "kPa"}
+        },
+        "forms": [{
+          "href": "https://api.example.com/maintenance-system/settings/thresholds",
+          "op": ["readproperty", "writeproperty"],
+          "contentType": "application/json"
+        }]
+      }
+    },
+    "actions": {
+      "acknowledgeAlert": {
+        "title": "Acknowledge Alert",
+        "description": "Acknowledge a specific maintenance alert",
+        "input": {
+          "type": "object",
+          "properties": {
+            "alertId": {"type": "string"},
+            "acknowledgedBy": {"type": "string"},
+            "notes": {"type": "string"}
+          },
+          "required": ["alertId", "acknowledgedBy"]
+        },
+        "forms": [{
+          "href": "https://api.example.com/maintenance-system/alerts/acknowledge",
+          "contentType": "application/json",
+          "op": "invokeaction"
+        }]
+      },
+      "scheduleInspection": {
+        "title": "Schedule Inspection",
+        "description": "Schedule a maintenance inspection for equipment",
+        "input": {
+          "type": "object",
+          "properties": {
+            "equipmentId": {"type": "string"},
+            "scheduledDate": {"type": "string", "format": "date-time"},
+            "priority": {"type": "string", "enum": ["routine", "urgent", "emergency"]},
+            "assignedTo": {"type": "string"},
+            "notes": {"type": "string"}
+          },
+          "required": ["equipmentId", "scheduledDate", "priority"]
+        },
+        "forms": [{
+          "href": "https://api.example.com/maintenance-system/inspections/schedule",
+          "contentType": "application/json",
+          "op": "invokeaction"
+        }]
+      },
+      "runDiagnostic": {
+        "title": "Run Diagnostic",
+        "description": "Run a diagnostic test on specific equipment",
+        "input": {
+          "type": "object",
+          "properties": {
+            "equipmentId": {"type": "string"},
+            "diagnosticLevel": {"type": "string", "enum": ["basic", "comprehensive", "detailed"]},
+            "components": {"type": "array", "items": {"type": "string"}}
+          },
+          "required": ["equipmentId", "diagnosticLevel"]
+        },
+        "output": {
+          "type": "object",
+          "properties": {
+            "diagnosticId": {"type": "string"},
+            "status": {"type": "string"},
+            "estimatedCompletionTime": {"type": "string", "format": "date-time"}
+          }
+        },
+        "forms": [{
+          "href": "https://api.example.com/maintenance-system/diagnostic/run",
+          "contentType": "application/json",
+          "op": "invokeaction"
+        }]
+      }
+    },
+    "events": {
+      "newAlert": {
+        "title": "New Alert",
+        "description": "Event emitted when a new maintenance alert is generated",
+        "data": {
+          "type": "object",
+          "properties": {
+            "alertId": {"type": "string"},
+            "timestamp": {"type": "string", "format": "date-time"},
+            "severity": {"type": "string", "enum": ["low", "medium", "high", "critical"]},
+            "equipmentId": {"type": "string"},
+            "description": {"type": "string"},
+            "readings": {
+              "type": "object",
+              "properties": {
+                "temperature": {"type": "number"},
+                "vibration": {"type": "number"},
+                "pressure": {"type": "number"}
+              }
+            }
+          }
+        },
+        "forms": [{
+          "href": "wss://api.example.com/maintenance-system/events/alerts",
+          "contentType": "application/json",
+          "subprotocol": "websocket",
+          "op": "subscribeevent"
+        }, {
+          "href": "https://api.example.com/maintenance-system/events/alerts",
+          "contentType": "application/json",
+          "op": "subscribeevent",
+          "subprotocol": "longpoll"
+        }]
+      },
+      "statusChange": {
+        "title": "Status Change",
+        "description": "Event emitted when equipment status changes",
+        "data": {
+          "type": "object",
+          "properties": {
+            "equipmentId": {"type": "string"},
+            "previousStatus": {"type": "string"},
+            "currentStatus": {"type": "string"},
+            "timestamp": {"type": "string", "format": "date-time"},
+            "reason": {"type": "string"}
+          }
+        },
+        "forms": [{
+          "href": "wss://api.example.com/maintenance-system/events/status",
+          "contentType": "application/json",
+          "subprotocol": "websocket",
+          "op": "subscribeevent"
+        }]
+      }
+    }
+  }

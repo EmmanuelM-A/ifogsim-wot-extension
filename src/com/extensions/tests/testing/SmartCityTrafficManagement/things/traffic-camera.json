@@ -1,0 +1,49 @@
+{
+    "@context": "https://www.w3.org/2019/wot/td/v1",
+    "id": "urn:uuid:traffic-camera",
+    "title": "Traffic Camera",
+    "description": "Advanced monitoring system for traffic surveillance",
+    "properties": {
+        "currentStatus": {
+            "type": "string",
+            "readOnly": true,
+            "description": "Current operational status of the camera"
+        },
+        "trafficDensity": {
+            "type": "number",
+            "readOnly": true,
+            "description": "Current traffic density in monitored area"
+        }
+    },
+    "actions": {
+        "captureImage": {
+            "description": "Capture a snapshot of the current traffic scene",
+            "input": {
+                "type": "object",
+                "properties": {
+                    "resolution": {"type": "string", "enum": ["low", "medium", "high"]},
+                    "focusArea": {"type": "string"}
+                }
+            },
+            "output": {
+                "type": "object",
+                "properties": {
+                    "imageUrl": {"type": "string"},
+                    "timestamp": {"type": "string"}
+                }
+            }
+        }
+    },
+    "events": {
+        "anomalyDetected": {
+            "description": "Triggered when unusual traffic patterns are observed",
+            "data": {
+                "type": "object",
+                "properties": {
+                    "anomalyType": {"type": "string"},
+                    "severity": {"type": "number"}
+                }
+            }
+        }
+    }
+}

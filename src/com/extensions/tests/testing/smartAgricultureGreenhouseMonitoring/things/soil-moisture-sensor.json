@@ -1,0 +1,99 @@
+{
+    "@context": "https://www.w3.org/2019/wot/td/v1",
+    "id": "urn:uuid:soil-moisture-sensor",
+    "title": "Soil Moisture Sensor",
+    "description": "Advanced agricultural monitoring device for tracking soil hydration levels",
+    "properties": {
+        "currentMoistureLevel": {
+            "type": "number",
+            "unit": "percentage",
+            "readOnly": true,
+            "description": "Current soil moisture percentage"
+        },
+        "moistureDepth": {
+            "type": "number",
+            "unit": "centimeters",
+            "readOnly": true,
+            "description": "Depth of moisture measurement"
+        },
+        "soilTemperature": {
+            "type": "number",
+            "unit": "celsius",
+            "readOnly": true,
+            "description": "Current soil temperature"
+        }
+    },
+    "actions": {
+        "configureMoistureThresholds": {
+            "description": "Set optimal moisture range for specific plant types",
+            "input": {
+                "type": "object",
+                "properties": {
+                    "plantType": {"type": "string"},
+                    "optimalMoistureRange": {
+                        "type": "object",
+                        "properties": {
+                            "min": {"type": "number"},
+                            "max": {"type": "number"}
+                        }
+                    },
+                    "measurementDepth": {"type": "number", "unit": "centimeters"}
+                }
+            },
+            "output": {
+                "type": "object",
+                "properties": {
+                    "configurationId": {"type": "string"},
+                    "status": {"type": "string"}
+                }
+            }
+        },
+        "calibrateSensor": {
+            "description": "Perform sensor calibration in different soil conditions",
+            "input": {
+                "type": "object",
+                "properties": {
+                    "calibrationType": {
+                        "type": "string",
+                        "enum": ["dry", "wet", "standard"]
+                    },
+                    "referencePoint": {"type": "number"}
+                }
+            },
+            "output": {
+                "type": "object",
+                "properties": {
+                    "calibrationAccuracy": {"type": "number"},
+                    "adjustmentMade": {"type": "boolean"}
+                }
+            }
+        }
+    },
+    "events": {
+        "moistureAlertEvent": {
+            "description": "Triggered when soil moisture falls outside optimal range",
+            "data": {
+                "type": "object",
+                "properties": {
+                    "currentMoisture": {"type": "number"},
+                    "alertType": {
+                        "type": "string",
+                        "enum": ["low", "high"]
+                    },
+                    "recommendedAction": {"type": "string"}
+                }
+            }
+        },
+        "sensorHealthCheck": {
+            "description": "Periodic event reporting sensor operational status",
+            "data": {
+                "type": "object",
+                "properties": {
+                    "batteryLevel": {"type": "number", "unit": "percentage"},
+                    "signalStrength": {"type": "number"},
+                    "lastCalibrationDate": {"type": "string", "format": "date"}
+                }
+            }
+        }
+    }
+}

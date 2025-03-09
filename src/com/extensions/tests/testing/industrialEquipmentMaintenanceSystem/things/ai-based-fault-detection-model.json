@@ -1,0 +1,50 @@
+{
+    "@context": "https://www.w3.org/2019/wot/td/v1",
+    "id": "urn:uuid:ai-fault-detection-model",
+    "title": "AI Based Fault Detection Model",
+    "description": "An AI-powered system for detecting potential faults in industrial machinery",
+    "properties": {
+        "detectionStatus": {
+            "type": "string",
+            "readOnly": true,
+            "description": "Current status of fault detection"
+        },
+        "confidenceScore": {
+            "type": "number",
+            "readOnly": true,
+            "description": "Confidence of fault detection model"
+        }
+    },
+    "actions": {
+        "runDetection": {
+            "description": "Trigger a new fault detection scan",
+            "input": {
+                "type": "object",
+                "properties": {
+                    "machineId": {"type": "string"},
+                    "scanType": {"type": "string"}
+                }
+            },
+            "output": {
+                "type": "object",
+                "properties": {
+                    "result": {"type": "string"},
+                    "faultProbability": {"type": "number"}
+                }
+            }
+        }
+    },
+    "events": {
+        "faultDetected": {
+            "description": "Triggered when a potential fault is identified",
+            "data": {
+                "type": "object",
+                "properties": {
+                    "machineId": {"type": "string"},
+                    "severity": {"type": "string"},
+                    "description": {"type": "string"}
+                }
+            }
+        }
+    }
+}

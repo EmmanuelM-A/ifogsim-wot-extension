@@ -10,6 +10,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * This class is responsible for parsing the VD config files.
+ */
 public class VirtualDeviceConfigParser implements FileProcessor<List<VirtualDeviceConfig>> {
     /**
      * Parses a JSON file containing VirtualDevice configurations and returns a list of VirtualDeviceConfig objects.

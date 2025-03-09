@@ -1,0 +1,938 @@
+[
+    {
+        "id": "6c763e75ae7b4131",
+        "type": "tab",
+        "label": "Smart Hospital Management",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "00503607d3eaa036",
+        "type": "read-property",
+        "z": "6c763e75ae7b4131",
+        "name": "",
+        "topic": "icu-monitoring",
+        "thing": "3fa89be747b729ed",
+        "property": "heartRate",
+        "uriVariables": "",
+        "observe": false,
+        "x": 350,
+        "y": 460,
+        "wires": [
+            [
+                "8f95375b6675bed5"
+            ]
+        ]
+    },
+    {
+        "id": "c0a1ad9b63ce93b7",
+        "type": "subscribe-event",
+        "z": "6c763e75ae7b4131",
+        "name": "",
+        "topic": "icu-monitoring",
+        "thing": "3fa89be747b729ed",
+        "event": "vitalSignAlert",
+        "x": 350,
+        "y": 580,
+        "wires": [
+            [
+                "ec60dde528177c0b"
+            ]
+        ]
+    },
+    {
+        "id": "0ac03fe24f1db520",
+        "type": "inject",
+        "z": "6c763e75ae7b4131",
+        "name": "",
+        "props": [],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 350,
+        "y": 140,
+        "wires": [
+            [
+                "4fe3d75f8d0be3f2",
+                "f432c868be58d68f"
+            ]
+        ]
+    },
+    {
+        "id": "4fe3d75f8d0be3f2",
+        "type": "invoke-action",
+        "z": "6c763e75ae7b4131",
+        "name": "",
+        "topic": "ward-monitoring",
+        "thing": "99965718133994bc",
+        "action": "adjustIncline",
+        "uriVariables": "",
+        "x": 620,
+        "y": 140,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "f432c868be58d68f",
+        "type": "invoke-action",
+        "z": "6c763e75ae7b4131",
+        "name": "",
+        "topic": "ward-monitoring",
+        "thing": "99965718133994bc",
+        "action": "adjustFirmness",
+        "uriVariables": "",
+        "x": 620,
+        "y": 180,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "df7513cb8beb5c0d",
+        "type": "comment",
+        "z": "6c763e75ae7b4131",
+        "name": "Simulate patients adjusting bed settings",
+        "info": "",
+        "x": 430,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "8f95375b6675bed5",
+        "type": "function",
+        "z": "6c763e75ae7b4131",
+        "name": "Some Data Processing",
+        "func": "\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 660,
+        "y": 460,
+        "wires": [
+            [
+                "d16f3097bbefe7bb"
+            ]
+        ]
+    },
+    {
+        "id": "d16f3097bbefe7bb",
+        "type": "invoke-action",
+        "z": "6c763e75ae7b4131",
+        "name": "",
+        "topic": "icu-monitoring",
+        "thing": "3fa89be747b729ed",
+        "action": "generateHealthReport",
+        "uriVariables": "",
+        "x": 970,
+        "y": 460,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "94d3b452206b02b2",
+        "type": "comment",
+        "z": "6c763e75ae7b4131",
+        "name": "Monitors patient vitals & health",
+        "info": "",
+        "x": 390,
+        "y": 400,
+        "wires": []
+    },
+    {
+        "id": "ec60dde528177c0b",
+        "type": "invoke-action",
+        "z": "6c763e75ae7b4131",
+        "name": "",
+        "topic": "icu-monitoring",
+        "thing": "c87908991b7435cd",
+        "action": "triggerEmergencyAlert",
+        "uriVariables": "",
+        "x": 690,
+        "y": 580,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "c5288d13b04e25f8",
+        "type": "read-property",
+        "z": "6c763e75ae7b4131",
+        "name": "",
+        "topic": "icu-monitoring",
+        "thing": "3fa89be747b729ed",
+        "property": "bloodOxygenLevel",
+        "uriVariables": "",
+        "observe": false,
+        "x": 380,
+        "y": 520,
+        "wires": [
+            [
+                "22a688dbb5044f63"
+            ]
+        ]
+    },
+    {
+        "id": "22a688dbb5044f63",
+        "type": "function",
+        "z": "6c763e75ae7b4131",
+        "name": "Some Data Processing",
+        "func": "\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 660,
+        "y": 520,
+        "wires": [
+            [
+                "c61df752a22e23af"
+            ]
+        ]
+    },
+    {
+        "id": "c61df752a22e23af",
+        "type": "invoke-action",
+        "z": "6c763e75ae7b4131",
+        "name": "",
+        "topic": "icu-monitoring",
+        "thing": "3fa89be747b729ed",
+        "action": "generateHealthReport",
+        "uriVariables": "",
+        "x": 970,
+        "y": 520,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "dfc61b8d8ab6d33b",
+        "type": "invoke-action",
+        "z": "6c763e75ae7b4131",
+        "name": "",
+        "topic": "ward-monitoring",
+        "thing": "dc99cc6070d7f6fe",
+        "action": "updateDisplay",
+        "uriVariables": "",
+        "x": 880,
+        "y": 860,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "076847173dbf4781",
+        "type": "read-property",
+        "z": "6c763e75ae7b4131",
+        "name": "",
+        "topic": "ward-monitoring",
+        "thing": "99965718133994bc",
+        "property": "occupancy",
+        "uriVariables": "",
+        "observe": true,
+        "x": 360,
+        "y": 860,
+        "wires": [
+            [
+                "5dea8dc4ee5a22a2"
+            ]
+        ]
+    },
+    {
+        "id": "5dea8dc4ee5a22a2",
+        "type": "function",
+        "z": "6c763e75ae7b4131",
+        "name": "Some Data Processing",
+        "func": "\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 620,
+        "y": 860,
+        "wires": [
+            [
+                "dfc61b8d8ab6d33b"
+            ]
+        ]
+    },
+    {
+        "id": "c43b3ad78e5a6e67",
+        "type": "comment",
+        "z": "6c763e75ae7b4131",
+        "name": "Monitors ward activity & ward management",
+        "info": "",
+        "x": 420,
+        "y": 800,
+        "wires": []
+    },
+    {
+        "id": "8a39c76e658c58ca",
+        "type": "subscribe-event",
+        "z": "6c763e75ae7b4131",
+        "name": "",
+        "topic": "ward-monitoring",
+        "thing": "4e31032eeb1cd839",
+        "event": "temperatureDeviationAlert",
+        "x": 390,
+        "y": 920,
+        "wires": [
+            [
+                "9be59212c4c0ccb3"
+            ]
+        ]
+    },
+    {
+        "id": "9be59212c4c0ccb3",
+        "type": "invoke-action",
+        "z": "6c763e75ae7b4131",
+        "name": "",
+        "topic": "ward-monitoring",
+        "thing": "dc99cc6070d7f6fe",
+        "action": "showAlert",
+        "uriVariables": "",
+        "x": 750,
+        "y": 920,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "c2833d1874f5ee7f",
+        "type": "inject",
+        "z": "6c763e75ae7b4131",
+        "name": "HVAC Data Input",
+        "props": [],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "x": 970,
+        "y": 140,
+        "wires": [
+            [
+                "77fab41ea90a694e"
+            ]
+        ]
+    },
+    {
+        "id": "77fab41ea90a694e",
+        "type": "invoke-action",
+        "z": "6c763e75ae7b4131",
+        "name": "",
+        "topic": "ward-monitoring",
+        "thing": "4e31032eeb1cd839",
+        "action": "adjustEnvironmentalSettings",
+        "uriVariables": "",
+        "x": 1270,
+        "y": 140,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "1f600a304226cf78",
+        "type": "comment",
+        "z": "6c763e75ae7b4131",
+        "name": "Simulates the HVAC adjustmnt",
+        "info": "",
+        "x": 990,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "d8ce60e1bbfce121",
+        "type": "comment",
+        "z": "6c763e75ae7b4131",
+        "name": "Manages inventory & tracking",
+        "info": "",
+        "x": 380,
+        "y": 1180,
+        "wires": []
+    },
+    {
+        "id": "c94556230218b41c",
+        "type": "switch",
+        "z": "6c763e75ae7b4131",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "lt",
+                "v": "",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 610,
+        "y": 1240,
+        "wires": [
+            [
+                "a66e2d76af546ea0",
+                "31b59a86cdc287fe"
+            ]
+        ]
+    },
+    {
+        "id": "a66e2d76af546ea0",
+        "type": "invoke-action",
+        "z": "6c763e75ae7b4131",
+        "name": "",
+        "topic": "inventory-managment",
+        "thing": "dc99cc6070d7f6fe",
+        "action": "updateDisplay",
+        "uriVariables": "",
+        "x": 900,
+        "y": 1240,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "31b59a86cdc287fe",
+        "type": "invoke-action",
+        "z": "6c763e75ae7b4131",
+        "name": "",
+        "topic": "inventory-managment",
+        "thing": "53318f195d961386",
+        "action": "performInventoryAudit",
+        "uriVariables": "",
+        "x": 930,
+        "y": 1300,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "11ad582872efb3c2",
+        "type": "subscribe-event",
+        "z": "6c763e75ae7b4131",
+        "name": "",
+        "topic": "inventory-managment",
+        "thing": "53318f195d961386",
+        "event": "lowStockAlert",
+        "x": 350,
+        "y": 1360,
+        "wires": [
+            [
+                "aab0eb091d9c9928"
+            ]
+        ]
+    },
+    {
+        "id": "49623e9a4d919bd8",
+        "type": "read-property",
+        "z": "6c763e75ae7b4131",
+        "name": "",
+        "topic": "inventory-managment",
+        "thing": "53318f195d961386",
+        "property": "totalItemCount",
+        "uriVariables": "",
+        "observe": false,
+        "x": 370,
+        "y": 1240,
+        "wires": [
+            [
+                "c94556230218b41c"
+            ]
+        ]
+    },
+    {
+        "id": "aab0eb091d9c9928",
+        "type": "invoke-action",
+        "z": "6c763e75ae7b4131",
+        "name": "",
+        "topic": "inventory-managment",
+        "thing": "dc99cc6070d7f6fe",
+        "action": "showAlert",
+        "uriVariables": "",
+        "x": 610,
+        "y": 1360,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "767615e67ac27ba2",
+        "type": "comment",
+        "z": "6c763e75ae7b4131",
+        "name": "Manages hospital security",
+        "info": "",
+        "x": 370,
+        "y": 1500,
+        "wires": []
+    },
+    {
+        "id": "dcc873afed83e95c",
+        "type": "read-property",
+        "z": "6c763e75ae7b4131",
+        "name": "",
+        "topic": "hospital-security",
+        "thing": "b7c9cdf5487520a3",
+        "property": "streamURL",
+        "uriVariables": "",
+        "observe": false,
+        "x": 1060,
+        "y": 1660,
+        "wires": [
+            [
+                "ab379c6bd789dc0e"
+            ]
+        ]
+    },
+    {
+        "id": "b5d18f5394c85b77",
+        "type": "subscribe-event",
+        "z": "6c763e75ae7b4131",
+        "name": "",
+        "topic": "hospital-security",
+        "thing": "95f43c8857db970c",
+        "event": "securityBreach",
+        "x": 360,
+        "y": 1580,
+        "wires": [
+            [
+                "b0ac42fae651e385",
+                "266c523fb2f31b07"
+            ]
+        ]
+    },
+    {
+        "id": "b0ac42fae651e385",
+        "type": "invoke-action",
+        "z": "6c763e75ae7b4131",
+        "name": "Activate Alarm",
+        "topic": "hospital-security",
+        "thing": "60ec5509eed581fd",
+        "action": "activate",
+        "uriVariables": "",
+        "x": 700,
+        "y": 1580,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "266c523fb2f31b07",
+        "type": "function",
+        "z": "6c763e75ae7b4131",
+        "name": "Some Data Processing",
+        "func": "\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 720,
+        "y": 1660,
+        "wires": [
+            [
+                "dcc873afed83e95c",
+                "03335e7d6457b643",
+                "3cedbc04d3c8152a"
+            ]
+        ]
+    },
+    {
+        "id": "03335e7d6457b643",
+        "type": "read-property",
+        "z": "6c763e75ae7b4131",
+        "name": "",
+        "topic": "hospital-security",
+        "thing": "b7c9cdf5487520a3",
+        "property": "streamURL",
+        "uriVariables": "",
+        "observe": false,
+        "x": 1060,
+        "y": 1740,
+        "wires": [
+            [
+                "5fa591623723f862"
+            ]
+        ]
+    },
+    {
+        "id": "ab379c6bd789dc0e",
+        "type": "invoke-action",
+        "z": "6c763e75ae7b4131",
+        "name": "Log Incident",
+        "topic": "hospital-security",
+        "thing": "dc99cc6070d7f6fe",
+        "action": "updateDisplay",
+        "uriVariables": "",
+        "x": 1370,
+        "y": 1660,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "5fa591623723f862",
+        "type": "invoke-action",
+        "z": "6c763e75ae7b4131",
+        "name": "Log Incident",
+        "topic": "hospital-security",
+        "thing": "dc99cc6070d7f6fe",
+        "action": "updateDisplay",
+        "uriVariables": "",
+        "x": 1370,
+        "y": 1740,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "3cedbc04d3c8152a",
+        "type": "invoke-action",
+        "z": "6c763e75ae7b4131",
+        "name": "",
+        "topic": "hospital-security",
+        "thing": "dc99cc6070d7f6fe",
+        "action": "showAlert",
+        "uriVariables": "",
+        "x": 1050,
+        "y": 1840,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "3085acb1e029c61d",
+        "type": "read-property",
+        "z": "6c763e75ae7b4131",
+        "name": "",
+        "topic": "ward-monitoring",
+        "thing": "99965718133994bc",
+        "property": "inclineLevel",
+        "uriVariables": "",
+        "observe": false,
+        "x": 360,
+        "y": 980,
+        "wires": [
+            [
+                "4e2e5f7a83688a82"
+            ]
+        ]
+    },
+    {
+        "id": "4e2e5f7a83688a82",
+        "type": "function",
+        "z": "6c763e75ae7b4131",
+        "name": "Some Data Processing",
+        "func": "\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 620,
+        "y": 980,
+        "wires": [
+            [
+                "da1577b5d916ac1b"
+            ]
+        ]
+    },
+    {
+        "id": "17867ff3dc6a7627",
+        "type": "invoke-action",
+        "z": "6c763e75ae7b4131",
+        "name": "",
+        "topic": "ward-monitoring",
+        "thing": "dc99cc6070d7f6fe",
+        "action": "showAlert",
+        "uriVariables": "",
+        "x": 1050,
+        "y": 980,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "da1577b5d916ac1b",
+        "type": "switch",
+        "z": "6c763e75ae7b4131",
+        "name": "Is True",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "true"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 830,
+        "y": 980,
+        "wires": [
+            [
+                "17867ff3dc6a7627"
+            ]
+        ]
+    },
+    {
+        "id": "1ab31992d81b9c34",
+        "type": "read-property",
+        "z": "6c763e75ae7b4131",
+        "name": "",
+        "topic": "ward-monitoring",
+        "thing": "76013f7a022e609c",
+        "property": "motionDetected",
+        "uriVariables": "",
+        "observe": true,
+        "x": 370,
+        "y": 1060,
+        "wires": [
+            [
+                "0691ada3a4017d27"
+            ]
+        ]
+    },
+    {
+        "id": "0691ada3a4017d27",
+        "type": "switch",
+        "z": "6c763e75ae7b4131",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "true"
+            },
+            {
+                "t": "false"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 630,
+        "y": 1060,
+        "wires": [
+            [
+                "6d1afc683617249d"
+            ],
+            [
+                "55182b812f5fbd21"
+            ]
+        ]
+    },
+    {
+        "id": "55182b812f5fbd21",
+        "type": "function",
+        "z": "6c763e75ae7b4131",
+        "name": "Some Processing",
+        "func": "\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 850,
+        "y": 1120,
+        "wires": [
+            [
+                "a305c88a13f94bcd"
+            ]
+        ]
+    },
+    {
+        "id": "a305c88a13f94bcd",
+        "type": "invoke-action",
+        "z": "6c763e75ae7b4131",
+        "name": "",
+        "topic": "ward-monitoring",
+        "thing": "76013f7a022e609c",
+        "action": "toggleLight",
+        "uriVariables": "",
+        "x": 1150,
+        "y": 1120,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "6d1afc683617249d",
+        "type": "invoke-action",
+        "z": "6c763e75ae7b4131",
+        "name": "",
+        "topic": "ward-monitoring",
+        "thing": "76013f7a022e609c",
+        "action": "toggleLight",
+        "uriVariables": "",
+        "x": 870,
+        "y": 1060,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "3fa89be747b729ed",
+        "type": "consumed-thing",
+        "tdLink": "",
+        "td": "{     \"@context\": \"https://www.w3.org/2019/wot/td/v1\",     \"id\": \"urn:uuid:patient-monitoring-device\",     \"title\": \"Patient Monitoring Device\",     \"description\": \"Advanced medical device for continuous patient health tracking\",     \"properties\": {         \"heartRate\": {             \"type\": \"number\",             \"unit\": \"bpm\",             \"readOnly\": true,             \"description\": \"Current patient heart rate\"         },         \"bloodOxygenLevel\": {             \"type\": \"number\",             \"unit\": \"percentage\",             \"readOnly\": true,             \"description\": \"Current blood oxygen saturation\"         }     },     \"actions\": {         \"generateHealthReport\": {             \"description\": \"Create a comprehensive health status report\",             \"input\": {                 \"type\": \"object\",                 \"properties\": {                     \"reportType\": {\"type\": \"string\", \"enum\": [\"brief\", \"detailed\"]},                     \"timeFrame\": {\"type\": \"string\"}                 }             },             \"output\": {                 \"type\": \"object\",                 \"properties\": {                     \"reportUrl\": {\"type\": \"string\"},                     \"keyMetrics\": {\"type\": \"object\"}                 }             }         }     },     \"events\": {         \"vitalSignAlert\": {             \"description\": \"Triggered when patient's vital signs are outside normal ranges\",             \"data\": {                 \"type\": \"object\",                 \"properties\": {                     \"alertType\": {\"type\": \"string\"},                     \"severityLevel\": {\"type\": \"number\"}                 }             }         }     } }",
+        "http": false,
+        "ws": false,
+        "coap": false,
+        "mqtt": false,
+        "opcua": false,
+        "modbus": false,
+        "basicAuth": false,
+        "username": "",
+        "password": ""
+    },
+    {
+        "id": "99965718133994bc",
+        "type": "consumed-thing",
+        "tdLink": "http://10.32.154.144:8081/smart-bed",
+        "td": "{\"@context\":[\"https://www.w3.org/2019/wot/td/v1\",{\"@language\":\"en\"}],\"@type\":\"Thing\",\"title\":\"Smart Bed\",\"securityDefinitions\":{\"nosec\":{\"scheme\":\"nosec\"}},\"security\":[\"nosec\"],\"properties\":{\"occupancy\":{\"type\":\"boolean\",\"description\":\"Indicates if the bed is currently occupied.\",\"readOnly\":true,\"observable\":true,\"forms\":[{\"href\":\"http://10.32.154.144:8081/smart-bed/properties/occupancy\",\"contentType\":\"application/json\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"},{\"href\":\"http://10.32.154.144:8081/smart-bed/properties/occupancy/observable\",\"contentType\":\"application/json\",\"op\":[\"observeproperty\",\"unobserveproperty\"],\"subprotocol\":\"longpoll\"},{\"href\":\"http://10.32.154.144:8081/smart-bed/properties/occupancy\",\"contentType\":\"application/cbor\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"},{\"href\":\"http://10.32.154.144:8081/smart-bed/properties/occupancy/observable\",\"contentType\":\"application/cbor\",\"op\":[\"observeproperty\",\"unobserveproperty\"],\"subprotocol\":\"longpoll\"}],\"writeOnly\":false},\"inclineLevel\":{\"type\":\"number\",\"description\":\"The current incline level (0-45 degrees).\",\"minimum\":0,\"maximum\":45,\"forms\":[{\"href\":\"http://10.32.154.144:8081/smart-bed/properties/inclineLevel\",\"contentType\":\"application/json\",\"op\":[\"readproperty\",\"writeproperty\"]},{\"href\":\"http://10.32.154.144:8081/smart-bed/properties/inclineLevel\",\"contentType\":\"application/cbor\",\"op\":[\"readproperty\",\"writeproperty\"]}],\"readOnly\":false,\"writeOnly\":false,\"observable\":false},\"firmnessLevel\":{\"type\":\"number\",\"description\":\"The current firmness level (1-10).\",\"minimum\":1,\"maximum\":10,\"forms\":[{\"href\":\"http://10.32.154.144:8081/smart-bed/properties/firmnessLevel\",\"contentType\":\"application/json\",\"op\":[\"readproperty\",\"writeproperty\"]},{\"href\":\"http://10.32.154.144:8081/smart-bed/properties/firmnessLevel\",\"contentType\":\"application/cbor\",\"op\":[\"readproperty\",\"writeproperty\"]}],\"readOnly\":false,\"writeOnly\":false,\"observable\":false},\"status\":{\"type\":\"string\",\"enum\":[\"active\",\"inactive\",\"error\"],\"description\":\"The current status of the smart bed.\",\"forms\":[{\"href\":\"http://10.32.154.144:8081/smart-bed/properties/status\",\"contentType\":\"application/json\",\"op\":[\"readproperty\",\"writeproperty\"]},{\"href\":\"http://10.32.154.144:8081/smart-bed/properties/status\",\"contentType\":\"application/cbor\",\"op\":[\"readproperty\",\"writeproperty\"]}],\"readOnly\":false,\"writeOnly\":false,\"observable\":false}},\"actions\":{\"adjustIncline\":{\"description\":\"Adjusts the incline level of the bed.\",\"input\":{\"type\":\"number\",\"description\":\"Desired incline level (0-45 degrees).\"},\"forms\":[{\"href\":\"http://10.32.154.144:8081/smart-bed/actions/adjustIncline\",\"contentType\":\"application/json\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"},{\"href\":\"http://10.32.154.144:8081/smart-bed/actions/adjustIncline\",\"contentType\":\"application/cbor\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"}],\"safe\":false,\"idempotent\":false},\"adjustFirmness\":{\"description\":\"Adjusts the firmness level of the bed.\",\"input\":{\"type\":\"number\",\"description\":\"Desired firmness level (1-10).\"},\"forms\":[{\"href\":\"http://10.32.154.144:8081/smart-bed/actions/adjustFirmness\",\"contentType\":\"application/json\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"},{\"href\":\"http://10.32.154.144:8081/smart-bed/actions/adjustFirmness\",\"contentType\":\"application/cbor\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"}],\"safe\":false,\"idempotent\":false}},\"events\":{\"occupancyChange\":{\"description\":\"Triggered when the occupancy status changes.\",\"data\":{\"type\":\"boolean\"},\"forms\":[{\"href\":\"http://10.32.154.144:8081/smart-bed/events/occupancyChange\",\"contentType\":\"application/json\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]},{\"href\":\"http://10.32.154.144:8081/smart-bed/events/occupancyChange\",\"contentType\":\"application/cbor\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]}]}},\"id\":\"urn:uuid:cc52fbd1-84b0-4dbd-8860-291f63b74dc8\",\"description\":\"A bed that adjusts firmness and incline based on user preferences.\",\"forms\":[{\"href\":\"http://10.32.154.144:8081/smart-bed/properties\",\"contentType\":\"application/json\",\"op\":[\"readallproperties\",\"readmultipleproperties\",\"writeallproperties\",\"writemultipleproperties\"]},{\"href\":\"http://10.32.154.144:8081/smart-bed/properties\",\"contentType\":\"application/cbor\",\"op\":[\"readallproperties\",\"readmultipleproperties\",\"writeallproperties\",\"writemultipleproperties\"]}]}",
+        "http": true,
+        "ws": false,
+        "coap": false,
+        "mqtt": false,
+        "opcua": false,
+        "modbus": false,
+        "basicAuth": false,
+        "username": "",
+        "password": ""
+    },
+    {
+        "id": "c87908991b7435cd",
+        "type": "consumed-thing",
+        "tdLink": "",
+        "td": "{     \"@context\": \"https://www.w3.org/2019/wot/td/v1\",     \"id\": \"urn:uuid:emergency-alert-system\",     \"title\": \"Emergency Alert System\",     \"description\": \"Comprehensive multi-channel emergency notification and communication platform\",     \"properties\": {         \"systemStatus\": {             \"type\": \"string\",             \"readOnly\": true,             \"description\": \"Current operational status of the emergency alert system\",             \"enum\": [\"active\", \"standby\", \"maintenance\", \"offline\"]         },         \"activeAlertChannels\": {             \"type\": \"array\",             \"readOnly\": true,             \"description\": \"Currently active communication channels\",             \"items\": {                 \"type\": \"string\",                 \"enum\": [\"SMS\", \"email\", \"push notification\", \"landline\", \"radio\", \"television\"]             }         },         \"coverageRadius\": {             \"type\": \"number\",             \"unit\": \"kilometers\",             \"readOnly\": true,             \"description\": \"Effective communication range of the alert system\"         }     },     \"actions\": {         \"triggerEmergencyAlert\": {             \"description\": \"Initiate a comprehensive emergency notification across multiple channels\",             \"input\": {                 \"type\": \"object\",                 \"properties\": {                     \"emergencyType\": {                         \"type\": \"string\",                         \"enum\": [                             \"natural disaster\",                             \"public safety\",                             \"health emergency\",                             \"security threat\",                             \"infrastructure failure\",                             \"environmental hazard\"                         ]                     },                     \"severityLevel\": {                         \"type\": \"string\",                         \"enum\": [\"low\", \"moderate\", \"high\", \"critical\"]                     },                     \"targetArea\": {                         \"type\": \"object\",                         \"properties\": {                             \"coordinates\": {                                 \"type\": \"object\",                                 \"properties\": {                                     \"latitude\": {\"type\": \"number\"},                                     \"longitude\": {\"type\": \"number\"}                                 }                             },                             \"radius\": {\"type\": \"number\", \"unit\": \"kilometers\"}                         }                     },                     \"alertMessage\": {                         \"type\": \"object\",                         \"properties\": {                             \"title\": {\"type\": \"string\"},                             \"body\": {\"type\": \"string\"},                             \"languageOptions\": {\"type\": \"array\", \"items\": {\"type\": \"string\"}}                         }                     },                     \"communicationChannels\": {                         \"type\": \"array\",                         \"items\": {                             \"type\": \"string\",                             \"enum\": [\"SMS\", \"email\", \"push notification\", \"landline\", \"radio\", \"television\"]                         }                     }                 }             },             \"output\": {                 \"type\": \"object\",                 \"properties\": {                     \"alertId\": {\"type\": \"string\"},                     \"distributionStatus\": {\"type\": \"string\"},                     \"estimatedReach\": {\"type\": \"number\", \"unit\": \"percentage\"}                 }             }         },         \"configureAlertProtocol\": {             \"description\": \"Modify emergency alert system configuration and protocols\",             \"input\": {                 \"type\": \"object\",                 \"properties\": {                     \"priorityChannels\": {                         \"type\": \"array\",                         \"items\": {                             \"type\": \"string\",                             \"enum\": [\"SMS\", \"email\", \"push notification\", \"landline\", \"radio\", \"television\"]                         }                     },                     \"escalationProcedures\": {                         \"type\": \"object\",                         \"properties\": {                             \"responseTimeLimits\": {\"type\": \"number\", \"unit\": \"minutes\"},                             \"additionalContactProtocol\": {\"type\": \"string\"}                         }                     }                 }             },             \"output\": {                 \"type\": \"object\",                 \"properties\": {                     \"configurationId\": {\"type\": \"string\"},                     \"implementationStatus\": {\"type\": \"string\"}                 }             }         }     },     \"events\": {         \"emergencyAlertTriggered\": {             \"description\": \"Detailed event data when an emergency alert is activated\",             \"data\": {                 \"type\": \"object\",                 \"properties\": {                     \"alertType\": {\"type\": \"string\"},                     \"severityLevel\": {\"type\": \"string\"},                     \"timestamp\": {\"type\": \"string\", \"format\": \"date-time\"},                     \"affectedArea\": {                         \"type\": \"object\",                         \"properties\": {                             \"coordinates\": {                                 \"type\": \"object\",                                 \"properties\": {                                     \"latitude\": {\"type\": \"number\"},                                     \"longitude\": {\"type\": \"number\"}                                 }                             },                             \"radius\": {\"type\": \"number\"}                         }                     },                     \"channelsUsed\": {\"type\": \"array\", \"items\": {\"type\": \"string\"}}                 }             }         },         \"systemHealthCheck\": {             \"description\": \"Periodic system status and operational readiness report\",             \"data\": {                 \"type\": \"object\",                 \"properties\": {                     \"systemIntegrity\": {\"type\": \"number\", \"unit\": \"percentage\"},                     \"communicationChannelStatus\": {                         \"type\": \"object\",                         \"additionalProperties\": {                             \"type\": \"string\",                             \"enum\": [\"operational\", \"partial\", \"offline\"]                         }                     },                     \"lastMaintenanceDate\": {\"type\": \"string\", \"format\": \"date\"}                 }             }         }     } }",
+        "http": false,
+        "ws": false,
+        "coap": false,
+        "mqtt": false,
+        "opcua": false,
+        "modbus": false,
+        "basicAuth": false,
+        "username": "",
+        "password": ""
+    },
+    {
+        "id": "dc99cc6070d7f6fe",
+        "type": "consumed-thing",
+        "tdLink": "http://10.32.147.97:8080/smart-display",
+        "td": "{\"@context\":[\"https://www.w3.org/2019/wot/td/v1\",{\"@language\":\"en\"}],\"@type\":\"Thing\",\"title\":\"Smart Display\",\"securityDefinitions\":{\"nosec\":{\"scheme\":\"nosec\"}},\"security\":[\"nosec\"],\"properties\":{\"displayedMessage\":{\"type\":\"string\",\"description\":\"The current message displayed on the screen.\",\"readOnly\":true,\"forms\":[{\"href\":\"http://10.32.147.97:8080/smart-display/properties/displayedMessage\",\"contentType\":\"application/json\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"},{\"href\":\"http://10.32.147.97:8080/smart-display/properties/displayedMessage\",\"contentType\":\"application/cbor\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"}],\"writeOnly\":false,\"observable\":false},\"alertMessage\":{\"type\":\"string\",\"description\":\"The current alert message displayed on the screen.\",\"readOnly\":true,\"forms\":[{\"href\":\"http://10.32.147.97:8080/smart-display/properties/alertMessage\",\"contentType\":\"application/json\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"},{\"href\":\"http://10.32.147.97:8080/smart-display/properties/alertMessage\",\"contentType\":\"application/cbor\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"}],\"writeOnly\":false,\"observable\":false},\"isDisplayActive\":{\"type\":\"boolean\",\"description\":\"Determines if the display is currently on or off.\",\"forms\":[{\"href\":\"http://10.32.147.97:8080/smart-display/properties/isDisplayActive\",\"contentType\":\"application/json\",\"op\":[\"readproperty\",\"writeproperty\"]},{\"href\":\"http://10.32.147.97:8080/smart-display/properties/isDisplayActive\",\"contentType\":\"application/cbor\",\"op\":[\"readproperty\",\"writeproperty\"]}],\"readOnly\":false,\"writeOnly\":false,\"observable\":false}},\"actions\":{\"updateDisplay\":{\"description\":\"Updates the message shown on smart display.\",\"input\":{\"type\":\"string\",\"description\":\"The message to display.\"},\"forms\":[{\"href\":\"http://10.32.147.97:8080/smart-display/actions/updateDisplay\",\"contentType\":\"application/json\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"},{\"href\":\"http://10.32.147.97:8080/smart-display/actions/updateDisplay\",\"contentType\":\"application/cbor\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"}],\"safe\":false,\"idempotent\":false},\"showAlert\":{\"description\":\"Displays an alert message on the screen.\",\"input\":{\"type\":\"string\",\"description\":\"The alert message to display.\"},\"forms\":[{\"href\":\"http://10.32.147.97:8080/smart-display/actions/showAlert\",\"contentType\":\"application/json\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"},{\"href\":\"http://10.32.147.97:8080/smart-display/actions/showAlert\",\"contentType\":\"application/cbor\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"}],\"safe\":false,\"idempotent\":false},\"clearDisplay\":{\"description\":\"Clears all information from the screen.\",\"forms\":[{\"href\":\"http://10.32.147.97:8080/smart-display/actions/clearDisplay\",\"contentType\":\"application/json\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"},{\"href\":\"http://10.32.147.97:8080/smart-display/actions/clearDisplay\",\"contentType\":\"application/cbor\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"}],\"safe\":false,\"idempotent\":false}},\"events\":{\"displayUpdated\":{\"description\":\"Triggered when the displayed message is updated.\",\"data\":{\"type\":\"string\"},\"forms\":[{\"href\":\"http://10.32.147.97:8080/smart-display/events/displayUpdated\",\"contentType\":\"application/json\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]},{\"href\":\"http://10.32.147.97:8080/smart-display/events/displayUpdated\",\"contentType\":\"application/cbor\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]}]},\"alertDisplayed\":{\"description\":\"Triggered when an alert message is displayed.\",\"data\":{\"type\":\"string\"},\"forms\":[{\"href\":\"http://10.32.147.97:8080/smart-display/events/alertDisplayed\",\"contentType\":\"application/json\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]},{\"href\":\"http://10.32.147.97:8080/smart-display/events/alertDisplayed\",\"contentType\":\"application/cbor\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]}]},\"displayCleared\":{\"description\":\"Triggered when the display is cleared.\",\"forms\":[{\"href\":\"http://10.32.147.97:8080/smart-display/events/displayCleared\",\"contentType\":\"application/json\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]},{\"href\":\"http://10.32.147.97:8080/smart-display/events/displayCleared\",\"contentType\":\"application/cbor\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]}]}},\"id\":\"urn:uuid:fc14185f-8385-4abf-b9ab-11a5599d5769\",\"description\":\"A smart display for display messages and related alerts.\",\"support\":\"\",\"forms\":[{\"href\":\"http://10.32.147.97:8080/smart-display/properties\",\"contentType\":\"application/json\",\"op\":[\"readallproperties\",\"readmultipleproperties\",\"writeallproperties\",\"writemultipleproperties\"]},{\"href\":\"http://10.32.147.97:8080/smart-display/properties\",\"contentType\":\"application/cbor\",\"op\":[\"readallproperties\",\"readmultipleproperties\",\"writeallproperties\",\"writemultipleproperties\"]}]}",
+        "http": true,
+        "ws": false,
+        "coap": false,
+        "mqtt": false,
+        "opcua": false,
+        "modbus": false,
+        "basicAuth": false,
+        "username": "",
+        "password": ""
+    },
+    {
+        "id": "4e31032eeb1cd839",
+        "type": "consumed-thing",
+        "tdLink": "",
+        "td": "{     \"@context\": \"https://www.w3.org/2019/wot/td/v1\",     \"id\": \"urn:uuid:hvac-control-system\",     \"title\": \"HVAC Control System\",     \"description\": \"Intelligent heating, ventilation, and air conditioning management system\",     \"properties\": {         \"currentTemperature\": {             \"type\": \"number\",             \"unit\": \"celsius\",             \"readOnly\": true,             \"description\": \"Current room temperature\"         },         \"energyEfficiencyRating\": {             \"type\": \"number\",             \"readOnly\": true,             \"description\": \"Current energy efficiency score\"         }     },     \"actions\": {         \"adjustEnvironmentalSettings\": {             \"description\": \"Modify HVAC system parameters\",             \"input\": {                 \"type\": \"object\",                 \"properties\": {                     \"desiredTemperature\": {\"type\": \"number\"},                     \"operationMode\": {\"type\": \"string\", \"enum\": [\"cooling\", \"heating\", \"auto\"]},                     \"energySavingMode\": {\"type\": \"boolean\"}                 }             },             \"output\": {                 \"type\": \"object\",                 \"properties\": {                     \"status\": {\"type\": \"string\"},                     \"estimatedEnergyConsumption\": {\"type\": \"number\"}                 }             }         }     },     \"events\": {         \"temperatureDeviationAlert\": {             \"description\": \"Triggered when temperature significantly deviates from set parameters\",             \"data\": {                 \"type\": \"object\",                 \"properties\": {                     \"currentTemp\": {\"type\": \"number\"},                     \"targetTemp\": {\"type\": \"number\"},                     \"deviation\": {\"type\": \"number\"}                 }             }         }     } }",
+        "http": false,
+        "ws": false,
+        "coap": false,
+        "mqtt": false,
+        "opcua": false,
+        "modbus": false,
+        "basicAuth": false,
+        "username": "",
+        "password": ""
+    },
+    {
+        "id": "53318f195d961386",
+        "type": "consumed-thing",
+        "tdLink": "",
+        "td": "{     \"@context\": \"https://www.w3.org/2019/wot/td/v1\",     \"id\": \"urn:uuid:rfid-inventory-system\",     \"title\": \"RFID-Based Inventory System\",     \"description\": \"Advanced inventory tracking and management system using RFID technology\",     \"properties\": {         \"totalItemCount\": {             \"type\": \"number\",             \"readOnly\": true,             \"description\": \"Total number of items in inventory\"         },         \"stockAlertThreshold\": {             \"type\": \"number\",             \"readOnly\": true,             \"description\": \"Predefined low stock threshold\"         }     },     \"actions\": {         \"performInventoryAudit\": {             \"description\": \"Conduct a comprehensive inventory audit\",             \"input\": {                 \"type\": \"object\",                 \"properties\": {                     \"auditScope\": {\"type\": \"string\", \"enum\": [\"full\", \"partial\"]},                     \"locationFilter\": {\"type\": \"array\", \"items\": {\"type\": \"string\"}}                 }             },             \"output\": {                 \"type\": \"object\",                 \"properties\": {                     \"auditReport\": {\"type\": \"object\"},                     \"discrepanciesFound\": {\"type\": \"number\"}                 }             }         }     },     \"events\": {         \"lowStockAlert\": {             \"description\": \"Triggered when inventory falls below predefined threshold\",             \"data\": {                 \"type\": \"object\",                 \"properties\": {                     \"currentStock\": {\"type\": \"number\"},                     \"minimumThreshold\": {\"type\": \"number\"}                 }             }         }     } }",
+        "http": false,
+        "ws": false,
+        "coap": false,
+        "mqtt": false,
+        "opcua": false,
+        "modbus": false,
+        "basicAuth": false,
+        "username": "",
+        "password": ""
+    },
+    {
+        "id": "b7c9cdf5487520a3",
+        "type": "consumed-thing",
+        "tdLink": "http://10.32.154.144:8081/smart-camera",
+        "td": "{\"@context\":[\"https://www.w3.org/2019/wot/td/v1\",{\"@language\":\"en\"}],\"@type\":\"Thing\",\"title\":\"Smart Camera\",\"securityDefinitions\":{\"nosec\":{\"scheme\":\"nosec\"}},\"security\":[\"nosec\"],\"properties\":{\"streamURL\":{\"type\":\"string\",\"description\":\"The URL of the video stream.\",\"readOnly\":true,\"forms\":[{\"href\":\"http://10.32.154.144:8081/smart-camera/properties/streamURL\",\"contentType\":\"application/json\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"},{\"href\":\"http://10.32.154.144:8081/smart-camera/properties/streamURL\",\"contentType\":\"application/cbor\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"}],\"writeOnly\":false,\"observable\":false},\"lastSnapshot\":{\"type\":\"string\",\"description\":\"Base64 encoded image of the last snapshot.\",\"readOnly\":true,\"forms\":[{\"href\":\"http://10.32.154.144:8081/smart-camera/properties/lastSnapshot\",\"contentType\":\"application/json\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"},{\"href\":\"http://10.32.154.144:8081/smart-camera/properties/lastSnapshot\",\"contentType\":\"application/cbor\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"}],\"writeOnly\":false,\"observable\":false}},\"actions\":{\"takeSnapshot\":{\"description\":\"Captures a snapshot from the camera.\",\"forms\":[{\"href\":\"http://10.32.154.144:8081/smart-camera/actions/takeSnapshot\",\"contentType\":\"application/json\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"},{\"href\":\"http://10.32.154.144:8081/smart-camera/actions/takeSnapshot\",\"contentType\":\"application/cbor\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"}],\"safe\":false,\"idempotent\":false}},\"events\":{\"snapshotTaken\":{\"description\":\"Triggered when a snapshot is taken.\",\"data\":{\"type\":\"boolean\"},\"forms\":[{\"href\":\"http://10.32.154.144:8081/smart-camera/events/snapshotTaken\",\"contentType\":\"application/json\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]},{\"href\":\"http://10.32.154.144:8081/smart-camera/events/snapshotTaken\",\"contentType\":\"application/cbor\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]}]}},\"id\":\"urn:uuid:02c12332-8ff3-4136-8b2c-8a21874e5799\",\"description\":\"A camera that streams video and captures snapshots.\",\"support\":\"\",\"forms\":[{\"href\":\"http://10.32.154.144:8081/smart-camera/properties\",\"contentType\":\"application/json\",\"op\":[\"readallproperties\",\"readmultipleproperties\"]},{\"href\":\"http://10.32.154.144:8081/smart-camera/properties\",\"contentType\":\"application/cbor\",\"op\":[\"readallproperties\",\"readmultipleproperties\"]}]}",
+        "http": true,
+        "ws": false,
+        "coap": false,
+        "mqtt": false,
+        "opcua": false,
+        "modbus": false,
+        "basicAuth": false,
+        "username": "",
+        "password": ""
+    },
+    {
+        "id": "95f43c8857db970c",
+        "type": "consumed-thing",
+        "tdLink": "",
+        "td": "{     \"@context\": \"https://www.w3.org/2019/wot/td/v1\",     \"id\": \"urn:uuid:security-camera-system\",     \"title\": \"Security Camera System\",     \"description\": \"Advanced multi-camera surveillance and security monitoring system\",     \"properties\": {         \"systemStatus\": {             \"type\": \"string\",             \"readOnly\": true,             \"description\": \"Current operational status of the security system\"         },         \"activeMonitoringCameras\": {             \"type\": \"number\",             \"readOnly\": true,             \"description\": \"Number of currently active cameras\"         }     },     \"actions\": {         \"configureSecurityProtocol\": {             \"description\": \"Modify security monitoring and alert parameters\",             \"input\": {                 \"type\": \"object\",                 \"properties\": {                     \"securityLevel\": {\"type\": \"string\", \"enum\": [\"low\", \"medium\", \"high\"]},                     \"activeZones\": {\"type\": \"array\", \"items\": {\"type\": \"string\"}}                 }             },             \"output\": {                 \"type\": \"object\",                 \"properties\": {                     \"configurationId\": {\"type\": \"string\"},                     \"potentialCoverageImprovement\": {\"type\": \"number\"}                 }             }         }     },     \"events\": {         \"securityBreach\": {             \"description\": \"Triggered when potential security threats are detected\",             \"data\": {                 \"type\": \"object\",                 \"properties\": {                     \"breachType\": {\"type\": \"string\"},                     \"affectedCameras\": {\"type\": \"array\", \"items\": {\"type\": \"string\"}}                 }             }         }     } }",
+        "http": false,
+        "ws": false,
+        "coap": false,
+        "mqtt": false,
+        "opcua": false,
+        "modbus": false,
+        "basicAuth": false,
+        "username": "",
+        "password": ""
+    },
+    {
+        "id": "60ec5509eed581fd",
+        "type": "consumed-thing",
+        "tdLink": "http://10.32.154.144:8081/alarm",
+        "td": "{\"@context\":[\"https://www.w3.org/2019/wot/td/v1\",{\"@language\":\"en\"}],\"@type\":\"Thing\",\"title\":\"Alarm\",\"securityDefinitions\":{\"nosec\":{\"scheme\":\"nosec\"}},\"security\":[\"nosec\"],\"properties\":{\"status\":{\"type\":\"string\",\"enum\":[\"on\",\"off\"],\"description\":\"The current status of the alarm.\",\"observable\":true,\"forms\":[{\"href\":\"http://10.32.154.144:8081/alarm/properties/status\",\"contentType\":\"application/json\",\"op\":[\"readproperty\",\"writeproperty\"]},{\"href\":\"http://10.32.154.144:8081/alarm/properties/status/observable\",\"contentType\":\"application/json\",\"op\":[\"observeproperty\",\"unobserveproperty\"],\"subprotocol\":\"longpoll\"},{\"href\":\"http://10.32.154.144:8081/alarm/properties/status\",\"contentType\":\"application/cbor\",\"op\":[\"readproperty\",\"writeproperty\"]},{\"href\":\"http://10.32.154.144:8081/alarm/properties/status/observable\",\"contentType\":\"application/cbor\",\"op\":[\"observeproperty\",\"unobserveproperty\"],\"subprotocol\":\"longpoll\"}],\"readOnly\":false,\"writeOnly\":false},\"batteryLevel\":{\"type\":\"number\",\"description\":\"The current battery level percentage.\",\"readOnly\":true,\"forms\":[{\"href\":\"http://10.32.154.144:8081/alarm/properties/batteryLevel\",\"contentType\":\"application/json\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"},{\"href\":\"http://10.32.154.144:8081/alarm/properties/batteryLevel\",\"contentType\":\"application/cbor\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"}],\"writeOnly\":false,\"observable\":false}},\"actions\":{\"activate\":{\"description\":\"Activates the alarm.\",\"forms\":[{\"href\":\"http://10.32.154.144:8081/alarm/actions/activate\",\"contentType\":\"application/json\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"},{\"href\":\"http://10.32.154.144:8081/alarm/actions/activate\",\"contentType\":\"application/cbor\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"}],\"safe\":false,\"idempotent\":false},\"deactivate\":{\"description\":\"Deactivates the alarm.\",\"forms\":[{\"href\":\"http://10.32.154.144:8081/alarm/actions/deactivate\",\"contentType\":\"application/json\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"},{\"href\":\"http://10.32.154.144:8081/alarm/actions/deactivate\",\"contentType\":\"application/cbor\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"}],\"safe\":false,\"idempotent\":false}},\"events\":{\"alarmTriggered\":{\"description\":\"Triggered when the alarm is activated.\",\"data\":{\"type\":\"string\"},\"forms\":[{\"href\":\"http://10.32.154.144:8081/alarm/events/alarmTriggered\",\"contentType\":\"application/json\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]},{\"href\":\"http://10.32.154.144:8081/alarm/events/alarmTriggered\",\"contentType\":\"application/cbor\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]}]},\"lowBattery\":{\"description\":\"Triggered when the battery level falls below 10%.\",\"data\":{\"type\":\"string\"},\"forms\":[{\"href\":\"http://10.32.154.144:8081/alarm/events/lowBattery\",\"contentType\":\"application/json\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]},{\"href\":\"http://10.32.154.144:8081/alarm/events/lowBattery\",\"contentType\":\"application/cbor\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]}]}},\"id\":\"urn:uuid:742a6d3f-1b98-401f-ad5a-a071f96b326a\",\"description\":\"A security alarm system.\",\"forms\":[{\"href\":\"http://10.32.154.144:8081/alarm/properties\",\"contentType\":\"application/json\",\"op\":[\"readallproperties\",\"readmultipleproperties\",\"writeallproperties\",\"writemultipleproperties\"]},{\"href\":\"http://10.32.154.144:8081/alarm/properties\",\"contentType\":\"application/cbor\",\"op\":[\"readallproperties\",\"readmultipleproperties\",\"writeallproperties\",\"writemultipleproperties\"]}]}",
+        "http": true,
+        "ws": false,
+        "coap": false,
+        "mqtt": false,
+        "opcua": false,
+        "modbus": false,
+        "basicAuth": false,
+        "username": "",
+        "password": ""
+    },
+    {
+        "id": "76013f7a022e609c",
+        "type": "consumed-thing",
+        "tdLink": "",
+        "td": "{     \"@context\": [       \"https://www.w3.org/2019/wot/td/v1\",       {         \"hvac\": \"http://example.org/hvac#\"       }     ],     \"id\": \"urn:dev:wot:example:lightsensor\",     \"title\": \"Smart Light\",     \"description\": \"A smart light with motion detection capabilities.\",     \"securityDefinitions\": {       \"nosec_sc\": {         \"scheme\": \"nosec\"       }     },     \"security\": [       \"nosec_sc\"     ],     \"properties\": {       \"lightState\": {         \"title\": \"Light State\",         \"type\": \"boolean\",         \"description\": \"The current state of the light (on/off).\",         \"observable\": true,         \"forms\": [           {             \"op\": \"readproperty\",             \"href\": \"/properties/lightState\",             \"contentType\": \"application/json\"           }         ]       },       \"motionDetected\": {         \"title\": \"Motion Detected\",         \"type\": \"boolean\",         \"description\": \"Indicates if motion has been detected.\",         \"observable\": true,         \"forms\": [           {             \"op\": \"readproperty\",             \"href\": \"/properties/motionDetected\",             \"contentType\": \"application/json\"           }         ]       }     },     \"actions\": {       \"toggleLight\": {         \"title\": \"Toggle Light\",         \"description\": \"Toggles the light state.\",         \"forms\": [           {             \"op\": \"invokeaction\",             \"href\": \"/actions/toggleLight\",             \"contentType\": \"application/json\"           }         ]       }     },     \"events\": {       \"motionAlert\": {         \"title\": \"Motion Alert\",         \"description\": \"Event triggered when motion is detected.\",         \"data\": {           \"type\": \"boolean\"         },         \"forms\": [           {             \"op\": \"subscribeevent\",             \"href\": \"/events/motionAlert\",             \"contentType\": \"application/json\"           }         ]       }     }   }",
+        "http": false,
+        "ws": false,
+        "coap": false,
+        "mqtt": false,
+        "opcua": false,
+        "modbus": false,
+        "basicAuth": false,
+        "username": "",
+        "password": ""
+    }
+]

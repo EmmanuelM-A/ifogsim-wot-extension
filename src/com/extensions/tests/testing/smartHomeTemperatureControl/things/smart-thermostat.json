@@ -1,0 +1,107 @@
+{
+    "@context": "https://www.w3.org/2019/wot/td/v1",
+    "id": "urn:uuid:smart-thermostat",
+    "title": "Smart Thermostat",
+    "description": "Intelligent temperature control and energy management device",
+    "properties": {
+        "currentTemperature": {
+            "type": "number",
+            "unit": "celsius",
+            "readOnly": true,
+            "description": "Current room temperature"
+        },
+        "targetTemperature": {
+            "type": "number",
+            "unit": "celsius",
+            "description": "Desired temperature setting",
+            "writeOnly": true
+        },
+        "operationMode": {
+            "type": "string",
+            "enum": ["heating", "cooling", "auto", "off"],
+            "description": "Current operational mode of the thermostat",
+            "writeOnly": true
+        },
+        "energyEfficiencyScore": {
+            "type": "number",
+            "readOnly": true,
+            "description": "Energy efficiency rating of current temperature management"
+        }
+    },
+    "actions": {
+        "setSchedule": {
+            "description": "Create a temperature schedule for different times of day",
+            "input": {
+                "type": "object",
+                "properties": {
+                    "scheduleType": {"type": "string", "enum": ["daily", "weekly"]},
+                    "temperatureSettings": {
+                        "type": "array",
+                        "items": {
+                            "type": "object",
+                            "properties": {
+                                "time": {"type": "string"},
+                                "temperature": {"type": "number"},
+                                "mode": {"type": "string", "enum": ["heating", "cooling", "auto"]}
+                            }
+                        }
+                    }
+                }
+            },
+            "output": {
+                "type": "object",
+                "properties": {
+                    "scheduleId": {"type": "string"},
+                    "estimatedEnergySavings": {"type": "number"}
+                }
+            }
+        },
+        "setEnergyProfile": {
+            "description": "Adjust energy-saving parameters",
+            "input": {
+                "type": "object",
+                "properties": {
+                    "energySavingMode": {"type": "boolean"},
+                    "comfortLevel": {"type": "number", "minimum": 0, "maximum": 10},
+                    "temperatureRange": {
+                        "type": "object",
+                        "properties": {
+                            "min": {"type": "number"},
+                            "max": {"type": "number"}
+                        }
+                    }
+                }
+            },
+            "output": {
+                "type": "object",
+                "properties": {
+                    "profileId": {"type": "string"},
+                    "potentialEnergySavings": {"type": "number"}
+                }
+            }
+        }
+    },
+    "events": {
+        "temperatureDeviationAlert": {
+            "description": "Triggered when actual temperature significantly differs from target",
+            "data": {
+                "type": "object",
+                "properties": {
+                    "currentTemp": {"type": "number"},
+                    "targetTemp": {"type": "number"},
+                    "deviation": {"type": "number"}
+                }
+            }
+        },
+        "energyEfficiencyAlert": {
+            "description": "Triggered when energy consumption becomes inefficient",
+            "data": {
+                "type": "object",
+                "properties": {
+                    "currentEfficiencyScore": {"type": "number"},
+                    "recommendedAction": {"type": "string"}
+                }
+            }
+        }
+    }
+}

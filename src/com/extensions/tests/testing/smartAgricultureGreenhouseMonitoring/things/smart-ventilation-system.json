@@ -1,0 +1,42 @@
+{
+    "@context": "https://www.w3.org/2019/wot/td/v1",
+    "id": "urn:uuid:27724a26-5997-4d2f-a043-35454740998b",
+    "title": "Smart Ventilation System",
+    "description": "Controls ventilation based on air quality.",
+    "securityDefinitions": {
+      "nosec_sc": {
+        "scheme": "nosec"
+      }
+    },
+    "security": "nosec_sc",
+    "properties": {
+      "fanSpeed": {
+        "type": "number",
+        "description": "Current fan speed",
+        "readOnly": true,
+        "unit": "rpm"
+      },
+      "airQuality": {
+        "type": "string",
+        "description": "Current air quality (e.g., good, moderate, poor)",
+        "readOnly": true
+      }
+    },
+    "actions": {
+      "setFanSpeed": {
+        "description": "Sets the fan speed",
+        "input": {
+          "type": "number",
+          "unit": "rpm"
+        }
+      }
+    },
+    "events": {
+      "airQualityChanged": {
+        "description": "Emits an event when air quality changes",
+        "data": {
+          "type": "string"
+        }
+      }
+    }
+}

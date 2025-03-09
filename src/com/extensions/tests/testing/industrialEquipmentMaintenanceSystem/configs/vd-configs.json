@@ -1,0 +1,70 @@
+{
+    "configs": [
+      {
+        "tagNames": ["AIBasedFaultDetectionModel"],
+        "mips": 1500,
+        "ram": 4096,
+        "upBw": 2000,
+        "downBw": 2000,
+        "level": 3,
+        "ratePerMips": 0.45,
+        "busyPower": 80.0,
+        "idlePower": 30.0
+      },
+      {
+        "tagNames": ["CloudDashboard"],
+        "mips": 1200,
+        "ram": 3072,
+        "upBw": 2500,
+        "downBw": 2500,
+        "level": 3,
+        "ratePerMips": 0.4,
+        "busyPower": 70.0,
+        "idlePower": 25.0
+      },
+      {
+        "tagNames": ["HumiditySensor"],
+        "mips": 350,
+        "ram": 512,
+        "upBw": 500,
+        "downBw": 500,
+        "level": 3,
+        "ratePerMips": 0.12,
+        "busyPower": 22.0,
+        "idlePower": 7.0
+      },
+      {
+        "tagNames": ["MaintenanceAlertSystem"],
+        "mips": 1000,
+        "ram": 2048,
+        "upBw": 1800,
+        "downBw": 1800,
+        "level": 3,
+        "ratePerMips": 0.35,
+        "busyPower": 60.0,
+        "idlePower": 20.0
+      },
+      {
+        "tagNames": ["TemperatureSensor"],
+        "mips": 350,
+        "ram": 512,
+        "upBw": 500,
+        "downBw": 500,
+        "level": 3,
+        "ratePerMips": 0.12,
+        "busyPower": 22.0,
+        "idlePower": 7.0
+      },
+      {
+        "tagNames": ["VibrationSensor"],
+        "mips": 450,
+        "ram": 768,
+        "upBw": 600,
+        "downBw": 600,
+        "level": 3,
+        "ratePerMips": 0.18,
+        "busyPower": 28.0,
+        "idlePower": 10.0
+      }
+    ]
+  }

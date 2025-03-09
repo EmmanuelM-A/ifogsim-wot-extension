@@ -1,0 +1,548 @@
+[
+    {
+        "id": "525fa989f3eb17ed",
+        "type": "tab",
+        "label": "Smart Agriculture Greenhouse Monitoring",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "ad863dacfe7452c2",
+        "type": "read-property",
+        "z": "525fa989f3eb17ed",
+        "name": "",
+        "topic": "",
+        "thing": "097e18567aff7548",
+        "property": "temperature",
+        "uriVariables": "",
+        "observe": false,
+        "x": 300,
+        "y": 160,
+        "wires": [
+            [
+                "dc070faf8fd8f982"
+            ]
+        ]
+    },
+    {
+        "id": "bcca1c297f7825b5",
+        "type": "read-property",
+        "z": "525fa989f3eb17ed",
+        "name": "",
+        "topic": "",
+        "thing": "134dc0be145fdc38",
+        "property": "currentHumidity",
+        "uriVariables": "",
+        "observe": false,
+        "x": 310,
+        "y": 220,
+        "wires": [
+            [
+                "bd27d05c5dfa8fd7"
+            ]
+        ]
+    },
+    {
+        "id": "e663c2b6982e8e72",
+        "type": "read-property",
+        "z": "525fa989f3eb17ed",
+        "name": "",
+        "topic": "",
+        "thing": "0a58653b1d429a97",
+        "property": "nitrogenLevel",
+        "uriVariables": "",
+        "observe": true,
+        "x": 310,
+        "y": 360,
+        "wires": [
+            [
+                "3f7ad34971fbd8df"
+            ]
+        ]
+    },
+    {
+        "id": "6f1a27f3cd7150bd",
+        "type": "read-property",
+        "z": "525fa989f3eb17ed",
+        "name": "",
+        "topic": "",
+        "thing": "0a58653b1d429a97",
+        "property": "phosphorusLevel",
+        "uriVariables": "",
+        "observe": true,
+        "x": 320,
+        "y": 420,
+        "wires": [
+            [
+                "6dcf32b2e9b1598f"
+            ]
+        ]
+    },
+    {
+        "id": "d0bb548b0c911a23",
+        "type": "read-property",
+        "z": "525fa989f3eb17ed",
+        "name": "",
+        "topic": "",
+        "thing": "0a58653b1d429a97",
+        "property": "potassiumLevel",
+        "uriVariables": "",
+        "observe": true,
+        "x": 310,
+        "y": 480,
+        "wires": [
+            [
+                "2172d9b13de6470f"
+            ]
+        ]
+    },
+    {
+        "id": "58da3237468e7772",
+        "type": "read-property",
+        "z": "525fa989f3eb17ed",
+        "name": "",
+        "topic": "",
+        "thing": "3712141efe289e0e",
+        "property": "currentMoistureLevel",
+        "uriVariables": "",
+        "observe": false,
+        "x": 330,
+        "y": 540,
+        "wires": [
+            [
+                "8c41f593abf4a96d",
+                "7a761948b8a0538e"
+            ]
+        ]
+    },
+    {
+        "id": "8c41f593abf4a96d",
+        "type": "switch",
+        "z": "525fa989f3eb17ed",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "gt",
+                "v": "",
+                "vt": "str"
+            },
+            {
+                "t": "lt",
+                "v": "",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 2,
+        "x": 610,
+        "y": 640,
+        "wires": [
+            [
+                "1131cc311ad22543"
+            ],
+            [
+                "d3fcd96f90fbdf62"
+            ]
+        ]
+    },
+    {
+        "id": "d3fcd96f90fbdf62",
+        "type": "invoke-action",
+        "z": "525fa989f3eb17ed",
+        "name": "",
+        "topic": "",
+        "thing": "3e11a9770f66de8a",
+        "action": "startPump",
+        "uriVariables": "",
+        "x": 930,
+        "y": 680,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "1131cc311ad22543",
+        "type": "invoke-action",
+        "z": "525fa989f3eb17ed",
+        "name": "",
+        "topic": "",
+        "thing": "3e11a9770f66de8a",
+        "action": "stopPump",
+        "uriVariables": "",
+        "x": 930,
+        "y": 620,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "dc070faf8fd8f982",
+        "type": "function",
+        "z": "525fa989f3eb17ed",
+        "name": "Some Processing",
+        "func": "\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 650,
+        "y": 160,
+        "wires": [
+            [
+                "3dd9733f06ca3ad7"
+            ]
+        ]
+    },
+    {
+        "id": "bd27d05c5dfa8fd7",
+        "type": "function",
+        "z": "525fa989f3eb17ed",
+        "name": "Some Processing",
+        "func": "\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 650,
+        "y": 220,
+        "wires": [
+            [
+                "3da49d0dfc59a886"
+            ]
+        ]
+    },
+    {
+        "id": "6dcf32b2e9b1598f",
+        "type": "function",
+        "z": "525fa989f3eb17ed",
+        "name": "Some Processing",
+        "func": "\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 650,
+        "y": 420,
+        "wires": [
+            [
+                "b4e84e95f12a69d1"
+            ]
+        ]
+    },
+    {
+        "id": "ec60eea56899816a",
+        "type": "invoke-action",
+        "z": "525fa989f3eb17ed",
+        "name": "",
+        "topic": "",
+        "thing": "73b6abf1370719fc",
+        "action": "setFanSpeed",
+        "uriVariables": "",
+        "x": 940,
+        "y": 800,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "c4371ada5f22ec24",
+        "type": "read-property",
+        "z": "525fa989f3eb17ed",
+        "name": "",
+        "topic": "",
+        "thing": "73b6abf1370719fc",
+        "property": "airQuality",
+        "uriVariables": "",
+        "observe": false,
+        "x": 290,
+        "y": 800,
+        "wires": [
+            [
+                "ec60eea56899816a"
+            ]
+        ]
+    },
+    {
+        "id": "51cbc0f4818c9a9d",
+        "type": "function",
+        "z": "525fa989f3eb17ed",
+        "name": "Some Processing",
+        "func": "\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 590,
+        "y": 800,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "3f7ad34971fbd8df",
+        "type": "function",
+        "z": "525fa989f3eb17ed",
+        "name": "Some Processing",
+        "func": "\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 650,
+        "y": 360,
+        "wires": [
+            [
+                "32e18aa466980c30"
+            ]
+        ]
+    },
+    {
+        "id": "2172d9b13de6470f",
+        "type": "function",
+        "z": "525fa989f3eb17ed",
+        "name": "Some Processing",
+        "func": "\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 650,
+        "y": 480,
+        "wires": [
+            [
+                "fa69297759f89cb5"
+            ]
+        ]
+    },
+    {
+        "id": "7a761948b8a0538e",
+        "type": "function",
+        "z": "525fa989f3eb17ed",
+        "name": "Some Processing",
+        "func": "\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 650,
+        "y": 540,
+        "wires": [
+            [
+                "f298402b82f7c879"
+            ]
+        ]
+    },
+    {
+        "id": "3dd9733f06ca3ad7",
+        "type": "invoke-action",
+        "z": "525fa989f3eb17ed",
+        "name": "",
+        "topic": "",
+        "thing": "dc99cc6070d7f6fe",
+        "action": "updateDisplay",
+        "uriVariables": "",
+        "x": 960,
+        "y": 160,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "3da49d0dfc59a886",
+        "type": "invoke-action",
+        "z": "525fa989f3eb17ed",
+        "name": "",
+        "topic": "",
+        "thing": "dc99cc6070d7f6fe",
+        "action": "updateDisplay",
+        "uriVariables": "",
+        "x": 960,
+        "y": 220,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "32e18aa466980c30",
+        "type": "invoke-action",
+        "z": "525fa989f3eb17ed",
+        "name": "",
+        "topic": "",
+        "thing": "dc99cc6070d7f6fe",
+        "action": "updateDisplay",
+        "uriVariables": "",
+        "x": 960,
+        "y": 360,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "b4e84e95f12a69d1",
+        "type": "invoke-action",
+        "z": "525fa989f3eb17ed",
+        "name": "",
+        "topic": "",
+        "thing": "dc99cc6070d7f6fe",
+        "action": "updateDisplay",
+        "uriVariables": "",
+        "x": 960,
+        "y": 420,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "fa69297759f89cb5",
+        "type": "invoke-action",
+        "z": "525fa989f3eb17ed",
+        "name": "",
+        "topic": "",
+        "thing": "dc99cc6070d7f6fe",
+        "action": "updateDisplay",
+        "uriVariables": "",
+        "x": 960,
+        "y": 480,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "f298402b82f7c879",
+        "type": "invoke-action",
+        "z": "525fa989f3eb17ed",
+        "name": "",
+        "topic": "",
+        "thing": "dc99cc6070d7f6fe",
+        "action": "updateDisplay",
+        "uriVariables": "",
+        "x": 960,
+        "y": 540,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "097e18567aff7548",
+        "type": "consumed-thing",
+        "tdLink": "http://10.32.147.97:8080/temperature-sensor",
+        "td": "{\"@context\":[\"https://www.w3.org/2019/wot/td/v1\",{\"@language\":\"en\"}],\"@type\":\"Thing\",\"title\":\"Temperature Sensor\",\"securityDefinitions\":{\"nosec\":{\"scheme\":\"nosec\"}},\"security\":[\"nosec\"],\"properties\":{\"temperature\":{\"type\":\"number\",\"description\":\"The current temperature reading of the environemnt in celsius.\",\"readOnly\":true,\"forms\":[{\"href\":\"http://10.32.147.97:8080/temperature-sensor/properties/temperature\",\"contentType\":\"application/json\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"},{\"href\":\"http://10.32.147.97:8080/temperature-sensor/properties/temperature\",\"contentType\":\"application/cbor\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"}],\"writeOnly\":false,\"observable\":false},\"batteryLevel\":{\"type\":\"number\",\"description\":\"The battery level of the sensor as a percentage.\",\"readOnly\":true,\"forms\":[{\"href\":\"http://10.32.147.97:8080/temperature-sensor/properties/batteryLevel\",\"contentType\":\"application/json\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"},{\"href\":\"http://10.32.147.97:8080/temperature-sensor/properties/batteryLevel\",\"contentType\":\"application/cbor\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"}],\"writeOnly\":false,\"observable\":false},\"status\":{\"type\":\"string\",\"description\":\"The current status of the sensor (e.g. active, inactive, error).\",\"properties\":{\"active\":{\"type\":\"string\",\"description\":\"Means the sensor is on and is sending data as normal.\"},\"inactive\":{\"type\":\"string\",\"description\":\"Means the sensor is off.\"},\"error\":{\"type\":\"string\",\"description\":\"Means an error has occured within the sensor.\"}},\"forms\":[{\"href\":\"http://10.32.147.97:8080/temperature-sensor/properties/status\",\"contentType\":\"application/json\",\"op\":[\"readproperty\",\"writeproperty\"]},{\"href\":\"http://10.32.147.97:8080/temperature-sensor/properties/status\",\"contentType\":\"application/cbor\",\"op\":[\"readproperty\",\"writeproperty\"]}],\"readOnly\":false,\"writeOnly\":false,\"observable\":false}},\"actions\":{\"reset\":{\"description\":\"Resets the temperature sensor to its default state.\",\"forms\":[{\"href\":\"http://10.32.147.97:8080/temperature-sensor/actions/reset\",\"contentType\":\"application/json\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"},{\"href\":\"http://10.32.147.97:8080/temperature-sensor/actions/reset\",\"contentType\":\"application/cbor\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"}],\"safe\":false,\"idempotent\":false},\"calibrate\":{\"description\":\"Calibrates the temperature sensor.\",\"input\":{\"type\":\"object\",\"properties\":{\"calibrationValue\":{\"type\":\"number\",\"description\":\"Calibration offset value in Celsius.\"}},\"required\":[\"calibrationValue\"]},\"forms\":[{\"href\":\"http://10.32.147.97:8080/temperature-sensor/actions/calibrate\",\"contentType\":\"application/json\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"},{\"href\":\"http://10.32.147.97:8080/temperature-sensor/actions/calibrate\",\"contentType\":\"application/cbor\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"}],\"safe\":false,\"idempotent\":false},\"setThreshold\":{\"description\":\"Sets a temperature threshold for triggering the overheat event.\",\"input\":{\"type\":\"object\",\"properties\":{\"threshold\":{\"type\":\"number\",\"description\":\"Temperature threshold in celsius.\"}},\"required\":[\"threshold\"]},\"forms\":[{\"href\":\"http://10.32.147.97:8080/temperature-sensor/actions/setThreshold\",\"contentType\":\"application/json\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"},{\"href\":\"http://10.32.147.97:8080/temperature-sensor/actions/setThreshold\",\"contentType\":\"application/cbor\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"}],\"safe\":false,\"idempotent\":false}},\"events\":{\"overheat\":{\"description\":\"Triggered when the temperature exceeds the set threshold.\",\"data\":{\"type\":\"number\"},\"forms\":[{\"href\":\"http://10.32.147.97:8080/temperature-sensor/events/overheat\",\"contentType\":\"application/json\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]},{\"href\":\"http://10.32.147.97:8080/temperature-sensor/events/overheat\",\"contentType\":\"application/cbor\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]}]},\"lowBattery\":{\"description\":\"Triggered when the battery level falls below 10%.\",\"data\":{\"type\":\"number\"},\"forms\":[{\"href\":\"http://10.32.147.97:8080/temperature-sensor/events/lowBattery\",\"contentType\":\"application/json\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]},{\"href\":\"http://10.32.147.97:8080/temperature-sensor/events/lowBattery\",\"contentType\":\"application/cbor\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]}]},\"statusChange\":{\"description\":\"Triggered when the sensor's status changes.\",\"data\":{\"type\":\"string\"},\"forms\":[{\"href\":\"http://10.32.147.97:8080/temperature-sensor/events/statusChange\",\"contentType\":\"application/json\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]},{\"href\":\"http://10.32.147.97:8080/temperature-sensor/events/statusChange\",\"contentType\":\"application/cbor\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]}]}},\"id\":\"urn:uuid:3b47980f-f83a-4df4-bf6c-3d68f8e34f19\",\"description\":\"A temperature sensor that provides readings, supports calibration, and monitors environmental conditions.\",\"support\":\"\",\"forms\":[{\"href\":\"http://10.32.147.97:8080/temperature-sensor/properties\",\"contentType\":\"application/json\",\"op\":[\"readallproperties\",\"readmultipleproperties\",\"writeallproperties\",\"writemultipleproperties\"]},{\"href\":\"http://10.32.147.97:8080/temperature-sensor/properties\",\"contentType\":\"application/cbor\",\"op\":[\"readallproperties\",\"readmultipleproperties\",\"writeallproperties\",\"writemultipleproperties\"]}]}",
+        "http": true,
+        "ws": false,
+        "coap": false,
+        "mqtt": false,
+        "opcua": false,
+        "modbus": false,
+        "basicAuth": false,
+        "username": "",
+        "password": ""
+    },
+    {
+        "id": "134dc0be145fdc38",
+        "type": "consumed-thing",
+        "tdLink": "",
+        "td": "{     \"@context\": \"https://www.w3.org/2019/wot/td/v1\",     \"id\": \"urn:uuid:humidity-sensor\",     \"title\": \"Humidity Sensor\",     \"description\": \"Advanced environmental monitoring device for tracking humidity levels\",     \"properties\": {         \"currentHumidity\": {             \"type\": \"number\",             \"unit\": \"percentage\",             \"readOnly\": true,             \"description\": \"Current relative humidity percentage\"         },         \"temperatureCorrelation\": {             \"type\": \"number\",             \"unit\": \"celsius\",             \"readOnly\": true,             \"description\": \"Correlated temperature reading\"         },         \"humidityTrend\": {             \"type\": \"string\",             \"readOnly\": true,             \"description\": \"Current humidity trend (rising, falling, stable)\",             \"enum\": [\"rising\", \"falling\", \"stable\"]         }     },     \"actions\": {         \"calibrateSensor\": {             \"description\": \"Perform sensor calibration to ensure accuracy\",             \"input\": {                 \"type\": \"object\",                 \"properties\": {                     \"calibrationEnvironment\": {                         \"type\": \"string\",                         \"enum\": [\"standard\", \"controlled\", \"field\"]                     },                     \"referenceHumidity\": {\"type\": \"number\"}                 }             },             \"output\": {                 \"type\": \"object\",                 \"properties\": {                     \"calibrationStatus\": {\"type\": \"string\"},                     \"accuracyImprovement\": {\"type\": \"number\"}                 }             }         },         \"setAlertThresholds\": {             \"description\": \"Configure humidity level alert parameters\",             \"input\": {                 \"type\": \"object\",                 \"properties\": {                     \"lowHumidityThreshold\": {\"type\": \"number\"},                     \"highHumidityThreshold\": {\"type\": \"number\"},                     \"durationBeforeAlert\": {\"type\": \"number\", \"unit\": \"minutes\"}                 }             },             \"output\": {                 \"type\": \"object\",                 \"properties\": {                     \"thresholdConfigId\": {\"type\": \"string\"},                     \"status\": {\"type\": \"string\"}                 }             }         }     },     \"events\": {         \"humidityLevelAlert\": {             \"description\": \"Triggered when humidity levels exceed configured thresholds\",             \"data\": {                 \"type\": \"object\",                 \"properties\": {                     \"currentHumidity\": {\"type\": \"number\"},                     \"alertType\": {                         \"type\": \"string\",                         \"enum\": [\"low\", \"high\"]                     },                     \"recommendedAction\": {\"type\": \"string\"}                 }             }         },         \"sensorHealthCheck\": {             \"description\": \"Periodic event reporting sensor operational status\",             \"data\": {                 \"type\": \"object\",                 \"properties\": {                     \"batteryLevel\": {\"type\": \"number\", \"unit\": \"percentage\"},                     \"signalStrength\": {\"type\": \"number\"},                     \"lastCalibrationDate\": {\"type\": \"string\", \"format\": \"date\"}                 }             }         }     } }",
+        "http": false,
+        "ws": false,
+        "coap": false,
+        "mqtt": false,
+        "opcua": false,
+        "modbus": false,
+        "basicAuth": false,
+        "username": "",
+        "password": ""
+    },
+    {
+        "id": "0a58653b1d429a97",
+        "type": "consumed-thing",
+        "tdLink": "http://10.32.154.144:8081/soil-nutrition-monitor",
+        "td": "{\"@context\":[\"https://www.w3.org/2019/wot/td/v1\",{\"@language\":\"en\"}],\"@type\":\"Thing\",\"title\":\"Soil Nutrition Monitor\",\"securityDefinitions\":{\"nosec\":{\"scheme\":\"nosec\"}},\"security\":[\"nosec\"],\"properties\":{\"nitrogenLevel\":{\"type\":\"number\",\"description\":\"The current nitrogen level (mg/kg).\",\"minimum\":0,\"maximum\":50,\"observable\":true,\"forms\":[{\"href\":\"http://10.32.154.144:8081/soil-nutrition-monitor/properties/nitrogenLevel\",\"contentType\":\"application/json\",\"op\":[\"readproperty\",\"writeproperty\"]},{\"href\":\"http://10.32.154.144:8081/soil-nutrition-monitor/properties/nitrogenLevel/observable\",\"contentType\":\"application/json\",\"op\":[\"observeproperty\",\"unobserveproperty\"],\"subprotocol\":\"longpoll\"},{\"href\":\"http://10.32.154.144:8081/soil-nutrition-monitor/properties/nitrogenLevel\",\"contentType\":\"application/cbor\",\"op\":[\"readproperty\",\"writeproperty\"]},{\"href\":\"http://10.32.154.144:8081/soil-nutrition-monitor/properties/nitrogenLevel/observable\",\"contentType\":\"application/cbor\",\"op\":[\"observeproperty\",\"unobserveproperty\"],\"subprotocol\":\"longpoll\"}],\"readOnly\":false,\"writeOnly\":false},\"phosphorusLevel\":{\"type\":\"number\",\"description\":\"The current phosphorus level (mg/kg).\",\"minimum\":0,\"maximum\":50,\"observable\":true,\"forms\":[{\"href\":\"http://10.32.154.144:8081/soil-nutrition-monitor/properties/phosphorusLevel\",\"contentType\":\"application/json\",\"op\":[\"readproperty\",\"writeproperty\"]},{\"href\":\"http://10.32.154.144:8081/soil-nutrition-monitor/properties/phosphorusLevel/observable\",\"contentType\":\"application/json\",\"op\":[\"observeproperty\",\"unobserveproperty\"],\"subprotocol\":\"longpoll\"},{\"href\":\"http://10.32.154.144:8081/soil-nutrition-monitor/properties/phosphorusLevel\",\"contentType\":\"application/cbor\",\"op\":[\"readproperty\",\"writeproperty\"]},{\"href\":\"http://10.32.154.144:8081/soil-nutrition-monitor/properties/phosphorusLevel/observable\",\"contentType\":\"application/cbor\",\"op\":[\"observeproperty\",\"unobserveproperty\"],\"subprotocol\":\"longpoll\"}],\"readOnly\":false,\"writeOnly\":false},\"potassiumLevel\":{\"type\":\"number\",\"description\":\"The current potassium level (mg/kg).\",\"minimum\":0,\"maximum\":50,\"observable\":true,\"forms\":[{\"href\":\"http://10.32.154.144:8081/soil-nutrition-monitor/properties/potassiumLevel\",\"contentType\":\"application/json\",\"op\":[\"readproperty\",\"writeproperty\"]},{\"href\":\"http://10.32.154.144:8081/soil-nutrition-monitor/properties/potassiumLevel/observable\",\"contentType\":\"application/json\",\"op\":[\"observeproperty\",\"unobserveproperty\"],\"subprotocol\":\"longpoll\"},{\"href\":\"http://10.32.154.144:8081/soil-nutrition-monitor/properties/potassiumLevel\",\"contentType\":\"application/cbor\",\"op\":[\"readproperty\",\"writeproperty\"]},{\"href\":\"http://10.32.154.144:8081/soil-nutrition-monitor/properties/potassiumLevel/observable\",\"contentType\":\"application/cbor\",\"op\":[\"observeproperty\",\"unobserveproperty\"],\"subprotocol\":\"longpoll\"}],\"readOnly\":false,\"writeOnly\":false},\"status\":{\"type\":\"string\",\"enum\":[\"active\",\"inactive\",\"error\"],\"description\":\"The current status of the monitor.\",\"forms\":[{\"href\":\"http://10.32.154.144:8081/soil-nutrition-monitor/properties/status\",\"contentType\":\"application/json\",\"op\":[\"readproperty\",\"writeproperty\"]},{\"href\":\"http://10.32.154.144:8081/soil-nutrition-monitor/properties/status\",\"contentType\":\"application/cbor\",\"op\":[\"readproperty\",\"writeproperty\"]}],\"readOnly\":false,\"writeOnly\":false,\"observable\":false}},\"actions\":{\"calibrateSensor\":{\"description\":\"Calibrates the sensor to reset nutrition readings.\",\"forms\":[{\"href\":\"http://10.32.154.144:8081/soil-nutrition-monitor/actions/calibrateSensor\",\"contentType\":\"application/json\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"},{\"href\":\"http://10.32.154.144:8081/soil-nutrition-monitor/actions/calibrateSensor\",\"contentType\":\"application/cbor\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"}],\"safe\":false,\"idempotent\":false}},\"events\":{\"nutritionDepleted\":{\"description\":\"Triggered when one or more nutrition levels are critically low.\",\"data\":{\"type\":\"string\"},\"forms\":[{\"href\":\"http://10.32.154.144:8081/soil-nutrition-monitor/events/nutritionDepleted\",\"contentType\":\"application/json\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]},{\"href\":\"http://10.32.154.144:8081/soil-nutrition-monitor/events/nutritionDepleted\",\"contentType\":\"application/cbor\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]}]}},\"id\":\"urn:uuid:ef029b40-fd20-42a4-ae49-7323f9e5e9f3\",\"description\":\"Monitors soil nutrition levels (NPK).\",\"forms\":[{\"href\":\"http://10.32.154.144:8081/soil-nutrition-monitor/properties\",\"contentType\":\"application/json\",\"op\":[\"readallproperties\",\"readmultipleproperties\",\"writeallproperties\",\"writemultipleproperties\"]},{\"href\":\"http://10.32.154.144:8081/soil-nutrition-monitor/properties\",\"contentType\":\"application/cbor\",\"op\":[\"readallproperties\",\"readmultipleproperties\",\"writeallproperties\",\"writemultipleproperties\"]}]}",
+        "http": true,
+        "ws": false,
+        "coap": false,
+        "mqtt": false,
+        "opcua": false,
+        "modbus": false,
+        "basicAuth": false,
+        "username": "",
+        "password": ""
+    },
+    {
+        "id": "3712141efe289e0e",
+        "type": "consumed-thing",
+        "tdLink": "",
+        "td": "{     \"@context\": \"https://www.w3.org/2019/wot/td/v1\",     \"id\": \"urn:uuid:soil-moisture-sensor\",     \"title\": \"Soil Moisture Sensor\",     \"description\": \"Advanced agricultural monitoring device for tracking soil hydration levels\",     \"properties\": {         \"currentMoistureLevel\": {             \"type\": \"number\",             \"unit\": \"percentage\",             \"readOnly\": true,             \"description\": \"Current soil moisture percentage\"         },         \"moistureDepth\": {             \"type\": \"number\",             \"unit\": \"centimeters\",             \"readOnly\": true,             \"description\": \"Depth of moisture measurement\"         },         \"soilTemperature\": {             \"type\": \"number\",             \"unit\": \"celsius\",             \"readOnly\": true,             \"description\": \"Current soil temperature\"         }     },     \"actions\": {         \"configureMoistureThresholds\": {             \"description\": \"Set optimal moisture range for specific plant types\",             \"input\": {                 \"type\": \"object\",                 \"properties\": {                     \"plantType\": {\"type\": \"string\"},                     \"optimalMoistureRange\": {                         \"type\": \"object\",                         \"properties\": {                             \"min\": {\"type\": \"number\"},                             \"max\": {\"type\": \"number\"}                         }                     },                     \"measurementDepth\": {\"type\": \"number\", \"unit\": \"centimeters\"}                 }             },             \"output\": {                 \"type\": \"object\",                 \"properties\": {                     \"configurationId\": {\"type\": \"string\"},                     \"status\": {\"type\": \"string\"}                 }             }         },         \"calibrateSensor\": {             \"description\": \"Perform sensor calibration in different soil conditions\",             \"input\": {                 \"type\": \"object\",                 \"properties\": {                     \"calibrationType\": {                         \"type\": \"string\",                         \"enum\": [\"dry\", \"wet\", \"standard\"]                     },                     \"referencePoint\": {\"type\": \"number\"}                 }             },             \"output\": {                 \"type\": \"object\",                 \"properties\": {                     \"calibrationAccuracy\": {\"type\": \"number\"},                     \"adjustmentMade\": {\"type\": \"boolean\"}                 }             }         }     },     \"events\": {         \"moistureAlertEvent\": {             \"description\": \"Triggered when soil moisture falls outside optimal range\",             \"data\": {                 \"type\": \"object\",                 \"properties\": {                     \"currentMoisture\": {\"type\": \"number\"},                     \"alertType\": {                         \"type\": \"string\",                         \"enum\": [\"low\", \"high\"]                     },                     \"recommendedAction\": {\"type\": \"string\"}                 }             }         },         \"sensorHealthCheck\": {             \"description\": \"Periodic event reporting sensor operational status\",             \"data\": {                 \"type\": \"object\",                 \"properties\": {                     \"batteryLevel\": {\"type\": \"number\", \"unit\": \"percentage\"},                     \"signalStrength\": {\"type\": \"number\"},                     \"lastCalibrationDate\": {\"type\": \"string\", \"format\": \"date\"}                 }             }         }     } }",
+        "http": false,
+        "ws": false,
+        "coap": false,
+        "mqtt": false,
+        "opcua": false,
+        "modbus": false,
+        "basicAuth": false,
+        "username": "",
+        "password": ""
+    },
+    {
+        "id": "3e11a9770f66de8a",
+        "type": "consumed-thing",
+        "tdLink": "http://10.32.154.144:8081/water-pump",
+        "td": "{\"@context\":[\"https://www.w3.org/2019/wot/td/v1\",{\"@language\":\"en\"}],\"@type\":\"Thing\",\"title\":\"Water Pump\",\"securityDefinitions\":{\"nosec\":{\"scheme\":\"nosec\"}},\"security\":[\"nosec\"],\"properties\":{\"status\":{\"type\":\"string\",\"enum\":[\"on\",\"off\"],\"description\":\"The current status of the water pump.\",\"observable\":true,\"forms\":[{\"href\":\"http://10.32.154.144:8081/water-pump/properties/status\",\"contentType\":\"application/json\",\"op\":[\"readproperty\",\"writeproperty\"]},{\"href\":\"http://10.32.154.144:8081/water-pump/properties/status/observable\",\"contentType\":\"application/json\",\"op\":[\"observeproperty\",\"unobserveproperty\"],\"subprotocol\":\"longpoll\"},{\"href\":\"http://10.32.154.144:8081/water-pump/properties/status\",\"contentType\":\"application/cbor\",\"op\":[\"readproperty\",\"writeproperty\"]},{\"href\":\"http://10.32.154.144:8081/water-pump/properties/status/observable\",\"contentType\":\"application/cbor\",\"op\":[\"observeproperty\",\"unobserveproperty\"],\"subprotocol\":\"longpoll\"}],\"readOnly\":false,\"writeOnly\":false},\"waterLevel\":{\"type\":\"number\",\"description\":\"The current water level in the reservoir (in liters).\",\"minimum\":0,\"maximum\":100,\"readOnly\":true,\"observable\":true,\"forms\":[{\"href\":\"http://10.32.154.144:8081/water-pump/properties/waterLevel\",\"contentType\":\"application/json\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"},{\"href\":\"http://10.32.154.144:8081/water-pump/properties/waterLevel/observable\",\"contentType\":\"application/json\",\"op\":[\"observeproperty\",\"unobserveproperty\"],\"subprotocol\":\"longpoll\"},{\"href\":\"http://10.32.154.144:8081/water-pump/properties/waterLevel\",\"contentType\":\"application/cbor\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"},{\"href\":\"http://10.32.154.144:8081/water-pump/properties/waterLevel/observable\",\"contentType\":\"application/cbor\",\"op\":[\"observeproperty\",\"unobserveproperty\"],\"subprotocol\":\"longpoll\"}],\"writeOnly\":false}},\"actions\":{\"startPump\":{\"description\":\"Starts the water pump.\",\"forms\":[{\"href\":\"http://10.32.154.144:8081/water-pump/actions/startPump\",\"contentType\":\"application/json\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"},{\"href\":\"http://10.32.154.144:8081/water-pump/actions/startPump\",\"contentType\":\"application/cbor\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"}],\"safe\":false,\"idempotent\":false},\"stopPump\":{\"description\":\"Stops the water pump.\",\"forms\":[{\"href\":\"http://10.32.154.144:8081/water-pump/actions/stopPump\",\"contentType\":\"application/json\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"},{\"href\":\"http://10.32.154.144:8081/water-pump/actions/stopPump\",\"contentType\":\"application/cbor\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"}],\"safe\":false,\"idempotent\":false}},\"events\":{\"lowWaterLevel\":{\"description\":\"Triggered when the water level falls below 10 liters.\",\"data\":{\"type\":\"string\"},\"forms\":[{\"href\":\"http://10.32.154.144:8081/water-pump/events/lowWaterLevel\",\"contentType\":\"application/json\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]},{\"href\":\"http://10.32.154.144:8081/water-pump/events/lowWaterLevel\",\"contentType\":\"application/cbor\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]}]}},\"id\":\"urn:uuid:803ca958-504b-4d28-b5cd-d91ecf310ec0\",\"description\":\"A pump for irrigating soil.\",\"forms\":[{\"href\":\"http://10.32.154.144:8081/water-pump/properties\",\"contentType\":\"application/json\",\"op\":[\"readallproperties\",\"readmultipleproperties\",\"writeallproperties\",\"writemultipleproperties\"]},{\"href\":\"http://10.32.154.144:8081/water-pump/properties\",\"contentType\":\"application/cbor\",\"op\":[\"readallproperties\",\"readmultipleproperties\",\"writeallproperties\",\"writemultipleproperties\"]}]}",
+        "http": true,
+        "ws": false,
+        "coap": false,
+        "mqtt": false,
+        "opcua": false,
+        "modbus": false,
+        "basicAuth": false,
+        "username": "",
+        "password": ""
+    },
+    {
+        "id": "73b6abf1370719fc",
+        "type": "consumed-thing",
+        "tdLink": "",
+        "td": "{     \"@context\": \"https://www.w3.org/2019/wot/td/v1\",     \"id\": \"urn:uuid:27724a26-5997-4d2f-a043-35454740998b\",     \"title\": \"Smart Ventilation System\",     \"description\": \"Controls ventilation based on air quality.\",     \"securityDefinitions\": {       \"nosec_sc\": {         \"scheme\": \"nosec\"       }     },     \"security\": \"nosec_sc\",     \"properties\": {       \"fanSpeed\": {         \"type\": \"number\",         \"description\": \"Current fan speed\",         \"readOnly\": true,         \"unit\": \"rpm\"       },       \"airQuality\": {         \"type\": \"string\",         \"description\": \"Current air quality (e.g., good, moderate, poor)\",         \"readOnly\": true       }     },     \"actions\": {       \"setFanSpeed\": {         \"description\": \"Sets the fan speed\",         \"input\": {           \"type\": \"number\",           \"unit\": \"rpm\"         }       }     },     \"events\": {       \"airQualityChanged\": {         \"description\": \"Emits an event when air quality changes\",         \"data\": {           \"type\": \"string\"         }       }     } }",
+        "http": false,
+        "ws": false,
+        "coap": false,
+        "mqtt": false,
+        "opcua": false,
+        "modbus": false,
+        "basicAuth": false,
+        "username": "",
+        "password": ""
+    },
+    {
+        "id": "dc99cc6070d7f6fe",
+        "type": "consumed-thing",
+        "tdLink": "http://10.32.147.97:8080/smart-display",
+        "td": "{\"@context\":[\"https://www.w3.org/2019/wot/td/v1\",{\"@language\":\"en\"}],\"@type\":\"Thing\",\"title\":\"Smart Display\",\"securityDefinitions\":{\"nosec\":{\"scheme\":\"nosec\"}},\"security\":[\"nosec\"],\"properties\":{\"displayedMessage\":{\"type\":\"string\",\"description\":\"The current message displayed on the screen.\",\"readOnly\":true,\"forms\":[{\"href\":\"http://10.32.147.97:8080/smart-display/properties/displayedMessage\",\"contentType\":\"application/json\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"},{\"href\":\"http://10.32.147.97:8080/smart-display/properties/displayedMessage\",\"contentType\":\"application/cbor\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"}],\"writeOnly\":false,\"observable\":false},\"alertMessage\":{\"type\":\"string\",\"description\":\"The current alert message displayed on the screen.\",\"readOnly\":true,\"forms\":[{\"href\":\"http://10.32.147.97:8080/smart-display/properties/alertMessage\",\"contentType\":\"application/json\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"},{\"href\":\"http://10.32.147.97:8080/smart-display/properties/alertMessage\",\"contentType\":\"application/cbor\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"}],\"writeOnly\":false,\"observable\":false},\"isDisplayActive\":{\"type\":\"boolean\",\"description\":\"Determines if the display is currently on or off.\",\"forms\":[{\"href\":\"http://10.32.147.97:8080/smart-display/properties/isDisplayActive\",\"contentType\":\"application/json\",\"op\":[\"readproperty\",\"writeproperty\"]},{\"href\":\"http://10.32.147.97:8080/smart-display/properties/isDisplayActive\",\"contentType\":\"application/cbor\",\"op\":[\"readproperty\",\"writeproperty\"]}],\"readOnly\":false,\"writeOnly\":false,\"observable\":false}},\"actions\":{\"updateDisplay\":{\"description\":\"Updates the message shown on smart display.\",\"input\":{\"type\":\"string\",\"description\":\"The message to display.\"},\"forms\":[{\"href\":\"http://10.32.147.97:8080/smart-display/actions/updateDisplay\",\"contentType\":\"application/json\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"},{\"href\":\"http://10.32.147.97:8080/smart-display/actions/updateDisplay\",\"contentType\":\"application/cbor\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"}],\"safe\":false,\"idempotent\":false},\"showAlert\":{\"description\":\"Displays an alert message on the screen.\",\"input\":{\"type\":\"string\",\"description\":\"The alert message to display.\"},\"forms\":[{\"href\":\"http://10.32.147.97:8080/smart-display/actions/showAlert\",\"contentType\":\"application/json\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"},{\"href\":\"http://10.32.147.97:8080/smart-display/actions/showAlert\",\"contentType\":\"application/cbor\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"}],\"safe\":false,\"idempotent\":false},\"clearDisplay\":{\"description\":\"Clears all information from the screen.\",\"forms\":[{\"href\":\"http://10.32.147.97:8080/smart-display/actions/clearDisplay\",\"contentType\":\"application/json\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"},{\"href\":\"http://10.32.147.97:8080/smart-display/actions/clearDisplay\",\"contentType\":\"application/cbor\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"}],\"safe\":false,\"idempotent\":false}},\"events\":{\"displayUpdated\":{\"description\":\"Triggered when the displayed message is updated.\",\"data\":{\"type\":\"string\"},\"forms\":[{\"href\":\"http://10.32.147.97:8080/smart-display/events/displayUpdated\",\"contentType\":\"application/json\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]},{\"href\":\"http://10.32.147.97:8080/smart-display/events/displayUpdated\",\"contentType\":\"application/cbor\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]}]},\"alertDisplayed\":{\"description\":\"Triggered when an alert message is displayed.\",\"data\":{\"type\":\"string\"},\"forms\":[{\"href\":\"http://10.32.147.97:8080/smart-display/events/alertDisplayed\",\"contentType\":\"application/json\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]},{\"href\":\"http://10.32.147.97:8080/smart-display/events/alertDisplayed\",\"contentType\":\"application/cbor\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]}]},\"displayCleared\":{\"description\":\"Triggered when the display is cleared.\",\"forms\":[{\"href\":\"http://10.32.147.97:8080/smart-display/events/displayCleared\",\"contentType\":\"application/json\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]},{\"href\":\"http://10.32.147.97:8080/smart-display/events/displayCleared\",\"contentType\":\"application/cbor\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]}]}},\"id\":\"urn:uuid:fc14185f-8385-4abf-b9ab-11a5599d5769\",\"description\":\"A smart display for display messages and related alerts.\",\"support\":\"\",\"forms\":[{\"href\":\"http://10.32.147.97:8080/smart-display/properties\",\"contentType\":\"application/json\",\"op\":[\"readallproperties\",\"readmultipleproperties\",\"writeallproperties\",\"writemultipleproperties\"]},{\"href\":\"http://10.32.147.97:8080/smart-display/properties\",\"contentType\":\"application/cbor\",\"op\":[\"readallproperties\",\"readmultipleproperties\",\"writeallproperties\",\"writemultipleproperties\"]}]}",
+        "http": true,
+        "ws": false,
+        "coap": false,
+        "mqtt": false,
+        "opcua": false,
+        "modbus": false,
+        "basicAuth": false,
+        "username": "",
+        "password": ""
+    }
+]

@@ -1,0 +1,380 @@
+{
+    "@context": [
+      "https://www.w3.org/2019/wot/td/v1",
+      "https://www.w3.org/2019/wot/security/v1"
+    ],
+    "id": "urn:uuid:a8346f72-9ed2-4b5c-8af2-88d7a2d2c991",
+    "title": "Roadside Air Quality Sensor",
+    "description": "Environmental sensor unit that monitors air quality parameters at roadside locations for smart city traffic management",
+    "version": {
+      "instance": "1.0.0"
+    },
+    "securityDefinitions": {
+      "bearer_sc": {
+        "scheme": "bearer",
+        "format": "jwt",
+        "alg": "ES256",
+        "description": "JWT-based authentication using ES256 algorithm"
+      },
+      "apikey_sc": {
+        "scheme": "apikey",
+        "in": "header",
+        "name": "X-API-Key"
+      }
+    },
+    "security": ["bearer_sc"],
+    "properties": {
+      "deviceStatus": {
+        "title": "Device Status",
+        "description": "Current operational status of the air quality sensor",
+        "type": "string",
+        "enum": ["online", "offline", "maintenance", "calibrating", "error"],
+        "readOnly": true,
+        "observable": true,
+        "forms": [{
+          "href": "https://smartcity.example.com/sensors/airquality/{id}/status",
+          "contentType": "application/json",
+          "op": ["readproperty"]
+        }]
+      },
+      "batteryLevel": {
+        "title": "Battery Level",
+        "description": "Current battery level percentage for solar-powered units",
+        "type": "number",
+        "minimum": 0,
+        "maximum": 100,
+        "unit": "percent",
+        "readOnly": true,
+        "observable": true,
+        "forms": [{
+          "href": "https://smartcity.example.com/sensors/airquality/{id}/battery",
+          "contentType": "application/json",
+          "op": ["readproperty"]
+        }]
+      },
+      "location": {
+        "title": "Sensor Location",
+        "description": "Geographic coordinates and street information of sensor installation",
+        "type": "object",
+        "properties": {
+          "latitude": {"type": "number"},
+          "longitude": {"type": "number"},
+          "altitude": {"type": "number", "unit": "meter"},
+          "streetName": {"type": "string"},
+          "crossStreet": {"type": "string"},
+          "installationHeight": {"type": "number", "unit": "meter"}
+        },
+        "readOnly": true,
+        "forms": [{
+          "href": "https://smartcity.example.com/sensors/airquality/{id}/location",
+          "contentType": "application/json",
+          "op": ["readproperty"]
+        }]
+      },
+      "airQualityIndex": {
+        "title": "Air Quality Index",
+        "description": "Calculated AQI based on multiple pollutant measurements",
+        "type": "object",
+        "properties": {
+          "value": {"type": "number"},
+          "category": {"type": "string", "enum": ["Good", "Moderate", "Unhealthy for Sensitive Groups", "Unhealthy", "Very Unhealthy", "Hazardous"]},
+          "timestamp": {"type": "string", "format": "date-time"}
+        },
+        "readOnly": true,
+        "observable": true,
+        "forms": [{
+          "href": "https://smartcity.example.com/sensors/airquality/{id}/aqi",
+          "contentType": "application/json",
+          "op": ["readproperty"]
+        }]
+      },
+      "measurements": {
+        "title": "Pollutant Measurements",
+        "description": "Current readings of individual air pollutants",
+        "type": "object",
+        "properties": {
+          "pm25": {"type": "number", "unit": "μg/m³"},
+          "pm10": {"type": "number", "unit": "μg/m³"},
+          "no2": {"type": "number", "unit": "ppb"},
+          "co": {"type": "number", "unit": "ppm"},
+          "o3": {"type": "number", "unit": "ppb"},
+          "so2": {"type": "number", "unit": "ppb"},
+          "temperature": {"type": "number", "unit": "celsius"},
+          "humidity": {"type": "number", "unit": "percent"},
+          "pressure": {"type": "number", "unit": "hPa"},
+          "timestamp": {"type": "string", "format": "date-time"}
+        },
+        "readOnly": true,
+        "observable": true,
+        "forms": [{
+          "href": "https://smartcity.example.com/sensors/airquality/{id}/measurements",
+          "contentType": "application/json",
+          "op": ["readproperty"]
+        }]
+      },
+      "trafficData": {
+        "title": "Traffic Data",
+        "description": "Current traffic information near the sensor location",
+        "type": "object",
+        "properties": {
+          "vehicleCount": {"type": "number"},
+          "averageSpeed": {"type": "number", "unit": "km/h"},
+          "congestionLevel": {"type": "string", "enum": ["none", "light", "moderate", "heavy", "gridlock"]},
+          "timestamp": {"type": "string", "format": "date-time"}
+        },
+        "readOnly": true,
+        "observable": true,
+        "forms": [{
+          "href": "https://smartcity.example.com/sensors/airquality/{id}/traffic",
+          "contentType": "application/json",
+          "op": ["readproperty"]
+        }]
+      },
+      "sampleRate": {
+        "title": "Sample Rate",
+        "description": "Frequency at which the sensor takes measurements",
+        "type": "number",
+        "unit": "second",
+        "minimum": 10,
+        "maximum": 3600,
+        "forms": [{
+          "href": "https://smartcity.example.com/sensors/airquality/{id}/settings/samplerate",
+          "contentType": "application/json",
+          "op": ["readproperty", "writeproperty"]
+        }]
+      },
+      "alertThresholds": {
+        "title": "Alert Thresholds",
+        "description": "Threshold values for triggering air quality alerts",
+        "type": "object",
+        "properties": {
+          "pm25": {"type": "number", "unit": "μg/m³"},
+          "pm10": {"type": "number", "unit": "μg/m³"},
+          "no2": {"type": "number", "unit": "ppb"},
+          "co": {"type": "number", "unit": "ppm"},
+          "o3": {"type": "number", "unit": "ppb"},
+          "so2": {"type": "number", "unit": "ppb"}
+        },
+        "forms": [{
+          "href": "https://smartcity.example.com/sensors/airquality/{id}/settings/thresholds",
+          "contentType": "application/json",
+          "op": ["readproperty", "writeproperty"]
+        }]
+      }
+    },
+    "actions": {
+      "calibrate": {
+        "title": "Calibrate Sensor",
+        "description": "Initiate calibration procedure for the sensor",
+        "input": {
+          "type": "object",
+          "properties": {
+            "calibrationType": {"type": "string", "enum": ["zero", "span", "full"]},
+            "operatorId": {"type": "string"}
+          },
+          "required": ["calibrationType", "operatorId"]
+        },
+        "output": {
+          "type": "object",
+          "properties": {
+            "calibrationId": {"type": "string"},
+            "status": {"type": "string"},
+            "estimatedCompletionTime": {"type": "string", "format": "date-time"}
+          }
+        },
+        "forms": [{
+          "href": "https://smartcity.example.com/sensors/airquality/{id}/actions/calibrate",
+          "contentType": "application/json",
+          "op": "invokeaction"
+        }]
+      },
+      "resetDevice": {
+        "title": "Reset Device",
+        "description": "Perform a reset of the sensor device",
+        "input": {
+          "type": "object",
+          "properties": {
+            "resetType": {"type": "string", "enum": ["soft", "hard", "factory"]},
+            "authorizedBy": {"type": "string"}
+          },
+          "required": ["resetType", "authorizedBy"]
+        },
+        "forms": [{
+          "href": "https://smartcity.example.com/sensors/airquality/{id}/actions/reset",
+          "contentType": "application/json",
+          "op": "invokeaction",
+          "security": ["bearer_sc", "apikey_sc"]
+        }]
+      },
+      "updateFirmware": {
+        "title": "Update Firmware",
+        "description": "Update the sensor firmware to a specified version",
+        "input": {
+          "type": "object",
+          "properties": {
+            "firmwareVersion": {"type": "string"},
+            "updateSchedule": {"type": "string", "enum": ["immediate", "offpeak", "scheduled"]},
+            "scheduledTime": {"type": "string", "format": "date-time"}
+          },
+          "required": ["firmwareVersion", "updateSchedule"]
+        },
+        "output": {
+          "type": "object",
+          "properties": {
+            "updateId": {"type": "string"},
+            "status": {"type": "string"},
+            "scheduledTime": {"type": "string", "format": "date-time"}
+          }
+        },
+        "forms": [{
+          "href": "https://smartcity.example.com/sensors/airquality/{id}/actions/update",
+          "contentType": "application/json",
+          "op": "invokeaction",
+          "security": ["bearer_sc", "apikey_sc"]
+        }]
+      },
+      "requestDataReport": {
+        "title": "Request Data Report",
+        "description": "Generate a report of historical air quality data",
+        "input": {
+          "type": "object",
+          "properties": {
+            "startTime": {"type": "string", "format": "date-time"},
+            "endTime": {"type": "string", "format": "date-time"},
+            "parameters": {"type": "array", "items": {"type": "string"}},
+            "resolution": {"type": "string", "enum": ["minute", "hour", "day"]}
+          },
+          "required": ["startTime", "endTime", "parameters"]
+        },
+        "output": {
+          "type": "object",
+          "properties": {
+            "reportId": {"type": "string"},
+            "downloadUrl": {"type": "string", "format": "uri"},
+            "expiryTime": {"type": "string", "format": "date-time"}
+          }
+        },
+        "forms": [{
+          "href": "https://smartcity.example.com/sensors/airquality/{id}/actions/report",
+          "contentType": "application/json",
+          "op": "invokeaction"
+        }]
+      }
+    },
+    "events": {
+      "airQualityAlert": {
+        "title": "Air Quality Alert",
+        "description": "Event emitted when air quality parameters exceed defined thresholds",
+        "data": {
+          "type": "object",
+          "properties": {
+            "alertId": {"type": "string"},
+            "timestamp": {"type": "string", "format": "date-time"},
+            "parameter": {"type": "string"},
+            "value": {"type": "number"},
+            "threshold": {"type": "number"},
+            "aqi": {"type": "number"},
+            "category": {"type": "string"},
+            "trafficCondition": {"type": "string"}
+          }
+        },
+        "forms": [{
+          "href": "wss://smartcity.example.com/sensors/airquality/{id}/events/alerts",
+          "contentType": "application/json",
+          "subprotocol": "websocket",
+          "op": "subscribeevent"
+        }, {
+          "href": "https://smartcity.example.com/sensors/airquality/{id}/events/alerts",
+          "contentType": "application/json",
+          "op": "subscribeevent",
+          "subprotocol": "longpoll"
+        }]
+      },
+      "statusUpdate": {
+        "title": "Status Update",
+        "description": "Event emitted when sensor status changes",
+        "data": {
+          "type": "object",
+          "properties": {
+            "previousStatus": {"type": "string"},
+            "currentStatus": {"type": "string"},
+            "timestamp": {"type": "string", "format": "date-time"},
+            "reason": {"type": "string"}
+          }
+        },
+        "forms": [{
+          "href": "wss://smartcity.example.com/sensors/airquality/{id}/events/status",
+          "contentType": "application/json",
+          "subprotocol": "websocket",
+          "op": "subscribeevent"
+        }]
+      },
+      "healthReport": {
+        "title": "Health Report",
+        "description": "Periodic event containing sensor health information",
+        "data": {
+          "type": "object",
+          "properties": {
+            "timestamp": {"type": "string", "format": "date-time"},
+            "batteryLevel": {"type": "number"},
+            "sensorCondition": {"type": "string"},
+            "lastCalibration": {"type": "string", "format": "date-time"},
+            "uptime": {"type": "number", "unit": "second"},
+            "temperatureInternal": {"type": "number", "unit": "celsius"},
+            "maintenanceRequired": {"type": "boolean"},
+            "diagnostics": {"type": "object"}
+          }
+        },
+        "forms": [{
+          "href": "wss://smartcity.example.com/sensors/airquality/{id}/events/health",
+          "contentType": "application/json",
+          "subprotocol": "websocket",
+          "op": "subscribeevent"
+        }]
+      },
+      "trafficCorrelationEvent": {
+        "title": "Traffic Correlation Event",
+        "description": "Event indicating correlation between traffic patterns and air quality",
+        "data": {
+          "type": "object",
+          "properties": {
+            "timestamp": {"type": "string", "format": "date-time"},
+            "trafficIncrease": {"type": "number", "unit": "percent"},
+            "pollutantIncrease": {
+              "type": "object",
+              "properties": {
+                "pm25": {"type": "number", "unit": "percent"},
+                "no2": {"type": "number", "unit": "percent"},
+                "co": {"type": "number", "unit": "percent"}
+              }
+            },
+            "correlationStrength": {"type": "number", "minimum": 0, "maximum": 1},
+            "suggestedAction": {"type": "string"}
+          }
+        },
+        "forms": [{
+          "href": "wss://smartcity.example.com/sensors/airquality/{id}/events/correlation",
+          "contentType": "application/json",
+          "subprotocol": "websocket",
+          "op": "subscribeevent"
+        }]
+      }
+    },
+    "links": [
+      {
+        "rel": "service-doc",
+        "href": "https://smartcity.example.com/docs/sensors/airquality",
+        "type": "text/html"
+      },
+      {
+        "rel": "data-schema",
+        "href": "https://smartcity.example.com/schemas/airquality-sensor.json",
+        "type": "application/schema+json"
+      },
+      {
+        "rel": "traffic-management-system",
+        "href": "https://smartcity.example.com/systems/traffic",
+        "type": "application/td+json"
+      }
+    ]
+}

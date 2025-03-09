@@ -1,0 +1,51 @@
+{
+    "@context": "https://www.w3.org/2019/wot/td/v1",
+    "id": "urn:uuid:patient-monitoring-device",
+    "title": "Patient Monitoring Device",
+    "description": "Advanced medical device for continuous patient health tracking",
+    "properties": {
+        "heartRate": {
+            "type": "number",
+            "unit": "bpm",
+            "readOnly": true,
+            "description": "Current patient heart rate"
+        },
+        "bloodOxygenLevel": {
+            "type": "number",
+            "unit": "percentage",
+            "readOnly": true,
+            "description": "Current blood oxygen saturation"
+        }
+    },
+    "actions": {
+        "generateHealthReport": {
+            "description": "Create a comprehensive health status report",
+            "input": {
+                "type": "object",
+                "properties": {
+                    "reportType": {"type": "string", "enum": ["brief", "detailed"]},
+                    "timeFrame": {"type": "string"}
+                }
+            },
+            "output": {
+                "type": "object",
+                "properties": {
+                    "reportUrl": {"type": "string"},
+                    "keyMetrics": {"type": "object"}
+                }
+            }
+        }
+    },
+    "events": {
+        "vitalSignAlert": {
+            "description": "Triggered when patient's vital signs are outside normal ranges",
+            "data": {
+                "type": "object",
+                "properties": {
+                    "alertType": {"type": "string"},
+                    "severityLevel": {"type": "number"}
+                }
+            }
+        }
+    }
+}

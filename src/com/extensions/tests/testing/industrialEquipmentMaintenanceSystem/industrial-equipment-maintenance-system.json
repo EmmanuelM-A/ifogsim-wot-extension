@@ -1,0 +1,872 @@
+[
+    {
+        "id": "2ccb94c7bfe4986f",
+        "type": "tab",
+        "label": "Industrial Equipment Maintenance System",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "bd45878071c2c8e8",
+        "type": "read-property",
+        "z": "2ccb94c7bfe4986f",
+        "name": "",
+        "topic": "environmental-monitoring",
+        "thing": "097e18567aff7548",
+        "property": "temperature",
+        "uriVariables": "",
+        "observe": false,
+        "x": 760,
+        "y": 840,
+        "wires": [
+            [
+                "5ff9172e6498907c"
+            ]
+        ]
+    },
+    {
+        "id": "1cba9e8f9313b4d5",
+        "type": "comment",
+        "z": "2ccb94c7bfe4986f",
+        "name": "Monitors and analyses the vibrations of the equipment",
+        "info": "",
+        "x": 460,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "04b2419fc43a26b2",
+        "type": "function",
+        "z": "2ccb94c7bfe4986f",
+        "name": "Some Processing",
+        "func": "\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 930,
+        "y": 260,
+        "wires": [
+            [
+                "c01d4a3f1f4bc3bb",
+                "d293be906aa604f6"
+            ]
+        ]
+    },
+    {
+        "id": "306f879ce5878ac3",
+        "type": "comment",
+        "z": "2ccb94c7bfe4986f",
+        "name": "Monitors the enviornmental status of the equipment",
+        "info": "",
+        "x": 450,
+        "y": 760,
+        "wires": []
+    },
+    {
+        "id": "d6746f51887f4b5d",
+        "type": "read-property",
+        "z": "2ccb94c7bfe4986f",
+        "name": "",
+        "topic": "environmental-monitoring",
+        "thing": "134dc0be145fdc38",
+
+        "uriVariables": "",
+        "observe": false,
+        "x": 770,
+        "y": 980,
+        "wires": [
+            [
+                "938942b5e9510335"
+            ]
+        ]
+    },
+    {
+        "id": "5ff9172e6498907c",
+        "type": "function",
+        "z": "2ccb94c7bfe4986f",
+        "name": "Some Processing",
+        "func": "\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1130,
+        "y": 840,
+        "wires": [
+            [
+                "9130cc025ce2f3fa",
+                "7ad677e270333238"
+            ]
+        ]
+    },
+    {
+        "id": "938942b5e9510335",
+        "type": "function",
+        "z": "2ccb94c7bfe4986f",
+        "name": "Some Processing",
+        "func": "\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1130,
+        "y": 980,
+        "wires": [
+            [
+                "2bf4a349e9025a8d",
+                "44240a18d910e42e"
+            ]
+        ]
+    },
+    {
+        "id": "c01d4a3f1f4bc3bb",
+        "type": "invoke-action",
+        "z": "2ccb94c7bfe4986f",
+        "name": "",
+        "topic": "predictive-ai-alerts",
+        "thing": "89d5a66f4a09fbd0",
+        "action": "generateComprehensiveReport",
+        "uriVariables": "",
+        "x": 1330,
+        "y": 260,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "47fa259e136e22ca",
+        "type": "invoke-action",
+        "z": "2ccb94c7bfe4986f",
+        "name": "",
+        "topic": "predictive-ai-alerts",
+        "thing": "bedd91e1b0c74093",
+        "action": "runDetection",
+        "uriVariables": "",
+        "x": 1420,
+        "y": 380,
+        "wires": [
+            [
+                "b3b0bc5d97464ecf"
+            ]
+        ]
+    },
+    {
+        "id": "777cc0de6d3d3ca1",
+        "type": "invoke-action",
+        "z": "2ccb94c7bfe4986f",
+        "name": "",
+        "topic": "predictive-ai-alerts",
+        "thing": "89d5a66f4a09fbd0",
+        "action": "generateComprehensiveReport",
+        "uriVariables": "",
+        "x": 2050,
+        "y": 380,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "6c46d9e29157310f",
+        "type": "invoke-action",
+        "z": "2ccb94c7bfe4986f",
+        "name": "",
+        "topic": "predictive-ai-alerts",
+        "thing": "3f735f51c277b97e",
+        "action": "scheduleInspection",
+        "uriVariables": "",
+        "x": 2020,
+        "y": 440,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "b3b0bc5d97464ecf",
+        "type": "function",
+        "z": "2ccb94c7bfe4986f",
+        "name": "Locate Issue",
+        "func": "\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1670,
+        "y": 380,
+        "wires": [
+            [
+                "777cc0de6d3d3ca1",
+                "6c46d9e29157310f",
+                "c0681bb24dedd5cd"
+            ]
+        ]
+    },
+    {
+        "id": "d293be906aa604f6",
+        "type": "switch",
+        "z": "2ccb94c7bfe4986f",
+        "name": "Exceeds Threshold",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "gt",
+                "v": "",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 1170,
+        "y": 380,
+        "wires": [
+            [
+                "47fa259e136e22ca"
+            ]
+        ]
+    },
+    {
+        "id": "e8b5df7455285ac6",
+        "type": "invoke-action",
+        "z": "2ccb94c7bfe4986f",
+        "name": "",
+        "topic": "predictive-ai-alerts",
+        "thing": "3f735f51c277b97e",
+        "action": "acknowledgeAlert",
+        "uriVariables": "",
+        "x": 2270,
+        "y": 520,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "c0681bb24dedd5cd",
+        "type": "function",
+        "z": "2ccb94c7bfe4986f",
+        "name": "Process Alert",
+        "func": "\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1990,
+        "y": 520,
+        "wires": [
+            [
+                "e8b5df7455285ac6"
+            ]
+        ]
+    },
+    {
+        "id": "377181132e535ead",
+        "type": "read-property",
+        "z": "2ccb94c7bfe4986f",
+        "name": "",
+        "topic": "vibration-analysis",
+        "thing": "dcf5de875c9dd019",
+        "property": "vibrationIntensity",
+        "uriVariables": "",
+        "observe": false,
+        "x": 380,
+        "y": 540,
+        "wires": [
+            [
+                "58d671c195a49443"
+            ]
+        ]
+    },
+    {
+        "id": "58d671c195a49443",
+        "type": "function",
+        "z": "2ccb94c7bfe4986f",
+        "name": "Some Processing",
+        "func": "\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 650,
+        "y": 540,
+        "wires": [
+            [
+                "cca806d8e8832003"
+            ]
+        ]
+    },
+    {
+        "id": "cca806d8e8832003",
+        "type": "invoke-action",
+        "z": "2ccb94c7bfe4986f",
+        "name": "",
+        "topic": "predictive-ai-alerts",
+        "thing": "89d5a66f4a09fbd0",
+        "action": "generateComprehensiveReport",
+        "uriVariables": "",
+        "x": 1050,
+        "y": 540,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "f92b3f0f16a0aabc",
+        "type": "subscribe-event",
+        "z": "2ccb94c7bfe4986f",
+        "name": "",
+        "topic": "predictive-ai-alerts",
+        "thing": "bedd91e1b0c74093",
+        "event": "faultDetected",
+        "x": 350,
+        "y": 260,
+        "wires": [
+            [
+                "47c496d6400819bb"
+            ]
+        ]
+    },
+    {
+        "id": "47c496d6400819bb",
+        "type": "read-property",
+        "z": "2ccb94c7bfe4986f",
+        "name": "",
+        "topic": "vibration-analysis",
+        "thing": "dcf5de875c9dd019",
+        "property": "vibrationIntensity",
+        "uriVariables": "",
+        "observe": false,
+        "x": 640,
+        "y": 260,
+        "wires": [
+            [
+                "04b2419fc43a26b2"
+            ]
+        ]
+    },
+    {
+        "id": "9130cc025ce2f3fa",
+        "type": "invoke-action",
+        "z": "2ccb94c7bfe4986f",
+        "name": "",
+        "topic": "predictive-ai-alerts",
+        "thing": "89d5a66f4a09fbd0",
+        "action": "generateComprehensiveReport",
+        "uriVariables": "",
+        "x": 1510,
+        "y": 840,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "064c893d7a4f7d84",
+        "type": "read-property",
+        "z": "2ccb94c7bfe4986f",
+        "name": "",
+        "topic": "predictive-ai-alerts",
+        "thing": "89d5a66f4a09fbd0",
+        "property": "resourceUtilizationSummary",
+        "uriVariables": "",
+        "observe": false,
+        "x": 1170,
+        "y": 1140,
+        "wires": [
+            [
+                "e8d99cc9536e72ce"
+            ]
+        ]
+    },
+    {
+        "id": "3c9eb5a7b9e4130a",
+        "type": "subscribe-event",
+        "z": "2ccb94c7bfe4986f",
+        "name": "",
+        "topic": "predictive-ai-alerts",
+        "thing": "3f735f51c277b97e",
+        "event": "newAlert",
+        "x": 340,
+        "y": 1400,
+        "wires": [
+            [
+                "c87b3c3ea32d19e9",
+                "47e7446e9ff16603"
+            ]
+        ]
+    },
+    {
+        "id": "d8adb71a1ad04c7d",
+        "type": "invoke-action",
+        "z": "2ccb94c7bfe4986f",
+        "name": "",
+        "topic": "predictive-ai-alerts",
+        "thing": "3f735f51c277b97e",
+        "action": "runDiagnostic",
+        "uriVariables": "",
+        "x": 920,
+        "y": 1400,
+        "wires": [
+            [
+                "a1d56fa2bf964270"
+            ]
+        ]
+    },
+    {
+        "id": "2bf4a349e9025a8d",
+        "type": "invoke-action",
+        "z": "2ccb94c7bfe4986f",
+        "name": "",
+        "topic": "predictive-ai-alerts",
+        "thing": "89d5a66f4a09fbd0",
+        "action": "generateComprehensiveReport",
+        "uriVariables": "",
+        "x": 1510,
+        "y": 980,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "98eceb9799996a67",
+        "type": "read-property",
+        "z": "2ccb94c7bfe4986f",
+        "name": "",
+        "topic": "predictive-ai-alerts",
+        "thing": "3f735f51c277b97e",
+        "property": "systemStatus",
+        "uriVariables": "",
+        "observe": true,
+        "x": 370,
+        "y": 1140,
+        "wires": [
+            [
+                "256c70f47b6fe287"
+            ]
+        ]
+    },
+    {
+        "id": "256c70f47b6fe287",
+        "type": "function",
+        "z": "2ccb94c7bfe4986f",
+        "name": "Some Processing - Verify Change",
+        "func": "\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 740,
+        "y": 1140,
+        "wires": [
+            [
+                "064c893d7a4f7d84",
+                "d6394e7036f32bcb"
+            ]
+        ]
+    },
+    {
+        "id": "d6394e7036f32bcb",
+        "type": "read-property",
+        "z": "2ccb94c7bfe4986f",
+        "name": "",
+        "topic": "predictive-ai-alerts",
+        "thing": "89d5a66f4a09fbd0",
+        "property": "systemHealthStatus",
+        "uriVariables": "",
+        "observe": false,
+        "x": 1170,
+        "y": 1220,
+        "wires": [
+            [
+                "a75c65c11a2babb9"
+            ]
+        ]
+    },
+    {
+        "id": "c87b3c3ea32d19e9",
+        "type": "function",
+        "z": "2ccb94c7bfe4986f",
+        "name": "Process Alert",
+        "func": "\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 630,
+        "y": 1400,
+        "wires": [
+            [
+                "d8adb71a1ad04c7d"
+            ]
+        ]
+    },
+    {
+        "id": "47e7446e9ff16603",
+        "type": "invoke-action",
+        "z": "2ccb94c7bfe4986f",
+        "name": "",
+        "topic": "predictive-ai-alerts",
+        "thing": "89d5a66f4a09fbd0",
+        "action": "generateComprehensiveReport",
+        "uriVariables": "",
+        "x": 710,
+        "y": 1480,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "7ad677e270333238",
+        "type": "switch",
+        "z": "2ccb94c7bfe4986f",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 1330,
+        "y": 920,
+        "wires": [
+            [
+                "fdf3078376858395"
+            ]
+        ]
+    },
+    {
+        "id": "fdf3078376858395",
+        "type": "invoke-action",
+        "z": "2ccb94c7bfe4986f",
+        "name": "",
+        "topic": "predictive-ai-alerts",
+        "thing": "bedd91e1b0c74093",
+        "action": "runDetection",
+        "uriVariables": "",
+        "x": 1540,
+        "y": 920,
+        "wires": [
+            [
+                "21099ddb51adaef6"
+            ]
+        ]
+    },
+    {
+        "id": "f100f58a51bdfb12",
+        "type": "invoke-action",
+        "z": "2ccb94c7bfe4986f",
+        "name": "",
+        "topic": "predictive-ai-alerts",
+        "thing": "3f735f51c277b97e",
+        "action": "scheduleInspection",
+        "uriVariables": "",
+        "x": 1500,
+        "y": 1400,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "a1d56fa2bf964270",
+        "type": "function",
+        "z": "2ccb94c7bfe4986f",
+        "name": "Some Processing",
+        "func": "\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1190,
+        "y": 1400,
+        "wires": [
+            [
+                "f100f58a51bdfb12"
+            ]
+        ]
+    },
+    {
+        "id": "e87049aa64c2587a",
+        "type": "comment",
+        "z": "2ccb94c7bfe4986f",
+        "name": "Runs when any type of alert is trigerred",
+        "info": "",
+        "x": 410,
+        "y": 1340,
+        "wires": []
+    },
+    {
+        "id": "21099ddb51adaef6",
+        "type": "function",
+        "z": "2ccb94c7bfe4986f",
+        "name": "Some Processing",
+        "func": "\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1870,
+        "y": 920,
+        "wires": [
+            [
+                "38ccbe068331139c"
+            ]
+        ]
+    },
+    {
+        "id": "38ccbe068331139c",
+        "type": "invoke-action",
+        "z": "2ccb94c7bfe4986f",
+        "name": "",
+        "topic": "predictive-ai-alerts",
+        "thing": "3f735f51c277b97e",
+        "action": "acknowledgeAlert",
+        "uriVariables": "",
+        "x": 2270,
+        "y": 920,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "44240a18d910e42e",
+        "type": "switch",
+        "z": "2ccb94c7bfe4986f",
+        "name": "",
+        "property": "payload",
+        "propertyType": "msg",
+        "rules": [
+            {
+                "t": "eq",
+                "v": "",
+                "vt": "str"
+            }
+        ],
+        "checkall": "true",
+        "repair": false,
+        "outputs": 1,
+        "x": 1330,
+        "y": 1060,
+        "wires": [
+            [
+                "8e8250dd3dc1085a"
+            ]
+        ]
+    },
+    {
+        "id": "8e8250dd3dc1085a",
+        "type": "invoke-action",
+        "z": "2ccb94c7bfe4986f",
+        "name": "",
+        "topic": "predictive-ai-alerts",
+        "thing": "bedd91e1b0c74093",
+        "action": "runDetection",
+        "uriVariables": "",
+        "x": 1540,
+        "y": 1060,
+        "wires": [
+            [
+                "50b0203ad05c4f41"
+            ]
+        ]
+    },
+    {
+        "id": "50b0203ad05c4f41",
+        "type": "function",
+        "z": "2ccb94c7bfe4986f",
+        "name": "Some Processing",
+        "func": "\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1870,
+        "y": 1060,
+        "wires": [
+            [
+                "32fe688e3f369e00"
+            ]
+        ]
+    },
+    {
+        "id": "32fe688e3f369e00",
+        "type": "invoke-action",
+        "z": "2ccb94c7bfe4986f",
+        "name": "",
+        "topic": "predictive-ai-alerts",
+        "thing": "3f735f51c277b97e",
+        "action": "acknowledgeAlert",
+        "uriVariables": "",
+        "x": 2270,
+        "y": 1060,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "e8d99cc9536e72ce",
+        "type": "invoke-action",
+        "z": "2ccb94c7bfe4986f",
+        "name": "",
+        "topic": "predictive-ai-alerts",
+        "thing": "89d5a66f4a09fbd0",
+        "action": "generateComprehensiveReport",
+        "uriVariables": "",
+        "x": 1650,
+        "y": 1140,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "a75c65c11a2babb9",
+        "type": "invoke-action",
+        "z": "2ccb94c7bfe4986f",
+        "name": "",
+        "topic": "predictive-ai-alerts",
+        "thing": "89d5a66f4a09fbd0",
+        "action": "generateComprehensiveReport",
+        "uriVariables": "",
+        "x": 1650,
+        "y": 1220,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "5039a005698d4e63",
+        "type": "read-property",
+        "z": "2ccb94c7bfe4986f",
+        "name": "",
+        "topic": "predictive-ai-alerts",
+        "thing": "3f735f51c277b97e",
+        "property": "systemStatus",
+        "uriVariables": "",
+        "observe": true,
+        "x": 370,
+        "y": 920,
+        "wires": [
+            [
+                "bd45878071c2c8e8",
+                "d6746f51887f4b5d"
+            ]
+        ]
+    },
+    {
+        "id": "097e18567aff7548",
+        "type": "consumed-thing",
+        "tdLink": "http://10.32.147.97:8080/temperature-sensor",
+        "td": "{\"@context\":[\"https://www.w3.org/2019/wot/td/v1\",{\"@language\":\"en\"}],\"@type\":\"Thing\",\"title\":\"Temperature Sensor\",\"securityDefinitions\":{\"nosec\":{\"scheme\":\"nosec\"}},\"security\":[\"nosec\"],\"properties\":{\"temperature\":{\"type\":\"number\",\"description\":\"The current temperature reading of the environemnt in celsius.\",\"readOnly\":true,\"forms\":[{\"href\":\"http://10.32.147.97:8080/temperature-sensor/properties/temperature\",\"contentType\":\"application/json\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"},{\"href\":\"http://10.32.147.97:8080/temperature-sensor/properties/temperature\",\"contentType\":\"application/cbor\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"}],\"writeOnly\":false,\"observable\":false},\"batteryLevel\":{\"type\":\"number\",\"description\":\"The battery level of the sensor as a percentage.\",\"readOnly\":true,\"forms\":[{\"href\":\"http://10.32.147.97:8080/temperature-sensor/properties/batteryLevel\",\"contentType\":\"application/json\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"},{\"href\":\"http://10.32.147.97:8080/temperature-sensor/properties/batteryLevel\",\"contentType\":\"application/cbor\",\"op\":[\"readproperty\"],\"htv:methodName\":\"GET\"}],\"writeOnly\":false,\"observable\":false},\"status\":{\"type\":\"string\",\"description\":\"The current status of the sensor (e.g. active, inactive, error).\",\"properties\":{\"active\":{\"type\":\"string\",\"description\":\"Means the sensor is on and is sending data as normal.\"},\"inactive\":{\"type\":\"string\",\"description\":\"Means the sensor is off.\"},\"error\":{\"type\":\"string\",\"description\":\"Means an error has occured within the sensor.\"}},\"forms\":[{\"href\":\"http://10.32.147.97:8080/temperature-sensor/properties/status\",\"contentType\":\"application/json\",\"op\":[\"readproperty\",\"writeproperty\"]},{\"href\":\"http://10.32.147.97:8080/temperature-sensor/properties/status\",\"contentType\":\"application/cbor\",\"op\":[\"readproperty\",\"writeproperty\"]}],\"readOnly\":false,\"writeOnly\":false,\"observable\":false}},\"actions\":{\"reset\":{\"description\":\"Resets the temperature sensor to its default state.\",\"forms\":[{\"href\":\"http://10.32.147.97:8080/temperature-sensor/actions/reset\",\"contentType\":\"application/json\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"},{\"href\":\"http://10.32.147.97:8080/temperature-sensor/actions/reset\",\"contentType\":\"application/cbor\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"}],\"safe\":false,\"idempotent\":false},\"calibrate\":{\"description\":\"Calibrates the temperature sensor.\",\"input\":{\"type\":\"object\",\"properties\":{\"calibrationValue\":{\"type\":\"number\",\"description\":\"Calibration offset value in Celsius.\"}},\"required\":[\"calibrationValue\"]},\"forms\":[{\"href\":\"http://10.32.147.97:8080/temperature-sensor/actions/calibrate\",\"contentType\":\"application/json\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"},{\"href\":\"http://10.32.147.97:8080/temperature-sensor/actions/calibrate\",\"contentType\":\"application/cbor\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"}],\"safe\":false,\"idempotent\":false},\"setThreshold\":{\"description\":\"Sets a temperature threshold for triggering the overheat event.\",\"input\":{\"type\":\"object\",\"properties\":{\"threshold\":{\"type\":\"number\",\"description\":\"Temperature threshold in celsius.\"}},\"required\":[\"threshold\"]},\"forms\":[{\"href\":\"http://10.32.147.97:8080/temperature-sensor/actions/setThreshold\",\"contentType\":\"application/json\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"},{\"href\":\"http://10.32.147.97:8080/temperature-sensor/actions/setThreshold\",\"contentType\":\"application/cbor\",\"op\":[\"invokeaction\"],\"htv:methodName\":\"POST\"}],\"safe\":false,\"idempotent\":false}},\"events\":{\"overheat\":{\"description\":\"Triggered when the temperature exceeds the set threshold.\",\"data\":{\"type\":\"number\"},\"forms\":[{\"href\":\"http://10.32.147.97:8080/temperature-sensor/events/overheat\",\"contentType\":\"application/json\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]},{\"href\":\"http://10.32.147.97:8080/temperature-sensor/events/overheat\",\"contentType\":\"application/cbor\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]}]},\"lowBattery\":{\"description\":\"Triggered when the battery level falls below 10%.\",\"data\":{\"type\":\"number\"},\"forms\":[{\"href\":\"http://10.32.147.97:8080/temperature-sensor/events/lowBattery\",\"contentType\":\"application/json\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]},{\"href\":\"http://10.32.147.97:8080/temperature-sensor/events/lowBattery\",\"contentType\":\"application/cbor\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]}]},\"statusChange\":{\"description\":\"Triggered when the sensor's status changes.\",\"data\":{\"type\":\"string\"},\"forms\":[{\"href\":\"http://10.32.147.97:8080/temperature-sensor/events/statusChange\",\"contentType\":\"application/json\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]},{\"href\":\"http://10.32.147.97:8080/temperature-sensor/events/statusChange\",\"contentType\":\"application/cbor\",\"subprotocol\":\"longpoll\",\"op\":[\"subscribeevent\",\"unsubscribeevent\"]}]}},\"id\":\"urn:uuid:3b47980f-f83a-4df4-bf6c-3d68f8e34f19\",\"description\":\"A temperature sensor that provides readings, supports calibration, and monitors environmental conditions.\",\"support\":\"\",\"forms\":[{\"href\":\"http://10.32.147.97:8080/temperature-sensor/properties\",\"contentType\":\"application/json\",\"op\":[\"readallproperties\",\"readmultipleproperties\",\"writeallproperties\",\"writemultipleproperties\"]},{\"href\":\"http://10.32.147.97:8080/temperature-sensor/properties\",\"contentType\":\"application/cbor\",\"op\":[\"readallproperties\",\"readmultipleproperties\",\"writeallproperties\",\"writemultipleproperties\"]}]}",
+        "http": true,
+        "ws": false,
+        "coap": false,
+        "mqtt": false,
+        "opcua": false,
+        "modbus": false,
+        "basicAuth": false,
+        "username": "",
+        "password": ""
+    },
+    {
+        "id": "134dc0be145fdc38",
+        "type": "consumed-thing",
+        "tdLink": "",
+        "td": "{     \"@context\": \"https://www.w3.org/2019/wot/td/v1\",     \"id\": \"urn:uuid:humidity-sensor\",     \"title\": \"Humidity Sensor\",     \"description\": \"Advanced environmental monitoring device for tracking humidity levels\",     \"properties\": {         \"currentHumidity\": {             \"type\": \"number\",             \"unit\": \"percentage\",             \"readOnly\": true,             \"description\": \"Current relative humidity percentage\"         },         \"temperatureCorrelation\": {             \"type\": \"number\",             \"unit\": \"celsius\",             \"readOnly\": true,             \"description\": \"Correlated temperature reading\"         },         \"humidityTrend\": {             \"type\": \"string\",             \"readOnly\": true,             \"description\": \"Current humidity trend (rising, falling, stable)\",             \"enum\": [\"rising\", \"falling\", \"stable\"]         }     },     \"actions\": {         \"calibrateSensor\": {             \"description\": \"Perform sensor calibration to ensure accuracy\",             \"input\": {                 \"type\": \"object\",                 \"properties\": {                     \"calibrationEnvironment\": {                         \"type\": \"string\",                         \"enum\": [\"standard\", \"controlled\", \"field\"]                     },                     \"referenceHumidity\": {\"type\": \"number\"}                 }             },             \"output\": {                 \"type\": \"object\",                 \"properties\": {                     \"calibrationStatus\": {\"type\": \"string\"},                     \"accuracyImprovement\": {\"type\": \"number\"}                 }             }         },         \"setAlertThresholds\": {             \"description\": \"Configure humidity level alert parameters\",             \"input\": {                 \"type\": \"object\",                 \"properties\": {                     \"lowHumidityThreshold\": {\"type\": \"number\"},                     \"highHumidityThreshold\": {\"type\": \"number\"},                     \"durationBeforeAlert\": {\"type\": \"number\", \"unit\": \"minutes\"}                 }             },             \"output\": {                 \"type\": \"object\",                 \"properties\": {                     \"thresholdConfigId\": {\"type\": \"string\"},                     \"status\": {\"type\": \"string\"}                 }             }         }     },     \"events\": {         \"humidityLevelAlert\": {             \"description\": \"Triggered when humidity levels exceed configured thresholds\",             \"data\": {                 \"type\": \"object\",                 \"properties\": {                     \"currentHumidity\": {\"type\": \"number\"},                     \"alertType\": {                         \"type\": \"string\",                         \"enum\": [\"low\", \"high\"]                     },                     \"recommendedAction\": {\"type\": \"string\"}                 }             }         },         \"sensorHealthCheck\": {             \"description\": \"Periodic event reporting sensor operational status\",             \"data\": {                 \"type\": \"object\",                 \"properties\": {                     \"batteryLevel\": {\"type\": \"number\", \"unit\": \"percentage\"},                     \"signalStrength\": {\"type\": \"number\"},                     \"lastCalibrationDate\": {\"type\": \"string\", \"format\": \"date\"}                 }             }         }     } }",
+        "http": false,
+        "ws": false,
+        "coap": false,
+        "mqtt": false,
+        "opcua": false,
+        "modbus": false,
+        "basicAuth": false,
+        "username": "",
+        "password": ""
+    },
+    {
+        "id": "89d5a66f4a09fbd0",
+        "type": "consumed-thing",
+        "tdLink": "",
+        "td": "{     \"@context\": \"https://www.w3.org/2019/wot/td/v1\",     \"id\": \"urn:uuid:cloud-dashboard\",     \"title\": \"Cloud Dashboard\",     \"description\": \"Comprehensive visualization and management interface for cloud resources\",     \"properties\": {         \"systemHealthStatus\": {             \"type\": \"string\",             \"readOnly\": true,             \"description\": \"Overall system health and status\"         },         \"resourceUtilizationSummary\": {             \"type\": \"object\",             \"readOnly\": true,             \"description\": \"Aggregate resource utilization across cloud infrastructure\"         }     },     \"actions\": {         \"generateComprehensiveReport\": {             \"description\": \"Create detailed system performance and resource report\",             \"input\": {                 \"type\": \"object\",                 \"properties\": {                     \"reportType\": {\"type\": \"string\", \"enum\": [\"brief\", \"detailed\"]},                     \"timeFrame\": {\"type\": \"string\", \"enum\": [\"daily\", \"weekly\", \"monthly\"]}                 }             },             \"output\": {                 \"type\": \"object\",                 \"properties\": {                     \"reportUrl\": {\"type\": \"string\"},                     \"keyInsights\": {\"type\": \"object\"}                 }             }         }     },     \"events\": {         \"criticalSystemEvent\": {             \"description\": \"Triggered during significant system-wide events\",             \"data\": {                 \"type\": \"object\",                 \"properties\": {                     \"eventType\": {\"type\": \"string\"},                     \"severityLevel\": {\"type\": \"number\"}                 }             }         }     } }",
+        "http": false,
+        "ws": false,
+        "coap": false,
+        "mqtt": false,
+        "opcua": false,
+        "modbus": false,
+        "basicAuth": false,
+        "username": "",
+        "password": ""
+    },
+    {
+        "id": "bedd91e1b0c74093",
+        "type": "consumed-thing",
+        "tdLink": "",
+        "td": "{     \"@context\": \"https://www.w3.org/2019/wot/td/v1\",     \"id\": \"urn:uuid:ai-fault-detection-model\",     \"title\": \"AI-Based Fault Detection Model\",     \"description\": \"An AI-powered system for detecting potential faults in industrial machinery\",     \"properties\": {         \"detectionStatus\": {             \"type\": \"string\",             \"readOnly\": true,             \"description\": \"Current status of fault detection\"         },         \"confidenceScore\": {             \"type\": \"number\",             \"readOnly\": true,             \"description\": \"Confidence of fault detection model\"         }     },     \"actions\": {         \"runDetection\": {             \"description\": \"Trigger a new fault detection scan\",             \"input\": {                 \"type\": \"object\",                 \"properties\": {                     \"machineId\": {\"type\": \"string\"},                     \"scanType\": {\"type\": \"string\"}                 }             },             \"output\": {                 \"type\": \"object\",                 \"properties\": {                     \"result\": {\"type\": \"string\"},                     \"faultProbability\": {\"type\": \"number\"}                 }             }         }     },     \"events\": {         \"faultDetected\": {             \"description\": \"Triggered when a potential fault is identified\",             \"data\": {                 \"type\": \"object\",                 \"properties\": {                     \"machineId\": {\"type\": \"string\"},                     \"severity\": {\"type\": \"string\"},                     \"description\": {\"type\": \"string\"}                 }             }         }     } }",
+        "http": false,
+        "ws": false,
+        "coap": false,
+        "mqtt": false,
+        "opcua": false,
+        "modbus": false,
+        "basicAuth": false,
+        "username": "",
+        "password": ""
+    },
+    {
+        "id": "3f735f51c277b97e",
+        "type": "consumed-thing",
+        "tdLink": "",
+        "td": "{   \"@context\": [     \"https://www.w3.org/2019/wot/td/v1\",     \"https://www.w3.org/2019/wot/security/v1\"   ],   \"id\": \"urn:uuid:6def3f42-c763-4bd9-a915-dfb4f4f16161\",   \"title\": \"Maintenance Alert System\",   \"description\": \"A system that monitors equipment status and generates maintenance alerts\",   \"securityDefinitions\": {     \"basic_sc\": {       \"scheme\": \"basic\",       \"in\": \"header\"     },     \"oauth2_sc\": {       \"scheme\": \"oauth2\",       \"flow\": \"client_credentials\",       \"authorization\": \"https://auth.example.com/token\",       \"scopes\": [\"read:alerts\", \"write:alerts\", \"read:status\"]     }   },   \"security\": [\"oauth2_sc\"],   \"properties\": {     \"systemStatus\": {       \"title\": \"System Status\",       \"description\": \"Current operational status of the maintenance alert system\",       \"type\": \"string\",       \"enum\": [\"online\", \"offline\", \"maintenance\", \"degraded\"],       \"readOnly\": true,       \"observable\": true,       \"forms\": [{         \"href\": \"https://api.example.com/maintenance-system/status\",         \"op\": [\"readproperty\"],         \"contentType\": \"application/json\",         \"security\": [\"oauth2_sc\"]       }]     },     \"currentAlerts\": {       \"title\": \"Current Alerts\",       \"description\": \"List of active maintenance alerts\",       \"type\": \"array\",       \"items\": {         \"type\": \"object\",         \"properties\": {           \"id\": {\"type\": \"string\"},           \"severity\": {\"type\": \"string\", \"enum\": [\"low\", \"medium\", \"high\", \"critical\"]},           \"timestamp\": {\"type\": \"string\", \"format\": \"date-time\"},           \"equipmentId\": {\"type\": \"string\"},           \"description\": {\"type\": \"string\"}         }       },       \"readOnly\": true,       \"observable\": true,       \"forms\": [{         \"href\": \"https://api.example.com/maintenance-system/alerts/current\",         \"op\": [\"readproperty\"],         \"contentType\": \"application/json\"       }]     },     \"alertThreshold\": {       \"title\": \"Alert Threshold\",       \"description\": \"Threshold settings for triggering maintenance alerts\",       \"type\": \"object\",       \"properties\": {         \"temperature\": {\"type\": \"number\", \"unit\": \"celsius\"},         \"vibration\": {\"type\": \"number\", \"unit\": \"mm/s\"},         \"noise\": {\"type\": \"number\", \"unit\": \"dB\"},         \"pressure\": {\"type\": \"number\", \"unit\": \"kPa\"}       },       \"forms\": [{         \"href\": \"https://api.example.com/maintenance-system/settings/thresholds\",         \"op\": [\"readproperty\", \"writeproperty\"],         \"contentType\": \"application/json\"       }]     }   },   \"actions\": {     \"acknowledgeAlert\": {       \"title\": \"Acknowledge Alert\",       \"description\": \"Acknowledge a specific maintenance alert\",       \"input\": {         \"type\": \"object\",         \"properties\": {           \"alertId\": {\"type\": \"string\"},           \"acknowledgedBy\": {\"type\": \"string\"},           \"notes\": {\"type\": \"string\"}         },         \"required\": [\"alertId\", \"acknowledgedBy\"]       },       \"forms\": [{         \"href\": \"https://api.example.com/maintenance-system/alerts/acknowledge\",         \"contentType\": \"application/json\",         \"op\": \"invokeaction\"       }]     },     \"scheduleInspection\": {       \"title\": \"Schedule Inspection\",       \"description\": \"Schedule a maintenance inspection for equipment\",       \"input\": {         \"type\": \"object\",         \"properties\": {           \"equipmentId\": {\"type\": \"string\"},           \"scheduledDate\": {\"type\": \"string\", \"format\": \"date-time\"},           \"priority\": {\"type\": \"string\", \"enum\": [\"routine\", \"urgent\", \"emergency\"]},           \"assignedTo\": {\"type\": \"string\"},           \"notes\": {\"type\": \"string\"}         },         \"required\": [\"equipmentId\", \"scheduledDate\", \"priority\"]       },       \"forms\": [{         \"href\": \"https://api.example.com/maintenance-system/inspections/schedule\",         \"contentType\": \"application/json\",         \"op\": \"invokeaction\"       }]     },     \"runDiagnostic\": {       \"title\": \"Run Diagnostic\",       \"description\": \"Run a diagnostic test on specific equipment\",       \"input\": {         \"type\": \"object\",         \"properties\": {           \"equipmentId\": {\"type\": \"string\"},           \"diagnosticLevel\": {\"type\": \"string\", \"enum\": [\"basic\", \"comprehensive\", \"detailed\"]},           \"components\": {\"type\": \"array\", \"items\": {\"type\": \"string\"}}         },         \"required\": [\"equipmentId\", \"diagnosticLevel\"]       },       \"output\": {         \"type\": \"object\",         \"properties\": {           \"diagnosticId\": {\"type\": \"string\"},           \"status\": {\"type\": \"string\"},           \"estimatedCompletionTime\": {\"type\": \"string\", \"format\": \"date-time\"}         }       },       \"forms\": [{         \"href\": \"https://api.example.com/maintenance-system/diagnostic/run\",         \"contentType\": \"application/json\",         \"op\": \"invokeaction\"       }]     }   },   \"events\": {     \"newAlert\": {       \"title\": \"New Alert\",       \"description\": \"Event emitted when a new maintenance alert is generated\",       \"data\": {         \"type\": \"object\",         \"properties\": {           \"alertId\": {\"type\": \"string\"},           \"timestamp\": {\"type\": \"string\", \"format\": \"date-time\"},           \"severity\": {\"type\": \"string\", \"enum\": [\"low\", \"medium\", \"high\", \"critical\"]},           \"equipmentId\": {\"type\": \"string\"},           \"description\": {\"type\": \"string\"},           \"readings\": {             \"type\": \"object\",             \"properties\": {               \"temperature\": {\"type\": \"number\"},               \"vibration\": {\"type\": \"number\"},               \"pressure\": {\"type\": \"number\"}             }           }         }       },       \"forms\": [{         \"href\": \"wss://api.example.com/maintenance-system/events/alerts\",         \"contentType\": \"application/json\",         \"subprotocol\": \"websocket\",         \"op\": \"subscribeevent\"       }, {         \"href\": \"https://api.example.com/maintenance-system/events/alerts\",         \"contentType\": \"application/json\",         \"op\": \"subscribeevent\",         \"subprotocol\": \"longpoll\"       }]     },     \"statusChange\": {       \"title\": \"Status Change\",       \"description\": \"Event emitted when equipment status changes\",       \"data\": {         \"type\": \"object\",         \"properties\": {           \"equipmentId\": {\"type\": \"string\"},           \"previousStatus\": {\"type\": \"string\"},           \"currentStatus\": {\"type\": \"string\"},           \"timestamp\": {\"type\": \"string\", \"format\": \"date-time\"},           \"reason\": {\"type\": \"string\"}         }       },       \"forms\": [{         \"href\": \"wss://api.example.com/maintenance-system/events/status\",         \"contentType\": \"application/json\",         \"subprotocol\": \"websocket\",         \"op\": \"subscribeevent\"       }]     }   } }",
+        "http": true,
+        "ws": true,
+        "coap": false,
+        "mqtt": false,
+        "opcua": false,
+        "modbus": false,
+        "basicAuth": false,
+        "username": "",
+        "password": ""
+    },
+    {
+        "id": "dcf5de875c9dd019",
+        "type": "consumed-thing",
+        "tdLink": "",
+        "td": "{     \"@context\": \"https://www.w3.org/2019/wot/td/v1\",     \"id\": \"urn:uuid:d3945a02-333e-481c-700c-5297140c2d4d\",     \"title\": \"Vibration Sensor\",     \"description\": \"Detects vibrations and measures their intensity.\",     \"securityDefinitions\": {       \"nosec_sc\": {         \"scheme\": \"nosec\"       }     },     \"security\": \"nosec_sc\",     \"properties\": {       \"vibrationIntensity\": {         \"type\": \"number\",         \"description\": \"Current vibration intensity\",         \"readOnly\": true,         \"unit\": \"m/s^2\"       }     },     \"actions\": {},     \"events\": {       \"vibrationDetected\": {         \"description\": \"Emits an event when vibration is detected above a threshold\",         \"data\": {           \"type\": \"number\",           \"unit\": \"m/s^2\"         }       }     } }",
+        "http": false,
+        "ws": false,
+        "coap": false,
+        "mqtt": false,
+        "opcua": false,
+        "modbus": false,
+        "basicAuth": false,
+        "username": "",
+        "password": ""
+    }
+]

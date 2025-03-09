@@ -1,0 +1,93 @@
+{
+    "@context": "https://www.w3.org/2019/wot/td/v1",
+    "id": "urn:uuid:humidity-sensor",
+    "title": "Humidity Sensor",
+    "description": "Advanced environmental monitoring device for tracking humidity levels",
+    "properties": {
+        "currentHumidity": {
+            "type": "number",
+            "unit": "percentage",
+            "readOnly": true,
+            "description": "Current relative humidity percentage"
+        },
+        "temperatureCorrelation": {
+            "type": "number",
+            "unit": "celsius",
+            "readOnly": true,
+            "description": "Correlated temperature reading"
+        },
+        "humidityTrend": {
+            "type": "string",
+            "readOnly": true,
+            "description": "Current humidity trend (rising, falling, stable)",
+            "enum": ["rising", "falling", "stable"]
+        }
+    },
+    "actions": {
+        "calibrateSensor": {
+            "description": "Perform sensor calibration to ensure accuracy",
+            "input": {
+                "type": "object",
+                "properties": {
+                    "calibrationEnvironment": {
+                        "type": "string",
+                        "enum": ["standard", "controlled", "field"]
+                    },
+                    "referenceHumidity": {"type": "number"}
+                }
+            },
+            "output": {
+                "type": "object",
+                "properties": {
+                    "calibrationStatus": {"type": "string"},
+                    "accuracyImprovement": {"type": "number"}
+                }
+            }
+        },
+        "setAlertThresholds": {
+            "description": "Configure humidity level alert parameters",
+            "input": {
+                "type": "object",
+                "properties": {
+                    "lowHumidityThreshold": {"type": "number"},
+                    "highHumidityThreshold": {"type": "number"},
+                    "durationBeforeAlert": {"type": "number", "unit": "minutes"}
+                }
+            },
+            "output": {
+                "type": "object",
+                "properties": {
+                    "thresholdConfigId": {"type": "string"},
+                    "status": {"type": "string"}
+                }
+            }
+        }
+    },
+    "events": {
+        "humidityLevelAlert": {
+            "description": "Triggered when humidity levels exceed configured thresholds",
+            "data": {
+                "type": "object",
+                "properties": {
+                    "currentHumidity": {"type": "number"},
+                    "alertType": {
+                        "type": "string",
+                        "enum": ["low", "high"]
+                    },
+                    "recommendedAction": {"type": "string"}
+                }
+            }
+        },
+        "sensorHealthCheck": {
+            "description": "Periodic event reporting sensor operational status",
+            "data": {
+                "type": "object",
+                "properties": {
+                    "batteryLevel": {"type": "number", "unit": "percentage"},
+                    "signalStrength": {"type": "number"},
+                    "lastCalibrationDate": {"type": "string", "format": "date"}
+                }
+            }
+        }
+    }
+}

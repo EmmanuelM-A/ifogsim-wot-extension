@@ -1,0 +1,26 @@
+{
+    "configs": [
+      {
+        "tagNames": ["SmartThermostat"],
+        "mips": 700,
+        "ram": 1024,
+        "upBw": 1000,
+        "downBw": 1000,
+        "level": 3,
+        "ratePerMips": 0.28,
+        "busyPower": 35.0,
+        "idlePower": 8.5
+      },
+      {
+        "tagNames": ["TemperatureSensor"],
+        "mips": 200,
+        "ram": 128,
+        "upBw": 200,
+        "downBw": 200,
+        "level": 3,
+        "ratePerMips": 0.08,
+        "busyPower": 15.0,
+        "idlePower": 3.0
+      }
+    ]
+}

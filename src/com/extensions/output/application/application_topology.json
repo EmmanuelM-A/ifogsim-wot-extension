@@ -1,184 +1,120 @@
 {
   "applicationDetails" : {
-    "title" : "Door Security Application"
+    "title" : "Remote Weather Station"
   },
   "things" : [ {
-    "id" : "263d2ff2376b823c",
-    "name" : "Smart Door Lock",
+    "id" : "097e18567aff7548",
+    "name" : "Temperature Sensor",
     "type" : "consumed-thing"
   }, {
-    "id" : "60ec5509eed581fd",
-    "name" : "Alarm",
+    "id" : "134dc0be145fdc38",
+    "name" : "Humidity Sensor",
     "type" : "consumed-thing"
   }, {
-    "id" : "b7c9cdf5487520a3",
-    "name" : "Smart Camera",
+    "id" : "247751d82e84e420",
+    "name" : "Air Quality Sensor",
     "type" : "consumed-thing"
   }, {
     "id" : "dc99cc6070d7f6fe",
     "name" : "Smart Display",
     "type" : "consumed-thing"
   } ],
-  "topics" : [ "access-control", "security-monitoring" ],
+  "topics" : [ ],
   "subFlows" : {
     "subFlow-0" : {
       "rootNode" : {
-        "id" : "9db12d6115952391",
-        "name" : "onTamperAlertEvent()",
-        "type" : "subscribe-event",
-        "topic" : "access-control",
-        "thing" : "263d2ff2376b823c",
-        "event" : "tamperAlert"
+        "id" : "e093f0b58856a178",
+        "name" : "",
+        "type" : "read-property",
+        "topic" : "",
+        "thing" : "097e18567aff7548",
+        "property" : "temperature"
       },
       "branches" : {
         "branch-0" : [ {
-          "id" : "9db12d6115952391",
-          "name" : "onTamperAlertEvent()",
-          "type" : "subscribe-event",
-          "topic" : "access-control",
-          "thing" : "263d2ff2376b823c",
-          "event" : "tamperAlert"
+          "id" : "e093f0b58856a178",
+          "name" : "",
+          "type" : "read-property",
+          "topic" : "",
+          "thing" : "097e18567aff7548",
+          "property" : "temperature"
         }, {
-          "id" : "f3e4a7e45b1528ec",
-          "name" : "activateAlarm()",
-          "type" : "invoke-action",
-          "topic" : "security-monitoring",
-          "thing" : "60ec5509eed581fd",
-          "action" : "activate"
-        } ],
-        "branch-1" : [ {
-          "id" : "9db12d6115952391",
-          "name" : "onTamperAlertEvent()",
-          "type" : "subscribe-event",
-          "topic" : "access-control",
-          "thing" : "263d2ff2376b823c",
-          "event" : "tamperAlert"
+          "id" : "684f5c39780f9437",
+          "name" : "Some Processing",
+          "type" : "function",
+          "topic" : null,
+          "thing" : null
         }, {
-          "id" : "d3db99b0f35b81ce",
-          "name" : "takePhoto()",
+          "id" : "8e0f920af2361491",
+          "name" : "",
           "type" : "invoke-action",
-          "topic" : "security-monitoring",
-          "thing" : "b7c9cdf5487520a3",
-          "action" : "takeSnapshot"
+          "topic" : "",
+          "thing" : "dc99cc6070d7f6fe",
+          "action" : "updateDisplay"
         } ]
       }
     },
     "subFlow-1" : {
       "rootNode" : {
-        "id" : "c5fdbc67d85cfe4b",
-        "name" : "getLockState()",
+        "id" : "0f51a15c737c3ff3",
+        "name" : "",
         "type" : "read-property",
-        "topic" : "access-control",
-        "thing" : "263d2ff2376b823c",
-        "property" : "lockState"
+        "topic" : "",
+        "thing" : "134dc0be145fdc38",
+        "property" : "currentHumidity"
       },
       "branches" : {
         "branch-0" : [ {
-          "id" : "c5fdbc67d85cfe4b",
-          "name" : "getLockState()",
-          "type" : "read-property",
-          "topic" : "access-control",
-          "thing" : "263d2ff2376b823c",
-          "property" : "lockState"
-        }, {
-          "id" : "4751a14ba955c435",
+          "id" : "0f51a15c737c3ff3",
           "name" : "",
-          "type" : "switch",
+          "type" : "read-property",
+          "topic" : "",
+          "thing" : "134dc0be145fdc38",
+          "property" : "currentHumidity"
+        }, {
+          "id" : "b20ef55ddd23e14d",
+          "name" : "Some Processing",
+          "type" : "function",
           "topic" : null,
           "thing" : null
         }, {
-          "id" : "75e9a24f35463920",
-          "name" : "lockDoor()",
+          "id" : "4166931cc2b507bc",
+          "name" : "",
           "type" : "invoke-action",
-          "topic" : "access-control",
-          "thing" : "263d2ff2376b823c",
-          "action" : "lockDoor"
-        } ],
-        "branch-1" : [ {
-          "id" : "c5fdbc67d85cfe4b",
-          "name" : "getLockState()",
-          "type" : "read-property",
-          "topic" : "access-control",
-          "thing" : "263d2ff2376b823c",
-          "property" : "lockState"
-        }, {
-          "id" : "4751a14ba955c435",
-          "name" : "",
-          "type" : "switch",
-          "topic" : null,
-          "thing" : null
-        }, {
-          "id" : "03ed1574430869f3",
-          "name" : "debug 5",
-          "type" : "debug",
-          "topic" : null,
-          "thing" : null
+          "topic" : "",
+          "thing" : "dc99cc6070d7f6fe",
+          "action" : "updateDisplay"
         } ]
       }
     },
     "subFlow-2" : {
       "rootNode" : {
-        "id" : "9d94164d06b0710c",
-        "name" : "onSnapshotTakenEvent()",
-        "type" : "subscribe-event",
-        "topic" : "security-monitoring",
-        "thing" : "b7c9cdf5487520a3",
-        "event" : "snapshotTaken"
+        "id" : "2c62c1b3564079f4",
+        "name" : "",
+        "type" : "read-property",
+        "topic" : "",
+        "thing" : "247751d82e84e420",
+        "property" : "airQualityIndex"
       },
       "branches" : {
         "branch-0" : [ {
-          "id" : "9d94164d06b0710c",
-          "name" : "onSnapshotTakenEvent()",
-          "type" : "subscribe-event",
-          "topic" : "security-monitoring",
-          "thing" : "b7c9cdf5487520a3",
-          "event" : "snapshotTaken"
-        }, {
-          "id" : "ed04d7ad2e16b730",
-          "name" : "getStreamURL()",
+          "id" : "2c62c1b3564079f4",
+          "name" : "",
           "type" : "read-property",
-          "topic" : "security-monitoring",
-          "thing" : "b7c9cdf5487520a3",
-          "property" : "streamURL"
+          "topic" : "",
+          "thing" : "247751d82e84e420",
+          "property" : "airQualityIndex"
         }, {
-          "id" : "6715a35ba36fd344",
+          "id" : "2c83ba520f6795ed",
           "name" : "Some Processing",
           "type" : "function",
           "topic" : null,
           "thing" : null
         }, {
-          "id" : "80359b6e0dae8f0d",
-          "name" : "logData()",
+          "id" : "00a6c9908f23b959",
+          "name" : "",
           "type" : "invoke-action",
-          "topic" : "security-monitoring",
-          "thing" : "dc99cc6070d7f6fe",
-          "action" : "updateDisplay"
-        } ],
-        "branch-1" : [ {
-          "id" : "9d94164d06b0710c",
-          "name" : "onSnapshotTakenEvent()",
-          "type" : "subscribe-event",
-          "topic" : "security-monitoring",
-          "thing" : "b7c9cdf5487520a3",
-          "event" : "snapshotTaken"
-        }, {
-          "id" : "836ea1adc6c4f940",
-          "name" : "getLastSnapshot()",
-          "type" : "read-property",
-          "topic" : "security-monitoring",
-          "thing" : "b7c9cdf5487520a3",
-          "property" : "lastSnapshot"
-        }, {
-          "id" : "9a4be8e1136190c1",
-          "name" : "Some Processing",
-          "type" : "function",
-          "topic" : null,
-          "thing" : null
-        }, {
-          "id" : "0f5c64a7567a5548",
-          "name" : "logData()",
-          "type" : "invoke-action",
-          "topic" : "security-monitoring",
+          "topic" : "",
           "thing" : "dc99cc6070d7f6fe",
           "action" : "updateDisplay"
         } ]
@@ -186,57 +122,53 @@
     },
     "subFlow-3" : {
       "rootNode" : {
-        "id" : "6d0c0d10e6a07442",
+        "id" : "c9eb70310b1b7791",
         "name" : "",
-        "type" : "inject",
+        "type" : "subscribe-event",
         "topic" : "",
-        "thing" : null
+        "thing" : "097e18567aff7548",
+        "event" : "overheat"
       },
       "branches" : {
         "branch-0" : [ {
-          "id" : "6d0c0d10e6a07442",
+          "id" : "c9eb70310b1b7791",
           "name" : "",
-          "type" : "inject",
+          "type" : "subscribe-event",
           "topic" : "",
-          "thing" : null
+          "thing" : "097e18567aff7548",
+          "event" : "overheat"
         }, {
-          "id" : "ab799136aebc7a6f",
-          "name" : "unlockDoor()",
+          "id" : "f9bf788b5e6bbe5d",
+          "name" : "",
           "type" : "invoke-action",
-          "topic" : "access-control",
-          "thing" : "263d2ff2376b823c",
-          "action" : "unlockDoor"
+          "topic" : "",
+          "thing" : "dc99cc6070d7f6fe",
+          "action" : "showAlert"
         } ]
       }
     },
     "subFlow-4" : {
       "rootNode" : {
-        "id" : "9587c249258c0e5e",
+        "id" : "1c0b0bb2e8193da8",
         "name" : "",
         "type" : "subscribe-event",
-        "topic" : "access-control",
-        "thing" : "263d2ff2376b823c",
-        "event" : "doorLocked"
+        "topic" : "",
+        "thing" : "134dc0be145fdc38",
+        "event" : "humidityLevelAlert"
       },
       "branches" : {
         "branch-0" : [ {
-          "id" : "9587c249258c0e5e",
+          "id" : "1c0b0bb2e8193da8",
           "name" : "",
           "type" : "subscribe-event",
-          "topic" : "access-control",
-          "thing" : "263d2ff2376b823c",
-          "event" : "doorLocked"
+          "topic" : "",
+          "thing" : "134dc0be145fdc38",
+          "event" : "humidityLevelAlert"
         }, {
-          "id" : "13bd4e8359ce1a5f",
-          "name" : "Do something",
-          "type" : "function",
-          "topic" : null,
-          "thing" : null
-        }, {
-          "id" : "6abec97a066fa433",
-          "name" : "logEvent()",
+          "id" : "dc8321ecfcbc7023",
+          "name" : "",
           "type" : "invoke-action",
-          "topic" : "access-control",
+          "topic" : "",
           "thing" : "dc99cc6070d7f6fe",
           "action" : "showAlert"
         } ]
@@ -244,32 +176,26 @@
     },
     "subFlow-5" : {
       "rootNode" : {
-        "id" : "3b6935d22bd00ead",
-        "name" : "onAlarmTriggeredEvent()",
+        "id" : "b7e32dc590ca78f9",
+        "name" : "",
         "type" : "subscribe-event",
-        "topic" : "security-monitoring",
-        "thing" : "60ec5509eed581fd",
-        "event" : "alarmTriggered"
+        "topic" : "",
+        "thing" : "247751d82e84e420",
+        "event" : "airQualityAlert"
       },
       "branches" : {
         "branch-0" : [ {
-          "id" : "3b6935d22bd00ead",
-          "name" : "onAlarmTriggeredEvent()",
+          "id" : "b7e32dc590ca78f9",
+          "name" : "",
           "type" : "subscribe-event",
-          "topic" : "security-monitoring",
-          "thing" : "60ec5509eed581fd",
-          "event" : "alarmTriggered"
+          "topic" : "",
+          "thing" : "247751d82e84e420",
+          "event" : "airQualityAlert"
         }, {
-          "id" : "f961cb5a16678a6e",
-          "name" : "Do something",
-          "type" : "function",
-          "topic" : null,
-          "thing" : null
-        }, {
-          "id" : "99879b685f3d65b8",
-          "name" : "logEvent()",
+          "id" : "6b5917b14c150b4b",
+          "name" : "",
           "type" : "invoke-action",
-          "topic" : "security-monitoring",
+          "topic" : "",
           "thing" : "dc99cc6070d7f6fe",
           "action" : "showAlert"
         } ]

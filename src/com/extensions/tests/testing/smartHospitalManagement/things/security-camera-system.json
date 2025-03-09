@@ -1,0 +1,49 @@
+{
+    "@context": "https://www.w3.org/2019/wot/td/v1",
+    "id": "urn:uuid:security-camera-system",
+    "title": "Security Camera System",
+    "description": "Advanced multi-camera surveillance and security monitoring system",
+    "properties": {
+        "systemStatus": {
+            "type": "string",
+            "readOnly": true,
+            "description": "Current operational status of the security system"
+        },
+        "activeMonitoringCameras": {
+            "type": "number",
+            "readOnly": true,
+            "description": "Number of currently active cameras"
+        }
+    },
+    "actions": {
+        "configureSecurityProtocol": {
+            "description": "Modify security monitoring and alert parameters",
+            "input": {
+                "type": "object",
+                "properties": {
+                    "securityLevel": {"type": "string", "enum": ["low", "medium", "high"]},
+                    "activeZones": {"type": "array", "items": {"type": "string"}}
+                }
+            },
+            "output": {
+                "type": "object",
+                "properties": {
+                    "configurationId": {"type": "string"},
+                    "potentialCoverageImprovement": {"type": "number"}
+                }
+            }
+        }
+    },
+    "events": {
+        "securityBreach": {
+            "description": "Triggered when potential security threats are detected",
+            "data": {
+                "type": "object",
+                "properties": {
+                    "breachType": {"type": "string"},
+                    "affectedCameras": {"type": "array", "items": {"type": "string"}}
+                }
+            }
+        }
+    }
+}

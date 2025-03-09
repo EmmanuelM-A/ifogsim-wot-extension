@@ -1,0 +1,48 @@
+{
+    "configs": [
+      {
+        "tagNames": ["AirQualitySensor"],
+        "mips": 400,
+        "ram": 512,
+        "upBw": 500,
+        "downBw": 500,
+        "level": 3,
+        "ratePerMips": 0.15,
+        "busyPower": 25.0,
+        "idlePower": 8.0
+      },
+      {
+        "tagNames": ["HumiditySensor"],
+        "mips": 300,
+        "ram": 256,
+        "upBw": 300,
+        "downBw": 300,
+        "level": 3,
+        "ratePerMips": 0.1,
+        "busyPower": 20.0,
+        "idlePower": 5.0
+      },
+      {
+        "tagNames": ["SmartDisplay"],
+        "mips": 600,
+        "ram": 1024,
+        "upBw": 1200,
+        "downBw": 1200,
+        "level": 3,
+        "ratePerMips": 0.25,
+        "busyPower": 60.0,
+        "idlePower": 20.5
+      },
+      {
+        "tagNames": ["TemperatureSensor"],
+        "mips": 300,
+        "ram": 256,
+        "upBw": 300,
+        "downBw": 300,
+        "level": 3,
+        "ratePerMips": 0.1,
+        "busyPower": 20.0,
+        "idlePower": 5.0
+      }
+    ]
+}

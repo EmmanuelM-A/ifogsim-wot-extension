@@ -1,0 +1,49 @@
+{
+    "@context": "https://www.w3.org/2019/wot/td/v1",
+    "id": "urn:uuid:cloud-dashboard",
+    "title": "Cloud Dashboard",
+    "description": "Comprehensive visualization and management interface for cloud resources",
+    "properties": {
+        "systemHealthStatus": {
+            "type": "string",
+            "readOnly": true,
+            "description": "Overall system health and status"
+        },
+        "resourceUtilizationSummary": {
+            "type": "object",
+            "readOnly": true,
+            "description": "Aggregate resource utilization across cloud infrastructure"
+        }
+    },
+    "actions": {
+        "generateComprehensiveReport": {
+            "description": "Create detailed system performance and resource report",
+            "input": {
+                "type": "object",
+                "properties": {
+                    "reportType": {"type": "string", "enum": ["brief", "detailed"]},
+                    "timeFrame": {"type": "string", "enum": ["daily", "weekly", "monthly"]}
+                }
+            },
+            "output": {
+                "type": "object",
+                "properties": {
+                    "reportUrl": {"type": "string"},
+                    "keyInsights": {"type": "object"}
+                }
+            }
+        }
+    },
+    "events": {
+        "criticalSystemEvent": {
+            "description": "Triggered during significant system-wide events",
+            "data": {
+                "type": "object",
+                "properties": {
+                    "eventType": {"type": "string"},
+                    "severityLevel": {"type": "number"}
+                }
+            }
+        }
+    }
+}

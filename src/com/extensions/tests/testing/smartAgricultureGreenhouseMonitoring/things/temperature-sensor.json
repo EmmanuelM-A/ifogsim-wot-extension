@@ -1,0 +1,327 @@
+{
+  "@context": [
+	"https://www.w3.org/2019/wot/td/v1",
+	{
+	  "@language": "en"
+	}
+  ],
+  "@type": "Thing",
+  "title": "Temperature Sensor",
+  "securityDefinitions": {
+	"nosec": {
+	  "scheme": "nosec"
+	}
+  },
+  "security": [
+	"nosec"
+  ],
+  "properties": {
+	"temperature": {
+	  "type": "number",
+	  "description": "The current temperature reading of the environemnt in celsius.",
+	  "readOnly": true,
+	  "observable": true,
+	  "forms": [
+		{
+		  "href": "http://10.32.151.21:8081/temperature-sensor/properties/temperature",
+		  "contentType": "application/json",
+		  "op": [
+			"readproperty"
+		  ],
+		  "htv:methodName": "GET"
+		},
+		{
+		  "href": "http://10.32.151.21:8081/temperature-sensor/properties/temperature/observable",
+		  "contentType": "application/json",
+		  "op": [
+			"observeproperty",
+			"unobserveproperty"
+		  ],
+		  "subprotocol": "longpoll"
+		},
+		{
+		  "href": "http://10.32.151.21:8081/temperature-sensor/properties/temperature",
+		  "contentType": "application/cbor",
+		  "op": [
+			"readproperty"
+		  ],
+		  "htv:methodName": "GET"
+		},
+		{
+		  "href": "http://10.32.151.21:8081/temperature-sensor/properties/temperature/observable",
+		  "contentType": "application/cbor",
+		  "op": [
+			"observeproperty",
+			"unobserveproperty"
+		  ],
+		  "subprotocol": "longpoll"
+		}
+	  ],
+	  "writeOnly": false
+	},
+	"batteryLevel": {
+	  "type": "number",
+	  "description": "The battery level of the sensor as a percentage.",
+	  "readOnly": true,
+	  "forms": [
+		{
+		  "href": "http://10.32.151.21:8081/temperature-sensor/properties/batteryLevel",
+		  "contentType": "application/json",
+		  "op": [
+			"readproperty"
+		  ],
+		  "htv:methodName": "GET"
+		},
+		{
+		  "href": "http://10.32.151.21:8081/temperature-sensor/properties/batteryLevel",
+		  "contentType": "application/cbor",
+		  "op": [
+			"readproperty"
+		  ],
+		  "htv:methodName": "GET"
+		}
+	  ],
+	  "writeOnly": false,
+	  "observable": false
+	},
+	"status": {
+	  "type": "string",
+	  "description": "The current status of the sensor (e.g. active, inactive, error).",
+	  "enum": [
+		"active",
+		"inactive",
+		"error"
+	  ],
+	  "forms": [
+		{
+		  "href": "http://10.32.151.21:8081/temperature-sensor/properties/status",
+		  "contentType": "application/json",
+		  "op": [
+			"readproperty",
+			"writeproperty"
+		  ]
+		},
+		{
+		  "href": "http://10.32.151.21:8081/temperature-sensor/properties/status",
+		  "contentType": "application/cbor",
+		  "op": [
+			"readproperty",
+			"writeproperty"
+		  ]
+		}
+	  ],
+	  "readOnly": false,
+	  "writeOnly": false,
+	  "observable": false
+	}
+  },
+  "actions": {
+	"reset": {
+	  "description": "Resets the temperature sensor to its default state.",
+	  "forms": [
+		{
+		  "href": "http://10.32.151.21:8081/temperature-sensor/actions/reset",
+		  "contentType": "application/json",
+		  "op": [
+			"invokeaction"
+		  ],
+		  "htv:methodName": "POST"
+		},
+		{
+		  "href": "http://10.32.151.21:8081/temperature-sensor/actions/reset",
+		  "contentType": "application/cbor",
+		  "op": [
+			"invokeaction"
+		  ],
+		  "htv:methodName": "POST"
+		}
+	  ],
+	  "safe": false,
+	  "idempotent": false
+	},
+	"calibrate": {
+	  "description": "Calibrates the temperature sensor.",
+	  "input": {
+		"type": "object",
+		"properties": {
+		  "calibrationValue": {
+			"type": "number",
+			"description": "Calibration offset value in Celsius."
+		  }
+		},
+		"required": [
+		  "calibrationValue"
+		]
+	  },
+	  "forms": [
+		{
+		  "href": "http://10.32.151.21:8081/temperature-sensor/actions/calibrate",
+		  "contentType": "application/json",
+		  "op": [
+			"invokeaction"
+		  ],
+		  "htv:methodName": "POST"
+		},
+		{
+		  "href": "http://10.32.151.21:8081/temperature-sensor/actions/calibrate",
+		  "contentType": "application/cbor",
+		  "op": [
+			"invokeaction"
+		  ],
+		  "htv:methodName": "POST"
+		}
+	  ],
+	  "safe": false,
+	  "idempotent": false
+	},
+	"setThreshold": {
+	  "description": "Sets a temperature threshold for triggering the overheat event.",
+	  "input": {
+		"type": "object",
+		"properties": {
+		  "threshold": {
+			"type": "number",
+			"description": "Temperature threshold in celsius."
+		  }
+		},
+		"required": [
+		  "threshold"
+		]
+	  },
+	  "forms": [
+		{
+		  "href": "http://10.32.151.21:8081/temperature-sensor/actions/setThreshold",
+		  "contentType": "application/json",
+		  "op": [
+			"invokeaction"
+		  ],
+		  "htv:methodName": "POST"
+		},
+		{
+		  "href": "http://10.32.151.21:8081/temperature-sensor/actions/setThreshold",
+		  "contentType": "application/cbor",
+		  "op": [
+			"invokeaction"
+		  ],
+		  "htv:methodName": "POST"
+		}
+	  ],
+	  "safe": false,
+	  "idempotent": false
+	}
+  },
+  "events": {
+	"overheat": {
+	  "description": "Triggered when the temperature exceeds the set threshold.",
+	  "data": {
+		"type": "object",
+		"properties": {
+		  "message": {
+			"type": "string"
+		  },
+		  "timestamp": {
+			"type": "string",
+			"format": "date-time"
+		  }
+		}
+	  },
+	  "forms": [
+		{
+		  "href": "http://10.32.151.21:8081/temperature-sensor/events/overheat",
+		  "contentType": "application/json",
+		  "subprotocol": "longpoll",
+		  "op": [
+			"subscribeevent",
+			"unsubscribeevent"
+		  ]
+		},
+		{
+		  "href": "http://10.32.151.21:8081/temperature-sensor/events/overheat",
+		  "contentType": "application/cbor",
+		  "subprotocol": "longpoll",
+		  "op": [
+			"subscribeevent",
+			"unsubscribeevent"
+		  ]
+		}
+	  ]
+	},
+	"lowBattery": {
+	  "description": "Triggered when the battery level falls below 10%.",
+	  "data": {
+		"type": "string"
+	  },
+	  "forms": [
+		{
+		  "href": "http://10.32.151.21:8081/temperature-sensor/events/lowBattery",
+		  "contentType": "application/json",
+		  "subprotocol": "longpoll",
+		  "op": [
+			"subscribeevent",
+			"unsubscribeevent"
+		  ]
+		},
+		{
+		  "href": "http://10.32.151.21:8081/temperature-sensor/events/lowBattery",
+		  "contentType": "application/cbor",
+		  "subprotocol": "longpoll",
+		  "op": [
+			"subscribeevent",
+			"unsubscribeevent"
+		  ]
+		}
+	  ]
+	},
+	"statusChange": {
+	  "description": "Triggered when the sensor's status changes.",
+	  "data": {
+		"type": "string"
+	  },
+	  "forms": [
+		{
+		  "href": "http://10.32.151.21:8081/temperature-sensor/events/statusChange",
+		  "contentType": "application/json",
+		  "subprotocol": "longpoll",
+		  "op": [
+			"subscribeevent",
+			"unsubscribeevent"
+		  ]
+		},
+		{
+		  "href": "http://10.32.151.21:8081/temperature-sensor/events/statusChange",
+		  "contentType": "application/cbor",
+		  "subprotocol": "longpoll",
+		  "op": [
+			"subscribeevent",
+			"unsubscribeevent"
+		  ]
+		}
+	  ]
+	}
+  },
+  "id": "urn:uuid:cf86b704-d32f-44cf-bf54-4ff525a7ca02",
+  "description": "A temperature sensor that provides readings, supports calibration, and monitors environmental conditions.",
+  "support": "http://example.com/support",
+  "forms": [
+	{
+	  "href": "http://10.32.151.21:8081/temperature-sensor/properties",
+	  "contentType": "application/json",
+	  "op": [
+		"readallproperties",
+		"readmultipleproperties",
+		"writeallproperties",
+		"writemultipleproperties"
+	  ]
+	},
+	{
+	  "href": "http://10.32.151.21:8081/temperature-sensor/properties",
+	  "contentType": "application/cbor",
+	  "op": [
+		"readallproperties",
+		"readmultipleproperties",
+		"writeallproperties",
+		"writemultipleproperties"
+	  ]
+	}
+  ]
+}

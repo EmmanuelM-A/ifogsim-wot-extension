@@ -1,0 +1,30 @@
+{
+    "@context": "https://www.w3.org/2019/wot/td/v1",
+    "id": "urn:uuid:d3945a02-333e-481c-700c-5297140c2d4d",
+    "title": "Vibration Sensor",
+    "description": "Detects vibrations and measures their intensity.",
+    "securityDefinitions": {
+      "nosec_sc": {
+        "scheme": "nosec"
+      }
+    },
+    "security": "nosec_sc",
+    "properties": {
+      "vibrationIntensity": {
+        "type": "number",
+        "description": "Current vibration intensity",
+        "readOnly": true,
+        "unit": "m/s^2"
+      }
+    },
+    "actions": {},
+    "events": {
+      "vibrationDetected": {
+        "description": "Emits an event when vibration is detected above a threshold",
+        "data": {
+          "type": "number",
+          "unit": "m/s^2"
+        }
+      }
+    }
+}

@@ -255,9 +255,9 @@ public class JsonToApplication {
                         String WORKER_MODULE_K = "WorkerModule-" + workerModuleCount;
                         workerModuleCount++;
 
-                        if(topologyNodeTree.branches().size() == 1) {
+                        //if(topologyNodeTree.branches().size() == 1) {
                             // Processing Module
-                            application.addAppModule(WORKER_MODULE_K, applicationPreset.APP_MODULE_RAM);
+                            /*application.addAppModule(WORKER_MODULE_K, applicationPreset.APP_MODULE_RAM);
 
                             // Data Flow Edges
                             addAppEdge(application, srcName, WORKER_MODULE_K, srcName, Tuple.UP, AppEdge.SENSOR);
@@ -271,8 +271,8 @@ public class JsonToApplication {
 
                             application.setLoops(new ArrayList<>(){{add(loop);}});
 
-                            break;
-                        } else if(branches.size() > 1) {
+                            break;*/
+                        //} else if(branches.size() > 1) {
                             VirtualDevice virtualDevice = getVDUsed(src, selectedVirtualDevices);
 
                             // Check if VD exists
@@ -318,7 +318,7 @@ public class JsonToApplication {
                                 );
                                 //System.out.println("WORKER-MODULE connection: " + workerModuleConnection + " added for " + virtualDevice.getFogDevice().getName());
                             }
-                        }
+                        //}
                     }
                 }
             }

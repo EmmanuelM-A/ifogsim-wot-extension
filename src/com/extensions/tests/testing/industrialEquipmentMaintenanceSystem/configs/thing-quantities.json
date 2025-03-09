@@ -1,0 +1,20 @@
+{
+    "vibration-analysis": {
+        "things": {
+            "Vibration Sensor": 3
+        }
+    },
+    "environmental-monitoring": {
+        "things": {
+            "Temperature Sensor": 3,
+            "Humidity Sensor": 2
+        }
+    },
+    "predictive-ai-alerts": {
+        "things": {
+            "AI Based Fault Detection System": 1,
+            "Maintenance Alert System": 1,
+            "Cloud Dashboard": 1
+        }
+    }
+}

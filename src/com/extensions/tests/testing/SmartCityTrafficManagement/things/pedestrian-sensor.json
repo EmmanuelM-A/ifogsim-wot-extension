@@ -1,0 +1,49 @@
+{
+    "@context": "https://www.w3.org/2019/wot/td/v1",
+    "id": "urn:uuid:pedestrian-sensor",
+    "title": "Pedestrian Sensor",
+    "description": "Advanced sensor for tracking pedestrian movement and safety",
+    "properties": {
+        "currentPedestrianCount": {
+            "type": "number",
+            "readOnly": true,
+            "description": "Number of pedestrians in the monitored area"
+        },
+        "safetyRiskLevel": {
+            "type": "number",
+            "readOnly": true,
+            "description": "Current pedestrian safety risk assessment"
+        }
+    },
+    "actions": {
+        "analyzeTrafficPattern": {
+            "description": "Perform detailed analysis of pedestrian traffic patterns",
+            "input": {
+                "type": "object",
+                "properties": {
+                    "timeFrame": {"type": "string"},
+                    "analysisType": {"type": "string", "enum": ["hourly", "daily", "weekly"]}
+                }
+            },
+            "output": {
+                "type": "object",
+                "properties": {
+                    "peakTimes": {"type": "array", "items": {"type": "string"}},
+                    "averageCount": {"type": "number"}
+                }
+            }
+        }
+    },
+    "events": {
+        "safetyConcernDetected": {
+            "description": "Triggered when potential pedestrian safety risks are identified",
+            "data": {
+                "type": "object",
+                "properties": {
+                    "riskLevel": {"type": "number"},
+                    "potentialHazards": {"type": "array", "items": {"type": "string"}}
+                }
+            }
+        }
+    }
+}

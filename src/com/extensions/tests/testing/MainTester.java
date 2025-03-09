@@ -1,7 +1,8 @@
-package com.extensions;
+package com.extensions.tests.testing;
 
 import com.extensions.customfog.CustomController;
 import com.extensions.custommetrics.CustomMetricManager;
+import com.extensions.custommetrics.metrics.MeanTupleExecutionDelay;
 import com.extensions.custommetrics.metrics.PeakEnergyConsumptionDevice;
 import com.extensions.custommetrics.metrics.TotalEnergyConsumptionEfficiency;
 import com.extensions.sysconstructor.core.ApplicationPhysicalTopology;
@@ -15,7 +16,9 @@ import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.core.CloudSim;
 import org.fog.application.AppModule;
 import org.fog.application.Application;
-import org.fog.entities.*;
+import org.fog.entities.Actuator;
+import org.fog.entities.FogBroker;
+import org.fog.entities.Sensor;
 import org.fog.placement.ModuleMapping;
 import org.fog.placement.ModulePlacementEdgewards;
 import org.fog.placement.ModulePlacementMapping;
@@ -25,36 +28,36 @@ import java.io.File;
 import java.util.Calendar;
 import java.util.List;
 
-public final class App {
+public final class MainTester {
     /**
      * Determines if the application is cloud-based
      */
     private static final boolean CLOUD = true;
 
-    private static final String NODE_RED_APPLICATION_JSON = "\"C:\\Users\\maduk\\Documents\\Lancaster University\\CompSoc\\Year 3\\Thrid Year Project\\Testing Phase\\Node-RED IoT Applications\\smart-hospital-ward-management.json\"";
+    //private static final InputHandler inputHandler = new InputHandler("industrial-equipment-maintenance-system.json", "src/com/extensions/tests/testing/industrialEquipmentMaintenanceSystem");
+    private static final InputHandler inputHandler = new InputHandler("remote-weather-station.json", "src/com/extensions/tests/testing/remoteWeatherStation", false);
+    //private static final InputHandler inputHandler = new InputHandler("smart-city-traffic-management.json", "src/com/extensions/tests/testing/SmartCityTrafficManagement");
+    //private static final InputHandler inputHandler = new InputHandler("smart-home-temperature-control.json", "src/com/extensions/tests/testing/smartHomeTemperatureControl");
+    //private static final InputHandler inputHandler = new InputHandler("smart-agriculture-greenhouse-monitoring.json", "src/com/extensions/tests/testing/smartAgricultureGreenhouseMonitoring");
+    //private static final InputHandler inputHandler = new InputHandler("smart-hospital-management.json", "src/com/extensions/tests/testing/smartHospitalManagement");
 
-    private static final String THINGS_REPO = "";
-
-    private static final String VDS_CONFIG_FILE = "";
-
-    private static final String VD_QUANTITIES_FILE = "";
     public static void main(String[] args) {
-        Log.printLine("Starting Simulation...");
-
         try {
             //////////////////////////////// INITIAL SETUP ////////////////////////////////
 
             // Parses the VD quantities file and extracts the quantity of each thing to be used in the application
-            VDQuantityParser vdQuantities = new VDQuantityParser(new File(VD_QUANTITIES_FILE));
+            VDQuantityParser vdQuantities = new VDQuantityParser(new File(inputHandler.THINGS_QUANTITIES));
 
             // This instance is responsible for loading in the node red application, creating the application topology and model and setting up related data
             JsonToApplication jsonToApplication = new JsonToApplication(
                     CloudNodePreset.DEFAULT, // CHANGEABLE
                     EdgeNodePreset.DEFAULT, // CHANGEABLE
                     ApplicationPreset.DEFAULT, // CHANGEABLE
-                    new File(NODE_RED_APPLICATION_JSON),
+                    new File(inputHandler.NODE_RED_APPLICATION_JSON),
                     vdQuantities
             );
+
+            Log.printLine("Starting Simulation...");
 
             // Disables iFogSim's logging mechanism, only displaying simulation results
             Log.disable();
@@ -83,10 +86,12 @@ public final class App {
                     FogDevicePreset.DEFAULT, // CHANGEABLE
                     SensorPreset.DEFAULT, // CHANGEABLE
                     ActuatorPreset.DEFAULT, // CHANGEABLE
-                    THINGS_REPO,
-                    vdConfigParser.process(new File(VDS_CONFIG_FILE)),
+                    inputHandler.THINGS_REPO,
+                    vdConfigParser.process(new File(inputHandler.VDS_CONFIG_FILE)),
                     vdQuantities.getThingFrequencies()
             );
+
+            System.out.println("Virtual Devices Created Successfully!");
 
             //////////////////////////////// APPLICATION SETUP ////////////////////////////////
 
@@ -98,6 +103,7 @@ public final class App {
 
             // Create the application model for the application
             Application application = jsonToApplication.createApplicationModel(appId, broker.getId());
+            //application.setUserId(broker.getId());
 
             // Set the application value for VD
             for(VirtualDevice virtualDevice : virtualDevices) {
@@ -125,9 +131,8 @@ public final class App {
             // If cloud based deployment then connect all app modules to the cloud device/node
             if (CLOUD) {
                 for (AppModule appModule : application.getModules()) {
-                    //if(appModule.getName().equals("MasterModule") || appModule.getName().startsWith("WorkerModule-")) {
-                        moduleMapping.addModuleToDevice(appModule.getName(), "cloud");
-                    //}
+                    //if(appModule.getName().equals("MasterModule")) continue;
+                    moduleMapping.addModuleToDevice(appModule.getName(), "cloud");
                 }
             }
 
@@ -149,9 +154,9 @@ public final class App {
 
             CustomMetricManager customMetricManager = controller.getCustomMetricManager();
 
-            //customMetricManager.registerMetric(new LongestApplicationLoopDelay());
-            customMetricManager.registerMetric(new PeakEnergyConsumptionDevice());
-            customMetricManager.registerMetric(new TotalEnergyConsumptionEfficiency());
+            //customMetricManager.registerMetric(new PeakEnergyConsumptionDevice());
+            //customMetricManager.registerMetric(new TotalEnergyConsumptionEfficiency());
+            customMetricManager.registerMetric(new MeanTupleExecutionDelay());
 
             //////////////////////////////// SIMULATION ////////////////////////////////
 
@@ -165,8 +170,8 @@ public final class App {
             CloudSim.stopSimulation();
 
         } catch(Exception e) {
+            System.out.println("Simulation Terminated! Error: " + e.getMessage());
             e.printStackTrace();
-            System.out.println(e.getMessage());
         }
     }
 }

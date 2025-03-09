@@ -1,0 +1,81 @@
+{
+    "configs": [
+      {
+        "tagNames": ["HumiditySensor"],
+        "mips": 300,
+        "ram": 256,
+        "upBw": 300,
+        "downBw": 300,
+        "level": 3,
+        "ratePerMips": 0.1,
+        "busyPower": 20.0,
+        "idlePower": 5.0
+      },
+      {
+        "tagNames": ["SmartDisplay"],
+        "mips": 600,
+        "ram": 1024,
+        "upBw": 1200,
+        "downBw": 1200,
+        "level": 3,
+        "ratePerMips": 0.25,
+        "busyPower": 60.0,
+        "idlePower": 20.5
+      },
+      {
+        "tagNames": ["SmartVentilationSystem"],
+        "mips": 700,
+        "ram": 1024,
+        "upBw": 1500,
+        "downBw": 1500,
+        "level": 3,
+        "ratePerMips": 0.28,
+        "busyPower": 45.0,
+        "idlePower": 15.0
+      },
+      {
+        "tagNames": ["SoilMoistureSensor"],
+        "mips": 350,
+        "ram": 512,
+        "upBw": 400,
+        "downBw": 400,
+        "level": 3,
+        "ratePerMips": 0.12,
+        "busyPower": 22.0,
+        "idlePower": 6.0
+      },
+      {
+        "tagNames": ["SoilNutritionMonitor"],
+        "mips": 500,
+        "ram": 768,
+        "upBw": 800,
+        "downBw": 800,
+        "level": 3,
+        "ratePerMips": 0.18,
+        "busyPower": 30.0,
+        "idlePower": 10.0
+      },
+      {
+        "tagNames": ["TemperatureSensor"],
+        "mips": 300,
+        "ram": 256,
+        "upBw": 300,
+        "downBw": 300,
+        "level": 3,
+        "ratePerMips": 0.1,
+        "busyPower": 40.0,
+        "idlePower": 15.0
+      },
+      {
+        "tagNames": ["WaterPump"],
+        "mips": 400,
+        "ram": 512,
+        "upBw": 500,
+        "downBw": 500,
+        "level": 3,
+        "ratePerMips": 0.15,
+        "busyPower": 45.0,
+        "idlePower": 18.0
+      }
+    ]
+}

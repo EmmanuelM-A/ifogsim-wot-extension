@@ -1,0 +1,49 @@
+{
+    "@context": "https://www.w3.org/2019/wot/td/v1",
+    "id": "urn:uuid:rfid-inventory-system",
+    "title": "RFID-Based Inventory System",
+    "description": "Advanced inventory tracking and management system using RFID technology",
+    "properties": {
+        "totalItemCount": {
+            "type": "number",
+            "readOnly": true,
+            "description": "Total number of items in inventory"
+        },
+        "stockAlertThreshold": {
+            "type": "number",
+            "readOnly": true,
+            "description": "Predefined low stock threshold"
+        }
+    },
+    "actions": {
+        "performInventoryAudit": {
+            "description": "Conduct a comprehensive inventory audit",
+            "input": {
+                "type": "object",
+                "properties": {
+                    "auditScope": {"type": "string", "enum": ["full", "partial"]},
+                    "locationFilter": {"type": "array", "items": {"type": "string"}}
+                }
+            },
+            "output": {
+                "type": "object",
+                "properties": {
+                    "auditReport": {"type": "object"},
+                    "discrepanciesFound": {"type": "number"}
+                }
+            }
+        }
+    },
+    "events": {
+        "lowStockAlert": {
+            "description": "Triggered when inventory falls below predefined threshold",
+            "data": {
+                "type": "object",
+                "properties": {
+                    "currentStock": {"type": "number"},
+                    "minimumThreshold": {"type": "number"}
+                }
+            }
+        }
+    }
+}

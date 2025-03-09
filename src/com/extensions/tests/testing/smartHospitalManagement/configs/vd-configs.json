@@ -1,0 +1,114 @@
+{
+    "configs": [
+        {
+            "tagNames": ["AlarmThing"],
+            "mips": 400,
+            "ram": 512,
+            "upBw": 500,
+            "downBw": 500,
+            "level": 3,
+            "ratePerMips": 0.15,
+            "busyPower": 30.0,
+            "idlePower": 10.0
+        },
+        {
+            "tagNames": ["EmergencyAlertSystem"],
+            "mips": 800,
+            "ram": 1024,
+            "upBw": 2000,
+            "downBw": 2000,
+            "level": 3,
+            "ratePerMips": 0.3,
+            "busyPower": 80.0,
+            "idlePower": 30.0
+        },
+        {
+            "tagNames": ["HVACControlSystem"],
+            "mips": 500,
+            "ram": 512,
+            "upBw": 800,
+            "downBw": 800,
+            "level": 3,
+            "ratePerMips": 0.2,
+            "busyPower": 40.0,
+            "idlePower": 15.0
+        },
+        {
+            "tagNames": ["PatientMonitoringDevice"],
+            "mips": 700,
+            "ram": 1024,
+            "upBw": 1500,
+            "downBw": 1500,
+            "level": 3,
+            "ratePerMips": 0.25,
+            "busyPower": 70.0,
+            "idlePower": 25.0
+        },
+        {
+            "tagNames": ["RFIDInventorySystem"],
+            "mips": 600,
+            "ram": 1024,
+            "upBw": 1000,
+            "downBw": 1000,
+            "level": 3,
+            "ratePerMips": 0.2,
+            "busyPower": 50.0,
+            "idlePower": 20.0
+        },
+        {
+            "tagNames": ["SecurityCameraSystem"],
+            "mips": 900,
+            "ram": 2048,
+            "upBw": 3000,
+            "downBw": 3000,
+            "level": 3,
+            "ratePerMips": 0.35,
+            "busyPower": 90.0,
+            "idlePower": 35.0
+        },
+        {
+            "tagNames": ["SmartBed"],
+            "mips": 550,
+            "ram": 768,
+            "upBw": 900,
+            "downBw": 900,
+            "level": 3,
+            "ratePerMips": 0.22,
+            "busyPower": 45.0,
+            "idlePower": 18.0
+        },
+        {
+            "tagNames": ["SmartCamera"],
+            "mips": 850,
+            "ram": 1536,
+            "upBw": 2500,
+            "downBw": 2500,
+            "level": 3,
+            "ratePerMips": 0.32,
+            "busyPower": 85.0,
+            "idlePower": 32.0
+        },
+        {
+            "tagNames": ["SmartDisplay"],
+            "mips": 600,
+            "ram": 1024,
+            "upBw": 1200,
+            "downBw": 1200,
+            "level": 3,
+            "ratePerMips": 0.25,
+            "busyPower": 60.0,
+            "idlePower": 20.5
+        },
+        {
+            "tagNames": ["SmartLight"],
+            "mips": 300,
+            "ram": 256,
+            "upBw": 300,
+            "downBw": 300,
+            "level": 3,
+            "ratePerMips": 0.1,
+            "busyPower": 20.0,
+            "idlePower": 5.0
+          }
+    ]
+}

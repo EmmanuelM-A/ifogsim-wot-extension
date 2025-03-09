@@ -1,0 +1,52 @@
+{
+    "@context": "https://www.w3.org/2019/wot/td/v1",
+    "id": "urn:uuid:hvac-control-system",
+    "title": "HVAC Control System",
+    "description": "Intelligent heating, ventilation, and air conditioning management system",
+    "properties": {
+        "currentTemperature": {
+            "type": "number",
+            "unit": "celsius",
+            "readOnly": true,
+            "description": "Current room temperature"
+        },
+        "energyEfficiencyRating": {
+            "type": "number",
+            "readOnly": true,
+            "description": "Current energy efficiency score"
+        }
+    },
+    "actions": {
+        "adjustEnvironmentalSettings": {
+            "description": "Modify HVAC system parameters",
+            "input": {
+                "type": "object",
+                "properties": {
+                    "desiredTemperature": {"type": "number"},
+                    "operationMode": {"type": "string", "enum": ["cooling", "heating", "auto"]},
+                    "energySavingMode": {"type": "boolean"}
+                }
+            },
+            "output": {
+                "type": "object",
+                "properties": {
+                    "status": {"type": "string"},
+                    "estimatedEnergyConsumption": {"type": "number"}
+                }
+            }
+        }
+    },
+    "events": {
+        "temperatureDeviationAlert": {
+            "description": "Triggered when temperature significantly deviates from set parameters",
+            "data": {
+                "type": "object",
+                "properties": {
+                    "currentTemp": {"type": "number"},
+                    "targetTemp": {"type": "number"},
+                    "deviation": {"type": "number"}
+                }
+            }
+        }
+    }
+}

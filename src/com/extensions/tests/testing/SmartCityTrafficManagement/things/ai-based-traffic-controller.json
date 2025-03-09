@@ -1,0 +1,49 @@
+{
+    "@context": "https://www.w3.org/2019/wot/td/v1",
+    "id": "urn:uuid:ai-traffic-controller",
+    "title": "AI-Based Traffic Controller",
+    "description": "Intelligent system for comprehensive traffic management",
+    "properties": {
+        "overallTrafficEfficiency": {
+            "type": "number",
+            "readOnly": true,
+            "description": "Overall traffic flow efficiency score"
+        },
+        "currentTrafficDensity": {
+            "type": "string",
+            "readOnly": true,
+            "description": "Current traffic density assessment"
+        }
+    },
+    "actions": {
+        "optimizeTrafficFlow": {
+            "description": "Apply AI-driven optimization to traffic management",
+            "input": {
+                "type": "object",
+                "properties": {
+                    "priorityRoutes": {"type": "array", "items": {"type": "string"}},
+                    "emergencyVehicleMode": {"type": "boolean"}
+                }
+            },
+            "output": {
+                "type": "object",
+                "properties": {
+                    "optimizationStrategy": {"type": "object"},
+                    "expectedTrafficReduction": {"type": "number"}
+                }
+            }
+        }
+    },
+    "events": {
+        "criticalTrafficSituation": {
+            "description": "Triggered during severe traffic disruptions",
+            "data": {
+                "type": "object",
+                "properties": {
+                    "incidentType": {"type": "string"},
+                    "impactScore": {"type": "number"}
+                }
+            }
+        }
+    }
+}

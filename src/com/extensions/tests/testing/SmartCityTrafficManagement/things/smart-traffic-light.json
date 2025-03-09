@@ -1,0 +1,29 @@
+{
+    "@context": ["https://www.w3.org/2019/wot/td/v1"],
+    "id": "urn:dev:wot:smart-traffic-light",
+    "title": "Smart Traffic Light",
+    "description": "A traffic light that adjusts signals based on traffic conditions.",
+    "security": ["nosec_sc"],
+    "securityDefinitions": {
+      "nosec_sc": { "scheme": "nosec" }
+    },
+    "properties": {
+      "currentSignal": {
+        "type": "string",
+        "description": "Current traffic signal (red, yellow, green)",
+        "readOnly": true
+      }
+    },
+    "actions": {
+      "changeSignal": {
+        "description": "Manually change the traffic signal",
+        "input": { "type": "string", "enum": ["red", "yellow", "green"] }
+      }
+    },
+    "events": {
+      "emergencyOverride": {
+        "description": "Triggered when emergency vehicles request priority",
+        "data": { "type": "boolean" }
+      }
+    }
+}

@@ -1,0 +1,30 @@
+{
+    "icu-monitoring": {
+        "things": {
+            "Patient Monitoring Device": 20,
+            "Emergency Alert System": 1
+        }
+    },
+    "ward-monitoring": {
+        "things": {
+            "Smart Bed": 10,
+            "HVAC Control System": 2,
+            "Smart Display": 1,
+            "Smart Light": 10
+        }
+    },
+    "inventory-management": {
+        "things": {
+            "RFID-Based Inventory System": 5,
+            "Smart Display": 1
+        }
+    },
+    "hospital-security": {
+        "things": {
+            "Security Camera System": 5,
+            "Smart Camera": 10,
+            "Alarm": 10,
+            "Smart Display": 1
+        }
+    }
+}

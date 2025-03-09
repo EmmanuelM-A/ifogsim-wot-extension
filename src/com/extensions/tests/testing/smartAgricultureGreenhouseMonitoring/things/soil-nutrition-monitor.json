@@ -1,0 +1,262 @@
+{
+  "@context": [
+	"https://www.w3.org/2019/wot/td/v1",
+	{
+	  "@language": "en"
+	}
+  ],
+  "@type": "Thing",
+  "title": "Soil Nutrition Monitor",
+  "securityDefinitions": {
+	"nosec": {
+	  "scheme": "nosec"
+	}
+  },
+  "security": [
+	"nosec"
+  ],
+  "properties": {
+	"nitrogenLevel": {
+	  "type": "number",
+	  "description": "The current nitrogen level (mg/kg).",
+	  "minimum": 0,
+	  "maximum": 50,
+	  "observable": true,
+	  "forms": [
+		{
+		  "href": "http://10.32.145.89:8081/soil-nutrition-monitor/properties/nitrogenLevel",
+		  "contentType": "application/json",
+		  "op": [
+			"readproperty",
+			"writeproperty"
+		  ]
+		},
+		{
+		  "href": "http://10.32.145.89:8081/soil-nutrition-monitor/properties/nitrogenLevel/observable",
+		  "contentType": "application/json",
+		  "op": [
+			"observeproperty",
+			"unobserveproperty"
+		  ],
+		  "subprotocol": "longpoll"
+		},
+		{
+		  "href": "http://10.32.145.89:8081/soil-nutrition-monitor/properties/nitrogenLevel",
+		  "contentType": "application/cbor",
+		  "op": [
+			"readproperty",
+			"writeproperty"
+		  ]
+		},
+		{
+		  "href": "http://10.32.145.89:8081/soil-nutrition-monitor/properties/nitrogenLevel/observable",
+		  "contentType": "application/cbor",
+		  "op": [
+			"observeproperty",
+			"unobserveproperty"
+		  ],
+		  "subprotocol": "longpoll"
+		}
+	  ],
+	  "readOnly": false,
+	  "writeOnly": false
+	},
+	"phosphorusLevel": {
+	  "type": "number",
+	  "description": "The current phosphorus level (mg/kg).",
+	  "minimum": 0,
+	  "maximum": 50,
+	  "observable": true,
+	  "forms": [
+		{
+		  "href": "http://10.32.145.89:8081/soil-nutrition-monitor/properties/phosphorusLevel",
+		  "contentType": "application/json",
+		  "op": [
+			"readproperty",
+			"writeproperty"
+		  ]
+		},
+		{
+		  "href": "http://10.32.145.89:8081/soil-nutrition-monitor/properties/phosphorusLevel/observable",
+		  "contentType": "application/json",
+		  "op": [
+			"observeproperty",
+			"unobserveproperty"
+		  ],
+		  "subprotocol": "longpoll"
+		},
+		{
+		  "href": "http://10.32.145.89:8081/soil-nutrition-monitor/properties/phosphorusLevel",
+		  "contentType": "application/cbor",
+		  "op": [
+			"readproperty",
+			"writeproperty"
+		  ]
+		},
+		{
+		  "href": "http://10.32.145.89:8081/soil-nutrition-monitor/properties/phosphorusLevel/observable",
+		  "contentType": "application/cbor",
+		  "op": [
+			"observeproperty",
+			"unobserveproperty"
+		  ],
+		  "subprotocol": "longpoll"
+		}
+	  ],
+	  "readOnly": false,
+	  "writeOnly": false
+	},
+	"potassiumLevel": {
+	  "type": "number",
+	  "description": "The current potassium level (mg/kg).",
+	  "minimum": 0,
+	  "maximum": 50,
+	  "observable": true,
+	  "forms": [
+		{
+		  "href": "http://10.32.145.89:8081/soil-nutrition-monitor/properties/potassiumLevel",
+		  "contentType": "application/json",
+		  "op": [
+			"readproperty",
+			"writeproperty"
+		  ]
+		},
+		{
+		  "href": "http://10.32.145.89:8081/soil-nutrition-monitor/properties/potassiumLevel/observable",
+		  "contentType": "application/json",
+		  "op": [
+			"observeproperty",
+			"unobserveproperty"
+		  ],
+		  "subprotocol": "longpoll"
+		},
+		{
+		  "href": "http://10.32.145.89:8081/soil-nutrition-monitor/properties/potassiumLevel",
+		  "contentType": "application/cbor",
+		  "op": [
+			"readproperty",
+			"writeproperty"
+		  ]
+		},
+		{
+		  "href": "http://10.32.145.89:8081/soil-nutrition-monitor/properties/potassiumLevel/observable",
+		  "contentType": "application/cbor",
+		  "op": [
+			"observeproperty",
+			"unobserveproperty"
+		  ],
+		  "subprotocol": "longpoll"
+		}
+	  ],
+	  "readOnly": false,
+	  "writeOnly": false
+	},
+	"status": {
+	  "type": "string",
+	  "enum": [
+		"active",
+		"inactive",
+		"error"
+	  ],
+	  "description": "The current status of the monitor.",
+	  "forms": [
+		{
+		  "href": "http://10.32.145.89:8081/soil-nutrition-monitor/properties/status",
+		  "contentType": "application/json",
+		  "op": [
+			"readproperty",
+			"writeproperty"
+		  ]
+		},
+		{
+		  "href": "http://10.32.145.89:8081/soil-nutrition-monitor/properties/status",
+		  "contentType": "application/cbor",
+		  "op": [
+			"readproperty",
+			"writeproperty"
+		  ]
+		}
+	  ],
+	  "readOnly": false,
+	  "writeOnly": false,
+	  "observable": false
+	}
+  },
+  "actions": {
+	"calibrateSensor": {
+	  "description": "Calibrates the sensor to reset nutrition readings.",
+	  "forms": [
+		{
+		  "href": "http://10.32.145.89:8081/soil-nutrition-monitor/actions/calibrateSensor",
+		  "contentType": "application/json",
+		  "op": [
+			"invokeaction"
+		  ],
+		  "htv:methodName": "POST"
+		},
+		{
+		  "href": "http://10.32.145.89:8081/soil-nutrition-monitor/actions/calibrateSensor",
+		  "contentType": "application/cbor",
+		  "op": [
+			"invokeaction"
+		  ],
+		  "htv:methodName": "POST"
+		}
+	  ],
+	  "safe": false,
+	  "idempotent": false
+	}
+  },
+  "events": {
+	"nutritionDepleted": {
+	  "description": "Triggered when one or more nutrition levels are critically low.",
+	  "data": {
+		"type": "string"
+	  },
+	  "forms": [
+		{
+		  "href": "http://10.32.145.89:8081/soil-nutrition-monitor/events/nutritionDepleted",
+		  "contentType": "application/json",
+		  "subprotocol": "longpoll",
+		  "op": [
+			"subscribeevent",
+			"unsubscribeevent"
+		  ]
+		},
+		{
+		  "href": "http://10.32.145.89:8081/soil-nutrition-monitor/events/nutritionDepleted",
+		  "contentType": "application/cbor",
+		  "subprotocol": "longpoll",
+		  "op": [
+			"subscribeevent",
+			"unsubscribeevent"
+		  ]
+		}
+	  ]
+	}
+  },
+  "id": "urn:uuid:00f9d61d-7076-475e-85c9-92aca9104290",
+  "description": "Monitors soil nutrition levels (NPK).",
+  "forms": [
+	{
+	  "href": "http://10.32.145.89:8081/soil-nutrition-monitor/properties",
+	  "contentType": "application/json",
+	  "op": [
+		"readallproperties",
+		"readmultipleproperties",
+		"writeallproperties",
+		"writemultipleproperties"
+	  ]
+	},
+	{
+	  "href": "http://10.32.145.89:8081/soil-nutrition-monitor/properties",
+	  "contentType": "application/cbor",
+	  "op": [
+		"readallproperties",
+		"readmultipleproperties",
+		"writeallproperties",
+		"writemultipleproperties"
+	  ]
+	}
+  ]
+}
