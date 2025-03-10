@@ -9,10 +9,10 @@ import java.io.IOException;
 import java.util.*;
 
 /**
- * Responsible for parsing the VD quantities file and extracting and transforming the data into
+ * Responsible for parsing the Thing (VD) quantities file and extracting and transforming the data into
  * a more useful form.
  */
-public class VDQuantityParser implements FileProcessor<Map<String, List<String>>> {
+public class ThingQuantityParser implements FileProcessor<Map<String, List<String>>> {
     /**
      * A frequency table that stores the number of times a thing appears.
      */
@@ -29,7 +29,7 @@ public class VDQuantityParser implements FileProcessor<Map<String, List<String>>
      * @param file The file containing the VD quantities (and their connections to edge devices).
      * @throws IOException IOException If an error occurs while reading or parsing the file
      */
-    public VDQuantityParser(File file) throws IOException {
+    public ThingQuantityParser(File file) throws IOException {
         this.thingFrequencies = new HashMap<>();
         this.vdsConnectedToEdgeNodes = process(file);
     }
