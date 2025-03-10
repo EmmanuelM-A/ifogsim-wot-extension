@@ -4,7 +4,7 @@
     "title": "Vibration Sensor",
     "description": "Detects vibrations and measures their intensity.",
     "securityDefinitions": {
-      "nosec_sc": {
+      "nosec": {
         "scheme": "nosec"
       }
     },

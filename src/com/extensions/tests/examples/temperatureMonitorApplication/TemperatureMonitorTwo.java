@@ -2,7 +2,7 @@ package com.extensions.tests.examples.temperatureMonitorApplication;
 
 import com.extensions.customfog.CustomController;
 import com.extensions.customfog.FogDeviceFactory;
-import com.extensions.sysconstructor.core.VDQuantityParser;
+import com.extensions.sysconstructor.core.ThingQuantityParser;
 import com.extensions.utils.presets.FogDevicePreset;
 import com.extensions.utils.presets.SensorPreset;
 import com.extensions.utils.presets.ActuatorPreset;
@@ -41,7 +41,7 @@ public class TemperatureMonitorTwo {
             //////////////////////////////// INITIAL SETUP ////////////////////////////////
 
             // Parses the VD quantities file and extracts the quantity of each thing to be used in the application
-            VDQuantityParser vdQuantities = new VDQuantityParser(new File(VD_QUANTITIES_FILE));
+            ThingQuantityParser vdQuantities = new ThingQuantityParser(new File(VD_QUANTITIES_FILE));
 
             // Disables iFogSim's logging mechanism, only display simulation results
             Log.disable();

@@ -1,0 +1,140 @@
+{
+    "@context": "https://www.w3.org/2019/wot/td/v1",
+    "id": "urn:retail:demandforecast:001",
+    "title": "AI-Based Demand Forecasting System",
+    "description": "Intelligent system that predicts product demand based on historical data and external factors",
+    "securityDefinitions": {
+      "oauth2_sc": {
+        "scheme": "oauth2",
+        "flow": "client_credentials",
+        "authorization": "https://retail.example.com/auth/token"
+      }
+    },
+    "security": ["oauth2_sc"],
+    "properties": {
+      "systemStatus": {
+        "type": "string",
+        "enum": ["online", "training", "updating", "offline"],
+        "forms": [{"href": "https://retail.example.com/forecast/status"}]
+      },
+      "lastUpdateTime": {
+        "type": "string",
+        "format": "date-time",
+        "readOnly": true,
+        "forms": [{"href": "https://retail.example.com/forecast/lastupdate"}]
+      },
+      "modelAccuracy": {
+        "type": "object",
+        "readOnly": true,
+        "properties": {
+          "mape": {"type": "number"},
+          "rmse": {"type": "number"},
+          "r2": {"type": "number"}
+        },
+        "forms": [{"href": "https://retail.example.com/forecast/accuracy"}]
+      },
+      "forecastHorizon": {
+        "type": "integer",
+        "unit": "day",
+        "forms": [{"href": "https://retail.example.com/forecast/horizon"}]
+      },
+      "dataSourceStatus": {
+        "type": "object",
+        "readOnly": true,
+        "properties": {
+          "sales": {"type": "string", "enum": ["connected", "disconnected"]},
+          "inventory": {"type": "string", "enum": ["connected", "disconnected"]},
+          "weather": {"type": "string", "enum": ["connected", "disconnected"]},
+          "events": {"type": "string", "enum": ["connected", "disconnected"]}
+        },
+        "forms": [{"href": "https://retail.example.com/forecast/datasources"}]
+      }
+    },
+    "actions": {
+      "generateForecast": {
+        "input": {
+          "type": "object",
+          "properties": {
+            "productSku": {"type": "string"},
+            "startDate": {"type": "string", "format": "date"},
+            "endDate": {"type": "string", "format": "date"},
+            "granularity": {"type": "string", "enum": ["hourly", "daily", "weekly"]}
+          }
+        },
+        "output": {
+          "type": "object",
+          "properties": {
+            "forecastId": {"type": "string"},
+            "values": {"type": "array", "items": {"type": "number"}},
+            "confidence": {"type": "array", "items": {"type": "object"}}
+          }
+        },
+        "forms": [{"href": "https://retail.example.com/forecast/generate"}]
+      },
+      "retrainModel": {
+        "input": {
+          "type": "object",
+          "properties": {
+            "productCategories": {"type": "array", "items": {"type": "string"}},
+            "trainingWindow": {"type": "integer", "unit": "day"}
+          }
+        },
+        "forms": [{"href": "https://retail.example.com/forecast/retrain"}]
+      },
+      "addExternalFactor": {
+        "input": {
+          "type": "object",
+          "properties": {
+            "factorName": {"type": "string"},
+            "factorType": {"type": "string", "enum": ["promotion", "event", "weather", "competitor"]},
+            "data": {"type": "array"}
+          }
+        },
+        "forms": [{"href": "https://retail.example.com/forecast/factors/add"}]
+      },
+      "optimizeInventory": {
+        "input": {
+          "type": "object",
+          "properties": {
+            "productCategories": {"type": "array", "items": {"type": "string"}},
+            "targetServiceLevel": {"type": "number"}
+          }
+        },
+        "output": {
+          "type": "object",
+          "properties": {
+            "recommendations": {"type": "array", "items": {"type": "object"}},
+            "estimatedSavings": {"type": "number"}
+          }
+        },
+        "forms": [{"href": "https://retail.example.com/forecast/optimize"}]
+      }
+    },
+    "events": {
+      "anomalyDetected": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "productSku": {"type": "string"},
+            "expected": {"type": "number"},
+            "actual": {"type": "number"},
+            "deviation": {"type": "number", "unit": "percent"},
+            "timestamp": {"type": "string", "format": "date-time"}
+          }
+        },
+        "forms": [{"href": "https://retail.example.com/forecast/events/anomaly", "subprotocol": "websocket"}]
+      },
+      "forecastReady": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "forecastId": {"type": "string"},
+            "productScope": {"type": "string"},
+            "horizon": {"type": "integer", "unit": "day"},
+            "timestamp": {"type": "string", "format": "date-time"}
+          }
+        },
+        "forms": [{"href": "https://retail.example.com/forecast/events/ready", "subprotocol": "websocket"}]
+      }
+    }
+  }

@@ -46,7 +46,7 @@ import org.fog.utils.distribution.DeterministicDistribution;
  */
 public class IFogSimImplementation {
 
-    private static boolean CLOUD_PLACEMENT = false; // Set to true to place all modules in cloud
+    private final static boolean CLOUD_PLACEMENT = false; // Set to true to place all modules in cloud
 
     public static void main(String[] args) {
         try {

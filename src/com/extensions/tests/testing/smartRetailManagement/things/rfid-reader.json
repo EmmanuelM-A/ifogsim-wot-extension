@@ -1,0 +1,91 @@
+{
+    "@context": "https://www.w3.org/2019/wot/td/v1",
+    "id": "urn:retail:rfidreader:001",
+    "title": "RFID Reader",
+    "description": "RFID reader for tracking inventory and preventing theft in retail environments",
+    "securityDefinitions": {
+      "apikey_sc": { "scheme": "apikey", "in": "header" }
+    },
+    "security": ["apikey_sc"],
+    "properties": {
+      "deviceId": {
+        "type": "string",
+        "readOnly": true,
+        "forms": [{"href": "http://store.example.com/rfid/{deviceId}"}]
+      },
+      "status": {
+        "type": "string",
+        "enum": ["active", "standby", "error"],
+        "readOnly": true,
+        "forms": [{"href": "http://store.example.com/rfid/{deviceId}/status"}]
+      },
+      "scanMode": {
+        "type": "string",
+        "enum": ["continuous", "triggered", "scheduled"],
+        "forms": [{"href": "http://store.example.com/rfid/{deviceId}/scanmode"}]
+      },
+      "lastScanTime": {
+        "type": "string",
+        "format": "date-time",
+        "readOnly": true,
+        "forms": [{"href": "http://store.example.com/rfid/{deviceId}/lastscan"}]
+      },
+      "detectedTags": {
+        "type": "array",
+        "readOnly": true,
+        "items": {
+          "type": "object",
+          "properties": {
+            "tagId": {"type": "string"},
+            "productSku": {"type": "string"},
+            "rssi": {"type": "number"}
+          }
+        },
+        "forms": [{"href": "http://store.example.com/rfid/{deviceId}/tags"}]
+      }
+    },
+    "actions": {
+      "scan": {
+        "forms": [{"href": "http://store.example.com/rfid/{deviceId}/scan"}]
+      },
+      "reset": {
+        "forms": [{"href": "http://store.example.com/rfid/{deviceId}/reset"}]
+      },
+      "updateAntennaConfig": {
+        "input": {
+          "type": "object",
+          "properties": {
+            "power": {"type": "number", "unit": "dBm"},
+            "sensitivity": {"type": "number"}
+          }
+        },
+        "forms": [{"href": "http://store.example.com/rfid/{deviceId}/config"}]
+      }
+    },
+    "events": {
+      "tagDetection": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "tagId": {"type": "string"},
+            "productSku": {"type": "string"},
+            "location": {"type": "string"},
+            "timestamp": {"type": "string", "format": "date-time"}
+          }
+        },
+        "forms": [{"href": "http://store.example.com/rfid/{deviceId}/events/detection", "subprotocol": "websocket"}]
+      },
+      "securityAlert": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "tagId": {"type": "string"},
+            "productSku": {"type": "string"},
+            "alertType": {"type": "string", "enum": ["exit", "restricted", "tamper"]},
+            "timestamp": {"type": "string", "format": "date-time"}
+          }
+        },
+        "forms": [{"href": "http://store.example.com/rfid/{deviceId}/events/security", "subprotocol": "websocket"}]
+      }
+    }
+  }

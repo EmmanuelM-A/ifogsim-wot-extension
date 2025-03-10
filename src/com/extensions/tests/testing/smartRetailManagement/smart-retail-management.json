@@ -1,0 +1,386 @@
+[
+    {
+        "id": "844d9b76019a42ce",
+        "type": "tab",
+        "label": "Smart Retail Management",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "1fe00cd107e62251",
+        "type": "read-property",
+        "z": "844d9b76019a42ce",
+        "name": "",
+        "topic": "",
+        "thing": "83c27042e7af7183",
+        "property": "shelfId",
+        "uriVariables": "",
+        "observe": false,
+        "x": 320,
+        "y": 760,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "81be7595643b2f99",
+        "type": "read-property",
+        "z": "844d9b76019a42ce",
+        "name": "",
+        "topic": "",
+        "thing": "2ba4fa6b2bc53ae4",
+        "property": "cameraId",
+        "uriVariables": "",
+        "observe": false,
+        "x": 290,
+        "y": 1000,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "fe6706fb372a6cf6",
+        "type": "read-property",
+        "z": "844d9b76019a42ce",
+        "name": "",
+        "topic": "",
+        "thing": "6ed7762f2bef2ddf",
+        "property": "checkoutId",
+        "uriVariables": "",
+        "observe": false,
+        "x": 300,
+        "y": 1140,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "a3e8e6c205334f41",
+        "type": "read-property",
+        "z": "844d9b76019a42ce",
+        "name": "",
+        "topic": "",
+        "thing": "e00e174ba7b407ea",
+        "property": "storeId",
+        "uriVariables": "",
+        "observe": false,
+        "x": 260,
+        "y": 1260,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "d1cce71c5715ba31",
+        "type": "read-property",
+        "z": "844d9b76019a42ce",
+        "name": "",
+        "topic": "",
+        "thing": "1d60bf389d609c64",
+        "property": "systemStatus",
+        "uriVariables": "",
+        "observe": false,
+        "x": 290,
+        "y": 1380,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "1d61d5ea48934e95",
+        "type": "comment",
+        "z": "844d9b76019a42ce",
+        "name": "Inventory Management",
+        "info": "",
+        "x": 300,
+        "y": 100,
+        "wires": []
+    },
+    {
+        "id": "a4295f229ee61887",
+        "type": "invoke-action",
+        "z": "844d9b76019a42ce",
+        "name": "",
+        "topic": "",
+        "thing": "6ed7762f2bef2ddf",
+        "action": "startTransaction",
+        "uriVariables": "",
+        "x": 710,
+        "y": 1000,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "fcbe6b2dcdc3f185",
+        "type": "subscribe-event",
+        "z": "844d9b76019a42ce",
+        "name": "",
+        "topic": "",
+        "thing": "6ed7762f2bef2ddf",
+        "event": "transactionComplete",
+        "x": 300,
+        "y": 320,
+        "wires": [
+            [
+                "f301f3dd5c8c43e8"
+            ]
+        ]
+    },
+    {
+        "id": "f301f3dd5c8c43e8",
+        "type": "function",
+        "z": "844d9b76019a42ce",
+        "name": "Some Processing",
+        "func": "\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 610,
+        "y": 320,
+        "wires": [
+            [
+                "78d3eb5aaadf51a9"
+            ]
+        ]
+    },
+    {
+        "id": "78d3eb5aaadf51a9",
+        "type": "invoke-action",
+        "z": "844d9b76019a42ce",
+        "name": "",
+        "topic": "dashboard",
+        "thing": "e00e174ba7b407ea",
+        "action": "generateReport",
+        "uriVariables": "",
+        "x": 950,
+        "y": 320,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "0fb7c8bb260fd70c",
+        "type": "read-property",
+        "z": "844d9b76019a42ce",
+        "name": "",
+        "topic": "",
+        "thing": "",
+        "property": "",
+        "uriVariables": "",
+        "observe": false,
+        "x": 580,
+        "y": 720,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "858bc2c7f5cdc57b",
+        "type": "invoke-action",
+        "z": "844d9b76019a42ce",
+        "name": "",
+        "topic": "",
+        "thing": "bf05dda24abfb628",
+        "action": "scan",
+        "uriVariables": "",
+        "x": 870,
+        "y": 740,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "13209390e6840454",
+        "type": "read-property",
+        "z": "844d9b76019a42ce",
+        "name": "",
+        "topic": "",
+        "thing": "bf05dda24abfb628",
+        "property": "detectedTags",
+        "uriVariables": "",
+        "observe": false,
+        "x": 310,
+        "y": 200,
+        "wires": [
+            [
+                "1e044770901bcc34"
+            ]
+        ]
+    },
+    {
+        "id": "1e044770901bcc34",
+        "type": "function",
+        "z": "844d9b76019a42ce",
+        "name": "Some Processing - Get Item ID",
+        "func": "\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 680,
+        "y": 200,
+        "wires": [
+            [
+                "c2b512ba93abf6a9"
+            ]
+        ]
+    },
+    {
+        "id": "e05c52e8a4c4983e",
+        "type": "invoke-action",
+        "z": "844d9b76019a42ce",
+        "name": "",
+        "topic": "",
+        "thing": "",
+        "action": "",
+        "uriVariables": "",
+        "x": 670,
+        "y": 480,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "4c3873e59530d509",
+        "type": "invoke-action",
+        "z": "844d9b76019a42ce",
+        "name": "",
+        "topic": "",
+        "thing": "53318f195d961386",
+        "action": "performInventoryAudit",
+        "uriVariables": "",
+        "x": 1150,
+        "y": 460,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "c2b512ba93abf6a9",
+        "type": "read-property",
+        "z": "844d9b76019a42ce",
+        "name": "",
+        "topic": "",
+        "thing": "53318f195d961386",
+        "property": "totalItemCount",
+        "uriVariables": "",
+        "observe": false,
+        "x": 1070,
+        "y": 200,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "83c27042e7af7183",
+        "type": "consumed-thing",
+        "tdLink": "",
+        "td": "{   \"@context\": \"https://www.w3.org/2019/wot/td/v1\",   \"id\": \"urn:retail:smartshelf:001\",   \"title\": \"Smart Shelf Sensor\",   \"description\": \"Weight-based sensor for monitoring inventory levels on retail shelves\",   \"securityDefinitions\": {     \"basic_sc\": { \"scheme\": \"basic\" }   },   \"security\": [\"basic_sc\"],   \"properties\": {     \"shelfId\": {       \"type\": \"string\",       \"readOnly\": true,       \"forms\": [{\"href\": \"http://store.example.com/shelves/{shelfId}/info\"}]     },     \"currentWeight\": {       \"type\": \"number\",       \"unit\": \"gram\",       \"readOnly\": true,       \"observable\": true,       \"forms\": [{\"href\": \"http://store.example.com/shelves/{shelfId}/weight\"}]     },     \"productSku\": {       \"type\": \"string\",       \"forms\": [{\"href\": \"http://store.example.com/shelves/{shelfId}/product\"}]     },     \"itemCount\": {       \"type\": \"integer\",       \"readOnly\": true,       \"forms\": [{\"href\": \"http://store.example.com/shelves/{shelfId}/count\"}]     },     \"batteryLevel\": {       \"type\": \"number\",       \"unit\": \"percent\",       \"readOnly\": true,       \"forms\": [{\"href\": \"http://store.example.com/shelves/{shelfId}/battery\"}]     }   },   \"actions\": {     \"calibrate\": {       \"forms\": [{\"href\": \"http://store.example.com/shelves/{shelfId}/calibrate\"}]     },     \"setItemWeight\": {       \"input\": {         \"type\": \"object\",         \"properties\": {           \"singleItemWeight\": {\"type\": \"number\", \"unit\": \"gram\"}         }       },       \"forms\": [{\"href\": \"http://store.example.com/shelves/{shelfId}/itemweight\"}]     }   },   \"events\": {     \"lowStock\": {       \"data\": {         \"type\": \"object\",         \"properties\": {           \"shelfId\": {\"type\": \"string\"},           \"productSku\": {\"type\": \"string\"},           \"currentCount\": {\"type\": \"integer\"},           \"timestamp\": {\"type\": \"string\", \"format\": \"date-time\"}         }       },       \"forms\": [{\"href\": \"http://store.example.com/shelves/{shelfId}/events/lowstock\", \"subprotocol\": \"longpoll\"}]     },     \"outOfStock\": {       \"data\": {         \"type\": \"object\",         \"properties\": {           \"shelfId\": {\"type\": \"string\"},           \"productSku\": {\"type\": \"string\"},           \"timestamp\": {\"type\": \"string\", \"format\": \"date-time\"}         }       },       \"forms\": [{\"href\": \"http://store.example.com/shelves/{shelfId}/events/outofstock\", \"subprotocol\": \"longpoll\"}]     }   } }",
+        "http": true,
+        "ws": false,
+        "coap": false,
+        "mqtt": false,
+        "opcua": false,
+        "modbus": false,
+        "basicAuth": false,
+        "username": "",
+        "password": ""
+    },
+    {
+        "id": "2ba4fa6b2bc53ae4",
+        "type": "consumed-thing",
+        "tdLink": "",
+        "td": "{   \"@context\": \"https://www.w3.org/2019/wot/td/v1\",   \"id\": \"urn:retail:smartcamera:001\",   \"title\": \"Smart Camera Tracker\",   \"description\": \"Vision-based system for tracking customer movement and behavior in retail spaces\",   \"securityDefinitions\": {     \"oauth2_sc\": {       \"scheme\": \"oauth2\",       \"flow\": \"client_credentials\",       \"authorization\": \"https://auth.store.example.com/token\"     }   },   \"security\": [\"oauth2_sc\"],   \"properties\": {     \"cameraId\": {       \"type\": \"string\",       \"readOnly\": true,       \"forms\": [{\"href\": \"https://store.example.com/cameras/{cameraId}\"}]     },     \"location\": {       \"type\": \"string\",       \"readOnly\": true,       \"forms\": [{\"href\": \"https://store.example.com/cameras/{cameraId}/location\"}]     },     \"status\": {       \"type\": \"string\",       \"enum\": [\"active\", \"standby\", \"error\"],       \"forms\": [{\"href\": \"https://store.example.com/cameras/{cameraId}/status\"}]     },     \"currentCount\": {       \"type\": \"integer\",       \"description\": \"Current number of people in view\",       \"readOnly\": true,       \"observable\": true,       \"forms\": [{\"href\": \"https://store.example.com/cameras/{cameraId}/count\"}]     },     \"privacyMode\": {       \"type\": \"string\",       \"enum\": [\"anonymized\", \"heatmap\", \"counting\"],       \"forms\": [{\"href\": \"https://store.example.com/cameras/{cameraId}/privacy\"}]     }   },   \"actions\": {     \"reboot\": {       \"forms\": [{\"href\": \"https://store.example.com/cameras/{cameraId}/reboot\"}]     },     \"setRegionOfInterest\": {       \"input\": {         \"type\": \"object\",         \"properties\": {           \"coordinates\": {\"type\": \"array\", \"items\": {\"type\": \"object\"}}         }       },       \"forms\": [{\"href\": \"https://store.example.com/cameras/{cameraId}/roi\"}]     },     \"generateHeatmap\": {       \"output\": {         \"type\": \"string\",         \"format\": \"uri\"       },       \"forms\": [{\"href\": \"https://store.example.com/cameras/{cameraId}/heatmap\"}]     }   },   \"events\": {     \"peakTraffic\": {       \"data\": {         \"type\": \"object\",         \"properties\": {           \"count\": {\"type\": \"integer\"},           \"threshold\": {\"type\": \"integer\"},           \"timestamp\": {\"type\": \"string\", \"format\": \"date-time\"}         }       },       \"forms\": [{\"href\": \"https://store.example.com/cameras/{cameraId}/events/peak\", \"subprotocol\": \"websocket\"}]     },     \"dwell\": {       \"data\": {         \"type\": \"object\",         \"properties\": {           \"zoneId\": {\"type\": \"string\"},           \"dwellTime\": {\"type\": \"number\", \"unit\": \"second\"},           \"count\": {\"type\": \"integer\"},           \"timestamp\": {\"type\": \"string\", \"format\": \"date-time\"}         }       },       \"forms\": [{\"href\": \"https://store.example.com/cameras/{cameraId}/events/dwell\", \"subprotocol\": \"websocket\"}]     },     \"unusualActivity\": {       \"data\": {         \"type\": \"object\",         \"properties\": {           \"activityType\": {\"type\": \"string\"},           \"confidence\": {\"type\": \"number\"},           \"timestamp\": {\"type\": \"string\", \"format\": \"date-time\"}         }       },       \"forms\": [{\"href\": \"https://store.example.com/cameras/{cameraId}/events/unusual\", \"subprotocol\": \"websocket\"}]     }   } }",
+        "http": true,
+        "ws": false,
+        "coap": false,
+        "mqtt": false,
+        "opcua": false,
+        "modbus": false,
+        "basicAuth": false,
+        "username": "",
+        "password": ""
+    },
+    {
+        "id": "6ed7762f2bef2ddf",
+        "type": "consumed-thing",
+        "tdLink": "",
+        "td": "{   \"@context\": \"https://www.w3.org/2019/wot/td/v1\",   \"id\": \"urn:retail:smartcheckout:001\",   \"title\": \"Smart Checkout System\",   \"description\": \"Automated checkout system for frictionless retail experiences\",   \"securityDefinitions\": {     \"bearer_sc\": { \"scheme\": \"bearer\" }   },   \"security\": [\"bearer_sc\"],   \"properties\": {     \"checkoutId\": {       \"type\": \"string\",       \"readOnly\": true,       \"forms\": [{\"href\": \"https://store.example.com/checkout/{checkoutId}\"}]     },     \"status\": {       \"type\": \"string\",       \"enum\": [\"available\", \"inUse\", \"maintenance\", \"error\"],       \"observable\": true,       \"forms\": [{\"href\": \"https://store.example.com/checkout/{checkoutId}/status\"}]     },     \"currentBasket\": {       \"type\": \"array\",       \"readOnly\": true,       \"items\": {         \"type\": \"object\",         \"properties\": {           \"productSku\": {\"type\": \"string\"},           \"name\": {\"type\": \"string\"},           \"price\": {\"type\": \"number\"},           \"quantity\": {\"type\": \"integer\"}         }       },       \"forms\": [{\"href\": \"https://store.example.com/checkout/{checkoutId}/basket\"}]     },     \"totalAmount\": {       \"type\": \"number\",       \"readOnly\": true,       \"forms\": [{\"href\": \"https://store.example.com/checkout/{checkoutId}/total\"}]     },     \"paymentMethods\": {       \"type\": \"array\",       \"items\": {\"type\": \"string\"},       \"forms\": [{\"href\": \"https://store.example.com/checkout/{checkoutId}/payments\"}]     }   },   \"actions\": {     \"startTransaction\": {       \"input\": {         \"type\": \"object\",         \"properties\": {           \"customerId\": {\"type\": \"string\"}         }       },       \"forms\": [{\"href\": \"https://store.example.com/checkout/{checkoutId}/start\"}]     },     \"addItem\": {       \"input\": {         \"type\": \"object\",         \"properties\": {           \"productSku\": {\"type\": \"string\"},           \"quantity\": {\"type\": \"integer\"}         }       },       \"forms\": [{\"href\": \"https://store.example.com/checkout/{checkoutId}/add\"}]     },     \"removeItem\": {       \"input\": {         \"type\": \"object\",         \"properties\": {           \"productSku\": {\"type\": \"string\"},           \"quantity\": {\"type\": \"integer\"}         }       },       \"forms\": [{\"href\": \"https://store.example.com/checkout/{checkoutId}/remove\"}]     },     \"processPayment\": {       \"input\": {         \"type\": \"object\",         \"properties\": {           \"paymentMethod\": {\"type\": \"string\"},           \"paymentToken\": {\"type\": \"string\"}         }       },       \"output\": {         \"type\": \"object\",         \"properties\": {           \"transactionId\": {\"type\": \"string\"},           \"success\": {\"type\": \"boolean\"},           \"receipt\": {\"type\": \"string\", \"format\": \"uri\"}         }       },       \"forms\": [{\"href\": \"https://store.example.com/checkout/{checkoutId}/pay\"}]     },     \"cancelTransaction\": {       \"forms\": [{\"href\": \"https://store.example.com/checkout/{checkoutId}/cancel\"}]     }   },   \"events\": {     \"transactionComplete\": {       \"data\": {         \"type\": \"object\",         \"properties\": {           \"transactionId\": {\"type\": \"string\"},           \"amount\": {\"type\": \"number\"},           \"itemCount\": {\"type\": \"integer\"},           \"timestamp\": {\"type\": \"string\", \"format\": \"date-time\"}         }       },       \"forms\": [{\"href\": \"https://store.example.com/checkout/{checkoutId}/events/complete\", \"subprotocol\": \"websocket\"}]     },     \"checkoutError\": {       \"data\": {         \"type\": \"object\",         \"properties\": {           \"errorCode\": {\"type\": \"string\"},           \"message\": {\"type\": \"string\"},           \"timestamp\": {\"type\": \"string\", \"format\": \"date-time\"}         }       },       \"forms\": [{\"href\": \"https://store.example.com/checkout/{checkoutId}/events/error\", \"subprotocol\": \"websocket\"}]     }   } }",
+        "http": true,
+        "ws": false,
+        "coap": false,
+        "mqtt": false,
+        "opcua": false,
+        "modbus": false,
+        "basicAuth": false,
+        "username": "",
+        "password": ""
+    },
+    {
+        "id": "e00e174ba7b407ea",
+        "type": "consumed-thing",
+        "tdLink": "",
+        "td": "{   \"@context\": \"https://www.w3.org/2019/wot/td/v1\",   \"id\": \"urn:retail:dashboard:001\",   \"title\": \"Retail Management Dashboard\",   \"description\": \"Central management interface for monitoring and controlling retail IoT ecosystem\",   \"securityDefinitions\": {     \"bearer_sc\": { \"scheme\": \"bearer\" }   },   \"security\": [\"bearer_sc\"],   \"properties\": {     \"storeId\": {       \"type\": \"string\",       \"readOnly\": true,       \"forms\": [{\"href\": \"https://retail.example.com/dashboard/store\"}]     },     \"systemOverview\": {       \"type\": \"object\",       \"readOnly\": true,       \"properties\": {         \"connectedDevices\": {\"type\": \"integer\"},         \"activeAlerts\": {\"type\": \"integer\"},         \"systemHealth\": {\"type\": \"string\", \"enum\": [\"healthy\", \"warning\", \"critical\"]}       },       \"observable\": true,       \"forms\": [{\"href\": \"https://retail.example.com/dashboard/overview\"}]     },     \"salesMetrics\": {       \"type\": \"object\",       \"readOnly\": true,       \"properties\": {         \"dailySales\": {\"type\": \"number\"},         \"salesTarget\": {\"type\": \"number\"},         \"averageBasketSize\": {\"type\": \"number\"},         \"customerCount\": {\"type\": \"integer\"}       },       \"observable\": true,       \"forms\": [{\"href\": \"https://retail.example.com/dashboard/sales\"}]     },     \"inventoryStatus\": {       \"type\": \"object\",       \"readOnly\": true,       \"properties\": {         \"totalSkus\": {\"type\": \"integer\"},         \"outOfStockItems\": {\"type\": \"integer\"},         \"lowStockItems\": {\"type\": \"integer\"},         \"overStockItems\": {\"type\": \"integer\"}       },       \"observable\": true,       \"forms\": [{\"href\": \"https://retail.example.com/dashboard/inventory\"}]     },     \"userPreferences\": {       \"type\": \"object\",       \"properties\": {         \"theme\": {\"type\": \"string\", \"enum\": [\"light\", \"dark\", \"system\"]},         \"refreshRate\": {\"type\": \"integer\", \"unit\": \"second\"},         \"notifications\": {\"type\": \"boolean\"}       },       \"forms\": [{\"href\": \"https://retail.example.com/dashboard/preferences\"}]     }   },   \"actions\": {     \"generateReport\": {       \"input\": {         \"type\": \"object\",         \"properties\": {           \"reportType\": {\"type\": \"string\", \"enum\": [\"sales\", \"inventory\", \"traffic\", \"forecast\"]},           \"startDate\": {\"type\": \"string\", \"format\": \"date\"},           \"endDate\": {\"type\": \"string\", \"format\": \"date\"},           \"format\": {\"type\": \"string\", \"enum\": [\"pdf\", \"excel\", \"json\"]}         }       },       \"output\": {         \"type\": \"string\",         \"format\": \"uri\"       },       \"forms\": [{\"href\": \"https://retail.example.com/dashboard/reports/generate\"}]     },     \"broadcastAnnouncement\": {       \"input\": {         \"type\": \"object\",         \"properties\": {           \"message\": {\"type\": \"string\"},           \"targetDevices\": {\"type\": \"array\", \"items\": {\"type\": \"string\"}},           \"priority\": {\"type\": \"string\", \"enum\": [\"low\", \"normal\", \"high\"]}         }       },       \"forms\": [{\"href\": \"https://retail.example.com/dashboard/broadcast\"}]     },     \"updateDeviceFirmware\": {       \"input\": {         \"type\": \"object\",         \"properties\": {           \"deviceType\": {\"type\": \"string\"},           \"version\": {\"type\": \"string\"},           \"schedule\": {\"type\": \"string\", \"enum\": [\"immediate\", \"overnight\", \"scheduled\"]},           \"scheduledTime\": {\"type\": \"string\", \"format\": \"date-time\"}         }       },       \"forms\": [{\"href\": \"https://retail.example.com/dashboard/firmware\"}]     },     \"optimizeStaffing\": {       \"input\": {         \"type\": \"object\",         \"properties\": {           \"department\": {\"type\": \"string\"},           \"date\": {\"type\": \"string\", \"format\": \"date\"}         }       },       \"output\": {         \"type\": \"object\",         \"properties\": {           \"recommendations\": {\"type\": \"array\", \"items\": {\"type\": \"object\"}},           \"expectedTraffic\": {\"type\": \"array\", \"items\": {\"type\": \"number\"}}         }       },       \"forms\": [{\"href\": \"https://retail.example.com/dashboard/staffing\"}]     }   },   \"events\": {     \"systemAlert\": {       \"data\": {         \"type\": \"object\",         \"properties\": {           \"alertId\": {\"type\": \"string\"},           \"alertType\": {\"type\": \"string\"},           \"severity\": {\"type\": \"string\", \"enum\": [\"info\", \"warning\", \"critical\"]},           \"message\": {\"type\": \"string\"},           \"timestamp\": {\"type\": \"string\", \"format\": \"date-time\"}         }       },       \"forms\": [{\"href\": \"https://retail.example.com/dashboard/events/alerts\", \"subprotocol\": \"websocket\"}]     },     \"performanceMetric\": {       \"data\": {         \"type\": \"object\",         \"properties\": {           \"metric\": {\"type\": \"string\"},           \"value\": {\"type\": \"number\"},           \"trend\": {\"type\": \"string\", \"enum\": [\"up\", \"down\", \"stable\"]},           \"timestamp\": {\"type\": \"string\", \"format\": \"date-time\"}         }       },       \"forms\": [{\"href\": \"https://retail.example.com/dashboard/events/metrics\", \"subprotocol\": \"websocket\"}]     },     \"userActivity\": {       \"data\": {         \"type\": \"object\",         \"properties\": {           \"userId\": {\"type\": \"string\"},           \"action\": {\"type\": \"string\"},           \"resource\": {\"type\": \"string\"},           \"timestamp\": {\"type\": \"string\", \"format\": \"date-time\"}         }       },       \"forms\": [{\"href\": \"https://retail.example.com/dashboard/events/activity\", \"subprotocol\": \"websocket\"}]     }   },   \"links\": [     {       \"rel\": \"shelf-sensors\",       \"href\": \"https://retail.example.com/devices/shelves\",       \"type\": \"application/td+json\"     },     {       \"rel\": \"rfid-readers\",       \"href\": \"https://retail.example.com/devices/rfid\",       \"type\": \"application/td+json\"     },     {       \"rel\": \"cameras\",       \"href\": \"https://retail.example.com/devices/cameras\",       \"type\": \"application/td+json\"     },     {       \"rel\": \"checkout-systems\",       \"href\": \"https://retail.example.com/devices/checkout\",       \"type\": \"application/td+json\"     },     {       \"rel\": \"forecasting\",       \"href\": \"https://retail.example.com/services/forecast\",       \"type\": \"application/td+json\"     }   ] }",
+        "http": true,
+        "ws": false,
+        "coap": false,
+        "mqtt": false,
+        "opcua": false,
+        "modbus": false,
+        "basicAuth": false,
+        "username": "",
+        "password": ""
+    },
+    {
+        "id": "1d60bf389d609c64",
+        "type": "consumed-thing",
+        "tdLink": "",
+        "td": "{   \"@context\": \"https://www.w3.org/2019/wot/td/v1\",   \"id\": \"urn:retail:demandforecast:001\",   \"title\": \"AI-Based Demand Forecasting System\",   \"description\": \"Intelligent system that predicts product demand based on historical data and external factors\",   \"securityDefinitions\": {     \"oauth2_sc\": {       \"scheme\": \"oauth2\",       \"flow\": \"client_credentials\",       \"authorization\": \"https://retail.example.com/auth/token\"     }   },   \"security\": [\"oauth2_sc\"],   \"properties\": {     \"systemStatus\": {       \"type\": \"string\",       \"enum\": [\"online\", \"training\", \"updating\", \"offline\"],       \"forms\": [{\"href\": \"https://retail.example.com/forecast/status\"}]     },     \"lastUpdateTime\": {       \"type\": \"string\",       \"format\": \"date-time\",       \"readOnly\": true,       \"forms\": [{\"href\": \"https://retail.example.com/forecast/lastupdate\"}]     },     \"modelAccuracy\": {       \"type\": \"object\",       \"readOnly\": true,       \"properties\": {         \"mape\": {\"type\": \"number\"},         \"rmse\": {\"type\": \"number\"},         \"r2\": {\"type\": \"number\"}       },       \"forms\": [{\"href\": \"https://retail.example.com/forecast/accuracy\"}]     },     \"forecastHorizon\": {       \"type\": \"integer\",       \"unit\": \"day\",       \"forms\": [{\"href\": \"https://retail.example.com/forecast/horizon\"}]     },     \"dataSourceStatus\": {       \"type\": \"object\",       \"readOnly\": true,       \"properties\": {         \"sales\": {\"type\": \"string\", \"enum\": [\"connected\", \"disconnected\"]},         \"inventory\": {\"type\": \"string\", \"enum\": [\"connected\", \"disconnected\"]},         \"weather\": {\"type\": \"string\", \"enum\": [\"connected\", \"disconnected\"]},         \"events\": {\"type\": \"string\", \"enum\": [\"connected\", \"disconnected\"]}       },       \"forms\": [{\"href\": \"https://retail.example.com/forecast/datasources\"}]     }   },   \"actions\": {     \"generateForecast\": {       \"input\": {         \"type\": \"object\",         \"properties\": {           \"productSku\": {\"type\": \"string\"},           \"startDate\": {\"type\": \"string\", \"format\": \"date\"},           \"endDate\": {\"type\": \"string\", \"format\": \"date\"},           \"granularity\": {\"type\": \"string\", \"enum\": [\"hourly\", \"daily\", \"weekly\"]}         }       },       \"output\": {         \"type\": \"object\",         \"properties\": {           \"forecastId\": {\"type\": \"string\"},           \"values\": {\"type\": \"array\", \"items\": {\"type\": \"number\"}},           \"confidence\": {\"type\": \"array\", \"items\": {\"type\": \"object\"}}         }       },       \"forms\": [{\"href\": \"https://retail.example.com/forecast/generate\"}]     },     \"retrainModel\": {       \"input\": {         \"type\": \"object\",         \"properties\": {           \"productCategories\": {\"type\": \"array\", \"items\": {\"type\": \"string\"}},           \"trainingWindow\": {\"type\": \"integer\", \"unit\": \"day\"}         }       },       \"forms\": [{\"href\": \"https://retail.example.com/forecast/retrain\"}]     },     \"addExternalFactor\": {       \"input\": {         \"type\": \"object\",         \"properties\": {           \"factorName\": {\"type\": \"string\"},           \"factorType\": {\"type\": \"string\", \"enum\": [\"promotion\", \"event\", \"weather\", \"competitor\"]},           \"data\": {\"type\": \"array\"}         }       },       \"forms\": [{\"href\": \"https://retail.example.com/forecast/factors/add\"}]     },     \"optimizeInventory\": {       \"input\": {         \"type\": \"object\",         \"properties\": {           \"productCategories\": {\"type\": \"array\", \"items\": {\"type\": \"string\"}},           \"targetServiceLevel\": {\"type\": \"number\"}         }       },       \"output\": {         \"type\": \"object\",         \"properties\": {           \"recommendations\": {\"type\": \"array\", \"items\": {\"type\": \"object\"}},           \"estimatedSavings\": {\"type\": \"number\"}         }       },       \"forms\": [{\"href\": \"https://retail.example.com/forecast/optimize\"}]     }   },   \"events\": {     \"anomalyDetected\": {       \"data\": {         \"type\": \"object\",         \"properties\": {           \"productSku\": {\"type\": \"string\"},           \"expected\": {\"type\": \"number\"},           \"actual\": {\"type\": \"number\"},           \"deviation\": {\"type\": \"number\", \"unit\": \"percent\"},           \"timestamp\": {\"type\": \"string\", \"format\": \"date-time\"}         }       },       \"forms\": [{\"href\": \"https://retail.example.com/forecast/events/anomaly\", \"subprotocol\": \"websocket\"}]     },     \"forecastReady\": {       \"data\": {         \"type\": \"object\",         \"properties\": {           \"forecastId\": {\"type\": \"string\"},           \"productScope\": {\"type\": \"string\"},           \"horizon\": {\"type\": \"integer\", \"unit\": \"day\"},           \"timestamp\": {\"type\": \"string\", \"format\": \"date-time\"}         }       },       \"forms\": [{\"href\": \"https://retail.example.com/forecast/events/ready\", \"subprotocol\": \"websocket\"}]     }   } }",
+        "http": true,
+        "ws": false,
+        "coap": false,
+        "mqtt": false,
+        "opcua": false,
+        "modbus": false,
+        "basicAuth": false,
+        "username": "",
+        "password": ""
+    },
+    {
+        "id": "bf05dda24abfb628",
+        "type": "consumed-thing",
+        "tdLink": "",
+        "td": "{   \"@context\": \"https://www.w3.org/2019/wot/td/v1\",   \"id\": \"urn:retail:rfidreader:001\",   \"title\": \"RFID Reader\",   \"description\": \"RFID reader for tracking inventory and preventing theft in retail environments\",   \"securityDefinitions\": {     \"apikey_sc\": { \"scheme\": \"apikey\", \"in\": \"header\" }   },   \"security\": [\"apikey_sc\"],   \"properties\": {     \"deviceId\": {       \"type\": \"string\",       \"readOnly\": true,       \"forms\": [{\"href\": \"http://store.example.com/rfid/{deviceId}\"}]     },     \"status\": {       \"type\": \"string\",       \"enum\": [\"active\", \"standby\", \"error\"],       \"readOnly\": true,       \"forms\": [{\"href\": \"http://store.example.com/rfid/{deviceId}/status\"}]     },     \"scanMode\": {       \"type\": \"string\",       \"enum\": [\"continuous\", \"triggered\", \"scheduled\"],       \"forms\": [{\"href\": \"http://store.example.com/rfid/{deviceId}/scanmode\"}]     },     \"lastScanTime\": {       \"type\": \"string\",       \"format\": \"date-time\",       \"readOnly\": true,       \"forms\": [{\"href\": \"http://store.example.com/rfid/{deviceId}/lastscan\"}]     },     \"detectedTags\": {       \"type\": \"array\",       \"readOnly\": true,       \"items\": {         \"type\": \"object\",         \"properties\": {           \"tagId\": {\"type\": \"string\"},           \"productSku\": {\"type\": \"string\"},           \"rssi\": {\"type\": \"number\"}         }       },       \"forms\": [{\"href\": \"http://store.example.com/rfid/{deviceId}/tags\"}]     }   },   \"actions\": {     \"scan\": {       \"forms\": [{\"href\": \"http://store.example.com/rfid/{deviceId}/scan\"}]     },     \"reset\": {       \"forms\": [{\"href\": \"http://store.example.com/rfid/{deviceId}/reset\"}]     },     \"updateAntennaConfig\": {       \"input\": {         \"type\": \"object\",         \"properties\": {           \"power\": {\"type\": \"number\", \"unit\": \"dBm\"},           \"sensitivity\": {\"type\": \"number\"}         }       },       \"forms\": [{\"href\": \"http://store.example.com/rfid/{deviceId}/config\"}]     }   },   \"events\": {     \"tagDetection\": {       \"data\": {         \"type\": \"object\",         \"properties\": {           \"tagId\": {\"type\": \"string\"},           \"productSku\": {\"type\": \"string\"},           \"location\": {\"type\": \"string\"},           \"timestamp\": {\"type\": \"string\", \"format\": \"date-time\"}         }       },       \"forms\": [{\"href\": \"http://store.example.com/rfid/{deviceId}/events/detection\", \"subprotocol\": \"websocket\"}]     },     \"securityAlert\": {       \"data\": {         \"type\": \"object\",         \"properties\": {           \"tagId\": {\"type\": \"string\"},           \"productSku\": {\"type\": \"string\"},           \"alertType\": {\"type\": \"string\", \"enum\": [\"exit\", \"restricted\", \"tamper\"]},           \"timestamp\": {\"type\": \"string\", \"format\": \"date-time\"}         }       },       \"forms\": [{\"href\": \"http://store.example.com/rfid/{deviceId}/events/security\", \"subprotocol\": \"websocket\"}]     }   } }",
+        "http": true,
+        "ws": false,
+        "coap": false,
+        "mqtt": false,
+        "opcua": false,
+        "modbus": false,
+        "basicAuth": false,
+        "username": "",
+        "password": ""
+    },
+    {
+        "id": "53318f195d961386",
+        "type": "consumed-thing",
+        "tdLink": "",
+        "td": "{     \"@context\": \"https://www.w3.org/2019/wot/td/v1\",     \"id\": \"urn:uuid:rfid-inventory-system\",     \"title\": \"RFID-Based Inventory System\",     \"description\": \"Advanced inventory tracking and management system using RFID technology\",     \"properties\": {         \"totalItemCount\": {             \"type\": \"number\",             \"readOnly\": true,             \"description\": \"Total number of items in inventory\"         },         \"stockAlertThreshold\": {             \"type\": \"number\",             \"readOnly\": true,             \"description\": \"Predefined low stock threshold\"         }     },     \"actions\": {         \"performInventoryAudit\": {             \"description\": \"Conduct a comprehensive inventory audit\",             \"input\": {                 \"type\": \"object\",                 \"properties\": {                     \"auditScope\": {\"type\": \"string\", \"enum\": [\"full\", \"partial\"]},                     \"locationFilter\": {\"type\": \"array\", \"items\": {\"type\": \"string\"}}                 }             },             \"output\": {                 \"type\": \"object\",                 \"properties\": {                     \"auditReport\": {\"type\": \"object\"},                     \"discrepanciesFound\": {\"type\": \"number\"}                 }             }         }     },     \"events\": {         \"lowStockAlert\": {             \"description\": \"Triggered when inventory falls below predefined threshold\",             \"data\": {                 \"type\": \"object\",                 \"properties\": {                     \"currentStock\": {\"type\": \"number\"},                     \"minimumThreshold\": {\"type\": \"number\"}                 }             }         }     } }",
+        "http": false,
+        "ws": false,
+        "coap": false,
+        "mqtt": false,
+        "opcua": false,
+        "modbus": false,
+        "basicAuth": false,
+        "username": "",
+        "password": ""
+    }
+]

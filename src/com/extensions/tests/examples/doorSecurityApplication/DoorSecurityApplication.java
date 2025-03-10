@@ -6,7 +6,7 @@ import com.extensions.custommetrics.metrics.PeakEnergyConsumptionDevice;
 import com.extensions.custommetrics.metrics.TotalEnergyConsumptionEfficiency;
 import com.extensions.sysconstructor.core.ApplicationPhysicalTopology;
 import com.extensions.sysconstructor.core.JsonToApplication;
-import com.extensions.sysconstructor.core.VDQuantityParser;
+import com.extensions.sysconstructor.core.ThingQuantityParser;
 import com.extensions.utils.presets.*;
 import com.extensions.vdcreation.core.VirtualDevice;
 import com.extensions.vdcreation.core.VirtualDeviceFactory;
@@ -44,7 +44,7 @@ public final class DoorSecurityApplication {
             //////////////////////////////// INITIAL SETUP ////////////////////////////////
 
             // Parses the VD quantities file and extracts the quantity of each thing to be used in the application
-            VDQuantityParser vdQuantities = new VDQuantityParser(new File(VD_QUANTITIES_FILE));
+            ThingQuantityParser vdQuantities = new ThingQuantityParser(new File(VD_QUANTITIES_FILE));
 
             // This instance is responsible for loading in the node red application, creating the application topology and model and setting up related data
             JsonToApplication jsonToApplication = new JsonToApplication(

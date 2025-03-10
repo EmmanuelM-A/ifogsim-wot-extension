@@ -1,0 +1,754 @@
+[
+    {
+        "id": "bd27fdea8dfe102c",
+        "type": "tab",
+        "label": "Smart City Traffic Management",
+        "disabled": false,
+        "info": "",
+        "env": []
+    },
+    {
+        "id": "8ad7d8aa49ccc233",
+        "type": "comment",
+        "z": "bd27fdea8dfe102c",
+        "name": "Monitors and controls traffic surveillance",
+        "info": "",
+        "x": 310,
+        "y": 180,
+        "wires": []
+    },
+    {
+        "id": "4aa9c47ca07f619f",
+        "type": "read-property",
+        "z": "bd27fdea8dfe102c",
+        "name": "",
+        "topic": "traffic-surveillance",
+        "thing": "3865e3fbd3fdf5e5",
+        "property": "trafficDensity",
+        "uriVariables": "",
+        "observe": false,
+        "x": 260,
+        "y": 240,
+        "wires": [
+            [
+                "6147117bc7041532"
+            ]
+        ]
+    },
+    {
+        "id": "df5fcd0f26ebf01d",
+        "type": "invoke-action",
+        "z": "bd27fdea8dfe102c",
+        "name": "",
+        "topic": "ai-traffic-control",
+        "thing": "513cf511c016fb7d",
+        "action": "optimizeTrafficFlow",
+        "uriVariables": "",
+        "x": 980,
+        "y": 720,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "2c8dc1651ba0c6ce",
+        "type": "subscribe-event",
+        "z": "bd27fdea8dfe102c",
+        "name": "",
+        "topic": "ai-traffic-control",
+        "thing": "513cf511c016fb7d",
+        "event": "criticalTrafficSituation",
+        "x": 280,
+        "y": 380,
+        "wires": [
+            [
+                "44aa557a1bc0e1d8",
+                "3f79ee9cc6ac1ce5"
+            ]
+        ]
+    },
+    {
+        "id": "e985aa0f9f75b141",
+        "type": "invoke-action",
+        "z": "bd27fdea8dfe102c",
+        "name": "",
+        "topic": "ai-traffic-control",
+        "thing": "89d5a66f4a09fbd0",
+        "action": "generateComprehensiveReport",
+        "uriVariables": "",
+        "x": 910,
+        "y": 380,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "44aa557a1bc0e1d8",
+        "type": "function",
+        "z": "bd27fdea8dfe102c",
+        "name": "Some Processing",
+        "func": "\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 590,
+        "y": 380,
+        "wires": [
+            [
+                "e985aa0f9f75b141"
+            ]
+        ]
+    },
+    {
+        "id": "3f79ee9cc6ac1ce5",
+        "type": "invoke-action",
+        "z": "bd27fdea8dfe102c",
+        "name": "",
+        "topic": "traffic-surveillance",
+        "thing": "3865e3fbd3fdf5e5",
+        "action": "captureImage",
+        "uriVariables": "",
+        "x": 600,
+        "y": 460,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "10a0ee6641c41c7f",
+        "type": "read-property",
+        "z": "bd27fdea8dfe102c",
+        "name": "",
+        "topic": "ai-traffic-control",
+        "thing": "513cf511c016fb7d",
+        "property": "overallTrafficEfficiency",
+        "uriVariables": "",
+        "observe": false,
+        "x": 290,
+        "y": 720,
+        "wires": [
+            [
+                "02c5287b2cac8342"
+            ]
+        ]
+    },
+    {
+        "id": "18113c474368c6b2",
+        "type": "invoke-action",
+        "z": "bd27fdea8dfe102c",
+        "name": "",
+        "topic": "ai-traffic-control",
+        "thing": "89d5a66f4a09fbd0",
+        "action": "generateComprehensiveReport",
+        "uriVariables": "",
+        "x": 930,
+        "y": 240,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "6147117bc7041532",
+        "type": "function",
+        "z": "bd27fdea8dfe102c",
+        "name": "Some Processing",
+        "func": "\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 590,
+        "y": 240,
+        "wires": [
+            [
+                "18113c474368c6b2",
+                "86e01bfdf7bef9f5"
+            ]
+        ]
+    },
+    {
+        "id": "86e01bfdf7bef9f5",
+        "type": "invoke-action",
+        "z": "bd27fdea8dfe102c",
+        "name": "",
+        "topic": "traffic-surveillance",
+        "thing": "3865e3fbd3fdf5e5",
+        "action": "captureImage",
+        "uriVariables": "",
+        "x": 880,
+        "y": 300,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "76070f9716513588",
+        "type": "comment",
+        "z": "bd27fdea8dfe102c",
+        "name": "Control traffic lights",
+        "info": "",
+        "x": 250,
+        "y": 660,
+        "wires": []
+    },
+    {
+        "id": "0403909b6f7e278d",
+        "type": "comment",
+        "z": "bd27fdea8dfe102c",
+        "name": "Monitors enviornmental readings and predestrains around the traffics lights",
+        "info": "",
+        "x": 420,
+        "y": 960,
+        "wires": []
+    },
+    {
+        "id": "32f7eb2ba9f08ad5",
+        "type": "subscribe-event",
+        "z": "bd27fdea8dfe102c",
+        "name": "",
+        "topic": "traffic-light-control",
+        "thing": "fdf2cccf0785050b",
+        "event": "emergencyOverride",
+        "x": 270,
+        "y": 800,
+        "wires": [
+            [
+                "6aeb643ddb97a4aa"
+            ]
+        ]
+    },
+    {
+        "id": "71cae89933c731bc",
+        "type": "invoke-action",
+        "z": "bd27fdea8dfe102c",
+        "name": "",
+        "topic": "traffic-light-control",
+        "thing": "fdf2cccf0785050b",
+        "action": "changeSignal",
+        "uriVariables": "",
+        "x": 860,
+        "y": 800,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "6aeb643ddb97a4aa",
+        "type": "function",
+        "z": "bd27fdea8dfe102c",
+        "name": "Some Processing",
+        "func": "\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 570,
+        "y": 800,
+        "wires": [
+            [
+                "71cae89933c731bc"
+            ]
+        ]
+    },
+    {
+        "id": "602dcb9175f57f25",
+        "type": "read-property",
+        "z": "bd27fdea8dfe102c",
+        "name": "",
+        "topic": "enviornmental-monitoring",
+        "thing": "7a0ce069567a6894",
+        "property": "airQualityIndex",
+        "uriVariables": "",
+        "observe": true,
+        "x": 890,
+        "y": 1220,
+        "wires": [
+            [
+                "7718deb479d73df0"
+            ]
+        ]
+    },
+    {
+        "id": "ad9a6b5208ef47b5",
+        "type": "read-property",
+        "z": "bd27fdea8dfe102c",
+        "name": "",
+        "topic": "enviornmental-monitoring",
+        "thing": "7a0ce069567a6894",
+        "property": "measurements",
+        "uriVariables": "",
+        "observe": true,
+        "x": 890,
+        "y": 1160,
+        "wires": [
+            [
+                "6e08113dd8173562"
+            ]
+        ]
+    },
+    {
+        "id": "f8a685d092074385",
+        "type": "read-property",
+        "z": "bd27fdea8dfe102c",
+        "name": "",
+        "topic": "enviornmental-monitoring",
+        "thing": "7a0ce069567a6894",
+        "property": "location",
+        "uriVariables": "",
+        "observe": false,
+        "x": 250,
+        "y": 1040,
+        "wires": [
+            [
+                "bd94f01e1e3337b4"
+            ]
+        ]
+    },
+    {
+        "id": "3b42511d6cf14ab0",
+        "type": "read-property",
+        "z": "bd27fdea8dfe102c",
+        "name": "",
+        "topic": "enviornmental-monitoring",
+        "thing": "7a0ce069567a6894",
+        "property": "sampleRate",
+        "uriVariables": "",
+        "observe": false,
+        "x": 880,
+        "y": 1040,
+        "wires": [
+            [
+                "8572f3fbae95ac89"
+            ]
+        ]
+    },
+    {
+        "id": "46640aa28eb2832f",
+        "type": "read-property",
+        "z": "bd27fdea8dfe102c",
+        "name": "",
+        "topic": "enviornmental-monitoring",
+        "thing": "7a0ce069567a6894",
+        "property": "trafficData",
+        "uriVariables": "",
+        "observe": true,
+        "x": 880,
+        "y": 1100,
+        "wires": [
+            [
+                "ecdfbe4472325288"
+            ]
+        ]
+    },
+    {
+        "id": "bd94f01e1e3337b4",
+        "type": "function",
+        "z": "bd27fdea8dfe102c",
+        "name": "Some Processing",
+        "func": "\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 540,
+        "y": 1040,
+        "wires": [
+            [
+                "3b42511d6cf14ab0",
+                "46640aa28eb2832f",
+                "ad9a6b5208ef47b5",
+                "602dcb9175f57f25",
+                "8f06364f89217083"
+            ]
+        ]
+    },
+    {
+        "id": "8572f3fbae95ac89",
+        "type": "function",
+        "z": "bd27fdea8dfe102c",
+        "name": "Some Data Processing",
+        "func": "\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1220,
+        "y": 1040,
+        "wires": [
+            [
+                "11023c0d0b357f1a"
+            ]
+        ]
+    },
+    {
+        "id": "11023c0d0b357f1a",
+        "type": "invoke-action",
+        "z": "bd27fdea8dfe102c",
+        "name": "",
+        "topic": "ai-traffic-control",
+        "thing": "89d5a66f4a09fbd0",
+        "action": "generateComprehensiveReport",
+        "uriVariables": "",
+        "x": 1550,
+        "y": 1040,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "ecdfbe4472325288",
+        "type": "function",
+        "z": "bd27fdea8dfe102c",
+        "name": "Some Data Processing",
+        "func": "\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1220,
+        "y": 1100,
+        "wires": [
+            [
+                "814597fdb3b88c22"
+            ]
+        ]
+    },
+    {
+        "id": "814597fdb3b88c22",
+        "type": "invoke-action",
+        "z": "bd27fdea8dfe102c",
+        "name": "",
+        "topic": "ai-traffic-control",
+        "thing": "89d5a66f4a09fbd0",
+        "action": "generateComprehensiveReport",
+        "uriVariables": "",
+        "x": 1550,
+        "y": 1100,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "6e08113dd8173562",
+        "type": "function",
+        "z": "bd27fdea8dfe102c",
+        "name": "Some Data Processing",
+        "func": "\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1220,
+        "y": 1160,
+        "wires": [
+            [
+                "344ea696d7abc3da"
+            ]
+        ]
+    },
+    {
+        "id": "344ea696d7abc3da",
+        "type": "invoke-action",
+        "z": "bd27fdea8dfe102c",
+        "name": "",
+        "topic": "ai-traffic-control",
+        "thing": "89d5a66f4a09fbd0",
+        "action": "generateComprehensiveReport",
+        "uriVariables": "",
+        "x": 1550,
+        "y": 1160,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "7718deb479d73df0",
+        "type": "function",
+        "z": "bd27fdea8dfe102c",
+        "name": "Some Data Processing",
+        "func": "\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1220,
+        "y": 1220,
+        "wires": [
+            [
+                "81f897a2ce56b4ca"
+            ]
+        ]
+    },
+    {
+        "id": "81f897a2ce56b4ca",
+        "type": "invoke-action",
+        "z": "bd27fdea8dfe102c",
+        "name": "",
+        "topic": "ai-traffic-control",
+        "thing": "89d5a66f4a09fbd0",
+        "action": "generateComprehensiveReport",
+        "uriVariables": "",
+        "x": 1550,
+        "y": 1220,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "19e23b5413a9db80",
+        "type": "subscribe-event",
+        "z": "bd27fdea8dfe102c",
+        "name": "",
+        "topic": "enviornmental-monitoring",
+        "thing": "7a0ce069567a6894",
+        "event": "trafficCorrelationEvent",
+        "x": 280,
+        "y": 1440,
+        "wires": [
+            [
+                "91f2fe495bb64523"
+            ]
+        ]
+    },
+    {
+        "id": "cc5a5c0718598951",
+        "type": "invoke-action",
+        "z": "bd27fdea8dfe102c",
+        "name": "",
+        "topic": "ai-traffic-control",
+        "thing": "89d5a66f4a09fbd0",
+        "action": "generateComprehensiveReport",
+        "uriVariables": "",
+        "x": 1010,
+        "y": 1440,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "91f2fe495bb64523",
+        "type": "read-property",
+        "z": "bd27fdea8dfe102c",
+        "name": "",
+        "topic": "pedestrian-monitoring",
+        "thing": "66e09e7ca625eea2",
+        "property": "safetyRiskLevel",
+        "uriVariables": "",
+        "observe": false,
+        "x": 630,
+        "y": 1440,
+        "wires": [
+            [
+                "cc5a5c0718598951"
+            ]
+        ]
+    },
+    {
+        "id": "02c5287b2cac8342",
+        "type": "invoke-action",
+        "z": "bd27fdea8dfe102c",
+        "name": "",
+        "topic": "pedestrian-monitoring",
+        "thing": "66e09e7ca625eea2",
+        "action": "analyzeTrafficPattern",
+        "uriVariables": "",
+        "x": 640,
+        "y": 720,
+        "wires": [
+            [
+                "df5fcd0f26ebf01d"
+            ]
+        ]
+    },
+    {
+        "id": "8f06364f89217083",
+        "type": "read-property",
+        "z": "bd27fdea8dfe102c",
+        "name": "",
+        "topic": "pedestrian-monitoring",
+        "thing": "66e09e7ca625eea2",
+        "property": "currentPedestrianCount",
+        "uriVariables": "",
+        "observe": false,
+        "x": 920,
+        "y": 1280,
+        "wires": [
+            [
+                "efe8e0e32b09bdb5"
+            ]
+        ]
+    },
+    {
+        "id": "efe8e0e32b09bdb5",
+        "type": "function",
+        "z": "bd27fdea8dfe102c",
+        "name": "Some Data Processing",
+        "func": "\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1220,
+        "y": 1280,
+        "wires": [
+            [
+                "6bc59f079a4edbac"
+            ]
+        ]
+    },
+    {
+        "id": "6bc59f079a4edbac",
+        "type": "invoke-action",
+        "z": "bd27fdea8dfe102c",
+        "name": "",
+        "topic": "ai-traffic-control",
+        "thing": "89d5a66f4a09fbd0",
+        "action": "generateComprehensiveReport",
+        "uriVariables": "",
+        "x": 1550,
+        "y": 1280,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "b5d20ada76b67a5e",
+        "type": "subscribe-event",
+        "z": "bd27fdea8dfe102c",
+        "name": "",
+        "topic": "pedestrian-monitoring",
+        "thing": "66e09e7ca625eea2",
+        "event": "safetyConcernDetected",
+        "x": 280,
+        "y": 1540,
+        "wires": [
+            [
+                "dc6ee81383e3f6fe"
+            ]
+        ]
+    },
+    {
+        "id": "dc6ee81383e3f6fe",
+        "type": "invoke-action",
+        "z": "bd27fdea8dfe102c",
+        "name": "",
+        "topic": "ai-traffic-control",
+        "thing": "89d5a66f4a09fbd0",
+        "action": "generateComprehensiveReport",
+        "uriVariables": "",
+        "x": 630,
+        "y": 1540,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "3865e3fbd3fdf5e5",
+        "type": "consumed-thing",
+        "tdLink": "",
+        "td": "{     \"@context\": \"https://www.w3.org/2019/wot/td/v1\",     \"id\": \"urn:uuid:traffic-camera\",     \"title\": \"Traffic Camera\",     \"description\": \"Advanced monitoring system for traffic surveillance\",     \"properties\": {         \"currentStatus\": {             \"type\": \"string\",             \"readOnly\": true,             \"description\": \"Current operational status of the camera\"         },         \"trafficDensity\": {             \"type\": \"number\",             \"readOnly\": true,             \"description\": \"Current traffic density in monitored area\"         }     },     \"actions\": {         \"captureImage\": {             \"description\": \"Capture a snapshot of the current traffic scene\",             \"input\": {                 \"type\": \"object\",                 \"properties\": {                     \"resolution\": {\"type\": \"string\", \"enum\": [\"low\", \"medium\", \"high\"]},                     \"focusArea\": {\"type\": \"string\"}                 }             },             \"output\": {                 \"type\": \"object\",                 \"properties\": {                     \"imageUrl\": {\"type\": \"string\"},                     \"timestamp\": {\"type\": \"string\"}                 }             }         }     },     \"events\": {         \"anomalyDetected\": {             \"description\": \"Triggered when unusual traffic patterns are observed\",             \"data\": {                 \"type\": \"object\",                 \"properties\": {                     \"anomalyType\": {\"type\": \"string\"},                     \"severity\": {\"type\": \"number\"}                 }             }         }     } }",
+        "http": false,
+        "ws": false,
+        "coap": false,
+        "mqtt": false,
+        "opcua": false,
+        "modbus": false,
+        "basicAuth": false,
+        "username": "",
+        "password": ""
+    },
+    {
+        "id": "513cf511c016fb7d",
+        "type": "consumed-thing",
+        "tdLink": "",
+        "td": "{     \"@context\": \"https://www.w3.org/2019/wot/td/v1\",     \"id\": \"urn:uuid:ai-traffic-controller\",     \"title\": \"AI-Based Traffic Controller\",     \"description\": \"Intelligent system for comprehensive traffic management\",     \"properties\": {         \"overallTrafficEfficiency\": {             \"type\": \"number\",             \"readOnly\": true,             \"description\": \"Overall traffic flow efficiency score\"         },         \"currentTrafficDensity\": {             \"type\": \"string\",             \"readOnly\": true,             \"description\": \"Current traffic density assessment\"         }     },     \"actions\": {         \"optimizeTrafficFlow\": {             \"description\": \"Apply AI-driven optimization to traffic management\",             \"input\": {                 \"type\": \"object\",                 \"properties\": {                     \"priorityRoutes\": {\"type\": \"array\", \"items\": {\"type\": \"string\"}},                     \"emergencyVehicleMode\": {\"type\": \"boolean\"}                 }             },             \"output\": {                 \"type\": \"object\",                 \"properties\": {                     \"optimizationStrategy\": {\"type\": \"object\"},                     \"expectedTrafficReduction\": {\"type\": \"number\"}                 }             }         }     },     \"events\": {         \"criticalTrafficSituation\": {             \"description\": \"Triggered during severe traffic disruptions\",             \"data\": {                 \"type\": \"object\",                 \"properties\": {                     \"incidentType\": {\"type\": \"string\"},                     \"impactScore\": {\"type\": \"number\"}                 }             }         }     } }",
+        "http": false,
+        "ws": false,
+        "coap": false,
+        "mqtt": false,
+        "opcua": false,
+        "modbus": false,
+        "basicAuth": false,
+        "username": "",
+        "password": ""
+    },
+    {
+        "id": "89d5a66f4a09fbd0",
+        "type": "consumed-thing",
+        "tdLink": "",
+        "td": "{     \"@context\": \"https://www.w3.org/2019/wot/td/v1\",     \"id\": \"urn:uuid:cloud-dashboard\",     \"title\": \"Cloud Dashboard\",     \"description\": \"Comprehensive visualization and management interface for cloud resources\",     \"properties\": {         \"systemHealthStatus\": {             \"type\": \"string\",             \"readOnly\": true,             \"description\": \"Overall system health and status\"         },         \"resourceUtilizationSummary\": {             \"type\": \"object\",             \"readOnly\": true,             \"description\": \"Aggregate resource utilization across cloud infrastructure\"         }     },     \"actions\": {         \"generateComprehensiveReport\": {             \"description\": \"Create detailed system performance and resource report\",             \"input\": {                 \"type\": \"object\",                 \"properties\": {                     \"reportType\": {\"type\": \"string\", \"enum\": [\"brief\", \"detailed\"]},                     \"timeFrame\": {\"type\": \"string\", \"enum\": [\"daily\", \"weekly\", \"monthly\"]}                 }             },             \"output\": {                 \"type\": \"object\",                 \"properties\": {                     \"reportUrl\": {\"type\": \"string\"},                     \"keyInsights\": {\"type\": \"object\"}                 }             }         }     },     \"events\": {         \"criticalSystemEvent\": {             \"description\": \"Triggered during significant system-wide events\",             \"data\": {                 \"type\": \"object\",                 \"properties\": {                     \"eventType\": {\"type\": \"string\"},                     \"severityLevel\": {\"type\": \"number\"}                 }             }         }     } }",
+        "http": false,
+        "ws": false,
+        "coap": false,
+        "mqtt": false,
+        "opcua": false,
+        "modbus": false,
+        "basicAuth": false,
+        "username": "",
+        "password": ""
+    },
+    {
+        "id": "fdf2cccf0785050b",
+        "type": "consumed-thing",
+        "tdLink": "",
+        "td": "{     \"@context\": [\"https://www.w3.org/2019/wot/td/v1\"],     \"id\": \"urn:dev:wot:smart-traffic-light\",     \"title\": \"Smart Traffic Light\",     \"description\": \"A traffic light that adjusts signals based on traffic conditions.\",     \"security\": [\"nosec_sc\"],     \"securityDefinitions\": {       \"nosec_sc\": { \"scheme\": \"nosec\" }     },     \"properties\": {       \"currentSignal\": {         \"type\": \"string\",         \"description\": \"Current traffic signal (red, yellow, green)\",         \"readOnly\": true       }     },     \"actions\": {       \"changeSignal\": {         \"description\": \"Manually change the traffic signal\",         \"input\": { \"type\": \"string\", \"enum\": [\"red\", \"yellow\", \"green\"] }       }     },     \"events\": {       \"emergencyOverride\": {         \"description\": \"Triggered when emergency vehicles request priority\",         \"data\": { \"type\": \"boolean\" }       }     } }",
+        "http": false,
+        "ws": false,
+        "coap": false,
+        "mqtt": false,
+        "opcua": false,
+        "modbus": false,
+        "basicAuth": false,
+        "username": "",
+        "password": ""
+    },
+    {
+        "id": "7a0ce069567a6894",
+        "type": "consumed-thing",
+        "tdLink": "",
+        "td": "{   \"@context\": [     \"https://www.w3.org/2019/wot/td/v1\",     \"https://www.w3.org/2019/wot/security/v1\"   ],   \"id\": \"urn:uuid:a8346f72-9ed2-4b5c-8af2-88d7a2d2c991\",   \"title\": \"Roadside Air Quality Sensor\",   \"description\": \"Environmental sensor unit that monitors air quality parameters at roadside locations for smart city traffic management\",   \"version\": {     \"instance\": \"1.0.0\"   },   \"securityDefinitions\": {     \"bearer_sc\": {       \"scheme\": \"bearer\",       \"format\": \"jwt\",       \"alg\": \"ES256\",       \"description\": \"JWT-based authentication using ES256 algorithm\"     },     \"apikey_sc\": {       \"scheme\": \"apikey\",       \"in\": \"header\",       \"name\": \"X-API-Key\"     }   },   \"security\": [\"bearer_sc\"],   \"properties\": {     \"deviceStatus\": {       \"title\": \"Device Status\",       \"description\": \"Current operational status of the air quality sensor\",       \"type\": \"string\",       \"enum\": [\"online\", \"offline\", \"maintenance\", \"calibrating\", \"error\"],       \"readOnly\": true,       \"observable\": true,       \"forms\": [{         \"href\": \"https://smartcity.example.com/sensors/airquality/{id}/status\",         \"contentType\": \"application/json\",         \"op\": [\"readproperty\"]       }]     },     \"batteryLevel\": {       \"title\": \"Battery Level\",       \"description\": \"Current battery level percentage for solar-powered units\",       \"type\": \"number\",       \"minimum\": 0,       \"maximum\": 100,       \"unit\": \"percent\",       \"readOnly\": true,       \"observable\": true,       \"forms\": [{         \"href\": \"https://smartcity.example.com/sensors/airquality/{id}/battery\",         \"contentType\": \"application/json\",         \"op\": [\"readproperty\"]       }]     },     \"location\": {       \"title\": \"Sensor Location\",       \"description\": \"Geographic coordinates and street information of sensor installation\",       \"type\": \"object\",       \"properties\": {         \"latitude\": {\"type\": \"number\"},         \"longitude\": {\"type\": \"number\"},         \"altitude\": {\"type\": \"number\", \"unit\": \"meter\"},         \"streetName\": {\"type\": \"string\"},         \"crossStreet\": {\"type\": \"string\"},         \"installationHeight\": {\"type\": \"number\", \"unit\": \"meter\"}       },       \"readOnly\": true,       \"forms\": [{         \"href\": \"https://smartcity.example.com/sensors/airquality/{id}/location\",         \"contentType\": \"application/json\",         \"op\": [\"readproperty\"]       }]     },     \"airQualityIndex\": {       \"title\": \"Air Quality Index\",       \"description\": \"Calculated AQI based on multiple pollutant measurements\",       \"type\": \"object\",       \"properties\": {         \"value\": {\"type\": \"number\"},         \"category\": {\"type\": \"string\", \"enum\": [\"Good\", \"Moderate\", \"Unhealthy for Sensitive Groups\", \"Unhealthy\", \"Very Unhealthy\", \"Hazardous\"]},         \"timestamp\": {\"type\": \"string\", \"format\": \"date-time\"}       },       \"readOnly\": true,       \"observable\": true,       \"forms\": [{         \"href\": \"https://smartcity.example.com/sensors/airquality/{id}/aqi\",         \"contentType\": \"application/json\",         \"op\": [\"readproperty\"]       }]     },     \"measurements\": {       \"title\": \"Pollutant Measurements\",       \"description\": \"Current readings of individual air pollutants\",       \"type\": \"object\",       \"properties\": {         \"pm25\": {\"type\": \"number\", \"unit\": \"μg/m³\"},         \"pm10\": {\"type\": \"number\", \"unit\": \"μg/m³\"},         \"no2\": {\"type\": \"number\", \"unit\": \"ppb\"},         \"co\": {\"type\": \"number\", \"unit\": \"ppm\"},         \"o3\": {\"type\": \"number\", \"unit\": \"ppb\"},         \"so2\": {\"type\": \"number\", \"unit\": \"ppb\"},         \"temperature\": {\"type\": \"number\", \"unit\": \"celsius\"},         \"humidity\": {\"type\": \"number\", \"unit\": \"percent\"},         \"pressure\": {\"type\": \"number\", \"unit\": \"hPa\"},         \"timestamp\": {\"type\": \"string\", \"format\": \"date-time\"}       },       \"readOnly\": true,       \"observable\": true,       \"forms\": [{         \"href\": \"https://smartcity.example.com/sensors/airquality/{id}/measurements\",         \"contentType\": \"application/json\",         \"op\": [\"readproperty\"]       }]     },     \"trafficData\": {       \"title\": \"Traffic Data\",       \"description\": \"Current traffic information near the sensor location\",       \"type\": \"object\",       \"properties\": {         \"vehicleCount\": {\"type\": \"number\"},         \"averageSpeed\": {\"type\": \"number\", \"unit\": \"km/h\"},         \"congestionLevel\": {\"type\": \"string\", \"enum\": [\"none\", \"light\", \"moderate\", \"heavy\", \"gridlock\"]},         \"timestamp\": {\"type\": \"string\", \"format\": \"date-time\"}       },       \"readOnly\": true,       \"observable\": true,       \"forms\": [{         \"href\": \"https://smartcity.example.com/sensors/airquality/{id}/traffic\",         \"contentType\": \"application/json\",         \"op\": [\"readproperty\"]       }]     },     \"sampleRate\": {       \"title\": \"Sample Rate\",       \"description\": \"Frequency at which the sensor takes measurements\",       \"type\": \"number\",       \"unit\": \"second\",       \"minimum\": 10,       \"maximum\": 3600,       \"forms\": [{         \"href\": \"https://smartcity.example.com/sensors/airquality/{id}/settings/samplerate\",         \"contentType\": \"application/json\",         \"op\": [\"readproperty\", \"writeproperty\"]       }]     },     \"alertThresholds\": {       \"title\": \"Alert Thresholds\",       \"description\": \"Threshold values for triggering air quality alerts\",       \"type\": \"object\",       \"properties\": {         \"pm25\": {\"type\": \"number\", \"unit\": \"μg/m³\"},         \"pm10\": {\"type\": \"number\", \"unit\": \"μg/m³\"},         \"no2\": {\"type\": \"number\", \"unit\": \"ppb\"},         \"co\": {\"type\": \"number\", \"unit\": \"ppm\"},         \"o3\": {\"type\": \"number\", \"unit\": \"ppb\"},         \"so2\": {\"type\": \"number\", \"unit\": \"ppb\"}       },       \"forms\": [{         \"href\": \"https://smartcity.example.com/sensors/airquality/{id}/settings/thresholds\",         \"contentType\": \"application/json\",         \"op\": [\"readproperty\", \"writeproperty\"]       }]     }   },   \"actions\": {     \"calibrate\": {       \"title\": \"Calibrate Sensor\",       \"description\": \"Initiate calibration procedure for the sensor\",       \"input\": {         \"type\": \"object\",         \"properties\": {           \"calibrationType\": {\"type\": \"string\", \"enum\": [\"zero\", \"span\", \"full\"]},           \"operatorId\": {\"type\": \"string\"}         },         \"required\": [\"calibrationType\", \"operatorId\"]       },       \"output\": {         \"type\": \"object\",         \"properties\": {           \"calibrationId\": {\"type\": \"string\"},           \"status\": {\"type\": \"string\"},           \"estimatedCompletionTime\": {\"type\": \"string\", \"format\": \"date-time\"}         }       },       \"forms\": [{         \"href\": \"https://smartcity.example.com/sensors/airquality/{id}/actions/calibrate\",         \"contentType\": \"application/json\",         \"op\": \"invokeaction\"       }]     },     \"resetDevice\": {       \"title\": \"Reset Device\",       \"description\": \"Perform a reset of the sensor device\",       \"input\": {         \"type\": \"object\",         \"properties\": {           \"resetType\": {\"type\": \"string\", \"enum\": [\"soft\", \"hard\", \"factory\"]},           \"authorizedBy\": {\"type\": \"string\"}         },         \"required\": [\"resetType\", \"authorizedBy\"]       },       \"forms\": [{         \"href\": \"https://smartcity.example.com/sensors/airquality/{id}/actions/reset\",         \"contentType\": \"application/json\",         \"op\": \"invokeaction\",         \"security\": [\"bearer_sc\", \"apikey_sc\"]       }]     },     \"updateFirmware\": {       \"title\": \"Update Firmware\",       \"description\": \"Update the sensor firmware to a specified version\",       \"input\": {         \"type\": \"object\",         \"properties\": {           \"firmwareVersion\": {\"type\": \"string\"},           \"updateSchedule\": {\"type\": \"string\", \"enum\": [\"immediate\", \"offpeak\", \"scheduled\"]},           \"scheduledTime\": {\"type\": \"string\", \"format\": \"date-time\"}         },         \"required\": [\"firmwareVersion\", \"updateSchedule\"]       },       \"output\": {         \"type\": \"object\",         \"properties\": {           \"updateId\": {\"type\": \"string\"},           \"status\": {\"type\": \"string\"},           \"scheduledTime\": {\"type\": \"string\", \"format\": \"date-time\"}         }       },       \"forms\": [{         \"href\": \"https://smartcity.example.com/sensors/airquality/{id}/actions/update\",         \"contentType\": \"application/json\",         \"op\": \"invokeaction\",         \"security\": [\"bearer_sc\", \"apikey_sc\"]       }]     },     \"requestDataReport\": {       \"title\": \"Request Data Report\",       \"description\": \"Generate a report of historical air quality data\",       \"input\": {         \"type\": \"object\",         \"properties\": {           \"startTime\": {\"type\": \"string\", \"format\": \"date-time\"},           \"endTime\": {\"type\": \"string\", \"format\": \"date-time\"},           \"parameters\": {\"type\": \"array\", \"items\": {\"type\": \"string\"}},           \"resolution\": {\"type\": \"string\", \"enum\": [\"minute\", \"hour\", \"day\"]}         },         \"required\": [\"startTime\", \"endTime\", \"parameters\"]       },       \"output\": {         \"type\": \"object\",         \"properties\": {           \"reportId\": {\"type\": \"string\"},           \"downloadUrl\": {\"type\": \"string\", \"format\": \"uri\"},           \"expiryTime\": {\"type\": \"string\", \"format\": \"date-time\"}         }       },       \"forms\": [{         \"href\": \"https://smartcity.example.com/sensors/airquality/{id}/actions/report\",         \"contentType\": \"application/json\",         \"op\": \"invokeaction\"       }]     }   },   \"events\": {     \"airQualityAlert\": {       \"title\": \"Air Quality Alert\",       \"description\": \"Event emitted when air quality parameters exceed defined thresholds\",       \"data\": {         \"type\": \"object\",         \"properties\": {           \"alertId\": {\"type\": \"string\"},           \"timestamp\": {\"type\": \"string\", \"format\": \"date-time\"},           \"parameter\": {\"type\": \"string\"},           \"value\": {\"type\": \"number\"},           \"threshold\": {\"type\": \"number\"},           \"aqi\": {\"type\": \"number\"},           \"category\": {\"type\": \"string\"},           \"trafficCondition\": {\"type\": \"string\"}         }       },       \"forms\": [{         \"href\": \"wss://smartcity.example.com/sensors/airquality/{id}/events/alerts\",         \"contentType\": \"application/json\",         \"subprotocol\": \"websocket\",         \"op\": \"subscribeevent\"       }, {         \"href\": \"https://smartcity.example.com/sensors/airquality/{id}/events/alerts\",         \"contentType\": \"application/json\",         \"op\": \"subscribeevent\",         \"subprotocol\": \"longpoll\"       }]     },     \"statusUpdate\": {       \"title\": \"Status Update\",       \"description\": \"Event emitted when sensor status changes\",       \"data\": {         \"type\": \"object\",         \"properties\": {           \"previousStatus\": {\"type\": \"string\"},           \"currentStatus\": {\"type\": \"string\"},           \"timestamp\": {\"type\": \"string\", \"format\": \"date-time\"},           \"reason\": {\"type\": \"string\"}         }       },       \"forms\": [{         \"href\": \"wss://smartcity.example.com/sensors/airquality/{id}/events/status\",         \"contentType\": \"application/json\",         \"subprotocol\": \"websocket\",         \"op\": \"subscribeevent\"       }]     },     \"healthReport\": {       \"title\": \"Health Report\",       \"description\": \"Periodic event containing sensor health information\",       \"data\": {         \"type\": \"object\",         \"properties\": {           \"timestamp\": {\"type\": \"string\", \"format\": \"date-time\"},           \"batteryLevel\": {\"type\": \"number\"},           \"sensorCondition\": {\"type\": \"string\"},           \"lastCalibration\": {\"type\": \"string\", \"format\": \"date-time\"},           \"uptime\": {\"type\": \"number\", \"unit\": \"second\"},           \"temperatureInternal\": {\"type\": \"number\", \"unit\": \"celsius\"},           \"maintenanceRequired\": {\"type\": \"boolean\"},           \"diagnostics\": {\"type\": \"object\"}         }       },       \"forms\": [{         \"href\": \"wss://smartcity.example.com/sensors/airquality/{id}/events/health\",         \"contentType\": \"application/json\",         \"subprotocol\": \"websocket\",         \"op\": \"subscribeevent\"       }]     },     \"trafficCorrelationEvent\": {       \"title\": \"Traffic Correlation Event\",       \"description\": \"Event indicating correlation between traffic patterns and air quality\",       \"data\": {         \"type\": \"object\",         \"properties\": {           \"timestamp\": {\"type\": \"string\", \"format\": \"date-time\"},           \"trafficIncrease\": {\"type\": \"number\", \"unit\": \"percent\"},           \"pollutantIncrease\": {             \"type\": \"object\",             \"properties\": {               \"pm25\": {\"type\": \"number\", \"unit\": \"percent\"},               \"no2\": {\"type\": \"number\", \"unit\": \"percent\"},               \"co\": {\"type\": \"number\", \"unit\": \"percent\"}             }           },           \"correlationStrength\": {\"type\": \"number\", \"minimum\": 0, \"maximum\": 1},           \"suggestedAction\": {\"type\": \"string\"}         }       },       \"forms\": [{         \"href\": \"wss://smartcity.example.com/sensors/airquality/{id}/events/correlation\",         \"contentType\": \"application/json\",         \"subprotocol\": \"websocket\",         \"op\": \"subscribeevent\"       }]     }   },   \"links\": [     {       \"rel\": \"service-doc\",       \"href\": \"https://smartcity.example.com/docs/sensors/airquality\",       \"type\": \"text/html\"     },     {       \"rel\": \"data-schema\",       \"href\": \"https://smartcity.example.com/schemas/airquality-sensor.json\",       \"type\": \"application/schema+json\"     },     {       \"rel\": \"traffic-management-system\",       \"href\": \"https://smartcity.example.com/systems/traffic\",       \"type\": \"application/td+json\"     }   ] }",
+        "http": true,
+        "ws": true,
+        "coap": false,
+        "mqtt": false,
+        "opcua": false,
+        "modbus": false,
+        "basicAuth": false,
+        "username": "",
+        "password": ""
+    },
+    {
+        "id": "66e09e7ca625eea2",
+        "type": "consumed-thing",
+        "tdLink": "",
+        "td": "{     \"@context\": \"https://www.w3.org/2019/wot/td/v1\",     \"id\": \"urn:uuid:pedestrian-sensor\",     \"title\": \"Pedestrian Sensor\",     \"description\": \"Advanced sensor for tracking pedestrian movement and safety\",     \"properties\": {         \"currentPedestrianCount\": {             \"type\": \"number\",             \"readOnly\": true,             \"description\": \"Number of pedestrians in the monitored area\"         },         \"safetyRiskLevel\": {             \"type\": \"number\",             \"readOnly\": true,             \"description\": \"Current pedestrian safety risk assessment\"         }     },     \"actions\": {         \"analyzeTrafficPattern\": {             \"description\": \"Perform detailed analysis of pedestrian traffic patterns\",             \"input\": {                 \"type\": \"object\",                 \"properties\": {                     \"timeFrame\": {\"type\": \"string\"},                     \"analysisType\": {\"type\": \"string\", \"enum\": [\"hourly\", \"daily\", \"weekly\"]}                 }             },             \"output\": {                 \"type\": \"object\",                 \"properties\": {                     \"peakTimes\": {\"type\": \"array\", \"items\": {\"type\": \"string\"}},                     \"averageCount\": {\"type\": \"number\"}                 }             }         }     },     \"events\": {         \"safetyConcernDetected\": {             \"description\": \"Triggered when potential pedestrian safety risks are identified\",             \"data\": {                 \"type\": \"object\",                 \"properties\": {                     \"riskLevel\": {\"type\": \"number\"},                     \"potentialHazards\": {\"type\": \"array\", \"items\": {\"type\": \"string\"}}                 }             }         }     } }",
+        "http": false,
+        "ws": false,
+        "coap": false,
+        "mqtt": false,
+        "opcua": false,
+        "modbus": false,
+        "basicAuth": false,
+        "username": "",
+        "password": ""
+    }
+]

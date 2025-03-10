@@ -90,7 +90,7 @@ public class JsonToApplication {
     /**
      * The parser responsible for extracting the data from the VD quantities file.
      */
-    private final VDQuantityParser vdQuantityParser;
+    private final ThingQuantityParser thingQuantityParser;
 
     /**
      * A list of all virtual devices used in the application
@@ -123,7 +123,7 @@ public class JsonToApplication {
      * @param edgeNodePreset The preset configurations used to configure the edge nodes.
      * @param applicationPreset The preset configurations used to configure the application and application components.
      * @param nodeRedApplicationJsonFile The JSON file that contains the Node-RED application design.
-     * @param vdQuantityParser The parser used to extract and transform the data from the VD quantities file.
+     * @param thingQuantityParser The parser used to extract and transform the data from the VD quantities file.
      * @throws IOException Throws an en exception if an error occurs or during processing or whilst reading or parsing the file
      */
     public JsonToApplication(
@@ -131,12 +131,12 @@ public class JsonToApplication {
             EdgeNodePreset edgeNodePreset,
             ApplicationPreset applicationPreset,
             File nodeRedApplicationJsonFile,
-            VDQuantityParser vdQuantityParser
+            ThingQuantityParser thingQuantityParser
     ) throws IOException {
         this.cloudNodePreset = cloudNodePreset;
         this.edgeNodePreset = edgeNodePreset;
         this.applicationPreset = applicationPreset;
-        this.vdQuantityParser = vdQuantityParser;
+        this.thingQuantityParser = thingQuantityParser;
 
         // Initialize variables and data structures
         this.dataFlows = new ArrayList<>();
@@ -454,7 +454,7 @@ public class JsonToApplication {
             for(VirtualDevice vd : vds) {
                 String formattedThingName = thingUsed.name().replace(" ", "");
                 if(vd.getFogDevice().getName().contains(formattedThingName) || vd.getFogDevice().getName().equals(formattedThingName)) {
-                    if(vdQuantityParser.getVdsConnectedToEdgeNodes() != null) {
+                    if(thingQuantityParser.getVdsConnectedToEdgeNodes() != null) {
                         vds.remove(vd); // Prevents the same VD being selected
                     }
 
@@ -677,9 +677,11 @@ public class JsonToApplication {
 
             fogDevices.add(cloud);
 
-            if(!nodeTopics.isEmpty()) { // If the topics array is set
+            if(thingQuantityParser.getVdsConnectedToEdgeNodes() != null && !thingQuantityParser.getVdsConnectedToEdgeNodes().keySet().isEmpty()) {
+            //if(!nodeTopics.isEmpty()) { // If the topics array is set
                 // Assign VDs to edge nodes based on topics
-                for(String edgeNodeName : nodeTopics) {
+                for(String edgeNodeName : thingQuantityParser.getVdsConnectedToEdgeNodes().keySet()) {
+                //for(String edgeNodeName : nodeTopics) {
                     // Create the edge node for that topic
                     FogDevice edgeNode = createEdgeNode(edgeNodeName);
 
@@ -690,7 +692,7 @@ public class JsonToApplication {
                     fogDevices.add(edgeNode);
                     edgeNodes.add(edgeNode);
 
-                    List<VirtualDevice> virtualDevicesUsed = getVirtualDevicesWithMatchingEdgeNodeName(allSelectedVirtualDevices, vdQuantityParser.getVdsConnectedToEdgeNodes(), edgeNodeName);
+                    List<VirtualDevice> virtualDevicesUsed = getVirtualDevicesWithMatchingEdgeNodeName(allSelectedVirtualDevices, thingQuantityParser.getVdsConnectedToEdgeNodes(), edgeNodeName);
 
                     assert virtualDevicesUsed != null;
 
@@ -858,7 +860,7 @@ public class JsonToApplication {
         // Get the VD (names) connected to this edge node
         List<String> vdsConnectedToEdgeNode = vdsConnectedToEdgeNodes.getOrDefault(edgeNodeName, null);
 
-        if(vdsConnectedToEdgeNode == null) throw new Error("The edge node " + edgeNodeName + " does not exist! Check VD quantities file!");
+        if(vdsConnectedToEdgeNode == null) throw new Error("The edge node " + edgeNodeName + " does not exist! Check Thing Quantities file!");
 
         // Get the VDs based of their names
         for(VirtualDevice virtualDevice : allVirtualDevices) {

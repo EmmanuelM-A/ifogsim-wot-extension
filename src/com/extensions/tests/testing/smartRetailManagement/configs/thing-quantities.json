@@ -1,0 +1,20 @@
+{
+    "inventory-management": {
+        "things": {
+            "Smart Shelf Sensor": 3,
+            "RFID Reader": 2
+        }
+    },
+    "customer-checkout-exp": {
+        "things": {
+            "Smart Camera Tracker": 2,
+            "Smart Checkout System": 1
+        }
+    },
+    "dashboard": {
+        "things": {
+            "AI Based Demand Forecasting System": 1,
+            "Retail Management Dashboard": 1
+        }
+    }
+}

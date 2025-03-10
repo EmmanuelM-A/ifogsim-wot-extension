@@ -1,0 +1,185 @@
+{
+    "@context": "https://www.w3.org/2019/wot/td/v1",
+    "id": "urn:retail:dashboard:001",
+    "title": "Retail Management Dashboard",
+    "description": "Central management interface for monitoring and controlling retail IoT ecosystem",
+    "securityDefinitions": {
+      "bearer_sc": { "scheme": "bearer" }
+    },
+    "security": ["bearer_sc"],
+    "properties": {
+      "storeId": {
+        "type": "string",
+        "readOnly": true,
+        "forms": [{"href": "https://retail.example.com/dashboard/store"}]
+      },
+      "systemOverview": {
+        "type": "object",
+        "readOnly": true,
+        "properties": {
+          "connectedDevices": {"type": "integer"},
+          "activeAlerts": {"type": "integer"},
+          "systemHealth": {"type": "string", "enum": ["healthy", "warning", "critical"]}
+        },
+        "observable": true,
+        "forms": [{"href": "https://retail.example.com/dashboard/overview"}]
+      },
+      "salesMetrics": {
+        "type": "object",
+        "readOnly": true,
+        "properties": {
+          "dailySales": {"type": "number"},
+          "salesTarget": {"type": "number"},
+          "averageBasketSize": {"type": "number"},
+          "customerCount": {"type": "integer"}
+        },
+        "observable": true,
+        "forms": [{"href": "https://retail.example.com/dashboard/sales"}]
+      },
+      "inventoryStatus": {
+        "type": "object",
+        "readOnly": true,
+        "properties": {
+          "totalSkus": {"type": "integer"},
+          "outOfStockItems": {"type": "integer"},
+          "lowStockItems": {"type": "integer"},
+          "overStockItems": {"type": "integer"}
+        },
+        "observable": true,
+        "forms": [{"href": "https://retail.example.com/dashboard/inventory"}]
+      },
+      "userPreferences": {
+        "type": "object",
+        "properties": {
+          "theme": {"type": "string", "enum": ["light", "dark", "system"]},
+          "refreshRate": {"type": "integer", "unit": "second"},
+          "notifications": {"type": "boolean"}
+        },
+        "forms": [{"href": "https://retail.example.com/dashboard/preferences"}]
+      }
+    },
+    "actions": {
+      "generateReport": {
+        "input": {
+          "type": "object",
+          "properties": {
+            "reportType": {"type": "string", "enum": ["sales", "inventory", "traffic", "forecast"]},
+            "startDate": {"type": "string", "format": "date"},
+            "endDate": {"type": "string", "format": "date"},
+            "format": {"type": "string", "enum": ["pdf", "excel", "json"]}
+          }
+        },
+        "output": {
+          "type": "string",
+          "format": "uri"
+        },
+        "forms": [{"href": "https://retail.example.com/dashboard/reports/generate"}]
+      },
+      "broadcastAnnouncement": {
+        "input": {
+          "type": "object",
+          "properties": {
+            "message": {"type": "string"},
+            "targetDevices": {"type": "array", "items": {"type": "string"}},
+            "priority": {"type": "string", "enum": ["low", "normal", "high"]}
+          }
+        },
+        "forms": [{"href": "https://retail.example.com/dashboard/broadcast"}]
+      },
+      "updateDeviceFirmware": {
+        "input": {
+          "type": "object",
+          "properties": {
+            "deviceType": {"type": "string"},
+            "version": {"type": "string"},
+            "schedule": {"type": "string", "enum": ["immediate", "overnight", "scheduled"]},
+            "scheduledTime": {"type": "string", "format": "date-time"}
+          }
+        },
+        "forms": [{"href": "https://retail.example.com/dashboard/firmware"}]
+      },
+      "optimizeStaffing": {
+        "input": {
+          "type": "object",
+          "properties": {
+            "department": {"type": "string"},
+            "date": {"type": "string", "format": "date"}
+          }
+        },
+        "output": {
+          "type": "object",
+          "properties": {
+            "recommendations": {"type": "array", "items": {"type": "object"}},
+            "expectedTraffic": {"type": "array", "items": {"type": "number"}}
+          }
+        },
+        "forms": [{"href": "https://retail.example.com/dashboard/staffing"}]
+      }
+    },
+    "events": {
+      "systemAlert": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "alertId": {"type": "string"},
+            "alertType": {"type": "string"},
+            "severity": {"type": "string", "enum": ["info", "warning", "critical"]},
+            "message": {"type": "string"},
+            "timestamp": {"type": "string", "format": "date-time"}
+          }
+        },
+        "forms": [{"href": "https://retail.example.com/dashboard/events/alerts", "subprotocol": "websocket"}]
+      },
+      "performanceMetric": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "metric": {"type": "string"},
+            "value": {"type": "number"},
+            "trend": {"type": "string", "enum": ["up", "down", "stable"]},
+            "timestamp": {"type": "string", "format": "date-time"}
+          }
+        },
+        "forms": [{"href": "https://retail.example.com/dashboard/events/metrics", "subprotocol": "websocket"}]
+      },
+      "userActivity": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "userId": {"type": "string"},
+            "action": {"type": "string"},
+            "resource": {"type": "string"},
+            "timestamp": {"type": "string", "format": "date-time"}
+          }
+        },
+        "forms": [{"href": "https://retail.example.com/dashboard/events/activity", "subprotocol": "websocket"}]
+      }
+    },
+    "links": [
+      {
+        "rel": "shelf-sensors",
+        "href": "https://retail.example.com/devices/shelves",
+        "type": "application/td+json"
+      },
+      {
+        "rel": "rfid-readers",
+        "href": "https://retail.example.com/devices/rfid",
+        "type": "application/td+json"
+      },
+      {
+        "rel": "cameras",
+        "href": "https://retail.example.com/devices/cameras",
+        "type": "application/td+json"
+      },
+      {
+        "rel": "checkout-systems",
+        "href": "https://retail.example.com/devices/checkout",
+        "type": "application/td+json"
+      },
+      {
+        "rel": "forecasting",
+        "href": "https://retail.example.com/services/forecast",
+        "type": "application/td+json"
+      }
+    ]
+  }

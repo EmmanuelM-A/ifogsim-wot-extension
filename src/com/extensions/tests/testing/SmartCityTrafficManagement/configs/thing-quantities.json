@@ -1,0 +1,28 @@
+{
+    "traffic-surveillance": {
+        "things": {
+            "Traffic Camera": 5
+        }
+    },
+    "traffic-light-control": {
+        "things": {
+            "Smart Traffic Light": 5
+        }
+    },
+    "enviornmental-monitoring": {
+        "things": {
+            "Roadside Air Quality Sensor": 5
+        }
+    },
+    "pedestrian-monitoring": {
+        "things": {
+            "Pedestrian Sensor": 3
+        }
+    },
+    "ai-traffic-control": {
+        "things": {
+            "AI-Based Traffic Controller": 1,
+            "Cloud Dashboard": 1
+        }
+    }
+}

@@ -1,0 +1,124 @@
+{
+    "@context": "https://www.w3.org/2019/wot/td/v1",
+    "id": "urn:retail:smartcheckout:001",
+    "title": "Smart Checkout System",
+    "description": "Automated checkout system for frictionless retail experiences",
+    "securityDefinitions": {
+      "bearer_sc": { "scheme": "bearer" }
+    },
+    "security": ["bearer_sc"],
+    "properties": {
+      "checkoutId": {
+        "type": "string",
+        "readOnly": true,
+        "forms": [{"href": "https://store.example.com/checkout/{checkoutId}"}]
+      },
+      "status": {
+        "type": "string",
+        "enum": ["available", "inUse", "maintenance", "error"],
+        "observable": true,
+        "forms": [{"href": "https://store.example.com/checkout/{checkoutId}/status"}]
+      },
+      "currentBasket": {
+        "type": "array",
+        "readOnly": true,
+        "items": {
+          "type": "object",
+          "properties": {
+            "productSku": {"type": "string"},
+            "name": {"type": "string"},
+            "price": {"type": "number"},
+            "quantity": {"type": "integer"}
+          }
+        },
+        "forms": [{"href": "https://store.example.com/checkout/{checkoutId}/basket"}]
+      },
+      "totalAmount": {
+        "type": "number",
+        "readOnly": true,
+        "forms": [{"href": "https://store.example.com/checkout/{checkoutId}/total"}]
+      },
+      "paymentMethods": {
+        "type": "array",
+        "items": {"type": "string"},
+        "forms": [{"href": "https://store.example.com/checkout/{checkoutId}/payments"}]
+      }
+    },
+    "actions": {
+      "startTransaction": {
+        "input": {
+          "type": "object",
+          "properties": {
+            "customerId": {"type": "string"}
+          }
+        },
+        "forms": [{"href": "https://store.example.com/checkout/{checkoutId}/start"}]
+      },
+      "addItem": {
+        "input": {
+          "type": "object",
+          "properties": {
+            "productSku": {"type": "string"},
+            "quantity": {"type": "integer"}
+          }
+        },
+        "forms": [{"href": "https://store.example.com/checkout/{checkoutId}/add"}]
+      },
+      "removeItem": {
+        "input": {
+          "type": "object",
+          "properties": {
+            "productSku": {"type": "string"},
+            "quantity": {"type": "integer"}
+          }
+        },
+        "forms": [{"href": "https://store.example.com/checkout/{checkoutId}/remove"}]
+      },
+      "processPayment": {
+        "input": {
+          "type": "object",
+          "properties": {
+            "paymentMethod": {"type": "string"},
+            "paymentToken": {"type": "string"}
+          }
+        },
+        "output": {
+          "type": "object",
+          "properties": {
+            "transactionId": {"type": "string"},
+            "success": {"type": "boolean"},
+            "receipt": {"type": "string", "format": "uri"}
+          }
+        },
+        "forms": [{"href": "https://store.example.com/checkout/{checkoutId}/pay"}]
+      },
+      "cancelTransaction": {
+        "forms": [{"href": "https://store.example.com/checkout/{checkoutId}/cancel"}]
+      }
+    },
+    "events": {
+      "transactionComplete": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "transactionId": {"type": "string"},
+            "amount": {"type": "number"},
+            "itemCount": {"type": "integer"},
+            "timestamp": {"type": "string", "format": "date-time"}
+          }
+        },
+        "forms": [{"href": "https://store.example.com/checkout/{checkoutId}/events/complete", "subprotocol": "websocket"}]
+      },
+      "checkoutError": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "errorCode": {"type": "string"},
+            "message": {"type": "string"},
+            "timestamp": {"type": "string", "format": "date-time"}
+          }
+        },
+        "forms": [{"href": "https://store.example.com/checkout/{checkoutId}/events/error", "subprotocol": "websocket"}]
+      }
+    }
+}

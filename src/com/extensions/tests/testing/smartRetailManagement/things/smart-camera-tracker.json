@@ -1,0 +1,100 @@
+{
+    "@context": "https://www.w3.org/2019/wot/td/v1",
+    "id": "urn:retail:smartcamera:001",
+    "title": "Smart Camera Tracker",
+    "description": "Vision-based system for tracking customer movement and behavior in retail spaces",
+    "securityDefinitions": {
+      "oauth2_sc": {
+        "scheme": "oauth2",
+        "flow": "client_credentials",
+        "authorization": "https://auth.store.example.com/token"
+      }
+    },
+    "security": ["oauth2_sc"],
+    "properties": {
+      "cameraId": {
+        "type": "string",
+        "readOnly": true,
+        "forms": [{"href": "https://store.example.com/cameras/{cameraId}"}]
+      },
+      "location": {
+        "type": "string",
+        "readOnly": true,
+        "forms": [{"href": "https://store.example.com/cameras/{cameraId}/location"}]
+      },
+      "status": {
+        "type": "string",
+        "enum": ["active", "standby", "error"],
+        "forms": [{"href": "https://store.example.com/cameras/{cameraId}/status"}]
+      },
+      "currentCount": {
+        "type": "integer",
+        "description": "Current number of people in view",
+        "readOnly": true,
+        "observable": true,
+        "forms": [{"href": "https://store.example.com/cameras/{cameraId}/count"}]
+      },
+      "privacyMode": {
+        "type": "string",
+        "enum": ["anonymized", "heatmap", "counting"],
+        "forms": [{"href": "https://store.example.com/cameras/{cameraId}/privacy"}]
+      }
+    },
+    "actions": {
+      "reboot": {
+        "forms": [{"href": "https://store.example.com/cameras/{cameraId}/reboot"}]
+      },
+      "setRegionOfInterest": {
+        "input": {
+          "type": "object",
+          "properties": {
+            "coordinates": {"type": "array", "items": {"type": "object"}}
+          }
+        },
+        "forms": [{"href": "https://store.example.com/cameras/{cameraId}/roi"}]
+      },
+      "generateHeatmap": {
+        "output": {
+          "type": "string",
+          "format": "uri"
+        },
+        "forms": [{"href": "https://store.example.com/cameras/{cameraId}/heatmap"}]
+      }
+    },
+    "events": {
+      "peakTraffic": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "count": {"type": "integer"},
+            "threshold": {"type": "integer"},
+            "timestamp": {"type": "string", "format": "date-time"}
+          }
+        },
+        "forms": [{"href": "https://store.example.com/cameras/{cameraId}/events/peak", "subprotocol": "websocket"}]
+      },
+      "dwell": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "zoneId": {"type": "string"},
+            "dwellTime": {"type": "number", "unit": "second"},
+            "count": {"type": "integer"},
+            "timestamp": {"type": "string", "format": "date-time"}
+          }
+        },
+        "forms": [{"href": "https://store.example.com/cameras/{cameraId}/events/dwell", "subprotocol": "websocket"}]
+      },
+      "unusualActivity": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "activityType": {"type": "string"},
+            "confidence": {"type": "number"},
+            "timestamp": {"type": "string", "format": "date-time"}
+          }
+        },
+        "forms": [{"href": "https://store.example.com/cameras/{cameraId}/events/unusual", "subprotocol": "websocket"}]
+      }
+    }
+}

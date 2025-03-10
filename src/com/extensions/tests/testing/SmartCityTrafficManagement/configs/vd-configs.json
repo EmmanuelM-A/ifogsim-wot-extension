@@ -1,0 +1,70 @@
+{
+    "configs": [
+      {
+        "tagNames": ["TrafficCamera"],
+        "mips": 1000,
+        "ram": 2048,
+        "upBw": 3000,
+        "downBw": 3000,
+        "level": 3,
+        "ratePerMips": 0.35,
+        "busyPower": 60.0,
+        "idlePower": 20.0
+      },
+      {
+        "tagNames": ["SmartTrafficLight"],
+        "mips": 800,
+        "ram": 1536,
+        "upBw": 1500,
+        "downBw": 1500,
+        "level": 3,
+        "ratePerMips": 0.3,
+        "busyPower": 50.0,
+        "idlePower": 15.0
+      },
+      {
+        "tagNames": ["AIBasedTrafficController"],
+        "mips": 1800,
+        "ram": 4096,
+        "upBw": 2500,
+        "downBw": 2500,
+        "level": 1,
+        "ratePerMips": 0.5,
+        "busyPower": 90.0,
+        "idlePower": 35.0
+      },
+      {
+        "tagNames": ["PedestrianSensor"],
+        "mips": 400,
+        "ram": 512,
+        "upBw": 500,
+        "downBw": 500,
+        "level": 3,
+        "ratePerMips": 0.15,
+        "busyPower": 25.0,
+        "idlePower": 8.0
+      },
+      {
+        "tagNames": ["CloudDashboard"],
+        "mips": 1200,
+        "ram": 3072,
+        "upBw": 3500,
+        "downBw": 3500,
+        "level": 1,
+        "ratePerMips": 0.4,
+        "busyPower": 70.0,
+        "idlePower": 25.0
+      },
+      {
+        "tagNames": ["RoadsideAirQualitySensor"],
+        "mips": 500,
+        "ram": 768,
+        "upBw": 800,
+        "downBw": 800,
+        "level": 3,
+        "ratePerMips": 0.2,
+        "busyPower": 30.0,
+        "idlePower": 10.0
+      }
+    ]
+  }

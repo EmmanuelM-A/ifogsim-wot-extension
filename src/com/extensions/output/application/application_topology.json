@@ -1,203 +1,548 @@
 {
   "applicationDetails" : {
-    "title" : "Remote Weather Station"
+    "title" : "Smart Hospital Management"
   },
   "things" : [ {
-    "id" : "097e18567aff7548",
-    "name" : "Temperature Sensor",
+    "id" : "3fa89be747b729ed",
+    "name" : "Patient Monitoring Device",
     "type" : "consumed-thing"
   }, {
-    "id" : "134dc0be145fdc38",
-    "name" : "Humidity Sensor",
+    "id" : "99965718133994bc",
+    "name" : "Smart Bed",
     "type" : "consumed-thing"
   }, {
-    "id" : "247751d82e84e420",
-    "name" : "Air Quality Sensor",
+    "id" : "c87908991b7435cd",
+    "name" : "Emergency Alert System",
     "type" : "consumed-thing"
   }, {
     "id" : "dc99cc6070d7f6fe",
     "name" : "Smart Display",
     "type" : "consumed-thing"
+  }, {
+    "id" : "4e31032eeb1cd839",
+    "name" : "HVAC Control System",
+    "type" : "consumed-thing"
+  }, {
+    "id" : "53318f195d961386",
+    "name" : "RFID-Based Inventory System",
+    "type" : "consumed-thing"
+  }, {
+    "id" : "b7c9cdf5487520a3",
+    "name" : "Smart Camera",
+    "type" : "consumed-thing"
+  }, {
+    "id" : "95f43c8857db970c",
+    "name" : "Security Camera System",
+    "type" : "consumed-thing"
+  }, {
+    "id" : "60ec5509eed581fd",
+    "name" : "Alarm",
+    "type" : "consumed-thing"
+  }, {
+    "id" : "76013f7a022e609c",
+    "name" : "Smart Light",
+    "type" : "consumed-thing"
   } ],
-  "topics" : [ ],
+  "topics" : [ "icu-monitoring", "ward-monitoring", "inventory-managment", "hospital-security" ],
   "subFlows" : {
     "subFlow-0" : {
       "rootNode" : {
-        "id" : "e093f0b58856a178",
+        "id" : "00503607d3eaa036",
         "name" : "",
         "type" : "read-property",
-        "topic" : "",
-        "thing" : "097e18567aff7548",
-        "property" : "temperature"
+        "topic" : "icu-monitoring",
+        "thing" : "3fa89be747b729ed",
+        "property" : "heartRate"
       },
       "branches" : {
         "branch-0" : [ {
-          "id" : "e093f0b58856a178",
+          "id" : "00503607d3eaa036",
           "name" : "",
           "type" : "read-property",
-          "topic" : "",
-          "thing" : "097e18567aff7548",
-          "property" : "temperature"
+          "topic" : "icu-monitoring",
+          "thing" : "3fa89be747b729ed",
+          "property" : "heartRate"
         }, {
-          "id" : "684f5c39780f9437",
-          "name" : "Some Processing",
+          "id" : "8f95375b6675bed5",
+          "name" : "Some Data Processing",
           "type" : "function",
           "topic" : null,
           "thing" : null
         }, {
-          "id" : "8e0f920af2361491",
+          "id" : "d16f3097bbefe7bb",
           "name" : "",
           "type" : "invoke-action",
-          "topic" : "",
-          "thing" : "dc99cc6070d7f6fe",
-          "action" : "updateDisplay"
+          "topic" : "icu-monitoring",
+          "thing" : "3fa89be747b729ed",
+          "action" : "generateHealthReport"
         } ]
       }
     },
     "subFlow-1" : {
       "rootNode" : {
-        "id" : "0f51a15c737c3ff3",
+        "id" : "c0a1ad9b63ce93b7",
         "name" : "",
-        "type" : "read-property",
-        "topic" : "",
-        "thing" : "134dc0be145fdc38",
-        "property" : "currentHumidity"
+        "type" : "subscribe-event",
+        "topic" : "icu-monitoring",
+        "thing" : "3fa89be747b729ed",
+        "event" : "vitalSignAlert"
       },
       "branches" : {
         "branch-0" : [ {
-          "id" : "0f51a15c737c3ff3",
+          "id" : "c0a1ad9b63ce93b7",
           "name" : "",
-          "type" : "read-property",
-          "topic" : "",
-          "thing" : "134dc0be145fdc38",
-          "property" : "currentHumidity"
+          "type" : "subscribe-event",
+          "topic" : "icu-monitoring",
+          "thing" : "3fa89be747b729ed",
+          "event" : "vitalSignAlert"
         }, {
-          "id" : "b20ef55ddd23e14d",
-          "name" : "Some Processing",
-          "type" : "function",
-          "topic" : null,
-          "thing" : null
-        }, {
-          "id" : "4166931cc2b507bc",
+          "id" : "ec60dde528177c0b",
           "name" : "",
           "type" : "invoke-action",
-          "topic" : "",
-          "thing" : "dc99cc6070d7f6fe",
-          "action" : "updateDisplay"
+          "topic" : "icu-monitoring",
+          "thing" : "c87908991b7435cd",
+          "action" : "triggerEmergencyAlert"
         } ]
       }
     },
     "subFlow-2" : {
       "rootNode" : {
-        "id" : "2c62c1b3564079f4",
+        "id" : "0ac03fe24f1db520",
         "name" : "",
-        "type" : "read-property",
+        "type" : "inject",
         "topic" : "",
-        "thing" : "247751d82e84e420",
-        "property" : "airQualityIndex"
+        "thing" : null
       },
       "branches" : {
         "branch-0" : [ {
-          "id" : "2c62c1b3564079f4",
+          "id" : "0ac03fe24f1db520",
           "name" : "",
-          "type" : "read-property",
+          "type" : "inject",
           "topic" : "",
-          "thing" : "247751d82e84e420",
-          "property" : "airQualityIndex"
-        }, {
-          "id" : "2c83ba520f6795ed",
-          "name" : "Some Processing",
-          "type" : "function",
-          "topic" : null,
           "thing" : null
         }, {
-          "id" : "00a6c9908f23b959",
+          "id" : "4fe3d75f8d0be3f2",
           "name" : "",
           "type" : "invoke-action",
+          "topic" : "ward-monitoring",
+          "thing" : "99965718133994bc",
+          "action" : "adjustIncline"
+        } ],
+        "branch-1" : [ {
+          "id" : "0ac03fe24f1db520",
+          "name" : "",
+          "type" : "inject",
           "topic" : "",
-          "thing" : "dc99cc6070d7f6fe",
-          "action" : "updateDisplay"
+          "thing" : null
+        }, {
+          "id" : "f432c868be58d68f",
+          "name" : "",
+          "type" : "invoke-action",
+          "topic" : "ward-monitoring",
+          "thing" : "99965718133994bc",
+          "action" : "adjustFirmness"
         } ]
       }
     },
     "subFlow-3" : {
       "rootNode" : {
-        "id" : "c9eb70310b1b7791",
+        "id" : "c5288d13b04e25f8",
         "name" : "",
-        "type" : "subscribe-event",
-        "topic" : "",
-        "thing" : "097e18567aff7548",
-        "event" : "overheat"
+        "type" : "read-property",
+        "topic" : "icu-monitoring",
+        "thing" : "3fa89be747b729ed",
+        "property" : "bloodOxygenLevel"
       },
       "branches" : {
         "branch-0" : [ {
-          "id" : "c9eb70310b1b7791",
+          "id" : "c5288d13b04e25f8",
           "name" : "",
-          "type" : "subscribe-event",
-          "topic" : "",
-          "thing" : "097e18567aff7548",
-          "event" : "overheat"
+          "type" : "read-property",
+          "topic" : "icu-monitoring",
+          "thing" : "3fa89be747b729ed",
+          "property" : "bloodOxygenLevel"
         }, {
-          "id" : "f9bf788b5e6bbe5d",
+          "id" : "22a688dbb5044f63",
+          "name" : "Some Data Processing",
+          "type" : "function",
+          "topic" : null,
+          "thing" : null
+        }, {
+          "id" : "c61df752a22e23af",
           "name" : "",
           "type" : "invoke-action",
-          "topic" : "",
-          "thing" : "dc99cc6070d7f6fe",
-          "action" : "showAlert"
+          "topic" : "icu-monitoring",
+          "thing" : "3fa89be747b729ed",
+          "action" : "generateHealthReport"
         } ]
       }
     },
     "subFlow-4" : {
       "rootNode" : {
-        "id" : "1c0b0bb2e8193da8",
+        "id" : "076847173dbf4781",
         "name" : "",
-        "type" : "subscribe-event",
-        "topic" : "",
-        "thing" : "134dc0be145fdc38",
-        "event" : "humidityLevelAlert"
+        "type" : "read-property",
+        "topic" : "ward-monitoring",
+        "thing" : "99965718133994bc",
+        "property" : "occupancy"
       },
       "branches" : {
         "branch-0" : [ {
-          "id" : "1c0b0bb2e8193da8",
+          "id" : "076847173dbf4781",
           "name" : "",
-          "type" : "subscribe-event",
-          "topic" : "",
-          "thing" : "134dc0be145fdc38",
-          "event" : "humidityLevelAlert"
+          "type" : "read-property",
+          "topic" : "ward-monitoring",
+          "thing" : "99965718133994bc",
+          "property" : "occupancy"
         }, {
-          "id" : "dc8321ecfcbc7023",
+          "id" : "5dea8dc4ee5a22a2",
+          "name" : "Some Data Processing",
+          "type" : "function",
+          "topic" : null,
+          "thing" : null
+        }, {
+          "id" : "dfc61b8d8ab6d33b",
           "name" : "",
           "type" : "invoke-action",
-          "topic" : "",
+          "topic" : "ward-monitoring",
           "thing" : "dc99cc6070d7f6fe",
-          "action" : "showAlert"
+          "action" : "updateDisplay"
         } ]
       }
     },
     "subFlow-5" : {
       "rootNode" : {
-        "id" : "b7e32dc590ca78f9",
+        "id" : "8a39c76e658c58ca",
         "name" : "",
         "type" : "subscribe-event",
-        "topic" : "",
-        "thing" : "247751d82e84e420",
-        "event" : "airQualityAlert"
+        "topic" : "ward-monitoring",
+        "thing" : "4e31032eeb1cd839",
+        "event" : "temperatureDeviationAlert"
       },
       "branches" : {
         "branch-0" : [ {
-          "id" : "b7e32dc590ca78f9",
+          "id" : "8a39c76e658c58ca",
           "name" : "",
           "type" : "subscribe-event",
-          "topic" : "",
-          "thing" : "247751d82e84e420",
-          "event" : "airQualityAlert"
+          "topic" : "ward-monitoring",
+          "thing" : "4e31032eeb1cd839",
+          "event" : "temperatureDeviationAlert"
         }, {
-          "id" : "6b5917b14c150b4b",
+          "id" : "9be59212c4c0ccb3",
           "name" : "",
           "type" : "invoke-action",
-          "topic" : "",
+          "topic" : "ward-monitoring",
           "thing" : "dc99cc6070d7f6fe",
           "action" : "showAlert"
+        } ]
+      }
+    },
+    "subFlow-6" : {
+      "rootNode" : {
+        "id" : "c2833d1874f5ee7f",
+        "name" : "HVAC Data Input",
+        "type" : "inject",
+        "topic" : "",
+        "thing" : null
+      },
+      "branches" : {
+        "branch-0" : [ {
+          "id" : "c2833d1874f5ee7f",
+          "name" : "HVAC Data Input",
+          "type" : "inject",
+          "topic" : "",
+          "thing" : null
+        }, {
+          "id" : "77fab41ea90a694e",
+          "name" : "",
+          "type" : "invoke-action",
+          "topic" : "ward-monitoring",
+          "thing" : "4e31032eeb1cd839",
+          "action" : "adjustEnvironmentalSettings"
+        } ]
+      }
+    },
+    "subFlow-7" : {
+      "rootNode" : {
+        "id" : "11ad582872efb3c2",
+        "name" : "",
+        "type" : "subscribe-event",
+        "topic" : "inventory-managment",
+        "thing" : "53318f195d961386",
+        "event" : "lowStockAlert"
+      },
+      "branches" : {
+        "branch-0" : [ {
+          "id" : "11ad582872efb3c2",
+          "name" : "",
+          "type" : "subscribe-event",
+          "topic" : "inventory-managment",
+          "thing" : "53318f195d961386",
+          "event" : "lowStockAlert"
+        }, {
+          "id" : "aab0eb091d9c9928",
+          "name" : "",
+          "type" : "invoke-action",
+          "topic" : "inventory-managment",
+          "thing" : "dc99cc6070d7f6fe",
+          "action" : "showAlert"
+        } ]
+      }
+    },
+    "subFlow-8" : {
+      "rootNode" : {
+        "id" : "49623e9a4d919bd8",
+        "name" : "",
+        "type" : "read-property",
+        "topic" : "inventory-managment",
+        "thing" : "53318f195d961386",
+        "property" : "totalItemCount"
+      },
+      "branches" : {
+        "branch-0" : [ {
+          "id" : "49623e9a4d919bd8",
+          "name" : "",
+          "type" : "read-property",
+          "topic" : "inventory-managment",
+          "thing" : "53318f195d961386",
+          "property" : "totalItemCount"
+        }, {
+          "id" : "c94556230218b41c",
+          "name" : "",
+          "type" : "switch",
+          "topic" : null,
+          "thing" : null
+        }, {
+          "id" : "a66e2d76af546ea0",
+          "name" : "",
+          "type" : "invoke-action",
+          "topic" : "inventory-managment",
+          "thing" : "dc99cc6070d7f6fe",
+          "action" : "updateDisplay"
+        } ],
+        "branch-1" : [ {
+          "id" : "49623e9a4d919bd8",
+          "name" : "",
+          "type" : "read-property",
+          "topic" : "inventory-managment",
+          "thing" : "53318f195d961386",
+          "property" : "totalItemCount"
+        }, {
+          "id" : "c94556230218b41c",
+          "name" : "",
+          "type" : "switch",
+          "topic" : null,
+          "thing" : null
+        }, {
+          "id" : "31b59a86cdc287fe",
+          "name" : "",
+          "type" : "invoke-action",
+          "topic" : "inventory-managment",
+          "thing" : "53318f195d961386",
+          "action" : "performInventoryAudit"
+        } ]
+      }
+    },
+    "subFlow-9" : {
+      "rootNode" : {
+        "id" : "b5d18f5394c85b77",
+        "name" : "",
+        "type" : "subscribe-event",
+        "topic" : "hospital-security",
+        "thing" : "95f43c8857db970c",
+        "event" : "securityBreach"
+      },
+      "branches" : {
+        "branch-0" : [ {
+          "id" : "b5d18f5394c85b77",
+          "name" : "",
+          "type" : "subscribe-event",
+          "topic" : "hospital-security",
+          "thing" : "95f43c8857db970c",
+          "event" : "securityBreach"
+        }, {
+          "id" : "b0ac42fae651e385",
+          "name" : "Activate Alarm",
+          "type" : "invoke-action",
+          "topic" : "hospital-security",
+          "thing" : "60ec5509eed581fd",
+          "action" : "activate"
+        } ],
+        "branch-1" : [ {
+          "id" : "b5d18f5394c85b77",
+          "name" : "",
+          "type" : "subscribe-event",
+          "topic" : "hospital-security",
+          "thing" : "95f43c8857db970c",
+          "event" : "securityBreach"
+        }, {
+          "id" : "266c523fb2f31b07",
+          "name" : "Some Data Processing",
+          "type" : "function",
+          "topic" : null,
+          "thing" : null
+        }, {
+          "id" : "dcc873afed83e95c",
+          "name" : "",
+          "type" : "read-property",
+          "topic" : "hospital-security",
+          "thing" : "b7c9cdf5487520a3",
+          "property" : "streamURL"
+        }, {
+          "id" : "ab379c6bd789dc0e",
+          "name" : "Log Incident",
+          "type" : "invoke-action",
+          "topic" : "hospital-security",
+          "thing" : "dc99cc6070d7f6fe",
+          "action" : "updateDisplay"
+        } ],
+        "branch-2" : [ {
+          "id" : "b5d18f5394c85b77",
+          "name" : "",
+          "type" : "subscribe-event",
+          "topic" : "hospital-security",
+          "thing" : "95f43c8857db970c",
+          "event" : "securityBreach"
+        }, {
+          "id" : "266c523fb2f31b07",
+          "name" : "Some Data Processing",
+          "type" : "function",
+          "topic" : null,
+          "thing" : null
+        }, {
+          "id" : "03335e7d6457b643",
+          "name" : "",
+          "type" : "read-property",
+          "topic" : "hospital-security",
+          "thing" : "b7c9cdf5487520a3",
+          "property" : "streamURL"
+        }, {
+          "id" : "5fa591623723f862",
+          "name" : "Log Incident",
+          "type" : "invoke-action",
+          "topic" : "hospital-security",
+          "thing" : "dc99cc6070d7f6fe",
+          "action" : "updateDisplay"
+        } ],
+        "branch-3" : [ {
+          "id" : "b5d18f5394c85b77",
+          "name" : "",
+          "type" : "subscribe-event",
+          "topic" : "hospital-security",
+          "thing" : "95f43c8857db970c",
+          "event" : "securityBreach"
+        }, {
+          "id" : "266c523fb2f31b07",
+          "name" : "Some Data Processing",
+          "type" : "function",
+          "topic" : null,
+          "thing" : null
+        }, {
+          "id" : "3cedbc04d3c8152a",
+          "name" : "",
+          "type" : "invoke-action",
+          "topic" : "hospital-security",
+          "thing" : "dc99cc6070d7f6fe",
+          "action" : "showAlert"
+        } ]
+      }
+    },
+    "subFlow-10" : {
+      "rootNode" : {
+        "id" : "3085acb1e029c61d",
+        "name" : "",
+        "type" : "read-property",
+        "topic" : "ward-monitoring",
+        "thing" : "99965718133994bc",
+        "property" : "inclineLevel"
+      },
+      "branches" : {
+        "branch-0" : [ {
+          "id" : "3085acb1e029c61d",
+          "name" : "",
+          "type" : "read-property",
+          "topic" : "ward-monitoring",
+          "thing" : "99965718133994bc",
+          "property" : "inclineLevel"
+        }, {
+          "id" : "4e2e5f7a83688a82",
+          "name" : "Some Data Processing",
+          "type" : "function",
+          "topic" : null,
+          "thing" : null
+        }, {
+          "id" : "da1577b5d916ac1b",
+          "name" : "Is True",
+          "type" : "switch",
+          "topic" : null,
+          "thing" : null
+        }, {
+          "id" : "17867ff3dc6a7627",
+          "name" : "",
+          "type" : "invoke-action",
+          "topic" : "ward-monitoring",
+          "thing" : "dc99cc6070d7f6fe",
+          "action" : "showAlert"
+        } ]
+      }
+    },
+    "subFlow-11" : {
+      "rootNode" : {
+        "id" : "1ab31992d81b9c34",
+        "name" : "",
+        "type" : "read-property",
+        "topic" : "ward-monitoring",
+        "thing" : "76013f7a022e609c",
+        "property" : "motionDetected"
+      },
+      "branches" : {
+        "branch-0" : [ {
+          "id" : "1ab31992d81b9c34",
+          "name" : "",
+          "type" : "read-property",
+          "topic" : "ward-monitoring",
+          "thing" : "76013f7a022e609c",
+          "property" : "motionDetected"
+        }, {
+          "id" : "0691ada3a4017d27",
+          "name" : "",
+          "type" : "switch",
+          "topic" : null,
+          "thing" : null
+        }, {
+          "id" : "6d1afc683617249d",
+          "name" : "",
+          "type" : "invoke-action",
+          "topic" : "ward-monitoring",
+          "thing" : "76013f7a022e609c",
+          "action" : "toggleLight"
+        } ],
+        "branch-1" : [ {
+          "id" : "1ab31992d81b9c34",
+          "name" : "",
+          "type" : "read-property",
+          "topic" : "ward-monitoring",
+          "thing" : "76013f7a022e609c",
+          "property" : "motionDetected"
+        }, {
+          "id" : "0691ada3a4017d27",
+          "name" : "",
+          "type" : "switch",
+          "topic" : null,
+          "thing" : null
+        }, {
+          "id" : "55182b812f5fbd21",
+          "name" : "Some Processing",
+          "type" : "function",
+          "topic" : null,
+          "thing" : null
+        }, {
+          "id" : "a305c88a13f94bcd",
+          "name" : "",
+          "type" : "invoke-action",
+          "topic" : "ward-monitoring",
+          "thing" : "76013f7a022e609c",
+          "action" : "toggleLight"
         } ]
       }
     }

@@ -1,0 +1,78 @@
+{
+    "@context": "https://www.w3.org/2019/wot/td/v1",
+    "id": "urn:retail:smartshelf:001",
+    "title": "Smart Shelf Sensor",
+    "description": "Weight-based sensor for monitoring inventory levels on retail shelves",
+    "securityDefinitions": {
+      "basic_sc": { "scheme": "basic" }
+    },
+    "security": ["basic_sc"],
+    "properties": {
+      "shelfId": {
+        "type": "string",
+        "readOnly": true,
+        "forms": [{"href": "http://store.example.com/shelves/{shelfId}/info"}]
+      },
+      "currentWeight": {
+        "type": "number",
+        "unit": "gram",
+        "readOnly": true,
+        "observable": true,
+        "forms": [{"href": "http://store.example.com/shelves/{shelfId}/weight"}]
+      },
+      "productSku": {
+        "type": "string",
+        "forms": [{"href": "http://store.example.com/shelves/{shelfId}/product"}]
+      },
+      "itemCount": {
+        "type": "integer",
+        "readOnly": true,
+        "forms": [{"href": "http://store.example.com/shelves/{shelfId}/count"}]
+      },
+      "batteryLevel": {
+        "type": "number",
+        "unit": "percent",
+        "readOnly": true,
+        "forms": [{"href": "http://store.example.com/shelves/{shelfId}/battery"}]
+      }
+    },
+    "actions": {
+      "calibrate": {
+        "forms": [{"href": "http://store.example.com/shelves/{shelfId}/calibrate"}]
+      },
+      "setItemWeight": {
+        "input": {
+          "type": "object",
+          "properties": {
+            "singleItemWeight": {"type": "number", "unit": "gram"}
+          }
+        },
+        "forms": [{"href": "http://store.example.com/shelves/{shelfId}/itemweight"}]
+      }
+    },
+    "events": {
+      "lowStock": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "shelfId": {"type": "string"},
+            "productSku": {"type": "string"},
+            "currentCount": {"type": "integer"},
+            "timestamp": {"type": "string", "format": "date-time"}
+          }
+        },
+        "forms": [{"href": "http://store.example.com/shelves/{shelfId}/events/lowstock", "subprotocol": "longpoll"}]
+      },
+      "outOfStock": {
+        "data": {
+          "type": "object",
+          "properties": {
+            "shelfId": {"type": "string"},
+            "productSku": {"type": "string"},
+            "timestamp": {"type": "string", "format": "date-time"}
+          }
+        },
+        "forms": [{"href": "http://store.example.com/shelves/{shelfId}/events/outofstock", "subprotocol": "longpoll"}]
+      }
+    }
+  }

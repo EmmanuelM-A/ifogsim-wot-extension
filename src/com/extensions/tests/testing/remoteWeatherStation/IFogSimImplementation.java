@@ -40,12 +40,12 @@ import org.fog.utils.distribution.DeterministicDistribution;
  *
  */
 public class IFogSimImplementation {
-    static List<FogDevice> fogDevices = new ArrayList<FogDevice>();
-    static List<Sensor> sensors = new ArrayList<Sensor>();
-    static List<Actuator> actuators = new ArrayList<Actuator>();
-    static int numOfAreas = 2;
+    static List<FogDevice> fogDevices = new ArrayList<>();
+    static List<Sensor> sensors = new ArrayList<>();
+    static List<Actuator> actuators = new ArrayList<>();
+    static int numOfAreas = 1;
 
-    private static boolean CLOUD = false;
+    private final static boolean CLOUD = true;
 
     public static void main(String[] args) {
 
@@ -53,18 +53,16 @@ public class IFogSimImplementation {
 
         try {
             Log.disable();
-            int num_user = 1; // number of cloud users
-            Calendar calendar = Calendar.getInstance();
-            boolean trace_flag = false; // mean trace events
 
-            CloudSim.init(num_user, calendar, trace_flag);
+            int num_user = 1;
 
-            String appId = "weather_app"; // identifier of the application
+            CloudSim.init(num_user, Calendar.getInstance(), false);
+
+            String appId = "remote_weather_station_application"; // identifier of the application
 
             FogBroker broker = new FogBroker("broker");
 
             Application application = createApplication(appId, broker.getId());
-            application.setUserId(broker.getId());
 
             createFogDevices(broker.getId(), appId);
 
@@ -79,20 +77,29 @@ public class IFogSimImplementation {
                 }
             }
 
-            // Place data processor on the gateway
+            // Place data processor on edge devices as well since there's no gateway in createFogDevices
             for(FogDevice device : fogDevices) {
-                if(device.getName().startsWith("gateway")) {
+                if(device.getName().startsWith("edge")) {
                     moduleMapping.addModuleToDevice("data_processor", device.getName());
                 }
             }
 
-            moduleMapping.addModuleToDevice("weather_analyzer", "cloud"); // weather analyzer in the cloud
+            // Place display controller on edge devices to minimize latency to display actuators
+            for(FogDevice device : fogDevices) {
+                if(device.getName().startsWith("edge")) {
+                    moduleMapping.addModuleToDevice("display_controller", device.getName());
+                }
+            }
+
+            // Place weather analyzer in the cloud as it's more computationally intensive
+            moduleMapping.addModuleToDevice("weather_analyzer", "cloud");
 
             if(CLOUD) {
-                // if the mode of deployment is cloud-based
+                // if the mode of deployment is cloud-based, override previous mappings
                 moduleMapping.addModuleToDevice("data_collector", "cloud");
                 moduleMapping.addModuleToDevice("data_processor", "cloud");
                 moduleMapping.addModuleToDevice("display_controller", "cloud");
+                moduleMapping.addModuleToDevice("weather_analyzer", "cloud");
             }
 
             controller = new Controller("master-controller", fogDevices, sensors, actuators);
@@ -124,26 +131,18 @@ public class IFogSimImplementation {
         cloud.setParentId(-1);
         fogDevices.add(cloud);
 
-        FogDevice proxy = createFogDevice("proxy-server", 2800, 4000, 10000, 10000, 1, 0.0, 107.339, 83.4333);
-        proxy.setParentId(cloud.getId());
-        proxy.setUplinkLatency(100); // latency of connection between proxy server and cloud is 100 ms
-        fogDevices.add(proxy);
 
         for(int i=0; i<numOfAreas; i++) {
-            addArea(i+"", userId, appId, proxy.getId());
+            addEdgeAndEndDevices(i+"", userId, appId, cloud.getId());
         }
     }
 
-    private static FogDevice addArea(String id, int userId, String appId, int parentId) {
-        FogDevice gateway = createFogDevice("gateway-"+id, 2800, 4000, 10000, 10000, 1, 0.0, 107.339, 83.4333);
-        fogDevices.add(gateway);
-        gateway.setUplinkLatency(4); // latency of connection between gateway and proxy server is 4 ms
-        gateway.setParentId(parentId);
-
+    private static void addEdgeAndEndDevices(String id, int userId, String appId, int parentId) {
+        // Add edge device
         FogDevice edge = createFogDevice("edge-"+id, 1000, 2000, 10000, 10000, 2, 0.0, 87.53, 82.44);
         fogDevices.add(edge);
         edge.setUplinkLatency(2); // latency of connection between edge and gateway is 2 ms
-        edge.setParentId(gateway.getId());
+        edge.setParentId(parentId);
 
         // Add temperature sensor
         Sensor tempSensor = new Sensor("temp-sensor-"+id, "TEMPERATURE", userId, appId, new DeterministicDistribution(5));
@@ -166,25 +165,10 @@ public class IFogSimImplementation {
         // Add smart display as actuator
         Actuator display = new Actuator("display-"+id, userId, appId, "DISPLAY");
         actuators.add(display);
-        display.setGatewayDeviceId(gateway.getId());
+        display.setGatewayDeviceId(edge.getId());
         display.setLatency(1.0);
-
-        return gateway;
     }
 
-    /**
-     * Creates a vanilla fog device
-     * @param nodeName name of the device to be used in simulation
-     * @param mips MIPS
-     * @param ram RAM
-     * @param upBw uplink bandwidth
-     * @param downBw downlink bandwidth
-     * @param level hierarchy level of the device
-     * @param ratePerMips cost rate per MIPS used
-     * @param busyPower
-     * @param idlePower
-     * @return
-     */
     private static FogDevice createFogDevice(String nodeName, long mips,
                                              int ram, long upBw, long downBw, int level, double ratePerMips, double busyPower, double idlePower) {
 
@@ -258,9 +242,9 @@ public class IFogSimImplementation {
         /*
          * Connecting the application modules (vertices) in the application model (directed graph) with edges
          */
-        application.addAppEdge("TEMPERATURE", "data_collector", 1000, 500, "TEMP_DATA", Tuple.UP, AppEdge.SENSOR);
-        application.addAppEdge("HUMIDITY", "data_collector", 1000, 500, "HUMIDITY_DATA", Tuple.UP, AppEdge.SENSOR);
-        application.addAppEdge("AIR_QUALITY", "data_collector", 1000, 500, "AIR_QUALITY_DATA", Tuple.UP, AppEdge.SENSOR);
+        application.addAppEdge("TEMPERATURE", "data_collector", 1000, 500, "TEMPERATURE", Tuple.UP, AppEdge.SENSOR);
+        application.addAppEdge("HUMIDITY", "data_collector", 1000, 500, "HUMIDITY", Tuple.UP, AppEdge.SENSOR);
+        application.addAppEdge("AIR_QUALITY", "data_collector", 1000, 500, "AIR_QUALITY", Tuple.UP, AppEdge.SENSOR);
 
         application.addAppEdge("data_collector", "data_processor", 2000, 1000, "SENSOR_DATA", Tuple.UP, AppEdge.MODULE);
         application.addAppEdge("data_processor", "weather_analyzer", 1000, 1000, "PROCESSED_DATA", Tuple.UP, AppEdge.MODULE);
@@ -270,9 +254,9 @@ public class IFogSimImplementation {
         /*
          * Defining the input-output relationships (represented by selectivity) of the application modules.
          */
-        application.addTupleMapping("data_collector", "TEMP_DATA", "SENSOR_DATA", new FractionalSelectivity(1.0));
-        application.addTupleMapping("data_collector", "HUMIDITY_DATA", "SENSOR_DATA", new FractionalSelectivity(1.0));
-        application.addTupleMapping("data_collector", "AIR_QUALITY_DATA", "SENSOR_DATA", new FractionalSelectivity(1.0));
+        application.addTupleMapping("data_collector", "TEMPERATURE", "SENSOR_DATA", new FractionalSelectivity(1.0));
+        application.addTupleMapping("data_collector", "HUMIDITY", "SENSOR_DATA", new FractionalSelectivity(1.0));
+        application.addTupleMapping("data_collector", "AIR_QUALITY", "SENSOR_DATA", new FractionalSelectivity(1.0));
 
         application.addTupleMapping("data_processor", "SENSOR_DATA", "PROCESSED_DATA", new FractionalSelectivity(1.0));
         application.addTupleMapping("weather_analyzer", "PROCESSED_DATA", "ANALYZED_DATA", new FractionalSelectivity(1.0));
