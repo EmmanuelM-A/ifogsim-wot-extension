@@ -31,7 +31,7 @@ import java.util.*;
 /**
  * This class is responsible for construction the application's 1) Physical Topology and its 2) Application Model
  */
-public class JsonToApplication {
+public class JsonToApplication implements ApplicationConstructor {
     /**
      * Presets for defining the characteristics of cloud nodes in the application
      */
@@ -51,11 +51,6 @@ public class JsonToApplication {
      * The list of all WoT thing nodes parsed from the application topology
      */
     private final List<TopologyNode> things;
-
-    /**
-     * The list of all topics parsed from the application topology. Used to group devices with edge nodes.
-     */
-    private final List<String> nodeTopics;
 
     /**
      * A list of all nodes used in the application.
@@ -98,19 +93,9 @@ public class JsonToApplication {
     private final List<VirtualDevice> selectedVirtualDevices;
 
     /**
-     * A count used to keep track of all processing modules created
-     */
-    private final int processingModuleCount;
-
-    /**
-     * A count used to keep track of all event processing modules created
-     */
-    private final int eventProcessingModuleCount;
-
-    /**
      * Keeps track of the number of worker modules created.
      */
-    private int workerModuleCount = 1;
+    private int workerModuleCount;
 
     /**
      * A list of all sensor used in the application's physical topology (ONLY USED IN THE APPLICATION MODEL).
@@ -143,8 +128,7 @@ public class JsonToApplication {
         this.eventFlows = new ArrayList<>();
         this.injectFlows = new ArrayList<>();
         this.selectedVirtualDevices = new ArrayList<>();
-        this.processingModuleCount = 0;
-        this.eventProcessingModuleCount = 0;
+        this.workerModuleCount = 1;
         this.allSensors = null;
 
         // Convert the Node-RED application description into a structured input format
@@ -161,9 +145,6 @@ public class JsonToApplication {
 
         // Extract IoT device nodes (things) from the parsed topology
         this.things = applicationTopologyParser.parseTopologyNodes("things");
-
-        // Extract the list of communication topics used in the application
-        this.nodeTopics = applicationTopologyParser.parseTopologyNodeTopics();
 
         // Get all the topology nodes from the sub flows list
         this.allTopologyNodes = Utility.getAllNodesFromTopology(topologyNodeTrees);
@@ -183,10 +164,12 @@ public class JsonToApplication {
      *
      * @return The constructed application model from the Node-RED application.
      */
-    public Application createApplicationModel(String appId, int userId) {
+    public Application createApplicationModel(String appId, int userId) throws Exception {
         Application application = mapAppTopologyToAppModel(appId, userId);
 
-        addEventFlowToApplication(application);
+        if(EventManager.EVENT_HANDLING_ENABLED) {
+            addEventFlowToApplication(application);
+        }
 
         System.out.println("Application's Application Model Constructed Successfully!");
 
@@ -200,7 +183,7 @@ public class JsonToApplication {
      *
      * @return The constructed application model.
      */
-    private Application mapAppTopologyToAppModel(String appId, int userId) {
+    private Application mapAppTopologyToAppModel(String appId, int userId) throws Exception {
         // Check if the sub-flow flow exists
         if(topologyNodeTrees == null) {
             System.out.println("Dataflow passed in is null!");
@@ -227,9 +210,6 @@ public class JsonToApplication {
             // If the sub-flow's branches list is not set, skip
             if(topologyNodeTree.branches() == null || topologyNodeTree.branches().isEmpty()) continue;
 
-            // Get the rootNode
-            TopologyNode rootNode = topologyNodeTree.rootNode();
-
             // Get branches
             List<List<TopologyNode>> branches = topologyNodeTree.branches();
 
@@ -255,70 +235,54 @@ public class JsonToApplication {
                         String WORKER_MODULE_K = "WorkerModule-" + workerModuleCount;
                         workerModuleCount++;
 
-                        //if(topologyNodeTree.branches().size() == 1) {
-                            // Processing Module
-                            /*application.addAppModule(WORKER_MODULE_K, applicationPreset.APP_MODULE_RAM);
+                        VirtualDevice srcVD = getVDUsed(src, selectedVirtualDevices);
+                        VirtualDevice dstVD = getVDUsed(dst, selectedVirtualDevices);
 
-                            // Data Flow Edges
-                            addAppEdge(application, srcName, WORKER_MODULE_K, srcName, Tuple.UP, AppEdge.SENSOR);
-                            addAppEdge(application, WORKER_MODULE_K, dstName, dstName, Tuple.DOWN, AppEdge.ACTUATOR);
+                        // Check if VD exists
+                        if(srcVD != null && dstVD != null) {
+                            // Get the VD_SENSOR and VD_ACTUATOR, which both represent all sensors and actuator for that VD respectively
+                            String VD_SENSOR = srcVD.getSensor().getName();
+                            String VD_ACTUATOR = dstVD.getActuator().getName();
 
-                            // Tuple Mappings
-                            application.addTupleMapping(WORKER_MODULE_K, srcName, dstName, new FractionalSelectivity(1.0));
-
-                            // Define Application Loops
-                            final AppLoop loop = new AppLoop(Arrays.asList(srcName, WORKER_MODULE_K, dstName));
-
-                            application.setLoops(new ArrayList<>(){{add(loop);}});
-
-                            break;*/
-                        //} else if(branches.size() > 1) {
-                            VirtualDevice virtualDevice = getVDUsed(src, selectedVirtualDevices);
-
-                            // Check if VD exists
-                            if(virtualDevice != null) {
-                                // Get the VD_SENSOR and VD_ACTUATOR, which both represent all sensors and actuator for that VD respectively
-                                String VD_SENSOR = virtualDevice.getSensor().getName();
-                                String VD_ACTUATOR = virtualDevice.getActuator().getName();
-
-                                // Check if the VD has not been used before (means VD SENSOR-MODULE-ACTUATOR for that sub-flow has not been created yet)
-                                if(!virtualDevicesUsedSoFar.contains(virtualDevice)) {
-                                    /*
-                                        Once the VD_SENSOR -> MASTER_MODULE -> VD_ACTUATOR connection is set up for a given VD, all branches (from that
-                                        sub-flow) that use that VD (meaning the sensor is from that VD), will be converted into a worker module, so that
-                                        data flowing through the sub-flow is still incorporated into the application model. If a sub-flow branch has an existing
-                                        VD SENSOR-MODULE-ACTUATOR connection already, the sub-flow branch is just converted into another WORKER_MODULE-MASTER_MODULE
-                                        connection for the existing VD SENSOR-MODULE-ACTUATOR connection.
-                                    */
-
-                                    // Make an edge from VD_SENSOR to MASTER_MODULE carrying tuple types of VD_SENSOR
-                                    addAppEdge(application, VD_SENSOR, MASTER_MODULE, VD_SENSOR, Tuple.UP, AppEdge.SENSOR);
-
-                                    // Make an edge from MASTER_MODULE to VD_ACTUATOR, carrying tuple types of VD_ACTUATOR
-                                    addAppEdge(application, MASTER_MODULE, VD_ACTUATOR, VD_ACTUATOR, Tuple.DOWN, AppEdge.ACTUATOR);
-
-                                    // Record the VD
-                                    virtualDevicesUsedSoFar.add(virtualDevice);
-
-                                    //System.out.println("New VD SENSOR-MODULE-ACTUATOR connection made for " + virtualDevice.getFogDevice().getName());
-                                }
-
+                            // Check if the VD has not been used before (means VD SENSOR-MODULE-ACTUATOR for that sub-flow has not been created yet)
+                            if(!virtualDevicesUsedSoFar.contains(srcVD)) {
                                 /*
-                                    VD SENSOR-MODULE-ACTUATOR connection already exists for the sub-flow and as such just create
-                                    a new WORKER_MODULE-MASTER_MODULE connection using sub-flow branch
-                                 */
-                                String workerModuleConnection = connectWorkerModule(
-                                        application,
-                                        VD_SENSOR,
-                                        VD_ACTUATOR,
-                                        srcName,
-                                        dstName,
-                                        MASTER_MODULE,
-                                        WORKER_MODULE_K
-                                );
-                                //System.out.println("WORKER-MODULE connection: " + workerModuleConnection + " added for " + virtualDevice.getFogDevice().getName());
+                                    Once the VD_SENSOR -> MASTER_MODULE -> VD_ACTUATOR connection is set up for a given VD, all branches (from that
+                                    sub-flow) that use that VD (meaning the sensor is from that VD), will be converted into a worker module, so that
+                                    data flowing through the sub-flow is still incorporated into the application model. If a sub-flow branch has an existing
+                                    VD SENSOR-MODULE-ACTUATOR connection already, the sub-flow branch is just converted into another WORKER_MODULE-MASTER_MODULE
+                                    connection for the existing VD SENSOR-MODULE-ACTUATOR connection.
+                                */
+
+                                // Make an edge from VD_SENSOR to MASTER_MODULE carrying tuple types of VD_SENSOR
+                                addAppEdge(application, VD_SENSOR, MASTER_MODULE, VD_SENSOR, Tuple.UP, AppEdge.SENSOR);
+
+                                // Make an edge from MASTER_MODULE to VD_ACTUATOR, carrying tuple types of VD_ACTUATOR
+                                addAppEdge(application, MASTER_MODULE, VD_ACTUATOR, VD_ACTUATOR, Tuple.DOWN, AppEdge.ACTUATOR);
+
+                                // Record the VD
+                                virtualDevicesUsedSoFar.add(srcVD);
+                                virtualDevicesUsedSoFar.add(dstVD);
+
+                                //System.out.println("New VD SENSOR-MODULE-ACTUATOR connection made for " + virtualDevice.getFogDevice().getName());
                             }
-                        //}
+
+                            /*
+                                VD SENSOR-MODULE-ACTUATOR connection already exists for the sub-flow and as such just create
+                                a new WORKER_MODULE-MASTER_MODULE connection using sub-flow branch
+                             */
+                            connectWorkerModule(
+                                    application,
+                                    VD_SENSOR,
+                                    VD_ACTUATOR,
+                                    srcName,
+                                    dstName,
+                                    MASTER_MODULE,
+                                    WORKER_MODULE_K
+                            );
+                        } else {
+                            throw new Exception("The Virtual Devices that correspond to things with these attributes: " + src.uniqueAttribute() + ", " + dst.uniqueAttribute() + " do not exist!");
+                        }
                     }
                 }
             }
@@ -342,9 +306,6 @@ public class JsonToApplication {
 
             // If the sub-flow's branches list is not set, skip
             if(topologyNodeTree.branches() == null || topologyNodeTree.branches().isEmpty()) continue;
-
-            // Get the rootNode
-            TopologyNode rootNode = topologyNodeTree.rootNode();
 
             // Get branches
             List<List<TopologyNode>> branches = topologyNodeTree.branches();
@@ -475,9 +436,8 @@ public class JsonToApplication {
      * @param subFlowActuator The actuator usually found at the end of the sub flow.
      * @param MASTER_MODULE The name of the master module.
      * @param WORKER_MODULE_K The name of the worker module to make a connection with the master module.
-     * @return A string detailing the connection and tuple types flowing through the worker module (USED FOR DEBUGGING).
      */
-    private String connectWorkerModule(
+    private void connectWorkerModule(
             Application application,
             String VD_SENSOR,
             String VD_ACTUATOR,
@@ -516,8 +476,6 @@ public class JsonToApplication {
 
         // Add the created app loop to the appLoops list
         application.getLoops().add(loop);
-
-        return subFlowSensor + " --> " + WORKER_MODULE_K + " --> " + subFlowActuator; // USED FOR DEBUGGING
     }
 
     /**
@@ -910,15 +868,6 @@ public class JsonToApplication {
     }
 
     /**
-     * Retrieves a list of all node topics used (parsed from the application topology).
-     *
-     * @return Al ist of all node topics.
-     */
-    public List<String> getNodeTopics() {
-        return nodeTopics;
-    }
-
-    /**
      * Retrieves a list of topology nodes (parsed from the application topology).
      *
      * @return A list of {@link TopologyNodeTree} representing the topology nodes in the application topology.
@@ -971,14 +920,4 @@ public class JsonToApplication {
     public List<VirtualDevice> getSelectedVirtualDevices() {
         return selectedVirtualDevices;
     }
-
-    /**
-     * Retrieves the count of processing modules in the system.
-     *
-     * @return The number of processing modules in the system.
-     */
-    public int getProcessingModuleCount() {
-        return processingModuleCount;
-    }
-
 }

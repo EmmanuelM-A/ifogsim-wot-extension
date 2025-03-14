@@ -5,6 +5,7 @@ import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.core.CloudSim;
 import org.fog.application.AppEdge;
 import org.fog.application.AppLoop;
+import org.fog.application.AppModule;
 import org.fog.application.Application;
 import org.fog.application.selectivity.FractionalSelectivity;
 import org.fog.entities.Actuator;
@@ -13,6 +14,7 @@ import org.fog.entities.FogDevice;
 import org.fog.entities.Sensor;
 import org.fog.entities.Tuple;
 import org.fog.placement.*;
+import org.fog.utils.TimeKeeper;
 import org.fog.utils.distribution.DeterministicDistribution;
 
 import java.util.ArrayList;
@@ -30,7 +32,7 @@ public class IFogSimImplementation {
     private static final String TEMPERATURE_PROCESSING_MODULE = "temperatureProcessingModule";
     private static final String THERMOSTAT_MODULE = "thermostatModule";
 
-    private static final boolean CLOUD = false;
+    private static final boolean CLOUD = true;
 
     public static void main(String[] args) {
         Log.printLine("Starting " + appId + "...");
@@ -67,6 +69,12 @@ public class IFogSimImplementation {
                 }
             }
 
+            if (CLOUD) {
+                for (AppModule appModule : application.getModules()) {
+                    moduleMapping.addModuleToDevice(appModule.getName(), "cloud");
+                }
+            }
+
             // Submit the application to the controller with the appropriate placement strategy
             controller.submitApplication(
                     application,
@@ -81,6 +89,9 @@ public class IFogSimImplementation {
                     ))
             );
 
+            // Set the simulation start time
+            TimeKeeper.getInstance().setSimulationStartTime(Calendar.getInstance().getTimeInMillis());
+
             CloudSim.startSimulation();
             CloudSim.stopSimulation();
 
@@ -93,51 +104,107 @@ public class IFogSimImplementation {
     }
 
     private static void createFogDevices(String appId, int userId) throws Exception {
+        // Cloud node
         FogDevice cloud = Helper.createFogDevice("cloud", 44800, 40000, 100, 10000, 0, 0.01, 16 * 103, 16 * 83.25);
-        FogDevice homeGateway = Helper.createFogDevice("home-gateway", 2000, 4000, 10000, 10000, 1, 0.0, 107.53, 83.44);
-
         cloud.setParentId(-1);
-        homeGateway.setParentId(cloud.getId());
-
         fogDevices.add(cloud);
+
+        // Edge node
+        FogDevice homeGateway = Helper.createFogDevice("home-gateway", 2000, 4000, 10000, 10000, 1, 0.0, 107.53, 83.44);
+        homeGateway.setParentId(cloud.getId());
         fogDevices.add(homeGateway);
 
-        Sensor temperatureSensor = new Sensor("TEMPERATURE", "TEMPERATURE", userId, appId, new DeterministicDistribution(5000));
-        temperatureSensor.setGatewayDeviceId(homeGateway.getId());
-        temperatureSensor.setLatency(1.0);
-        sensors.add(temperatureSensor);
+        // Temperature Sensor End Device
+        FogDevice temperatureSensor = createTemperatureSensor("temperature", appId, userId);
+        temperatureSensor.setParentId(homeGateway.getId());
+        fogDevices.add(temperatureSensor);
 
-        Actuator thermostatActuator = new Actuator("THERMOSTAT", userId, appId, "THERMOSTAT");
-        thermostatActuator.setGatewayDeviceId(homeGateway.getId());
-        thermostatActuator.setLatency(1.0);
-        actuators.add(thermostatActuator);
+        // Thermostat End Device
+        FogDevice thermostat = createThermostat("thermostat", appId, userId);
+        thermostat.setParentId(homeGateway.getId());
+        fogDevices.add(thermostat);
+    }
+
+    private static FogDevice createTemperatureSensor(String name, String appId, int userId) {
+        FogDevice device = Helper.createFogDevice(name, 300, 1024, 100, 100, 3, 0.2, 50.5, 20.0);
+
+        // Create sensor
+        Sensor sensor = new Sensor(name, name, userId, appId, new DeterministicDistribution(100));
+        sensor.setGatewayDeviceId(device.getId());
+        sensor.setLatency(1.0);
+        sensors.add(sensor);
+
+        return device;
+    }
+
+    private static FogDevice createThermostat(String name, String appId, int userId) {
+        FogDevice device = Helper.createFogDevice(name, 200, 1024, 300, 200, 3, 0.1, 25, 10.0);
+
+        // Create actuator
+        Actuator actuator = new Actuator(name, userId, appId, name);
+        actuator.setGatewayDeviceId(device.getId());
+        actuator.setLatency(1.0);
+        actuators.add(actuator);
+
+        return device;
     }
 
     private static Application createApplication(String appId, int userId) {
         Application application = Application.createApplication(appId, userId);
 
-        application.addAppModule(TEMPERATURE_PROCESSING_MODULE, 10);
+// Define Master Module
+        application.addAppModule("MASTER_MODULE", 20); // Higher computation power
+
+// Define Worker Modules
+        application.addAppModule("WORKER_MODULE_1", 10);
+        application.addAppModule("WORKER_MODULE_2", 10);
+
+// Define Thermostat Module
         application.addAppModule(THERMOSTAT_MODULE, 10);
 
-        application.addAppEdge("TEMPERATURE", TEMPERATURE_PROCESSING_MODULE, 1000, 100, "TEMPERATURE", Tuple.UP, AppEdge.SENSOR);
-        application.addAppEdge(TEMPERATURE_PROCESSING_MODULE, THERMOSTAT_MODULE, 1000, 100, "THERMOSTAT", Tuple.UP, AppEdge.MODULE);
-        application.addAppEdge(THERMOSTAT_MODULE, "THERMOSTAT", 1000, 100, "THERMOSTAT", Tuple.DOWN, AppEdge.ACTUATOR);
+// Sensor Data to Master
+        application.addAppEdge("temperature", "MASTER_MODULE", 900, 2100, "temperature", Tuple.UP, AppEdge.SENSOR);
 
-        application.addTupleMapping(TEMPERATURE_PROCESSING_MODULE, "TEMPERATURE", "THERMOSTAT", new FractionalSelectivity(1.0));
-        application.addTupleMapping(THERMOSTAT_MODULE, "THERMOSTAT", "THERMOSTAT", new FractionalSelectivity(1.0));
+// Master to Worker Modules (Splitting Work)
+        application.addAppEdge("MASTER_MODULE", "WORKER_MODULE_1", 1000, 900, "temperature_task_1", Tuple.UP, AppEdge.MODULE);
+        application.addAppEdge("MASTER_MODULE", "WORKER_MODULE_2", 1000, 900, "temperature_task_2", Tuple.UP, AppEdge.MODULE);
 
-        final AppLoop mainControlLoop = new AppLoop(new ArrayList<String>() {{
-            add("TEMPERATURE");
-            add(TEMPERATURE_PROCESSING_MODULE);
+// Worker Modules Process and Return Data to Master
+        application.addAppEdge("WORKER_MODULE_1", "MASTER_MODULE", 1000, 900, "processed_data_1", Tuple.DOWN, AppEdge.MODULE);
+        application.addAppEdge("WORKER_MODULE_2", "MASTER_MODULE", 1000, 900, "processed_data_2", Tuple.DOWN, AppEdge.MODULE);
+
+// Master Aggregates and Sends Final Data to Thermostat
+        application.addAppEdge("MASTER_MODULE", THERMOSTAT_MODULE, 1000, 900, "final_processed_data", Tuple.UP, AppEdge.MODULE);
+        application.addAppEdge(THERMOSTAT_MODULE, "thermostat", 500, 100, "thermostat", Tuple.DOWN, AppEdge.ACTUATOR);
+
+// Tuple Mappings (Master Sends Tasks, Workers Process, Master Collects)
+        application.addTupleMapping("MASTER_MODULE", "temperature", "temperature_task_1", new FractionalSelectivity(0.5));
+        application.addTupleMapping("MASTER_MODULE", "temperature", "temperature_task_2", new FractionalSelectivity(0.5));
+
+        application.addTupleMapping("WORKER_MODULE_1", "temperature_task_1", "processed_data_1", new FractionalSelectivity(1.0));
+        application.addTupleMapping("WORKER_MODULE_2", "temperature_task_2", "processed_data_2", new FractionalSelectivity(1.0));
+
+        application.addTupleMapping("MASTER_MODULE", "processed_data_1", "final_processed_data", new FractionalSelectivity(1.0));
+        application.addTupleMapping("MASTER_MODULE", "processed_data_2", "final_processed_data", new FractionalSelectivity(1.0));
+        application.addTupleMapping(THERMOSTAT_MODULE, "final_processed_data", "thermostat", new FractionalSelectivity(1.0));
+
+// Define Execution Loops
+        final AppLoop masterWorkerLoop = new AppLoop(new ArrayList<String>() {{
+            add("temperature");
+            add("MASTER_MODULE");
+            add("WORKER_MODULE_1");
+            add("WORKER_MODULE_2");
+            add("MASTER_MODULE");
             add(THERMOSTAT_MODULE);
-            add("THERMOSTAT");
+            add("thermostat");
         }});
 
         List<AppLoop> loops = new ArrayList<AppLoop>() {{
-            add(mainControlLoop);
+            add(masterWorkerLoop);
         }};
 
         application.setLoops(loops);
+
 
         return application;
     }

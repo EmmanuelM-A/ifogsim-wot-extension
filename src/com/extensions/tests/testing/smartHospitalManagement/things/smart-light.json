@@ -1,0 +1,76 @@
+{
+	"@context": [
+		"https://www.w3.org/2019/wot/td/v1",
+		{
+			"hvac": "http://example.org/hvac#"
+		}
+	],
+	"id": "urn:dev:wot:example:lightsensor",
+	"title": "Smart Light",
+	"description": "A smart light with motion detection capabilities.",
+	"securityDefinitions": {
+		"nosec_sc": {
+			"scheme": "nosec"
+		}
+	},
+	"security": [
+		"nosec_sc"
+	],
+	"properties": {
+		"lightState": {
+			"title": "Light State",
+			"type": "boolean",
+			"description": "The current state of the light (on/off).",
+			"observable": true,
+			"forms": [
+				{
+					"op": "readproperty",
+					"href": "/properties/lightState",
+					"contentType": "application/json"
+				}
+			]
+		},
+		"motionDetected": {
+			"title": "Motion Detected",
+			"type": "boolean",
+			"description": "Indicates if motion has been detected.",
+			"observable": true,
+			"forms": [
+				{
+					"op": "readproperty",
+					"href": "/properties/motionDetected",
+					"contentType": "application/json"
+				}
+			]
+		}
+	},
+	"actions": {
+		"toggleLight": {
+			"title": "Toggle Light",
+			"description": "Toggles the light state.",
+			"forms": [
+				{
+					"op": "invokeaction",
+					"href": "/actions/toggleLight",
+					"contentType": "application/json"
+				}
+			]
+		}
+	},
+	"events": {
+		"motionAlert": {
+			"title": "Motion Alert",
+			"description": "Event triggered when motion is detected.",
+			"data": {
+				"type": "boolean"
+			},
+			"forms": [
+				{
+					"op": "subscribeevent",
+					"href": "/events/motionAlert",
+					"contentType": "application/json"
+				}
+			]
+		}
+	}
+}

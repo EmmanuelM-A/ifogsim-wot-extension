@@ -1,0 +1,82 @@
+{
+	"@context": "https://www.w3.org/2019/wot/td/v1",
+	"@type": "Thing",
+	"title": "Smart Surveillance Camera",
+	"description": "WoT-enabled smart camera for surveillance",
+	"id": "urn:dev:wot:org:dcns:camera",
+	"securityDefinitions": {
+		"basic_sc": {
+			"scheme": "basic",
+			"in": "header"
+		}
+	},
+	"security": ["basic_sc"],
+	"properties": {
+		"videoStream": {
+			"type": "object",
+			"description": "Current video stream from the camera",
+			"observable": true,
+			"readOnly": true,
+			"properties": {
+				"cameraId": {
+					"type": "string",
+					"description": "Unique identifier of the camera"
+				},
+				"timestamp": {
+					"type": "string",
+					"description": "Timestamp of the video frame"
+				},
+				"videoStream": {
+					"type": "string",
+					"description": "Encoded video stream (e.g. base64)"
+				}
+			},
+			"forms": [{
+				"href": "http://localhost:8080/camera/stream",
+				"contentType": "application/json",
+				"op": ["readproperty", "observeproperty"]
+			}]
+		}
+	},
+	"actions": {
+		"setPTZ": {
+			"description": "Set the PTZ position",
+			"input": {
+				"type": "object",
+				"properties": {
+					"cameraId": {
+						"type": "string",
+						"description": "ID of the camera to control"
+					},
+					"ptz": {
+						"type": "object",
+						"properties": {
+							"pan": {
+								"type": "integer",
+								"minimum": -100,
+								"maximum": 100
+							},
+							"tilt": {
+								"type": "integer",
+								"minimum": -100,
+								"maximum": 100
+							},
+							"zoom": {
+								"type": "integer",
+								"minimum": 0,
+								"maximum": 100
+							}
+						}
+					}
+				},
+				"required": ["cameraId", "ptz"]
+			},
+			"forms": [{
+				"href": "http://localhost:8080/ptz/actions/setPTZ",
+				"contentType": "application/json",
+				"op": "invokeaction"
+			}]
+		}
+	},
+	"events": {}
+}

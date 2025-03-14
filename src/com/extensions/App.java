@@ -37,7 +37,7 @@ public final class App {
 
     private static final String VDS_CONFIG_FILE = "";
 
-    private static final String VD_QUANTITIES_FILE = "";
+    private static final String THING_QUANTITIES_FILE = "";
     public static void main(String[] args) {
         Log.printLine("Starting Simulation...");
 
@@ -45,7 +45,7 @@ public final class App {
             //////////////////////////////// INITIAL SETUP ////////////////////////////////
 
             // Parses the VD quantities file and extracts the quantity of each thing to be used in the application
-            ThingQuantityParser vdQuantities = new ThingQuantityParser(new File(VD_QUANTITIES_FILE));
+            ThingQuantityParser vdQuantities = new ThingQuantityParser(new File(THING_QUANTITIES_FILE));
 
             // This instance is responsible for loading in the node red application, creating the application topology and model and setting up related data
             JsonToApplication jsonToApplication = new JsonToApplication(

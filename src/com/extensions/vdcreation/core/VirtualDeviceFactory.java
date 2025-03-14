@@ -9,6 +9,7 @@ import java.util.Map;
 import com.extensions.customfog.ActuatorAction;
 import com.extensions.customfog.CustomActuator;
 import com.extensions.customfog.CustomSensor;
+import com.extensions.sysconstructor.eventdriver.EventManager;
 import com.extensions.sysconstructor.eventdriver.EventSensor;
 import com.extensions.utils.presets.ActuatorPreset;
 import com.extensions.utils.presets.FogDevicePreset;
@@ -177,27 +178,29 @@ public class VirtualDeviceFactory {
             virtualDevice.getActuatorActions().add(actuatorAction);
         }
 
-        // Create sensors for the TD events
-        for(Map.Entry<String, Event> eventEntry : thingDescription.getEvents().entrySet()) {
-            // Extract entry data
-            String eventName = eventEntry.getKey();
-            Event event = eventEntry.getValue();
+        if(EventManager.EVENT_HANDLING_ENABLED) {
+            // Create sensors for the TD events
+            for(Map.Entry<String, Event> eventEntry : thingDescription.getEvents().entrySet()) {
+                // Extract entry data
+                String eventName = eventEntry.getKey();
+                Event event = eventEntry.getValue();
 
-            // Map event to an EventSensor
-            EventSensor eventSensor = new EventSensor(eventName, userId, appId, sensorPreset);
-            eventSensor.setEvent(event);
+                // Map event to an EventSensor
+                EventSensor eventSensor = new EventSensor(eventName, userId, appId, sensorPreset);
+                eventSensor.setEvent(event);
 
-            // Set the sensor's gateway device ID to the VD's ID
-            eventSensor.setGatewayDeviceId(virtualDevice.getFogDevice().getId());
+                // Set the sensor's gateway device ID to the VD's ID
+                eventSensor.setGatewayDeviceId(virtualDevice.getFogDevice().getId());
 
-            // Set the latency of the sensor communication
-            eventSensor.setLatency(sensorPreset.LATENCY);
+                // Set the latency of the sensor communication
+                eventSensor.setLatency(sensorPreset.LATENCY);
 
-            // Add the event sensor to the virtual device
-            virtualDevice.getEventSensors().add(eventSensor);
+                // Add the event sensor to the virtual device
+                virtualDevice.getEventSensors().add(eventSensor);
+            }
         }
 
-        // Initialize and set the VD sensor and actuator
+        // Initialize and set the VD's sensor and actuator
         initVDSensorAndVDActuator(virtualDevice);
 
         return virtualDevice;

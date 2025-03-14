@@ -11,6 +11,8 @@ public class EventManager {
     private static final EventManager instance = new EventManager();
     private final List<EventSensor> eventSensors = new ArrayList<>();
 
+    public static boolean EVENT_HANDLING_ENABLED = true;
+
     private EventManager() {}
 
     public static synchronized EventManager getInstance() {

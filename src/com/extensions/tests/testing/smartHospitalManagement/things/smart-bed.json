@@ -1,53 +1,255 @@
 {
-  "@context": "https://www.w3.org/2022/wot/td/v1.1",
-  "id": "urn:uuid:cb63f23b-fdf7-4f5c-a9f1-3c68c6f75b61",
-  "@type": "Thing",
-  "title": "SmartBed",
-  "description": "TD for a Smart Bed Thing",
-  "securityDefinitions": {
-	"basic_sc": {
-	  "scheme": "basic",
-	  "in": "header"
-	}
-  },
-  "security": "basic_sc",
-  "properties": {
-	"bedPosition": {
-	  "type": "string",
-	  "forms": [
+	"@context": [
+		"https://www.w3.org/2019/wot/td/v1",
 		{
-		  "href": "https://smartbed.example.com/position"
+			"@language": "en"
 		}
-	  ]
+	],
+	"@type": "Thing",
+	"title": "Smart Bed",
+	"securityDefinitions": {
+		"nosec": {
+			"scheme": "nosec"
+		}
 	},
-	"temperature": {
-	  "type": "number",
-	  "forms": [
-		{
-		  "href": "https://smartbed.example.com/temperature"
+	"security": [
+		"nosec"
+	],
+	"properties": {
+		"occupancy": {
+			"type": "boolean",
+			"description": "Indicates if the bed is currently occupied.",
+			"readOnly": true,
+			"observable": true,
+			"forms": [
+				{
+					"href": "http://10.32.154.144:8081/smart-bed/properties/occupancy",
+					"contentType": "application/json",
+					"op": [
+						"readproperty"
+					],
+					"htv:methodName": "GET"
+				},
+				{
+					"href": "http://10.32.154.144:8081/smart-bed/properties/occupancy/observable",
+					"contentType": "application/json",
+					"op": [
+						"observeproperty",
+						"unobserveproperty"
+					],
+					"subprotocol": "longpoll"
+				},
+				{
+					"href": "http://10.32.154.144:8081/smart-bed/properties/occupancy",
+					"contentType": "application/cbor",
+					"op": [
+						"readproperty"
+					],
+					"htv:methodName": "GET"
+				},
+				{
+					"href": "http://10.32.154.144:8081/smart-bed/properties/occupancy/observable",
+					"contentType": "application/cbor",
+					"op": [
+						"observeproperty",
+						"unobserveproperty"
+					],
+					"subprotocol": "longpoll"
+				}
+			],
+			"writeOnly": false
+		},
+		"inclineLevel": {
+			"type": "number",
+			"description": "The current incline level (0-45 degrees).",
+			"minimum": 0,
+			"maximum": 45,
+			"forms": [
+				{
+					"href": "http://10.32.154.144:8081/smart-bed/properties/inclineLevel",
+					"contentType": "application/json",
+					"op": [
+						"readproperty",
+						"writeproperty"
+					]
+				},
+				{
+					"href": "http://10.32.154.144:8081/smart-bed/properties/inclineLevel",
+					"contentType": "application/cbor",
+					"op": [
+						"readproperty",
+						"writeproperty"
+					]
+				}
+			],
+			"readOnly": false,
+			"writeOnly": false,
+			"observable": false
+		},
+		"firmnessLevel": {
+			"type": "number",
+			"description": "The current firmness level (1-10).",
+			"minimum": 1,
+			"maximum": 10,
+			"forms": [
+				{
+					"href": "http://10.32.154.144:8081/smart-bed/properties/firmnessLevel",
+					"contentType": "application/json",
+					"op": [
+						"readproperty",
+						"writeproperty"
+					]
+				},
+				{
+					"href": "http://10.32.154.144:8081/smart-bed/properties/firmnessLevel",
+					"contentType": "application/cbor",
+					"op": [
+						"readproperty",
+						"writeproperty"
+					]
+				}
+			],
+			"readOnly": false,
+			"writeOnly": false,
+			"observable": false
+		},
+		"status": {
+			"type": "string",
+			"enum": [
+				"active",
+				"inactive",
+				"error"
+			],
+			"description": "The current status of the smart bed.",
+			"forms": [
+				{
+					"href": "http://10.32.154.144:8081/smart-bed/properties/status",
+					"contentType": "application/json",
+					"op": [
+						"readproperty",
+						"writeproperty"
+					]
+				},
+				{
+					"href": "http://10.32.154.144:8081/smart-bed/properties/status",
+					"contentType": "application/cbor",
+					"op": [
+						"readproperty",
+						"writeproperty"
+					]
+				}
+			],
+			"readOnly": false,
+			"writeOnly": false,
+			"observable": false
 		}
-	  ]
-	}
-  },
-  "actions": {
-	"adjustPosition": {
-	  "forms": [
-		{
-		  "href": "https://smartbed.example.com/adjustPosition"
+	},
+	"actions": {
+		"adjustIncline": {
+			"description": "Adjusts the incline level of the bed.",
+			"input": {
+				"type": "number",
+				"description": "Desired incline level (0-45 degrees)."
+			},
+			"forms": [
+				{
+					"href": "http://10.32.154.144:8081/smart-bed/actions/adjustIncline",
+					"contentType": "application/json",
+					"op": [
+						"invokeaction"
+					],
+					"htv:methodName": "POST"
+				},
+				{
+					"href": "http://10.32.154.144:8081/smart-bed/actions/adjustIncline",
+					"contentType": "application/cbor",
+					"op": [
+						"invokeaction"
+					],
+					"htv:methodName": "POST"
+				}
+			],
+			"safe": false,
+			"idempotent": false
+		},
+		"adjustFirmness": {
+			"description": "Adjusts the firmness level of the bed.",
+			"input": {
+				"type": "number",
+				"description": "Desired firmness level (1-10)."
+			},
+			"forms": [
+				{
+					"href": "http://10.32.154.144:8081/smart-bed/actions/adjustFirmness",
+					"contentType": "application/json",
+					"op": [
+						"invokeaction"
+					],
+					"htv:methodName": "POST"
+				},
+				{
+					"href": "http://10.32.154.144:8081/smart-bed/actions/adjustFirmness",
+					"contentType": "application/cbor",
+					"op": [
+						"invokeaction"
+					],
+					"htv:methodName": "POST"
+				}
+			],
+			"safe": false,
+			"idempotent": false
 		}
-	  ]
-	}
-  },
-  "events": {
-	"sleepDetected": {
-	  "data": {
-		"type": "string"
-	  },
-	  "forms": [
-		{
-		  "href": "https://smartbed.example.com/sleepDetected"
+	},
+	"events": {
+		"occupancyChange": {
+			"description": "Triggered when the occupancy status changes.",
+			"data": {
+				"type": "boolean"
+			},
+			"forms": [
+				{
+					"href": "http://10.32.154.144:8081/smart-bed/events/occupancyChange",
+					"contentType": "application/json",
+					"subprotocol": "longpoll",
+					"op": [
+						"subscribeevent",
+						"unsubscribeevent"
+					]
+				},
+				{
+					"href": "http://10.32.154.144:8081/smart-bed/events/occupancyChange",
+					"contentType": "application/cbor",
+					"subprotocol": "longpoll",
+					"op": [
+						"subscribeevent",
+						"unsubscribeevent"
+					]
+				}
+			]
 		}
-	  ]
-	}
-  }
+	},
+	"id": "urn:uuid:cc52fbd1-84b0-4dbd-8860-291f63b74dc8",
+	"description": "A bed that adjusts firmness and incline based on user preferences.",
+	"forms": [
+		{
+			"href": "http://10.32.154.144:8081/smart-bed/properties",
+			"contentType": "application/json",
+			"op": [
+				"readallproperties",
+				"readmultipleproperties",
+				"writeallproperties",
+				"writemultipleproperties"
+			]
+		},
+		{
+			"href": "http://10.32.154.144:8081/smart-bed/properties",
+			"contentType": "application/cbor",
+			"op": [
+				"readallproperties",
+				"readmultipleproperties",
+				"writeallproperties",
+				"writemultipleproperties"
+			]
+		}
+	]
 }

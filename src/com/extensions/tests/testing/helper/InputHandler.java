@@ -1,4 +1,4 @@
-package com.extensions.tests.testing;
+package com.extensions.tests.testing.helper;
 
 public class InputHandler {
     public final String NODE_RED_APPLICATION_JSON;

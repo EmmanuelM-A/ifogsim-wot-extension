@@ -6,6 +6,7 @@ import com.extensions.custommetrics.metrics.MeanTupleExecutionDelay;
 import com.extensions.sysconstructor.core.ApplicationPhysicalTopology;
 import com.extensions.sysconstructor.core.JsonToApplication;
 import com.extensions.sysconstructor.core.ThingQuantityParser;
+import com.extensions.tests.testing.helper.InputHandler;
 import com.extensions.utils.presets.*;
 import com.extensions.vdcreation.core.VirtualDevice;
 import com.extensions.vdcreation.core.VirtualDeviceFactory;
@@ -38,6 +39,7 @@ public final class MainTester {
     //private static final InputHandler inputHandler = new InputHandler("smart-home-temperature-control.json", "src/com/extensions/tests/testing/smartHomeTemperatureControl", false);
     //private static final InputHandler inputHandler = new InputHandler("smart-agriculture-greenhouse-monitoring.json", "src/com/extensions/tests/testing/smartAgricultureGreenhouseMonitoring", false);
     private static final InputHandler inputHandler = new InputHandler("smart-hospital-management.json", "src/com/extensions/tests/testing/smartHospitalManagement", true);
+    //private static final InputHandler inputHandler = new InputHandler("dcns-fog-application.json", "src/com/extensions/tests/testing/dcnsFog", true);
 
     public static void main(String[] args) {
         try {
