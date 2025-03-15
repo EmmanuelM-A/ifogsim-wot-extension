@@ -43,6 +43,12 @@ public class CustomSensor extends Sensor {
         this.preset = preset;
     }
 
+    public CustomSensor(String name, String tupleType, int userId, String appId, SensorPreset preset) {
+        super(name, tupleType, userId, appId, preset.DISTRIBUTION);
+        setLatency(preset.LATENCY);
+        this.preset = preset;
+    }
+
     /**
      * Retrieves the property associated to the sensor.
      *

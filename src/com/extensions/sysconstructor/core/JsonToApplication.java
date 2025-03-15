@@ -244,6 +244,7 @@ public class JsonToApplication implements ApplicationConstructor {
                             String VD_SENSOR = srcVD.getSensor().getName();
                             String VD_ACTUATOR = dstVD.getActuator().getName();
 
+                            // If the VD sensor and actuator are from the same VD, then set the VD actuator to equal the src VD's actuator
                             if(srcVD.getThingDescription().getTitle().equals(dstVD.getThingDescription().getTitle())) {
                                 VD_ACTUATOR = srcVD.getActuator().getName();
                             }

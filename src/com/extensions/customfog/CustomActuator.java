@@ -44,10 +44,10 @@ public class CustomActuator extends Actuator {
         this.preset = preset;
     }
 
-    public CustomActuator(String name, int userId, String appId, String actuatorType) {
+    public CustomActuator(String name, int userId, String appId, ActuatorPreset preset, String actuatorType) {
         super(name, userId, appId, actuatorType);
         this.actuatorType = actuatorType;
-        this.preset = null;
+        this.preset = preset;
     }
 
     /**

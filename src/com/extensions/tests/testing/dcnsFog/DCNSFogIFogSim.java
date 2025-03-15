@@ -148,7 +148,7 @@ public class DCNSFogIFogSim {
         sensors.add(sensor);
 
         // Create the camera's actuator
-        CustomActuator ptz = new CustomActuator("ptz-"+id, userId, appId, "PTZ_CONTROL");
+        CustomActuator ptz = new CustomActuator("ptz-"+id, userId, appId, null, "PTZ_CONTROL");
         ptz.setGatewayDeviceId(camera.getId());
         ptz.setLatency(ActuatorPreset.DEFAULT.LATENCY);
         actuators.add(ptz);
