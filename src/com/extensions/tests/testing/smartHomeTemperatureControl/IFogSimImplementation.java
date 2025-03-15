@@ -1,6 +1,6 @@
 package com.extensions.tests.testing.smartHomeTemperatureControl;
 
-import com.extensions.tests.testing.helper.Helper;
+import com.extensions.tests.helper.Helper;
 import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.core.CloudSim;
 import org.fog.application.AppEdge;

@@ -4,13 +4,16 @@ import com.extensions.sysconstructor.eventdriver.EventTuple;
 import org.cloudbus.cloudsim.*;
 import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.core.SimEvent;
+import org.fog.application.AppLoop;
 import org.fog.application.AppModule;
+import org.fog.application.Application;
 import org.fog.entities.FogDevice;
 import org.fog.entities.FogDeviceCharacteristics;
 import org.fog.entities.Tuple;
 import org.fog.utils.FogEvents;
 import org.fog.utils.FogUtils;
 import org.fog.utils.Logger;
+import org.fog.utils.TimeKeeper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -74,6 +77,37 @@ public class CustomFogDevice extends FogDevice {
             super.processTupleArrival(ev);
         } else {
             System.out.println("Warning: Received an unknown tuple type: " + data.getClass().getName());
+        }
+    }
+
+    @Override
+    protected void updateTimingsOnReceipt(Tuple tuple) {
+        Application app = getApplicationMap().get(tuple.getAppId());
+        String srcModule = tuple.getSrcModuleName();
+        String destModule = tuple.getDestModuleName();
+        List<AppLoop> loops = app.getLoops();
+        for (AppLoop loop : loops) {
+            if (loop.hasEdge(srcModule, destModule) && loop.isEndModule(destModule)) {
+                //System.out.println("FogDevice module connection: " + srcModule + " ---> " + destModule);
+
+                Double startTime = TimeKeeper.getInstance().getEmitTimes().get(tuple.getActualTupleId());
+                if (startTime == null)
+                    break;
+                if (!TimeKeeper.getInstance().getLoopIdToCurrentAverage().containsKey(loop.getLoopId())) {
+                    TimeKeeper.getInstance().getLoopIdToCurrentAverage().put(loop.getLoopId(), 0.0);
+                    TimeKeeper.getInstance().getLoopIdToCurrentNum().put(loop.getLoopId(), 0);
+                }
+                double currentAverage = TimeKeeper.getInstance().getLoopIdToCurrentAverage().get(loop.getLoopId());
+                int currentCount = TimeKeeper.getInstance().getLoopIdToCurrentNum().get(loop.getLoopId());
+                double delay = CloudSim.clock() - TimeKeeper.getInstance().getEmitTimes().get(tuple.getActualTupleId());
+                TimeKeeper.getInstance().getEmitTimes().remove(tuple.getActualTupleId());
+                double newAverage = (currentAverage * currentCount + delay) / (currentCount + 1);
+                TimeKeeper.getInstance().getLoopIdToCurrentAverage().put(loop.getLoopId(), newAverage);
+                TimeKeeper.getInstance().getLoopIdToCurrentNum().put(loop.getLoopId(), currentCount + 1);
+                break;
+            } else {
+                //System.out.println("FogDevice module connection does not exist: " + srcModule + " ---> " + destModule);
+            }
         }
     }
 

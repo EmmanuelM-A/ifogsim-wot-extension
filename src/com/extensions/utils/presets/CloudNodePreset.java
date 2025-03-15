@@ -13,7 +13,7 @@ public enum CloudNodePreset {
             40000,
             100,
             1000,
-            10,
+            2,
             0.1,
             1600,
             1320

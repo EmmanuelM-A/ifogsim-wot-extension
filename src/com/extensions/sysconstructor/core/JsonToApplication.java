@@ -480,8 +480,8 @@ public class JsonToApplication implements ApplicationConstructor {
         ////////// App Loop //////////
 
         // Create the app loop which defines the flow of tuples from component to component
-        //final AppLoop loop = new AppLoop(new ArrayList<>(){{add(VD_SENSOR);add(MASTER_MODULE);add(subFlowSensor);add(WORKER_MODULE_K);add(subFlowActuator);add(MASTER_MODULE);add(VD_ACTUATOR);}});
-        final AppLoop loop = new AppLoop(new ArrayList<>(){{add(subFlowSensor);add(WORKER_MODULE_K);add(subFlowActuator);add(MASTER_MODULE);add(VD_ACTUATOR);}});
+        final AppLoop loop = new AppLoop(new ArrayList<>(){{add(VD_SENSOR);add(MASTER_MODULE);add(subFlowSensor);add(WORKER_MODULE_K);add(subFlowActuator);add(MASTER_MODULE);add(VD_ACTUATOR);}});
+        //final AppLoop loop = new AppLoop(new ArrayList<>(){{add(subFlowSensor);add(WORKER_MODULE_K);add(subFlowActuator);add(MASTER_MODULE);add(VD_ACTUATOR);}});
 
         // Add the created app loop to the appLoops list
         application.getLoops().add(loop);

@@ -1,4 +1,4 @@
-package com.extensions.tests.testing.helper;
+package com.extensions.tests.helper;
 
 import org.cloudbus.cloudsim.Host;
 import org.cloudbus.cloudsim.Pe;

@@ -1,6 +1,7 @@
 package com.extensions.simulation;
 
 import com.extensions.customfog.CustomController;
+import com.extensions.customfog.CustomFogDevice;
 import com.extensions.custommetrics.CustomMetricManager;
 import com.extensions.custommetrics.CustomPerformanceMetric;
 import com.extensions.sysconstructor.core.ApplicationPhysicalTopology;
@@ -16,6 +17,7 @@ import org.fog.application.AppModule;
 import org.fog.application.Application;
 import org.fog.entities.Actuator;
 import org.fog.entities.FogBroker;
+import org.fog.entities.FogDevice;
 import org.fog.entities.Sensor;
 import org.fog.placement.ModuleMapping;
 import org.fog.placement.ModulePlacementEdgewards;
@@ -152,11 +154,19 @@ public class Simulation {
         // If cloud based deployment then connect all app modules to the cloud device/node
         if (isCloudDeployment) {
             for (AppModule appModule : application.getModules()) {
-                //if(appModule.getName().equals("MasterModule") || appModule.getName().startsWith("WorkerModule-")) {
-                moduleMapping.addModuleToDevice(appModule.getName(), "cloud");
-                //}
+                //if(appModule.getName().startsWith("WorkerModule-"))
+                    moduleMapping.addModuleToDevice(appModule.getName(), "cloud");
             }
         }
+
+        /*for(FogDevice fogDevice : physicalTopology.getFogDevices()) {
+            moduleMapping.addModuleToDevice("MasterModule", fogDevice.getName());
+        }
+
+
+        if(isCloudDeployment) {
+            moduleMapping.addModuleToDevice("MasterModule", "cloud");
+        }*/
 
         // Submit the application to the controller with the appropriate placement strategy
         controller.submitApplication(

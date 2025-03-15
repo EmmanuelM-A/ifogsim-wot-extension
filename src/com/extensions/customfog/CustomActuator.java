@@ -96,7 +96,7 @@ public class CustomActuator extends Actuator {
 
         for(AppLoop loop : app.getLoops()){
             if(loop.hasEdge(srcModule, destModule) && loop.isEndModule(destModule)){
-                System.out.println(srcModule + " ---> " + destModule);
+                //System.out.println("Actuator module connection: " + srcModule + " ---> " + destModule);
 
                 Double startTime = TimeKeeper.getInstance().getEmitTimes().get(tuple.getActualTupleId());
                 if(startTime==null) {
@@ -115,7 +115,7 @@ public class CustomActuator extends Actuator {
                 TimeKeeper.getInstance().getLoopIdToCurrentNum().put(loop.getLoopId(), currentCount+1);
                 break;
             } else {
-                System.out.println("Error edge does not exist! " + srcModule + " ---> " + destModule);
+                //System.out.println("Actuator module connection does not exist: " + srcModule + " ---> " + destModule);
             }
         }
     }

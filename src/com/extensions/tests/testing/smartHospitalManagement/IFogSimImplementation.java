@@ -1,6 +1,6 @@
 package com.extensions.tests.testing.smartHospitalManagement;
 
-import com.extensions.tests.testing.helper.Helper;
+import com.extensions.tests.helper.Helper;
 import org.cloudbus.cloudsim.Log;
 import org.cloudbus.cloudsim.core.CloudSim;
 import org.fog.application.Application;
@@ -14,14 +14,11 @@ import org.fog.entities.Sensor;
 import org.fog.entities.Tuple;
 import org.fog.placement.ModuleMapping;
 import org.fog.placement.ModulePlacement;
-import org.fog.placement.ModulePlacementEdgewards;
 import org.fog.placement.ModulePlacementMapping;
 
 import java.util.ArrayList;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class IFogSimImplementation {
     private static final List<FogDevice> fogDevices = new ArrayList<>();

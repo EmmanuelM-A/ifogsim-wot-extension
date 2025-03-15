@@ -3,12 +3,18 @@ package com.extensions.customfog;
 import com.extensions.utils.presets.SensorPreset;
 import com.extensions.vdcreation.models.Property;
 import org.cloudbus.cloudsim.UtilizationModelFull;
+import org.cloudbus.cloudsim.core.CloudSim;
 import org.fog.application.AppEdge;
+import org.fog.application.AppLoop;
+import org.fog.application.Application;
 import org.fog.entities.Sensor;
 import org.fog.entities.Tuple;
 import org.fog.utils.FogEvents;
 import org.fog.utils.FogUtils;
 import org.fog.utils.Logger;
+import org.fog.utils.TimeKeeper;
+
+import java.util.ArrayList;
 
 /**
  * Represents a custom sensor, extending the base {@code Sensor} class
@@ -93,5 +99,25 @@ public class CustomSensor extends Sensor {
 
             send(getGatewayDeviceId(), getLatency(), FogEvents.TUPLE_ARRIVAL,tuple);
         }
+    }
+
+    @Override
+    protected int updateTimings(String src, String dest){
+        Application application = getApp();
+        for(AppLoop loop : application.getLoops()){
+            if(loop.hasEdge(src, dest)){
+                //System.out.println("From Sensor: " + src + " ---> " + dest);
+
+                int tupleId = TimeKeeper.getInstance().getUniqueId();
+                if(!TimeKeeper.getInstance().getLoopIdToTupleIds().containsKey(loop.getLoopId()))
+                    TimeKeeper.getInstance().getLoopIdToTupleIds().put(loop.getLoopId(), new ArrayList<Integer>());
+                TimeKeeper.getInstance().getLoopIdToTupleIds().get(loop.getLoopId()).add(tupleId);
+                TimeKeeper.getInstance().getEmitTimes().put(tupleId, CloudSim.clock());
+                return tupleId;
+            } else {
+                //System.out.println("Error Occurred - From Sensor: " + src + " ---> " + dest);
+            }
+        }
+        return -1;
     }
 }

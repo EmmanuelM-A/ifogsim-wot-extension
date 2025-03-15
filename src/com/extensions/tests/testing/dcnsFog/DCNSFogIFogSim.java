@@ -74,11 +74,14 @@ public class DCNSFogIFogSim {
             Controller controller = null;
 
             ModuleMapping moduleMapping = ModuleMapping.createModuleMapping(); // initializing a module mapping
+            // Deploy sub processing on edge routers instead of cloud
             for(FogDevice device : fogDevices){
                 if(device.getName().startsWith("m")){ // names of all Smart Cameras start with 'm'
-                    moduleMapping.addModuleToDevice("main_processing_module", device.getName());
+                    moduleMapping.addModuleToDevice("sub_processing_module", device.getName());
+                    //moduleMapping.addModuleToDevice("main_processing_module", device.getName());
                 }
             }
+
             if(CLOUD){
                 // if the mode of deployment is cloud-based
                 moduleMapping.addModuleToDevice("main_processing_module", "cloud");
@@ -106,19 +109,18 @@ public class DCNSFogIFogSim {
 
     private static void createFogDevices(int userId, String appId) {
         // Create the cloud node
-        FogDevice cloud = FogDeviceFactory.createFogDevice("cloud", 44800, 40000, 100, 1000, 2, 0.01, 16*103, 16*83.25);
+        FogDevice cloud = FogDeviceFactory.createFogDevice("cloud", 44800, 40000, 100, 1000, 2, 0.01, 1600, 1320);
         cloud.setLevel(0);
         cloud.setParentId(-1);
         fogDevices.add(cloud);
 
         // Connect the edge node (router) to cloud
         for(int i=0;i<numOfAreas;i++){
-            FogDevice router = addArea(i+"", userId, appId, cloud.getId());
-            fogDevices.add(router);
+            addArea(i+"", userId, appId, cloud.getId());
         }
     }
 
-    private static FogDevice addArea(String id, int userId, String appId, int parentId){
+    private static void addArea(String id, int userId, String appId, int parentId){
         // Create the edge node (router)
         FogDevice router = FogDeviceFactory.createFogDevice("d-"+id, 2800, 4000, 10000, 10000, 2, 0.0, 107.339, 83.4333);
         router.setLevel(1);
@@ -131,8 +133,6 @@ public class DCNSFogIFogSim {
             FogDevice camera = addCamera(mobileId, userId, appId, router.getId());
             fogDevices.add(camera);
         }
-
-        return router;
     }
 
     private static FogDevice addCamera(String id, int userId, String appId, int parentId){
@@ -167,13 +167,18 @@ public class DCNSFogIFogSim {
         application.addAppModule(WORKER_MODULE, applicationPreset.APP_MODULE_RAM);
 
         // App edges
-        application.addAppEdge("CAMERA", MASTER_MODULE, 1000, 20000, "CAMERA", Tuple.UP, AppEdge.SENSOR);
+        /*application.addAppEdge("CAMERA", MASTER_MODULE, 1000, 20000, "CAMERA", Tuple.UP, AppEdge.SENSOR);
         application.addAppEdge(MASTER_MODULE, WORKER_MODULE, 2000, 2000, "PROCESSED_DATA", Tuple.UP, AppEdge.MODULE);
         application.addAppEdge(WORKER_MODULE, MASTER_MODULE, 1000, 100, "RESULTANT_DATA", Tuple.DOWN, AppEdge.MODULE);
-        application.addAppEdge(MASTER_MODULE, "PTZ_CONTROL", 100, 28, 100, "PTZ_PARAMS", Tuple.DOWN, AppEdge.ACTUATOR);
+        application.addAppEdge(MASTER_MODULE, "PTZ_CONTROL", 100, 28, 100, "PTZ_PARAMS", Tuple.DOWN, AppEdge.ACTUATOR);*/
+
+        application.addAppEdge("CAMERA", MASTER_MODULE, applicationPreset.APP_EDGE_TUPLE_CPU_LENGTH, applicationPreset.APP_EDGE_TUPLE_CPU_LENGTH, "CAMERA", Tuple.UP, AppEdge.SENSOR);
+        application.addAppEdge(MASTER_MODULE, WORKER_MODULE, applicationPreset.APP_EDGE_TUPLE_CPU_LENGTH, applicationPreset.APP_EDGE_TUPLE_CPU_LENGTH, "PROCESSED_DATA", Tuple.UP, AppEdge.MODULE);
+        application.addAppEdge(WORKER_MODULE, MASTER_MODULE, applicationPreset.APP_EDGE_TUPLE_CPU_LENGTH, applicationPreset.APP_EDGE_TUPLE_CPU_LENGTH, "RESULTANT_DATA", Tuple.DOWN, AppEdge.MODULE);
+        application.addAppEdge(MASTER_MODULE, "PTZ_CONTROL", applicationPreset.APP_EDGE_TUPLE_CPU_LENGTH, applicationPreset.APP_EDGE_TUPLE_CPU_LENGTH, "PTZ_PARAMS", Tuple.DOWN, AppEdge.ACTUATOR);
 
         // Tuple mappings
-        application.addTupleMapping(MASTER_MODULE, "CAMERA", "RAW_DATA", new FractionalSelectivity(1.0));
+        application.addTupleMapping(MASTER_MODULE, "CAMERA", "PROCESSED_DATA", new FractionalSelectivity(1.0));
         application.addTupleMapping(WORKER_MODULE, "PROCESSED_DATA", "RESULTANT_DATA", new FractionalSelectivity(1.0));
         application.addTupleMapping(MASTER_MODULE, "RESULTANT_DATA", "PTZ_PARAMS", new FractionalSelectivity(1.0));
 

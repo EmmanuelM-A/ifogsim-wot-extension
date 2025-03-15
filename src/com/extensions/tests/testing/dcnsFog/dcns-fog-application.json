@@ -1,0 +1,118 @@
+[
+	{
+		"id": "16b4ee0dc649dbf0",
+		"type": "tab",
+		"label": "DCNS Fog Application",
+		"disabled": false,
+		"info": "",
+		"env": []
+	},
+	{
+		"id": "19e43852abe3a5d9",
+		"type": "read-property",
+		"z": "16b4ee0dc649dbf0",
+		"name": "",
+		"topic": "",
+		"thing": "186ba42b58ebb2cb",
+		"property": "videoStream",
+		"uriVariables": "",
+		"observe": true,
+		"x": 240,
+		"y": 320,
+		"wires": [
+			[
+				"caaa51359bec6504"
+			]
+		]
+	},
+	{
+		"id": "caaa51359bec6504",
+		"type": "function",
+		"z": "16b4ee0dc649dbf0",
+		"name": "Motion Detector",
+		"func": "\nreturn msg;",
+		"outputs": 1,
+		"timeout": 0,
+		"noerr": 0,
+		"initialize": "",
+		"finalize": "",
+		"libs": [],
+		"x": 540,
+		"y": 320,
+		"wires": [
+			[
+				"1e5b16d89388d616"
+			]
+		]
+	},
+	{
+		"id": "1e5b16d89388d616",
+		"type": "function",
+		"z": "16b4ee0dc649dbf0",
+		"name": "Object Detector",
+		"func": "\nreturn msg;",
+		"outputs": 1,
+		"timeout": 0,
+		"noerr": 0,
+		"initialize": "",
+		"finalize": "",
+		"libs": [],
+		"x": 800,
+		"y": 320,
+		"wires": [
+			[
+				"90cd1119db78cd06"
+			]
+		]
+	},
+	{
+		"id": "90cd1119db78cd06",
+		"type": "function",
+		"z": "16b4ee0dc649dbf0",
+		"name": "Object Tracker",
+		"func": "\nreturn msg;",
+		"outputs": 1,
+		"timeout": 0,
+		"noerr": 0,
+		"initialize": "",
+		"finalize": "",
+		"libs": [],
+		"x": 1040,
+		"y": 320,
+		"wires": [
+			[
+				"5d92e561706fb648"
+			]
+		]
+	},
+	{
+		"id": "5d92e561706fb648",
+		"type": "invoke-action",
+		"z": "16b4ee0dc649dbf0",
+		"name": "",
+		"topic": "",
+		"thing": "186ba42b58ebb2cb",
+		"action": "setPTZ",
+		"uriVariables": "",
+		"x": 1340,
+		"y": 320,
+		"wires": [
+			[]
+		]
+	},
+	{
+		"id": "186ba42b58ebb2cb",
+		"type": "consumed-thing",
+		"tdLink": "",
+		"td": "{ \t\"@context\": \"https://www.w3.org/2019/wot/td/v1\", \t\"@type\": \"Thing\", \t\"title\": \"Smart Surveillance Camera\", \t\"description\": \"WoT-enabled smart camera for surveillance\", \t\"id\": \"urn:dev:wot:org:dcns:camera\", \t\"securityDefinitions\": { \t\t\"basic_sc\": { \t\t\t\"scheme\": \"basic\", \t\t\t\"in\": \"header\" \t\t} \t}, \t\"security\": [\"basic_sc\"], \t\"properties\": { \t\t\"videoStream\": { \t\t\t\"type\": \"object\", \t\t\t\"description\": \"Current video stream from the camera\", \t\t\t\"observable\": true, \t\t\t\"readOnly\": true, \t\t\t\"properties\": { \t\t\t\t\"cameraId\": { \t\t\t\t\t\"type\": \"string\", \t\t\t\t\t\"description\": \"Unique identifier of the camera\" \t\t\t\t}, \t\t\t\t\"timestamp\": { \t\t\t\t\t\"type\": \"string\", \t\t\t\t\t\"description\": \"Timestamp of the video frame\" \t\t\t\t}, \t\t\t\t\"videoStream\": { \t\t\t\t\t\"type\": \"string\", \t\t\t\t\t\"description\": \"Encoded video stream (e.g. base64)\" \t\t\t\t} \t\t\t}, \t\t\t\"forms\": [{ \t\t\t\t\"href\": \"http://localhost:8080/camera/stream\", \t\t\t\t\"contentType\": \"application/json\", \t\t\t\t\"op\": [\"readproperty\", \"observeproperty\"] \t\t\t}] \t\t} \t}, \t\"actions\": { \t\t\"setPTZ\": { \t\t\t\"description\": \"Set the PTZ position\", \t\t\t\"input\": { \t\t\t\t\"type\": \"object\", \t\t\t\t\"properties\": { \t\t\t\t\t\"cameraId\": { \t\t\t\t\t\t\"type\": \"string\", \t\t\t\t\t\t\"description\": \"ID of the camera to control\" \t\t\t\t\t}, \t\t\t\t\t\"ptz\": { \t\t\t\t\t\t\"type\": \"object\", \t\t\t\t\t\t\"properties\": { \t\t\t\t\t\t\t\"pan\": { \t\t\t\t\t\t\t\t\"type\": \"integer\", \t\t\t\t\t\t\t\t\"minimum\": -100, \t\t\t\t\t\t\t\t\"maximum\": 100 \t\t\t\t\t\t\t}, \t\t\t\t\t\t\t\"tilt\": { \t\t\t\t\t\t\t\t\"type\": \"integer\", \t\t\t\t\t\t\t\t\"minimum\": -100, \t\t\t\t\t\t\t\t\"maximum\": 100 \t\t\t\t\t\t\t}, \t\t\t\t\t\t\t\"zoom\": { \t\t\t\t\t\t\t\t\"type\": \"integer\", \t\t\t\t\t\t\t\t\"minimum\": 0, \t\t\t\t\t\t\t\t\"maximum\": 100 \t\t\t\t\t\t\t} \t\t\t\t\t\t} \t\t\t\t\t} \t\t\t\t}, \t\t\t\t\"required\": [\"cameraId\", \"ptz\"] \t\t\t}, \t\t\t\"forms\": [{ \t\t\t\t\"href\": \"http://localhost:8080/ptz/actions/setPTZ\", \t\t\t\t\"contentType\": \"application/json\", \t\t\t\t\"op\": \"invokeaction\" \t\t\t}] \t\t} \t}, \t\"events\": {} }",
+		"http": true,
+		"ws": false,
+		"coap": false,
+		"mqtt": false,
+		"opcua": false,
+		"modbus": false,
+		"basicAuth": false,
+		"username": "",
+		"password": ""
+	}
+]

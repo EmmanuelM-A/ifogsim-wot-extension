@@ -8,13 +8,13 @@ import org.cloudbus.cloudsim.Log;
 import java.io.IOException;
 
 /**
- * This is the main class used to run the program. All steps have been detailed below
+ * This is the main class used to run the program. All steps have been detailed below on how to run it.
  */
 public final class App {
     /**
      * Determines if the application will be cloud deployment or not.
      */
-    private static final boolean CLOUD_DEPLOYED = true;
+    private static final boolean CLOUD_DEPLOYED = true; // FOR NOW THE CLOUD DEPLOYMENT IS ONLY POSSIBLE
 
     /**
      * The location of the node red application json file.
@@ -52,9 +52,9 @@ public final class App {
     private static final ApplicationPreset APPLICATION_PRESET = null;
 
     /**
-     * The number of cloud users/components that interact with the cloud.
+     * The number of cloud users that interact with the cloud.
      */
-    private static final int NUM_USERS = 0;
+    private static final int NUM_USERS = 1;
 
     /**
      * The presets used to configure any fog device.
