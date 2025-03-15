@@ -244,6 +244,10 @@ public class JsonToApplication implements ApplicationConstructor {
                             String VD_SENSOR = srcVD.getSensor().getName();
                             String VD_ACTUATOR = dstVD.getActuator().getName();
 
+                            if(srcVD.getThingDescription().getTitle().equals(dstVD.getThingDescription().getTitle())) {
+                                VD_ACTUATOR = srcVD.getActuator().getName();
+                            }
+
                             // Check if the VD has not been used before (means VD SENSOR-MODULE-ACTUATOR for that sub-flow has not been created yet)
                             if(!virtualDevicesUsedSoFar.contains(srcVD)) {
                                 /*
@@ -262,7 +266,10 @@ public class JsonToApplication implements ApplicationConstructor {
 
                                 // Record the VD
                                 virtualDevicesUsedSoFar.add(srcVD);
-                                virtualDevicesUsedSoFar.add(dstVD);
+
+                                if(!srcVD.getThingDescription().getTitle().equals(dstVD.getThingDescription().getTitle())) {
+                                    virtualDevicesUsedSoFar.add(dstVD);
+                                }
 
                                 //System.out.println("New VD SENSOR-MODULE-ACTUATOR connection made for " + virtualDevice.getFogDevice().getName());
                             }
@@ -416,13 +423,14 @@ public class JsonToApplication implements ApplicationConstructor {
                 String formattedThingName = thingUsed.name().replace(" ", "");
                 if(vd.getFogDevice().getName().contains(formattedThingName) || vd.getFogDevice().getName().equals(formattedThingName)) {
                     if(thingQuantityParser.getVdsConnectedToEdgeNodes() != null) {
-                        vds.remove(vd); // Prevents the same VD being selected
+                        //vds.remove(vd); // Prevents the same VD being selected
                     }
 
                     return vd;
                 }
             }
         }
+        System.out.println("No VD found");
 
         return null;
     }
@@ -472,7 +480,8 @@ public class JsonToApplication implements ApplicationConstructor {
         ////////// App Loop //////////
 
         // Create the app loop which defines the flow of tuples from component to component
-        final AppLoop loop = new AppLoop(new ArrayList<>(){{add(VD_SENSOR);add(MASTER_MODULE);add(subFlowSensor);add(WORKER_MODULE_K);add(subFlowActuator);add(MASTER_MODULE);add(VD_ACTUATOR);}});
+        //final AppLoop loop = new AppLoop(new ArrayList<>(){{add(VD_SENSOR);add(MASTER_MODULE);add(subFlowSensor);add(WORKER_MODULE_K);add(subFlowActuator);add(MASTER_MODULE);add(VD_ACTUATOR);}});
+        final AppLoop loop = new AppLoop(new ArrayList<>(){{add(subFlowSensor);add(WORKER_MODULE_K);add(subFlowActuator);add(MASTER_MODULE);add(VD_ACTUATOR);}});
 
         // Add the created app loop to the appLoops list
         application.getLoops().add(loop);

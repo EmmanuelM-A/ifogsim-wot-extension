@@ -7,8 +7,8 @@ public enum ApplicationPreset {
            1000,
            1000,
            1000,
-           10,
-           5,
+           2,
+           2,
            6,
            100
     );

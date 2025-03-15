@@ -1,5 +1,6 @@
 package com.extensions.tests.testing.dcnsFog;
 
+import com.extensions.customfog.CustomActuator;
 import com.extensions.customfog.FogDeviceFactory;
 import com.extensions.utils.presets.ActuatorPreset;
 import com.extensions.utils.presets.ApplicationPreset;
@@ -75,14 +76,12 @@ public class DCNSFogIFogSim {
             ModuleMapping moduleMapping = ModuleMapping.createModuleMapping(); // initializing a module mapping
             for(FogDevice device : fogDevices){
                 if(device.getName().startsWith("m")){ // names of all Smart Cameras start with 'm'
-                    moduleMapping.addModuleToDevice("sub_processing_module", device.getName());  // fixing 1 instance of the Motion Detector module to each Smart Camera
+                    moduleMapping.addModuleToDevice("main_processing_module", device.getName());
                 }
             }
-            moduleMapping.addModuleToDevice("sub_processing_module", "cloud"); // fixing instances of User Interface module in the Cloud
             if(CLOUD){
                 // if the mode of deployment is cloud-based
-                moduleMapping.addModuleToDevice("sub_processing_module", "cloud"); // placing all instances of Object Detector module in the Cloud
-                moduleMapping.addModuleToDevice("sub_processing_module", "cloud"); // placing all instances of Object Tracker module in the Cloud
+                moduleMapping.addModuleToDevice("main_processing_module", "cloud");
             }
 
             controller = new Controller("master-controller", fogDevices, sensors,
@@ -149,7 +148,7 @@ public class DCNSFogIFogSim {
         sensors.add(sensor);
 
         // Create the camera's actuator
-        Actuator ptz = new Actuator("ptz-"+id, userId, appId, "PTZ_CONTROL");
+        CustomActuator ptz = new CustomActuator("ptz-"+id, userId, appId, "PTZ_CONTROL");
         ptz.setGatewayDeviceId(camera.getId());
         ptz.setLatency(ActuatorPreset.DEFAULT.LATENCY);
         actuators.add(ptz);
@@ -159,13 +158,6 @@ public class DCNSFogIFogSim {
 
     private static Application createApplication(String appId, int userId, ApplicationPreset applicationPreset){
         Application application = Application.createApplication(appId, userId);
-        /*
-         * Adding modules (vertices) to the application model (directed graph)
-         */
-        application.addAppModule("object_detector", 10);
-        application.addAppModule("motion_detector", 10);
-        application.addAppModule("object_tracker", 10);
-        application.addAppModule("user_interface", 10);
 
         // App modules
         String MASTER_MODULE = "main_processing_module";
@@ -175,19 +167,24 @@ public class DCNSFogIFogSim {
         application.addAppModule(WORKER_MODULE, applicationPreset.APP_MODULE_RAM);
 
         // App edges
-        application.addAppEdge("CAMERA", MASTER_MODULE, applicationPreset.APP_EDGE_TUPLE_CPU_LENGTH, applicationPreset.APP_EDGE_TUPLE_NW_LENGTH, "CAMERA", Tuple.UP, AppEdge.SENSOR);
-        application.addAppEdge(MASTER_MODULE, WORKER_MODULE, applicationPreset.APP_EDGE_TUPLE_CPU_LENGTH, applicationPreset.APP_EDGE_TUPLE_NW_LENGTH, "RAW_DATA", Tuple.UP, AppEdge.MODULE);
-        application.addAppEdge(WORKER_MODULE, MASTER_MODULE, applicationPreset.APP_EDGE_TUPLE_CPU_LENGTH, applicationPreset.APP_EDGE_TUPLE_NW_LENGTH, "PROCESSED_DATA", Tuple.DOWN, AppEdge.MODULE);
-        application.addAppEdge(MASTER_MODULE, "PTZ_CONTROL", 100, applicationPreset.APP_EDGE_TUPLE_CPU_LENGTH, applicationPreset.APP_EDGE_TUPLE_NW_LENGTH, "PTZ_PARAMS", Tuple.DOWN, AppEdge.ACTUATOR);
+        application.addAppEdge("CAMERA", MASTER_MODULE, 1000, 20000, "CAMERA", Tuple.UP, AppEdge.SENSOR);
+        application.addAppEdge(MASTER_MODULE, WORKER_MODULE, 2000, 2000, "PROCESSED_DATA", Tuple.UP, AppEdge.MODULE);
+        application.addAppEdge(WORKER_MODULE, MASTER_MODULE, 1000, 100, "RESULTANT_DATA", Tuple.DOWN, AppEdge.MODULE);
+        application.addAppEdge(MASTER_MODULE, "PTZ_CONTROL", 100, 28, 100, "PTZ_PARAMS", Tuple.DOWN, AppEdge.ACTUATOR);
 
         // Tuple mappings
         application.addTupleMapping(MASTER_MODULE, "CAMERA", "RAW_DATA", new FractionalSelectivity(1.0));
-        application.addTupleMapping(WORKER_MODULE, "RAW_DATA", "PROCESSED_DATA", new FractionalSelectivity(1.0));
-        application.addTupleMapping(MASTER_MODULE, "PROCESSED_DATA", "PTZ_PARAMS", new FractionalSelectivity(1.0));
+        application.addTupleMapping(WORKER_MODULE, "PROCESSED_DATA", "RESULTANT_DATA", new FractionalSelectivity(1.0));
+        application.addTupleMapping(MASTER_MODULE, "RESULTANT_DATA", "PTZ_PARAMS", new FractionalSelectivity(1.0));
 
         // App Loop
-        final AppLoop loop1 = new AppLoop(new ArrayList<>(){{add("CAMERA");add(MASTER_MODULE);add(WORKER_MODULE);add(MASTER_MODULE);add("PTZ_PARAMS");}});
-        List<AppLoop> loops = new ArrayList<AppLoop>(){{add(loop1);}};
+        final AppLoop loop1 = new AppLoop(new ArrayList<>(){{
+            add(MASTER_MODULE); // Module
+            add(WORKER_MODULE); // Module
+            add(MASTER_MODULE); // Module
+            add("PTZ_CONTROL"); // Actuator
+        }});
+        List<AppLoop> loops = new ArrayList<>(){{add(loop1);}};
 
         application.setLoops(loops);
         return application;

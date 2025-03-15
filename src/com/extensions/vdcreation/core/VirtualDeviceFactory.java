@@ -93,6 +93,9 @@ public class VirtualDeviceFactory {
                             id,
                             configs
                     );
+
+                    vd.setThingDescription(thingDescription); // Explicitly set the TD for the VD
+
                     // IF YOU WISH TO VALIDATE VDS, DO IT HERE
                     createdVirtualDevices.add(vd);
                 }
