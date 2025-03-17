@@ -24,16 +24,40 @@ import com.extensions.vdcreation.parsers.ThingDescriptionParser;
  * Responsible for creating the virtual devices (VDs) from the thing descriptions.
  */
 public class VirtualDeviceFactory {
+    /**
+     * The user ID associated with the application.
+     */
     private final int userId;
 
+    /**
+     * The unique identifier for the application for which the virtual devices are being created.
+     */
     private final String appId;
 
+    /**
+     * The preset configuration for the fog device, which includes various parameters such as processing power, memory, bandwidth, etc.
+     */
     private final FogDevicePreset fogDevicePreset;
 
+    /**
+     * The preset configuration for the sensors that will be attached to the virtual devices. It includes properties such as sensor type, data rate, etc.
+     */
     private final SensorPreset sensorPreset;
 
+    /**
+     * The preset configuration for the actuators that will be attached to the virtual devices. It includes actuator actions, power consumption, etc.
+     */
     private final ActuatorPreset actuatorPreset;
 
+    /**
+     * Private constructor to initialize the VirtualDeviceFactory with required configurations.
+     *
+     * @param userId The user ID associated with the application, for which the Virtual Devices will be added to.
+     * @param appId The unique identifier for the application for which the virtual devices are being created.
+     * @param fogDevicePreset The preset configuration for the fog device.
+     * @param sensorPreset The preset configuration for the sensors.
+     * @param actuatorPreset The preset configuration for the actuators.
+     */
     private VirtualDeviceFactory(int userId, String appId, FogDevicePreset fogDevicePreset, SensorPreset sensorPreset, ActuatorPreset actuatorPreset) {
         this.userId = userId;
         this.appId = appId;
@@ -42,6 +66,20 @@ public class VirtualDeviceFactory {
         this.actuatorPreset = actuatorPreset;
     }
 
+    /**
+     * Creates a list of virtual devices from thing descriptions stored in the specified folder.
+     *
+     * @param userId The user ID who is creating the virtual devices.
+     * @param appId The application ID for which the virtual devices are created.
+     * @param fogDevicePreset The preset configurations for the fog device.
+     * @param sensorPreset The preset configurations for the sensors.
+     * @param actuatorPreset The preset configurations for the actuators.
+     * @param thingRepoFolder The folder containing thing descriptions (TDs).
+     * @param configs The list of virtual device configurations.
+     * @param thingFrequencies The frequencies at which the things should be activated.
+     * @return A list of created virtual devices.
+     * @throws IOException If there's an error reading the thing descriptions.
+     */
     public static List<VirtualDevice> createVirtualDevices(
             int userId,
             String appId,
@@ -209,6 +247,10 @@ public class VirtualDeviceFactory {
         return virtualDevice;
     }
 
+    /**
+     * Creates the actuator and sensors devices for the virtual device.
+     * @param virtualDevice The virtual device which the sensor and actuator will be added.
+     */
     private void initVDSensorAndVDActuator(VirtualDevice virtualDevice) {
         // Get the name of the virtual device
         String vdName = virtualDevice.getFogDevice().getName();

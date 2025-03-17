@@ -16,7 +16,6 @@ import com.extensions.vdcreation.models.ThingDescription;
  * and returns a list of processed {@link ThingDescription} objects.
  */
 public class JsonFileProcessor {
-
     /**
      * Processes all JSON files in the given folder path using the provided file processor.
      * <p>
