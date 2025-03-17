@@ -154,19 +154,9 @@ public class Simulation {
         // If cloud based deployment then connect all app modules to the cloud device/node
         if (isCloudDeployment) {
             for (AppModule appModule : application.getModules()) {
-                //if(appModule.getName().startsWith("WorkerModule-"))
                     moduleMapping.addModuleToDevice(appModule.getName(), "cloud");
             }
         }
-
-        /*for(FogDevice fogDevice : physicalTopology.getFogDevices()) {
-            moduleMapping.addModuleToDevice("MasterModule", fogDevice.getName());
-        }
-
-
-        if(isCloudDeployment) {
-            moduleMapping.addModuleToDevice("MasterModule", "cloud");
-        }*/
 
         // Submit the application to the controller with the appropriate placement strategy
         controller.submitApplication(
@@ -218,4 +208,7 @@ public class Simulation {
         // Register custom metric
         customMetricManager.registerMetric(metric);
     }
+
+
+    public static void exportSimulationResultsAs(String format, SimulationData simulationData) {}
 }

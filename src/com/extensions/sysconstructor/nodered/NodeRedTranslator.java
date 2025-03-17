@@ -7,8 +7,20 @@ import java.io.File;
 import java.io.IOException;
 import java.util.List;
 
+/**
+ * This class is responsible for converting a Node-RED application JSON file into an input JSON format for system topology.
+ */
 public class NodeRedTranslator {
+    /**
+     * The output file path where the application topology JSON will be saved.
+     */
     public static String APPLICATION_TOPOLOGY = "src/com/extensions/output/application/application_topology.json";
+
+    /**
+     * Converts the given Node-RED application JSON file to an input JSON format and saves it to the specified location.
+     *
+     * @param nodeRedApplicationJsonFile The Node-RED application JSON file to be processed.
+     */
     public static void nodeRedToInputJson(File nodeRedApplicationJsonFile) {
         try {
             // Parse Node-RED JSON into Nodes

@@ -2,7 +2,6 @@ package com.extensions.utils.presets;
 
 import org.fog.utils.distribution.DeterministicDistribution;
 import org.fog.utils.distribution.Distribution;
-import org.fog.utils.distribution.UniformDistribution;
 
 /**
  * Defines presets for sensor configurations in the iFogSim simulation.

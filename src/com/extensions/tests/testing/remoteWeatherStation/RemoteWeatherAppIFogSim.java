@@ -22,6 +22,7 @@ import org.cloudbus.cloudsim.sdn.overbooking.BwProvisionerOverbooking;
 import org.cloudbus.cloudsim.sdn.overbooking.PeProvisionerOverbooking;
 import org.fog.application.AppEdge;
 import org.fog.application.AppLoop;
+import org.fog.application.AppModule;
 import org.fog.application.Application;
 import org.fog.application.selectivity.FractionalSelectivity;
 import org.fog.entities.Actuator;
@@ -51,7 +52,7 @@ public class RemoteWeatherAppIFogSim {
     static List<Actuator> actuators = new ArrayList<>();
     static int numOfAreas = 1;
 
-    private final static boolean CLOUD = true; // Changed to false to follow edge deployment model
+    private final static boolean CLOUD = false; // Changed to false to follow edge deployment model
 
     public static void main(String[] args) {
 
@@ -77,7 +78,7 @@ public class RemoteWeatherAppIFogSim {
             ModuleMapping moduleMapping = ModuleMapping.createModuleMapping(); // initializing a module mapping
 
             // Place master_module on edge devices
-            for(FogDevice device : fogDevices) {
+            /*for(FogDevice device : fogDevices) {
                 if(device.getName().startsWith("edge")) {
                     moduleMapping.addModuleToDevice("worker_module", device.getName());
                 }
@@ -90,6 +91,13 @@ public class RemoteWeatherAppIFogSim {
                 // if the mode of deployment is cloud-based, override previous mappings
                 moduleMapping.addModuleToDevice("master_module", "cloud");
                 //moduleMapping.addModuleToDevice("worker_module", "cloud");
+            }*/
+
+            if (CLOUD) {
+                for (AppModule appModule : application.getModules()) {
+                    //if(appModule.getName().startsWith("WorkerModule-"))
+                    moduleMapping.addModuleToDevice(appModule.getName(), "cloud");
+                }
             }
 
             controller = new Controller("master-controller", fogDevices, sensors, actuators);
@@ -117,7 +125,8 @@ public class RemoteWeatherAppIFogSim {
      * @param appId
      */
     private static void createFogDevices(int userId, String appId) {
-        FogDevice cloud = createFogDevice("cloud", 44800, 40000, 100, 10000, 0, 0.01, 16*103, 16*83.25);
+        FogDevice cloud = FogDeviceFactory.createFogDevice("cloud", 44800, 40000, 100, 10000, 2, 0.01, 16*103, 16*83.25);
+        cloud.setLevel(1);
         cloud.setParentId(-1);
         fogDevices.add(cloud);
 
@@ -128,7 +137,8 @@ public class RemoteWeatherAppIFogSim {
 
     private static void addEdgeAndEndDevices(String id, int userId, String appId, int parentId) {
         // Add edge device
-        FogDevice edge = createFogDevice("edge-"+id, 1000, 2000, 10000, 10000, 2, 0.0, 87.53, 82.44);
+        FogDevice edge = FogDeviceFactory.createFogDevice("edge-"+id, 1000, 2000, 10000, 10000, 2, 0.0, 87.53, 82.44);
+        edge.setLevel(2);
         fogDevices.add(edge);
         edge.setUplinkLatency(2); // latency of connection between edge and gateway is 2 ms
         edge.setParentId(parentId);

@@ -33,13 +33,13 @@ public final class MainTester {
      */
     private static final boolean CLOUD = true;
 
-    //private static final InputHandler inputHandler = new InputHandler("industrial-equipment-maintenance-system.json", "src/com/extensions/tests/testing/industrialEquipmentMaintenanceSystem", true);
-    //private static final InputHandler inputHandler = new InputHandler("remote-weather-station.json", "src/com/extensions/tests/testing/remoteWeatherStation", false);
-    //private static final InputHandler inputHandler = new InputHandler("smart-city-traffic-management.json", "src/com/extensions/tests/testing/SmartCityTrafficManagement", true);
+    //private static final InputHandler inputHandler = new InputHandler("industrial-equipment-maintenance-system.json", "src/com/extensions/tests/testing/industrialEquipmentMaintenanceSystem");
+    //private static final InputHandler inputHandler = new InputHandler("remote-weather-station.json", "src/com/extensions/tests/testing/remoteWeatherStation");
+    private static final InputHandler inputHandler = new InputHandler("smart-city-traffic-management.json", "src/com/extensions/tests/testing/SmartCityTrafficManagement", false);
     //private static final InputHandler inputHandler = new InputHandler("smart-home-temperature-control.json", "src/com/extensions/tests/testing/smartHomeTemperatureControl", false);
-    //private static final InputHandler inputHandler = new InputHandler("smart-agriculture-greenhouse-monitoring.json", "src/com/extensions/tests/testing/smartAgricultureGreenhouseMonitoring", false);
-    private static final InputHandler inputHandler = new InputHandler("smart-hospital-management.json", "src/com/extensions/tests/testing/smartHospitalManagement", true);
-    //private static final InputHandler inputHandler = new InputHandler("dcns-fog-application.json", "src/com/extensions/tests/testing/dcnsFog", true);
+    //private static final InputHandler inputHandler = new InputHandler("smart-agriculture-greenhouse-monitoring.json", "src/com/extensions/tests/testing/smartAgricultureGreenhouseMonitoring");
+    //private static final InputHandler inputHandler = new InputHandler("smart-hospital-management.json", "src/com/extensions/tests/testing/smartHospitalManagement");
+    //private static final InputHandler inputHandler = new InputHandler("dcns-fog-application.json", "src/com/extensions/tests/testing/dcnsFog");
 
     public static void main(String[] args) {
         try {

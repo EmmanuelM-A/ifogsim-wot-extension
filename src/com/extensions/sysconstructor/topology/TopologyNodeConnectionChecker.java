@@ -56,10 +56,12 @@ public class TopologyNodeConnectionChecker {
     }
 
     /**
-     * Checks if two nodes are connected using their unique IDs
-     * @param nodeIdA
-     * @param nodeIdB
-     * @return
+     * Checks if two nodes are connected using their unique IDs.
+     * It checks both direct and indirect connections between the nodes.
+     *
+     * @param nodeIdA The ID of the first node.
+     * @param nodeIdB The ID of the second node.
+     * @return A TopologyNodeConnectionStatus indicating if the nodes are connected, and if they are directly connected.
      */
     public static TopologyNodeConnectionStatus areNodesConnected(String nodeIdA, String nodeIdB) {
         if (!nodeLookup.containsKey(nodeIdA) || !nodeLookup.containsKey(nodeIdB)) {
@@ -69,12 +71,17 @@ public class TopologyNodeConnectionChecker {
         boolean isConnected = false;
         boolean isDirectlyConnected = false;
 
+        // If both IDs are the same, they are trivially connected
         if (nodeIdA.equals(nodeIdB)) {
             return new TopologyNodeConnectionStatus(true, true);
         }
+
+        // Check for direct connection
         if (adjacencyList.getOrDefault(nodeIdA, Collections.emptySet()).contains(nodeIdB)) {
             isDirectlyConnected = true;
         }
+
+        // Use DFS to check for any path between the nodes (indirect connection)
         if (dfs(nodeIdA, nodeIdB, new HashSet<>())) {
             isConnected = true;
         }
@@ -83,29 +90,39 @@ public class TopologyNodeConnectionChecker {
     }
 
     /**
-     * Depth-first search (DFS) to check connectivity
-     * @param current
-     * @param target
-     * @param visited
-     * @return
+     * Depth-first search (DFS) to check if there is a path from the current node to the target node.
+     * This method recursively explores neighboring nodes to find a connection.
+     *
+     * @param current The current node being explored.
+     * @param target The target node we are trying to find a path to.
+     * @param visited A set of visited nodes to avoid cycles and infinite recursion.
+     * @return true if there is a path from the current node to the target, false otherwise.
      */
     private static boolean dfs(String current, String target, Set<String> visited) {
+        // If we have reached the target node, return true
         if (current.equals(target)) {
             return true;
         }
+
+        // If the current node has already been visited, return false to avoid cycles
         if (visited.contains(current)) {
             return false;
         }
 
+        // Mark the current node as visited
         visited.add(current);
 
+        // Get the neighboring nodes of the current node
         Set<String> neighbors = adjacencyList.getOrDefault(current, Collections.emptySet());
+
+        // Recursively check all neighbors
         for (String neighbor : neighbors) {
             if (dfs(neighbor, target, visited)) {
                 return true;
             }
         }
 
+        // If no path is found, return false
         return false;
     }
 }

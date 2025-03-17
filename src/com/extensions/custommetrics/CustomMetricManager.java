@@ -40,6 +40,9 @@ public class CustomMetricManager {
         for (CustomPerformanceMetric<?> metric : customMetrics) {
             Object result = metric.evaluate(simulationData);
             System.out.println(metric.getMetricName() + ": " + result);
+
+            // Record performance metrics in simulation data
+            simulationData.recordCustomPerformanceMetrics(metric.getMetricName(), result);
         }
     }
 }

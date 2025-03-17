@@ -2,20 +2,9 @@ package com.extensions.sysconstructor.nodered;
 
 import java.util.List;
 
-public class SubFlowTree {
-    private final NodeRedNode rootNode;
-    private final List<TreeBranch> branches;
-
-    public SubFlowTree(NodeRedNode rootNode, List<TreeBranch> branches) {
-        this.rootNode = rootNode;
-        this.branches = branches;
-    }
-
-    public NodeRedNode getRootNode() {
-        return rootNode;
-    }
-
-    public List<TreeBranch> getBranches() {
-        return branches;
-    }
+/**
+ * Represents a sub-flow tree, consisting of a root node and a list of branches.
+ * A sub-flow tree is used to represent the structure and flow of a specific Node-RED sub-flow.
+ */
+public record SubFlowTree(NodeRedNode rootNode, List<TreeBranch> branches) {
 }

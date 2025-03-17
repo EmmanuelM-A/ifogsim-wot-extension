@@ -9,19 +9,37 @@ import org.fog.entities.Tuple;
 import org.fog.utils.FogEvents;
 import org.fog.utils.FogUtils;
 import org.fog.utils.Logger;
-import org.fog.utils.TimeKeeper;
 
 /**
- *
+ * Represents Web of Thing event mapped as {@code Sensor} entities.
  */
 public class EventSensor extends CustomSensor {
+    /**
+     * The preset used to configure the event sensor.
+     */
     private final SensorPreset preset;
-    private Event event;
-    private boolean eventTriggered = false;
 
+    /**
+     * The event associated with the event sensor.
+     */
+    private Event event;
+
+    /**
+     * Determines if the event was triggered or not.
+     */
+    private boolean eventTriggered;
+
+    /**
+     * Constructs an {@code EventSensor} instance.
+     * @param name The name of the sensor.
+     * @param userId The user ID associated with the application.
+     * @param appId The application ID which the sensor is linked to.
+     * @param preset The preset configurations used to configure the sensor.
+     */
     public EventSensor(String name, int userId, String appId, SensorPreset preset) {
         super(name, userId, appId, preset);
         this.preset = preset;
+        this.eventTriggered = false;
     }
 
     /**
@@ -31,6 +49,9 @@ public class EventSensor extends CustomSensor {
         this.eventTriggered = true;
     }
 
+    /**
+     * Transmits the event only when the event sensors has not been triggered before.
+     */
     @Override
     public void transmit() {
         if (eventTriggered) {
@@ -40,6 +61,9 @@ public class EventSensor extends CustomSensor {
         }
     }
 
+    /**
+     * Transmit the event tuple, similar to how {@code Sensor}'s transmit method works.
+     */
     private void transmitEventTuple() {
         AppEdge _edge = null;
         for(AppEdge edge : getApp().getEdges()){
@@ -70,10 +94,20 @@ public class EventSensor extends CustomSensor {
         }
     }
 
+    /**
+     * Retrieves the current event.
+     *
+     * @return the current {@link Event}
+     */
     public Event getEvent() {
         return event;
     }
 
+    /**
+     * Sets a new event.
+     *
+     * @param event the {@link Event} to set
+     */
     public void setEvent(Event event) {
         this.event = event;
     }

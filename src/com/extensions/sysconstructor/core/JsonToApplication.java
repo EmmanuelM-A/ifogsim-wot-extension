@@ -245,9 +245,9 @@ public class JsonToApplication implements ApplicationConstructor {
                             String VD_ACTUATOR = dstVD.getActuator().getName();
 
                             // If the VD sensor and actuator are from the same VD, then set the VD actuator to equal the src VD's actuator
-                            if(srcVD.getThingDescription().getTitle().equals(dstVD.getThingDescription().getTitle())) {
-                                VD_ACTUATOR = srcVD.getActuator().getName();
-                            }
+                            //if(srcVD.getThingDescription().getTitle().equals(dstVD.getThingDescription().getTitle())) {
+                               // VD_ACTUATOR = srcVD.getActuator().getName();
+                            //}
 
                             // Check if the VD has not been used before (means VD SENSOR-MODULE-ACTUATOR for that sub-flow has not been created yet)
                             if(!virtualDevicesUsedSoFar.contains(srcVD)) {
@@ -268,9 +268,9 @@ public class JsonToApplication implements ApplicationConstructor {
                                 // Record the VD
                                 virtualDevicesUsedSoFar.add(srcVD);
 
-                                if(!srcVD.getThingDescription().getTitle().equals(dstVD.getThingDescription().getTitle())) {
+                                //if(!srcVD.getThingDescription().getTitle().equals(dstVD.getThingDescription().getTitle())) {
                                     virtualDevicesUsedSoFar.add(dstVD);
-                                }
+                                //}
 
                                 //System.out.println("New VD SENSOR-MODULE-ACTUATOR connection made for " + virtualDevice.getFogDevice().getName());
                             }

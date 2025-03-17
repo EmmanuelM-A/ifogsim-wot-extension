@@ -44,6 +44,8 @@ public class SimulationData {
      */
     private double cloudExecutionCost;
 
+    private final Map<String, Object> customPerformanceMetrics;
+
     /**
      * Constructor initializes empty result maps.
      */
@@ -53,6 +55,7 @@ public class SimulationData {
         this.energyConsumptionPerDevice = new HashMap<>();
         this.totalNetworkUsage = 0.0;
         this.cloudExecutionCost = 0.0;
+        this.customPerformanceMetrics = new HashMap<>();
     }
 
     /**
@@ -98,6 +101,16 @@ public class SimulationData {
         } else {
             System.out.println("CLOUD DEVICE IS NULL!");
         }
+    }
+
+    /**
+     * Records all custom performance metrics used.
+     * @param name The name of the metric.
+     * @param metric The implementation of the metric.
+     * @param <T> The type of return value.
+     */
+    public <T> void recordCustomPerformanceMetrics(String name, T metric) {
+        customPerformanceMetrics.put(name, metric);
     }
 
     /**
@@ -192,6 +205,15 @@ public class SimulationData {
      */
     public double getCloudExecutionCost() {
         return cloudExecutionCost;
+    }
+
+    /**
+     * Retrieves all custom performance metrics registered.
+     *
+     * @return All custom metrics added.
+     */
+    public Map<String, Object> getCustomPerformanceMetrics() {
+        return customPerformanceMetrics;
     }
 }
 

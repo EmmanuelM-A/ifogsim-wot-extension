@@ -46,6 +46,14 @@ public class ActuatorAction extends Actuator {
     }
 
     /**
+     * Retrieves the action associated with this actuator.
+     * @return The action for this actuator.
+     */
+    public Action getAction() {
+        return action;
+    }
+
+    /**
      * Retrieves the name of the actuator.
      * @return The name of the actuator.
      */

@@ -1,56 +1,443 @@
 {
   "applicationDetails" : {
-    "title" : "DCNS Fog Application"
+    "title" : "Smart City Traffic Management"
   },
   "things" : [ {
-    "id" : "186ba42b58ebb2cb",
-    "name" : "Smart Surveillance Camera",
+    "id" : "3865e3fbd3fdf5e5",
+    "name" : "Traffic Camera",
+    "type" : "consumed-thing"
+  }, {
+    "id" : "513cf511c016fb7d",
+    "name" : "AI-Based Traffic Controller",
+    "type" : "consumed-thing"
+  }, {
+    "id" : "89d5a66f4a09fbd0",
+    "name" : "Cloud Dashboard",
+    "type" : "consumed-thing"
+  }, {
+    "id" : "fdf2cccf0785050b",
+    "name" : "Smart Traffic Light",
+    "type" : "consumed-thing"
+  }, {
+    "id" : "7a0ce069567a6894",
+    "name" : "Roadside Air Quality Sensor",
+    "type" : "consumed-thing"
+  }, {
+    "id" : "66e09e7ca625eea2",
+    "name" : "Pedestrian Sensor",
     "type" : "consumed-thing"
   } ],
-  "topics" : [ ],
+  "topics" : [ "traffic-surveillance", "ai-traffic-control", "traffic-light-control", "enviornmental-monitoring", "pedestrian-monitoring" ],
   "subFlows" : {
     "subFlow-0" : {
       "rootNode" : {
-        "id" : "19e43852abe3a5d9",
+        "id" : "4aa9c47ca07f619f",
         "name" : "",
         "type" : "read-property",
-        "topic" : "",
-        "thing" : "186ba42b58ebb2cb",
-        "property" : "videoStream"
+        "topic" : "traffic-surveillance",
+        "thing" : "3865e3fbd3fdf5e5",
+        "property" : "trafficDensity"
       },
       "branches" : {
         "branch-0" : [ {
-          "id" : "19e43852abe3a5d9",
+          "id" : "4aa9c47ca07f619f",
           "name" : "",
           "type" : "read-property",
-          "topic" : "",
-          "thing" : "186ba42b58ebb2cb",
-          "property" : "videoStream"
+          "topic" : "traffic-surveillance",
+          "thing" : "3865e3fbd3fdf5e5",
+          "property" : "trafficDensity"
         }, {
-          "id" : "caaa51359bec6504",
-          "name" : "Motion Detector",
+          "id" : "6147117bc7041532",
+          "name" : "Some Processing",
           "type" : "function",
           "topic" : null,
           "thing" : null
         }, {
-          "id" : "1e5b16d89388d616",
-          "name" : "Object Detector",
-          "type" : "function",
-          "topic" : null,
-          "thing" : null
-        }, {
-          "id" : "90cd1119db78cd06",
-          "name" : "Object Tracker",
-          "type" : "function",
-          "topic" : null,
-          "thing" : null
-        }, {
-          "id" : "5d92e561706fb648",
+          "id" : "18113c474368c6b2",
           "name" : "",
           "type" : "invoke-action",
-          "topic" : "",
-          "thing" : "186ba42b58ebb2cb",
-          "action" : "setPTZ"
+          "topic" : "ai-traffic-control",
+          "thing" : "89d5a66f4a09fbd0",
+          "action" : "generateComprehensiveReport"
+        } ],
+        "branch-1" : [ {
+          "id" : "4aa9c47ca07f619f",
+          "name" : "",
+          "type" : "read-property",
+          "topic" : "traffic-surveillance",
+          "thing" : "3865e3fbd3fdf5e5",
+          "property" : "trafficDensity"
+        }, {
+          "id" : "6147117bc7041532",
+          "name" : "Some Processing",
+          "type" : "function",
+          "topic" : null,
+          "thing" : null
+        }, {
+          "id" : "86e01bfdf7bef9f5",
+          "name" : "",
+          "type" : "invoke-action",
+          "topic" : "traffic-surveillance",
+          "thing" : "3865e3fbd3fdf5e5",
+          "action" : "captureImage"
+        } ]
+      }
+    },
+    "subFlow-1" : {
+      "rootNode" : {
+        "id" : "2c8dc1651ba0c6ce",
+        "name" : "",
+        "type" : "subscribe-event",
+        "topic" : "ai-traffic-control",
+        "thing" : "513cf511c016fb7d",
+        "event" : "criticalTrafficSituation"
+      },
+      "branches" : {
+        "branch-0" : [ {
+          "id" : "2c8dc1651ba0c6ce",
+          "name" : "",
+          "type" : "subscribe-event",
+          "topic" : "ai-traffic-control",
+          "thing" : "513cf511c016fb7d",
+          "event" : "criticalTrafficSituation"
+        }, {
+          "id" : "44aa557a1bc0e1d8",
+          "name" : "Some Processing",
+          "type" : "function",
+          "topic" : null,
+          "thing" : null
+        }, {
+          "id" : "e985aa0f9f75b141",
+          "name" : "",
+          "type" : "invoke-action",
+          "topic" : "ai-traffic-control",
+          "thing" : "89d5a66f4a09fbd0",
+          "action" : "generateComprehensiveReport"
+        } ],
+        "branch-1" : [ {
+          "id" : "2c8dc1651ba0c6ce",
+          "name" : "",
+          "type" : "subscribe-event",
+          "topic" : "ai-traffic-control",
+          "thing" : "513cf511c016fb7d",
+          "event" : "criticalTrafficSituation"
+        }, {
+          "id" : "3f79ee9cc6ac1ce5",
+          "name" : "",
+          "type" : "invoke-action",
+          "topic" : "traffic-surveillance",
+          "thing" : "3865e3fbd3fdf5e5",
+          "action" : "captureImage"
+        } ]
+      }
+    },
+    "subFlow-2" : {
+      "rootNode" : {
+        "id" : "10a0ee6641c41c7f",
+        "name" : "",
+        "type" : "read-property",
+        "topic" : "ai-traffic-control",
+        "thing" : "513cf511c016fb7d",
+        "property" : "overallTrafficEfficiency"
+      },
+      "branches" : {
+        "branch-0" : [ {
+          "id" : "10a0ee6641c41c7f",
+          "name" : "",
+          "type" : "read-property",
+          "topic" : "ai-traffic-control",
+          "thing" : "513cf511c016fb7d",
+          "property" : "overallTrafficEfficiency"
+        }, {
+          "id" : "02c5287b2cac8342",
+          "name" : "",
+          "type" : "invoke-action",
+          "topic" : "pedestrian-monitoring",
+          "thing" : "66e09e7ca625eea2",
+          "action" : "analyzeTrafficPattern"
+        }, {
+          "id" : "df5fcd0f26ebf01d",
+          "name" : "",
+          "type" : "invoke-action",
+          "topic" : "ai-traffic-control",
+          "thing" : "513cf511c016fb7d",
+          "action" : "optimizeTrafficFlow"
+        } ]
+      }
+    },
+    "subFlow-3" : {
+      "rootNode" : {
+        "id" : "32f7eb2ba9f08ad5",
+        "name" : "",
+        "type" : "subscribe-event",
+        "topic" : "traffic-light-control",
+        "thing" : "fdf2cccf0785050b",
+        "event" : "emergencyOverride"
+      },
+      "branches" : {
+        "branch-0" : [ {
+          "id" : "32f7eb2ba9f08ad5",
+          "name" : "",
+          "type" : "subscribe-event",
+          "topic" : "traffic-light-control",
+          "thing" : "fdf2cccf0785050b",
+          "event" : "emergencyOverride"
+        }, {
+          "id" : "6aeb643ddb97a4aa",
+          "name" : "Some Processing",
+          "type" : "function",
+          "topic" : null,
+          "thing" : null
+        }, {
+          "id" : "71cae89933c731bc",
+          "name" : "",
+          "type" : "invoke-action",
+          "topic" : "traffic-light-control",
+          "thing" : "fdf2cccf0785050b",
+          "action" : "changeSignal"
+        } ]
+      }
+    },
+    "subFlow-4" : {
+      "rootNode" : {
+        "id" : "f8a685d092074385",
+        "name" : "",
+        "type" : "read-property",
+        "topic" : "enviornmental-monitoring",
+        "thing" : "7a0ce069567a6894",
+        "property" : "location"
+      },
+      "branches" : {
+        "branch-0" : [ {
+          "id" : "f8a685d092074385",
+          "name" : "",
+          "type" : "read-property",
+          "topic" : "enviornmental-monitoring",
+          "thing" : "7a0ce069567a6894",
+          "property" : "location"
+        }, {
+          "id" : "bd94f01e1e3337b4",
+          "name" : "Some Processing",
+          "type" : "function",
+          "topic" : null,
+          "thing" : null
+        }, {
+          "id" : "3b42511d6cf14ab0",
+          "name" : "",
+          "type" : "read-property",
+          "topic" : "enviornmental-monitoring",
+          "thing" : "7a0ce069567a6894",
+          "property" : "sampleRate"
+        }, {
+          "id" : "8572f3fbae95ac89",
+          "name" : "Some Data Processing",
+          "type" : "function",
+          "topic" : null,
+          "thing" : null
+        }, {
+          "id" : "11023c0d0b357f1a",
+          "name" : "",
+          "type" : "invoke-action",
+          "topic" : "ai-traffic-control",
+          "thing" : "89d5a66f4a09fbd0",
+          "action" : "generateComprehensiveReport"
+        } ],
+        "branch-1" : [ {
+          "id" : "f8a685d092074385",
+          "name" : "",
+          "type" : "read-property",
+          "topic" : "enviornmental-monitoring",
+          "thing" : "7a0ce069567a6894",
+          "property" : "location"
+        }, {
+          "id" : "bd94f01e1e3337b4",
+          "name" : "Some Processing",
+          "type" : "function",
+          "topic" : null,
+          "thing" : null
+        }, {
+          "id" : "46640aa28eb2832f",
+          "name" : "",
+          "type" : "read-property",
+          "topic" : "enviornmental-monitoring",
+          "thing" : "7a0ce069567a6894",
+          "property" : "trafficData"
+        }, {
+          "id" : "ecdfbe4472325288",
+          "name" : "Some Data Processing",
+          "type" : "function",
+          "topic" : null,
+          "thing" : null
+        }, {
+          "id" : "814597fdb3b88c22",
+          "name" : "",
+          "type" : "invoke-action",
+          "topic" : "ai-traffic-control",
+          "thing" : "89d5a66f4a09fbd0",
+          "action" : "generateComprehensiveReport"
+        } ],
+        "branch-2" : [ {
+          "id" : "f8a685d092074385",
+          "name" : "",
+          "type" : "read-property",
+          "topic" : "enviornmental-monitoring",
+          "thing" : "7a0ce069567a6894",
+          "property" : "location"
+        }, {
+          "id" : "bd94f01e1e3337b4",
+          "name" : "Some Processing",
+          "type" : "function",
+          "topic" : null,
+          "thing" : null
+        }, {
+          "id" : "ad9a6b5208ef47b5",
+          "name" : "",
+          "type" : "read-property",
+          "topic" : "enviornmental-monitoring",
+          "thing" : "7a0ce069567a6894",
+          "property" : "measurements"
+        }, {
+          "id" : "6e08113dd8173562",
+          "name" : "Some Data Processing",
+          "type" : "function",
+          "topic" : null,
+          "thing" : null
+        }, {
+          "id" : "344ea696d7abc3da",
+          "name" : "",
+          "type" : "invoke-action",
+          "topic" : "ai-traffic-control",
+          "thing" : "89d5a66f4a09fbd0",
+          "action" : "generateComprehensiveReport"
+        } ],
+        "branch-3" : [ {
+          "id" : "f8a685d092074385",
+          "name" : "",
+          "type" : "read-property",
+          "topic" : "enviornmental-monitoring",
+          "thing" : "7a0ce069567a6894",
+          "property" : "location"
+        }, {
+          "id" : "bd94f01e1e3337b4",
+          "name" : "Some Processing",
+          "type" : "function",
+          "topic" : null,
+          "thing" : null
+        }, {
+          "id" : "602dcb9175f57f25",
+          "name" : "",
+          "type" : "read-property",
+          "topic" : "enviornmental-monitoring",
+          "thing" : "7a0ce069567a6894",
+          "property" : "airQualityIndex"
+        }, {
+          "id" : "7718deb479d73df0",
+          "name" : "Some Data Processing",
+          "type" : "function",
+          "topic" : null,
+          "thing" : null
+        }, {
+          "id" : "81f897a2ce56b4ca",
+          "name" : "",
+          "type" : "invoke-action",
+          "topic" : "ai-traffic-control",
+          "thing" : "89d5a66f4a09fbd0",
+          "action" : "generateComprehensiveReport"
+        } ],
+        "branch-4" : [ {
+          "id" : "f8a685d092074385",
+          "name" : "",
+          "type" : "read-property",
+          "topic" : "enviornmental-monitoring",
+          "thing" : "7a0ce069567a6894",
+          "property" : "location"
+        }, {
+          "id" : "bd94f01e1e3337b4",
+          "name" : "Some Processing",
+          "type" : "function",
+          "topic" : null,
+          "thing" : null
+        }, {
+          "id" : "8f06364f89217083",
+          "name" : "",
+          "type" : "read-property",
+          "topic" : "pedestrian-monitoring",
+          "thing" : "66e09e7ca625eea2",
+          "property" : "currentPedestrianCount"
+        }, {
+          "id" : "efe8e0e32b09bdb5",
+          "name" : "Some Data Processing",
+          "type" : "function",
+          "topic" : null,
+          "thing" : null
+        }, {
+          "id" : "6bc59f079a4edbac",
+          "name" : "",
+          "type" : "invoke-action",
+          "topic" : "ai-traffic-control",
+          "thing" : "89d5a66f4a09fbd0",
+          "action" : "generateComprehensiveReport"
+        } ]
+      }
+    },
+    "subFlow-5" : {
+      "rootNode" : {
+        "id" : "19e23b5413a9db80",
+        "name" : "",
+        "type" : "subscribe-event",
+        "topic" : "enviornmental-monitoring",
+        "thing" : "7a0ce069567a6894",
+        "event" : "trafficCorrelationEvent"
+      },
+      "branches" : {
+        "branch-0" : [ {
+          "id" : "19e23b5413a9db80",
+          "name" : "",
+          "type" : "subscribe-event",
+          "topic" : "enviornmental-monitoring",
+          "thing" : "7a0ce069567a6894",
+          "event" : "trafficCorrelationEvent"
+        }, {
+          "id" : "91f2fe495bb64523",
+          "name" : "",
+          "type" : "read-property",
+          "topic" : "pedestrian-monitoring",
+          "thing" : "66e09e7ca625eea2",
+          "property" : "safetyRiskLevel"
+        }, {
+          "id" : "cc5a5c0718598951",
+          "name" : "",
+          "type" : "invoke-action",
+          "topic" : "ai-traffic-control",
+          "thing" : "89d5a66f4a09fbd0",
+          "action" : "generateComprehensiveReport"
+        } ]
+      }
+    },
+    "subFlow-6" : {
+      "rootNode" : {
+        "id" : "b5d20ada76b67a5e",
+        "name" : "",
+        "type" : "subscribe-event",
+        "topic" : "pedestrian-monitoring",
+        "thing" : "66e09e7ca625eea2",
+        "event" : "safetyConcernDetected"
+      },
+      "branches" : {
+        "branch-0" : [ {
+          "id" : "b5d20ada76b67a5e",
+          "name" : "",
+          "type" : "subscribe-event",
+          "topic" : "pedestrian-monitoring",
+          "thing" : "66e09e7ca625eea2",
+          "event" : "safetyConcernDetected"
+        }, {
+          "id" : "dc6ee81383e3f6fe",
+          "name" : "",
+          "type" : "invoke-action",
+          "topic" : "ai-traffic-control",
+          "thing" : "89d5a66f4a09fbd0",
+          "action" : "generateComprehensiveReport"
         } ]
       }
     }

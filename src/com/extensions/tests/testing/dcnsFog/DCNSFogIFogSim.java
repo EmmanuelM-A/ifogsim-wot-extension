@@ -17,6 +17,7 @@ import org.cloudbus.cloudsim.sdn.overbooking.BwProvisionerOverbooking;
 import org.cloudbus.cloudsim.sdn.overbooking.PeProvisionerOverbooking;
 import org.fog.application.AppEdge;
 import org.fog.application.AppLoop;
+import org.fog.application.AppModule;
 import org.fog.application.Application;
 import org.fog.application.selectivity.FractionalSelectivity;
 import org.fog.entities.*;
@@ -86,6 +87,13 @@ public class DCNSFogIFogSim {
                 // if the mode of deployment is cloud-based
                 moduleMapping.addModuleToDevice("main_processing_module", "cloud");
             }
+
+            /*if (CLOUD) {
+                for (AppModule appModule : application.getModules()) {
+                    //if(appModule.getName().startsWith("WorkerModule-"))
+                    moduleMapping.addModuleToDevice(appModule.getName(), "cloud");
+                }
+            }*/
 
             controller = new Controller("master-controller", fogDevices, sensors,
                     actuators);

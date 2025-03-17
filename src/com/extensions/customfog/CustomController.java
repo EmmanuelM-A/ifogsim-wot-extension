@@ -6,7 +6,9 @@ import java.util.List;
 import java.util.Map;
 
 import com.extensions.custommetrics.CustomMetricManager;
+import com.extensions.simulation.Simulation;
 import com.extensions.simulation.SimulationData;
+import com.extensions.tests.Testing;
 import org.cloudbus.cloudsim.core.CloudSim;
 import org.cloudbus.cloudsim.core.SimEntity;
 import org.cloudbus.cloudsim.core.SimEvent;
@@ -133,9 +135,10 @@ public class CustomController extends SimEntity {
                 // Run custom metrics using simulation data
                 customMetricManager.evaluateMetrics(simulationData);
 
+                //Simulation.setSimulationData(simulationData);
+
                 System.exit(0);
                 break;
-
         }
     }
 
@@ -304,5 +307,9 @@ public class CustomController extends SimEntity {
 
     public void setAppModulePlacementPolicy(Map<String, ModulePlacement> appModulePlacementPolicy) {
         this.appModulePlacementPolicy = appModulePlacementPolicy;
+    }
+
+    public SimulationData getSimulationData() {
+        return simulationData;
     }
 }

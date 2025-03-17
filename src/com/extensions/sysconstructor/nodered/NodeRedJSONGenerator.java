@@ -9,13 +9,27 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
+/**
+ * This class is responsible for generating the application topology file adn its content into a JSON file.
+ */
 public class NodeRedJSONGenerator {
+    /**
+     * The list of all node red nodes extracted from the node red application.
+     */
     private final List<NodeRedNode> nodes;
 
+    /**
+     * Initializes the list of node red nodes.
+     * @param nodes The list of node red nodes.
+     */
     public NodeRedJSONGenerator(List<NodeRedNode> nodes) {
         this.nodes = nodes;
     }
 
+    /**
+     * Generates the application topology file.
+     * @return The JSON object node containing the contents of the application topology file.
+     */
     public ObjectNode generate() {
         ObjectMapper mapper = new ObjectMapper();
         ObjectNode outputJson = mapper.createObjectNode();
@@ -28,6 +42,13 @@ public class NodeRedJSONGenerator {
         return outputJson;
     }
 
+    /**
+     * Generates a JSON object containing the application name.
+     * Extracts the name from the first node of type {@code TYPE_TAB}.
+     *
+     * @param mapper The {@link ObjectMapper} used to create the JSON object
+     * @return An {@link ObjectNode} containing the application name, or {@code null} if no such node is found
+     */
     private ObjectNode generateApplicationName(ObjectMapper mapper) {
         ObjectNode title = mapper.createObjectNode();
         for (NodeRedNode node : nodes) {
@@ -39,6 +60,13 @@ public class NodeRedJSONGenerator {
         return null; // Or return an empty ObjectNode if null is not preferred.
     }
 
+    /**
+     * Generates a JSON array containing information about consumed things.
+     * Each object in the array represents a thing with its ID, name, and type.
+     *
+     * @param mapper The {@link ObjectMapper} used to create the JSON array
+     * @return An {@link ArrayNode} containing JSON representations of consumed things
+     */
     private ArrayNode generateThings(ObjectMapper mapper) {
         ArrayNode thingsArray = mapper.createArrayNode();
         for (NodeRedNode node : nodes) {
@@ -53,6 +81,13 @@ public class NodeRedJSONGenerator {
         return thingsArray;
     }
 
+    /**
+     * Generates a JSON array of unique node topics.
+     * Duplicates are filtered out using a {@link HashSet}.
+     *
+     * @param mapper The {@link ObjectMapper} used to create the JSON array
+     * @return An {@link ArrayNode} containing unique node topics
+     */
     private ArrayNode generateNodeTopics(ObjectMapper mapper) {
         ArrayNode nodesArray = mapper.createArrayNode();
         Set<String> uniqueTopics = new HashSet<>(); // Use a Set to track unique topics
@@ -67,6 +102,13 @@ public class NodeRedJSONGenerator {
         return nodesArray;
     }
 
+    /**
+     * Generates a JSON representation of sub-flow trees.
+     * Groups nodes into sub-flows and represents them as a hierarchical structure.
+     *
+     * @param mapper The {@link ObjectMapper} used to create the JSON structure
+     * @return An {@link ObjectNode} containing sub-flow trees
+     */
     private ObjectNode generateSubFlowTrees(ObjectMapper mapper) {
         ObjectNode subFlowTrees = mapper.createObjectNode();
 
@@ -77,13 +119,13 @@ public class NodeRedJSONGenerator {
             ObjectNode subFlowTree = mapper.createObjectNode(); // JSON object for each sub flow
 
             // Set root node
-            JsonNode rootNode = createTopologyNode(mapper, trees.get(index).getRootNode());
+            JsonNode rootNode = createTopologyNode(mapper, trees.get(index).rootNode());
             subFlowTree.set("rootNode", rootNode);
 
             // Set the branches
             ObjectNode branchesJson = mapper.createObjectNode();
             int branchIndex = 0;
-            for (TreeBranch branch : trees.get(index).getBranches()) {
+            for (TreeBranch branch : trees.get(index).branches()) {
                 ArrayNode branchArray = mapper.createArrayNode();
                 for (NodeRedNode node : branch.nodes()) {
                     branchArray.add(createTopologyNode(mapper, node));
@@ -100,6 +142,14 @@ public class NodeRedJSONGenerator {
         return subFlowTrees;
     }
 
+    /**
+     * Creates a JSON representation of a topology node.
+     * Includes details such as ID, name, type, topic, thing, and specific attributes based on the node type.
+     *
+     * @param mapper The {@link ObjectMapper} used to create the JSON object
+     * @param node   The {@link NodeRedNode} to convert into a JSON representation
+     * @return An {@link ObjectNode} representing the topology node
+     */
     private ObjectNode createTopologyNode(ObjectMapper mapper, NodeRedNode node) {
         ObjectNode topologyNode = mapper.createObjectNode();
         topologyNode.put("id", node.getId());

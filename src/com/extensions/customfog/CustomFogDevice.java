@@ -80,37 +80,6 @@ public class CustomFogDevice extends FogDevice {
         }
     }
 
-    @Override
-    protected void updateTimingsOnReceipt(Tuple tuple) {
-        Application app = getApplicationMap().get(tuple.getAppId());
-        String srcModule = tuple.getSrcModuleName();
-        String destModule = tuple.getDestModuleName();
-        List<AppLoop> loops = app.getLoops();
-        for (AppLoop loop : loops) {
-            if (loop.hasEdge(srcModule, destModule) && loop.isEndModule(destModule)) {
-                //System.out.println("FogDevice module connection: " + srcModule + " ---> " + destModule);
-
-                Double startTime = TimeKeeper.getInstance().getEmitTimes().get(tuple.getActualTupleId());
-                if (startTime == null)
-                    break;
-                if (!TimeKeeper.getInstance().getLoopIdToCurrentAverage().containsKey(loop.getLoopId())) {
-                    TimeKeeper.getInstance().getLoopIdToCurrentAverage().put(loop.getLoopId(), 0.0);
-                    TimeKeeper.getInstance().getLoopIdToCurrentNum().put(loop.getLoopId(), 0);
-                }
-                double currentAverage = TimeKeeper.getInstance().getLoopIdToCurrentAverage().get(loop.getLoopId());
-                int currentCount = TimeKeeper.getInstance().getLoopIdToCurrentNum().get(loop.getLoopId());
-                double delay = CloudSim.clock() - TimeKeeper.getInstance().getEmitTimes().get(tuple.getActualTupleId());
-                TimeKeeper.getInstance().getEmitTimes().remove(tuple.getActualTupleId());
-                double newAverage = (currentAverage * currentCount + delay) / (currentCount + 1);
-                TimeKeeper.getInstance().getLoopIdToCurrentAverage().put(loop.getLoopId(), newAverage);
-                TimeKeeper.getInstance().getLoopIdToCurrentNum().put(loop.getLoopId(), currentCount + 1);
-                break;
-            } else {
-                //System.out.println("FogDevice module connection does not exist: " + srcModule + " ---> " + destModule);
-            }
-        }
-    }
-
     /**
      * Process incoming event tuples. This method is very similar to the processTupleArrival method (from the parent), with the
      * exception that it handles EVENT tuples rather than regular tuples.

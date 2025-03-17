@@ -1,41 +1,75 @@
 package com.extensions.sysconstructor.nodered;
 
 import com.extensions.utils.processors.FileProcessor;
-import com.extensions.vdcreation.models.ThingDescription;
-import com.extensions.vdcreation.parsers.ThingDescriptionParser;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
+/**
+ * Parses a JSON file containing Node-RED nodes and converts it into a list of {@link NodeRedNode} objects.
+ */
 public class NodeRedJSONParser implements FileProcessor<List<NodeRedNode>> {
     /**
-     *  The object mapper instance used to parse JSON files.
+     * The object mapper instance used to parse JSON files.
      */
     private final ObjectMapper objectMapper;
 
+    /**
+     * Node type representing an action invocation.
+     */
     public final static String TYPE_INVOKE_ACTION = "invoke-action";
+
+    /**
+     * Node type representing an event subscription.
+     */
     public final static String TYPE_SUBSCRIBE_EVENT = "subscribe-event";
+
+    /**
+     * Node type representing a read property operation.
+     */
     public final static String TYPE_READ_PROPERTY = "read-property";
+
+    /**
+     * Node type representing a write property operation.
+     */
     public final static String TYPE_WRITE_PROPERTY = "write-property";
+
+    /**
+     * Node type representing a consumed Thing.
+     */
     public final static String TYPE_CONSUMED_THING = "consumed-thing";
+
+    /**
+     * Node type representing a flow tab.
+     */
     public final static String TYPE_TAB = "tab";
+
+    /**
+     * Node type representing an inject node.
+     */
     public final static String TYPE_INJECT = "inject";
 
+    /**
+     * Constructs a new {@code NodeRedJSONParser} with a configured {@code ObjectMapper}.
+     */
     public NodeRedJSONParser() {
         this.objectMapper = new ObjectMapper();
         objectMapper.enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY);
         objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
     }
 
+    /**
+     * Processes a JSON file and converts it into a list of {@link NodeRedNode} objects.
+     *
+     * @param file The JSON file to parse.
+     * @return A list of parsed {@link NodeRedNode} objects.
+     * @throws IOException If an error occurs while reading or parsing the file.
+     */
     @Override
     public List<NodeRedNode> process(File file) throws IOException {
         JsonNode rootNode = objectMapper.readTree(file);
@@ -96,6 +130,12 @@ public class NodeRedJSONParser implements FileProcessor<List<NodeRedNode>> {
         return nodes;
     }
 
+    /**
+     * Cleans a string by removing double quotes and trimming whitespace.
+     *
+     * @param value The string to clean.
+     * @return The cleaned string, or {@code null} if the input was {@code null}.
+     */
     private String cleanString(String value) {
         if (value == null) {
             return null;

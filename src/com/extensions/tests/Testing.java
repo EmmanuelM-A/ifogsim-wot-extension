@@ -2,11 +2,13 @@ package com.extensions.tests;
 
 import com.extensions.custommetrics.metrics.MeanTupleExecutionDelay;
 import com.extensions.simulation.Simulation;
+import com.extensions.simulation.SimulationData;
 import com.extensions.tests.helper.InputHandler;
 import com.extensions.utils.presets.*;
 import org.cloudbus.cloudsim.Log;
 
 import java.io.IOException;
+import java.util.Arrays;
 
 /**
  * All testing done during my Testing & Evaluation stage happen in this folder.
@@ -19,11 +21,11 @@ public class Testing {
 
     //private static final InputHandler inputHandler = new InputHandler("industrial-equipment-maintenance-system.json", "src/com/extensions/tests/testing/industrialEquipmentMaintenanceSystem", true);
     //private static final InputHandler inputHandler = new InputHandler("remote-weather-station.json", "src/com/extensions/tests/testing/remoteWeatherStation", false);
-    //private static final InputHandler inputHandler = new InputHandler("smart-city-traffic-management.json", "src/com/extensions/tests/testing/SmartCityTrafficManagement", true);
+    private static final InputHandler inputHandler = new InputHandler("smart-city-traffic-management.json", "src/com/extensions/tests/testing/SmartCityTrafficManagement", true);
     //private static final InputHandler inputHandler = new InputHandler("smart-home-temperature-control.json", "src/com/extensions/tests/testing/smartHomeTemperatureControl", false);
     //private static final InputHandler inputHandler = new InputHandler("smart-agriculture-greenhouse-monitoring.json", "src/com/extensions/tests/testing/smartAgricultureGreenhouseMonitoring", false);
     //private static final InputHandler inputHandler = new InputHandler("smart-hospital-management.json", "src/com/extensions/tests/testing/smartHospitalManagement", true);
-    private static final InputHandler inputHandler = new InputHandler("dcns-fog-application.json", "src/com/extensions/tests/testing/dcnsFog", true);
+    //private static final InputHandler inputHandler = new InputHandler("dcns-fog-application.json", "src/com/extensions/tests/testing/dcnsFog", true);
 
     /**
      * The preset used to configure the cloud node.
@@ -33,7 +35,7 @@ public class Testing {
     /**
      * The presets used to configure all edge nodes.
      */
-    private static final EdgeNodePreset EDGE_NODE_PRESET = EdgeNodePreset.DCNSFog;
+    private static final EdgeNodePreset EDGE_NODE_PRESET = EdgeNodePreset.DEFAULT;
 
     /**
      * The presets used to configure the application.
@@ -89,8 +91,8 @@ public class Testing {
             Simulation.run();
 
         } catch(IOException e) {
-            //System.out.println(e.getMessage());
-            Log.printLine(e.getLocalizedMessage());
+            Log.printLine("Simulation terminated!");
+            e.printStackTrace();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
