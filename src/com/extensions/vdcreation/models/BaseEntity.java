@@ -18,6 +18,7 @@ import java.util.List;
  *     <li><b>minimum</b>: The minimum allowable value for numeric attributes of the entity.</li>
  *     <li><b>maximum</b>: The maximum allowable value for numeric attributes of the entity.</li>
  *     <li><b>observable</b>: Indicates whether the entity supports observation for real-time updates.</li>
+ *     <li><b>writeable</b>: Indicates whether the entity supports writeable attributes..</li>
  *     <li><b>readOnly</b>: Indicates whether the entity is read-only.</li>
  *     <li><b>writeOnly</b>: Indicates whether the entity is write-only.</li>
  *     <li><b>security</b>: A list of security mechanisms or schemes associated with the entity.</li>
@@ -74,6 +75,9 @@ public class BaseEntity {
      */
     private boolean observable;
 
+    /**
+     * Indicates whether the entity supports writeable attributes.
+     */
     private boolean writeable;
 
     /**
@@ -90,8 +94,6 @@ public class BaseEntity {
      * A list of security mechanisms or schemes associated with the entity.
      */
     private List<String> security;
-
-    // Getters and Setters
 
     /**
      * Gets the unique identifier for the entity.

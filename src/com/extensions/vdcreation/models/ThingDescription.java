@@ -58,78 +58,175 @@ public class ThingDescription extends BaseEntity {
 
     /////////////////////////// Getters and Setters ///////////////////////////
 
+    /**
+     * Gets the context of the Thing Description.
+     *
+     * @return the context as an Object (can be a String or List)
+     */
     public Object getContext() {
         return this.context;
     }
 
+    /**
+     * Sets the context of the Thing Description.
+     *
+     * @param context the context to set
+     */
     public void setContext(Object context) {
         this.context = context;
     }
 
+    /**
+     * Gets the base URI of the Thing.
+     *
+     * @return the base URI as a String
+     */
     public String getBase() {
         return this.base;
     }
 
+    /**
+     * Sets the base URI of the Thing.
+     *
+     * @param base the base URI to set
+     */
     public void setBase(String base) {
         this.base = base;
     }
 
+    /**
+     * Gets the version information of the Thing Description.
+     *
+     * @return the version information
+     */
     public VersionInfo getVersionInfo() {
         return this.versionInfo;
     }
 
+    /**
+     * Sets the version information of the Thing Description.
+     *
+     * @param versionInfo the version information to set
+     */
     public void setVersionInfo(VersionInfo versionInfo) {
         this.versionInfo = versionInfo;
     }
 
+    /**
+     * Gets the definitions map.
+     *
+     * @return a map of definitions
+     */
     public Map<String, Definition> getDefinitions() {
         return this.definitions;
     }
 
+    /**
+     * Sets the definitions map.
+     *
+     * @param definitions a map of definitions to set
+     */
     public void setDefinitions(Map<String, Definition> definitions) {
         this.definitions = definitions;
     }
 
+    /**
+     * Gets the security definitions of the Thing.
+     *
+     * @return a map of security schemes
+     */
     public Map<String, SecurityScheme> getSecurityDefinitions() {
         return this.securityDefinitions;
     }
 
+    /**
+     * Sets the security definitions of the Thing.
+     *
+     * @param securityDefinitions a map of security schemes to set
+     */
     public void setSecurityDefinitions(Map<String, SecurityScheme> securityDefinitions) {
         this.securityDefinitions = securityDefinitions;
     }
 
+    /**
+     * Gets the properties of the Thing.
+     *
+     * @return a map of properties
+     */
     public Map<String, Property> getProperties() {
         return this.properties;
     }
 
-    public void setProperty(Map<String, Property> properties) {
+    /**
+     * Sets the properties of the Thing.
+     *
+     * @param properties a map of properties to set
+     */
+    public void setProperties(Map<String, Property> properties) {
         this.properties = properties;
     }
 
+    /**
+     * Gets the actions of the Thing.
+     *
+     * @return a map of actions
+     */
     public Map<String, Action> getActions() {
         return this.actions;
     }
 
+    /**
+     * Sets the actions of the Thing.
+     *
+     * @param actions a map of actions to set
+     */
     public void setActions(Map<String, Action> actions) {
         this.actions = actions;
     }
-    
+
+    /**
+     * Gets the events of the Thing.
+     *
+     * @return a map of events
+     */
     public Map<String, Event> getEvents() {
         return this.events;
     }
 
+    /**
+     * Sets the events of the Thing.
+     *
+     * @param events a map of events to set
+     */
     public void setEvents(Map<String, Event> events) {
         this.events = events;
     }
 
+    /**
+     * Gets the links associated with the Thing.
+     *
+     * @return a list of links
+     */
     public List<Link> getLinks() {
         return this.links;
     }
 
+    /**
+     * Sets the links associated with the Thing.
+     *
+     * @param links a list of links to set
+     */
     public void setLinks(List<Link> links) {
         this.links = links;
     }
 
+    /**
+     * Prints the attributes of a given map.
+     *
+     * @param title the title of the section
+     * @param map   the map of attributes to print
+     * @param <T>   the type of values in the map
+     */
     public static <T> void printAttributes(String title, Map<String, T> map) {
         if (map == null || map.isEmpty()) {
             System.out.println(title + ": No data available.");
@@ -138,13 +235,17 @@ public class ThingDescription extends BaseEntity {
 
         System.out.println(title + ":");
         for (Map.Entry<String, T> entry : map.entrySet()) {
-            String name = entry.getKey();
-            T value = entry.getValue();
-            System.out.println("Name: " + name);
-            System.out.println("Details: " + value);
+            System.out.println("Name: " + entry.getKey());
+            System.out.println("Details: " + entry.getValue());
         }
     }
 
+    /**
+     * Prints the names of attributes in a given map.
+     *
+     * @param title the title of the section
+     * @param map   the map containing the attributes
+     */
     public static void printAttributeNames(String title, Map<String, ?> map) {
         if (map == null || map.isEmpty()) {
             System.out.println(title + ": No data available.");
@@ -152,15 +253,16 @@ public class ThingDescription extends BaseEntity {
         }
 
         System.out.print(title + ": [");
-        for (String attributeName : map.keySet()) {
-            System.out.print(attributeName + ", ");
-
-        }
-        System.out.print("]");
-        System.out.println();
+        System.out.print(String.join(", ", map.keySet()));
+        System.out.println("]");
     }
 
-    public static void printData(ThingDescription thingDescription) { 
+    /**
+     * Prints the key details of a ThingDescription instance.
+     *
+     * @param thingDescription the ThingDescription object to print
+     */
+    public static void printData(ThingDescription thingDescription) {
         if (thingDescription != null) {
             System.out.println("-----------------------------------------------------------------");
             System.out.println("Thing Description: " + thingDescription.getTitle());
