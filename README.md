@@ -157,11 +157,98 @@ For more detail about these constraints, view the [Technical Support Document](s
 `input/things` folder. To check if your TD conforms to the WoT standard, you can use this website
 [TD Playground](https://playground.thingweb.io/).
 
-2. Node-RED Application Design: 
+2. Node-RED Application Design: Once you have designed the application, it needs to be exported/downloaded. Store the
+file in the `input/application` folder.
+
+3. Virtual Device Configuration File: These are the configurations files used to configure VDs. A VD config file is in
+JSON format and may possess more than one VD configuration. They are stored in the `input/configs` folder. The format
+for `VirtualDeviceConfigs` is as follows:
+
+```json
+{
+  "configs": [
+	{
+	  "tagNames": ["VirtualDeviceName"],
+	  "mips": 800,
+	  "ram": 2048,
+	  "upBw": 1500,
+	  "downBw": 1500,
+	  "level": 3,
+	  "ratePerMips": 0.3,
+	  "busyPower": 40.0,
+	  "idlePower": 10.5
+	},
+	{}
+  ]    
+}
+```
+
+4. Thing Quantities: This file specifies the quantity of Things (which will later be converted into VDs) that will be
+used in the application and the VD-edge node connections. This file is stored in the `input/configs` file. The format of
+thing-quantity files is as follows:
+
+```json
+{
+  "edgeNodeName": {
+    "things": {
+	  "Thing Name 1": 2,
+	  "Thing Name 2": 1
+	}
+  },
+  "edgeNodeName2": {
+    "things": {
+	  "Thing Name 1": 2,
+	  "Thing Name 2": 1,
+      "Thing Name 3": 4
+	}
+  }
+}
+```
+For more detail about these inputs, please visit the [Technical Support Document](src/com/extensions/simulation/technical-support.md).
+
+### Running the Program
+
+1. Navigate to the `App` class (located in the root directory).
+
+2. Fill in all the required fields specified by the comments. In particularly, the following:
+
+```java
+private static final String NODE_RED_APPLICATION_JSON = "";
+
+private static final String THINGS_REPO = "";
+
+private static final String VDS_CONFIG_FILE = "";
+
+private static final String THING_QUANTITIES_FILE = "";
+```
+3. Assign all presets. These are configurations used to configure the iFogSim entities and applications. If you wish
+to alter these presets or create your own they are all located in this folder: `utils/presets`.
+
+4. If you wish to add any custom performance metrics, follow the steps bellow:
+    1. Navigate to the folder `custommetrics/metrics` and create a new class named `YourCustomPeromanceMetricName` which
+        implements the interface `CustomPerformanceMetric`.
+    2. Implement the specified methods
+    3. Navigate back to the `App` class and inside the main method, as part as step 2, use the `Simulation.registerCustomMetric(...)`
+        method to register the custom performance metrics you just created.
+
+5. Run the program. If any errors occur visit the [Technical Support Document - Errors Section](src/com/extensions/simulation/technical-support.md).
 
 ### Output Data
 
+The output produced from the simulation, is iFogSim's default results output plus any custom performance metrics you
+added. iFogSim's default results are as followed:
 
+- Execution Time – Total duration required to complete the simulation.
+
+- Application Loop Delays – Time taken for data to travel through the IoT system.
+
+- Tuple Execution Delays – Processing time of individual data tuples at different system nodes.
+
+- Energy Consumption per Device – Energy usage of each simulated device.
+
+- Total Network Usage – Data transmitted across the network during simulation.
+
+- Cloud Execution Cost – Estimated cost of cloud resource usage during execution.
 
 ## Documentation
 
@@ -178,3 +265,9 @@ for more details.
 
 - **Web of Things (WoT)**: Standard followed for IoT Thing Descriptions. Check here [Web of Things](https://www.w3.org/WoT/)
 for more details.
+
+- **Node-RED**: A wonderful tool for building and designing the applications and vital component used in my project.
+For more detail about Node-RED, visit their website [Node-RED](https://nodered.org/).
+
+- **Thing Web**: Utilised their Node-RED extension `node-red-node-wot` and they provided a lot of useful information 
+and documentation about IoT and setting up IoT applications. Visit here for more resources [ThingWeb](https://thingweb.io/).
