@@ -1,5 +1,12 @@
 # iFogSim Web of Thing Extension
 
+## About
+
+This project is part of my third-year dissertation for my Computer Science Course. It focuses on 
+addressing challenges in IoT system development by automating the integration and simulation of IoT devices. The tool 
+leverages IoT Thing Descriptions (TDs) from the Web of Things (WoT) standard and integrates with iFogSim to enhance 
+interoperability, scalability, and testing efficiency.
+
 ## Overview
 The Internet of Things (IoT) is expanding rapidly, with new devices continuously introduced to enhance 
 capabilities. However, this growth presents significant challenges for IoT developers, who must integrate, 
@@ -129,7 +136,7 @@ For additional details on using this extension, visit its official page: [@thing
 ### Node-RED Application Design
 
 Given you have set up Node-RED and the `node-red-node-wot` extension (and gained some familiarity) you can now build
-your application. If not visit here [Node-RED Setup]() for instructions for installing Node-RED and all the required
+your application. If not visit here [Node-RED Setup](#node-red-setup) for instructions for installing Node-RED and all the required
 extensions.
 
 When designing your application, you must adhere to these constraints:
@@ -148,8 +155,6 @@ node.
     - Inject node
 
 5. Once the application is completed, you must export (download) the entire flow (current flow) as a JSON file.
-
-For more detail about these constraints, view the [Technical Support Document](src/com/extensions/simulation/technical-support.md).
 
 ### Input Data
 
@@ -231,7 +236,7 @@ to alter these presets or create your own they are all located in this folder: `
     3. Navigate back to the `App` class and inside the main method, as part as step 2, use the `Simulation.registerCustomMetric(...)`
         method to register the custom performance metrics you just created.
 
-5. Run the program. If any errors occur visit the [Technical Support Document - Errors Section](src/com/extensions/simulation/technical-support.md).
+5. Run the program. If any errors occur visit the [Technical Support Document - Common Errors & Solutions](src/com/extensions/simulation/technical-support.md).
 
 ### Output Data
 

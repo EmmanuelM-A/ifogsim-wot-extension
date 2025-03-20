@@ -10,7 +10,7 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
- * This class is responsible for generating the application topology file adn its content into a JSON file.
+ * This class is responsible for generating the application topology file and its content into a JSON file.
  */
 public class NodeRedJSONGenerator {
     /**
