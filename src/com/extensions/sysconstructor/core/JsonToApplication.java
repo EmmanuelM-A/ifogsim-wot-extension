@@ -289,11 +289,9 @@ public class JsonToApplication implements ApplicationConstructor {
                                     WORKER_MODULE_K
                             );
                         } else {
-                            throw new Exception("The Virtual Devices that correspond to things with these attributes: " + src.uniqueAttribute() + ", " + dst.uniqueAttribute() + " do not exist!");
+                            throw new Exception("Application Construction Error - The Virtual Devices that correspond to things with these attributes: " + src.uniqueAttribute() + ", " + dst.uniqueAttribute() + " do not exist!");
                         }
                     }
-                } else {
-                    throw new Exception("Application Construction Error - either the " + src.uniqueAttribute() + " node is not a read-prop or the " + dst.uniqueAttribute() + " node is not an action/write-prop node!");
                 }
             }
         }
