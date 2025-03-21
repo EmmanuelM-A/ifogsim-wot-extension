@@ -47,7 +47,7 @@ This document can be found here: [Analytical Support Document](src/com/extension
 ### Prerequisites
 
 **Note - Knowledge and familiarity with iFogSim** will make it easier to understand and debug the application construction mechanism and 
-simulation process.
+the simulation process.
 
 Before setting up the project, ensure you have the following installed:
 
@@ -144,7 +144,7 @@ extensions.
 
 When designing your application, you must adhere to these constraints:
 
-1. Single Flow Requirement - Your entire application must be contained within on flow. Multiple flows are not supported.
+1. Single Flow Requirement - Your entire application must be contained within one flow. Multiple flows are not supported.
 
 2. Single input connection - Each node must have exactly one input connection. Nodes with multiple incoming connections
 will cause parsing errors.
