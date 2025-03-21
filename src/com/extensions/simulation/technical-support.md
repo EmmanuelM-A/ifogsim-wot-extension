@@ -53,7 +53,7 @@ similar to iFogSim's `Controller` class but incorporates the `CustomMetricsManag
   - `createApplicationPhysicalTopology(virtualDevices)`: Constructs the application's physical topology base of two
   approaches depending on weather you use the thing quantities file or not.
     - Both approaches follow the structure CLOUD <----> EDGE NODES <----> VDs
-    - (1) Structure the topology with a cloud at
+    - (1) Structures the topology with the cloud node at
     level 1, the edge nodes defined in the thing quantities file at level 2 and finally the VDs at level 3 connected to
     their specific edge nodes. 
     - (2) Is the default topology, when no thing quantity file is present. It has a cloud node
@@ -97,6 +97,7 @@ also determines which edge nodes they belong to.
 
 #### **Simulation**
 - **Purpose**: Handles everything needed to create the application and its simulation.
+
 - **Key Methods/Functions**:
     - `setupApplication(...)`: Sets up the application and all its components.
     - `run`: Runs the simulation
@@ -106,7 +107,7 @@ also determines which edge nodes they belong to.
 - **Purpose**: Responsible for creating all virtual devices from the folder that stores the thing descriptions.
 
 - **Key Methods/Functions**:
-  - `createVirtualDevices(...)`: Creates a list of virtual devices from the thing descriptions
+  - `createVirtualDevices(...)`: Creates a list of virtual devices from the thing descriptions.
 
 #### **Thing Description**
 - **Purpose**: Represents a Thing Description for a WoT-compliant device, used as intermediately D.S to store the 

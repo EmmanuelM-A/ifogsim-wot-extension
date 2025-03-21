@@ -46,6 +46,9 @@ This document can be found here: [Analytical Support Document](src/com/extension
 
 ### Prerequisites
 
+**Note - Knowledge and familiarity with iFogSim** will make it easier to understand and debug the application construction mechanism and 
+simulation process.
+
 Before setting up the project, ensure you have the following installed:
 
 - **Java Development Kit (JDK) 8 or later** – Required to compile and run the simulation.
@@ -146,6 +149,10 @@ When designing your application, you must adhere to these constraints:
 2. Single input connection - Each node must have exactly one input connection. Nodes with multiple incoming connections
 will cause parsing errors.
 
+![Image of Node-RED node with multiple incoming connections](images/multiple-incoming-connections.png)
+
+![Image of Node-RED node with one incoming connections](images/one-incoming-connection.png)
+
 3. iFogSim Compatibility - All sub-flows must start with a read-property or sub-event node and end with an invoke-action or write-property
 node.
 
@@ -230,11 +237,27 @@ private static final String THING_QUANTITIES_FILE = "";
 to alter these presets or create your own they are all located in this folder: `utils/presets`.
 
 4. If you wish to add any custom performance metrics, follow the steps bellow:
-    1. Navigate to the folder `custommetrics/metrics` and create a new class named `YourCustomPeromanceMetricName` which
-        implements the interface `CustomPerformanceMetric`.
-    2. Implement the specified methods
-    3. Navigate back to the `App` class and inside the main method, as part as step 2, use the `Simulation.registerCustomMetric(...)`
-        method to register the custom performance metrics you just created.
+   1. Navigate to the folder `custommetrics/metrics` and create a new class named `YourCustomPeromanceMetricName` which
+   implements the interface `CustomPerformanceMetric`.
+   
+   2. Implement the specified methods.
+   
+   3. Navigate back to the `App` class and inside the main method, as part as step 2, use the `Simulation.registerCustomMetric(...)`
+   method to register the custom performance metrics you just created.
+   
+   ```java
+   public class MeanTupleExecutionDelay implements CustomPerformanceMetric<Double> {
+       @Override
+       public Double evaluate(SimulationData simulationData) {
+           // Some Implementation
+       }
+        
+       @Override
+       public String getMetricName() {
+           return "Mean Tuple Execution Delay (ms)";
+       }    
+   }
+   ```
 
 5. Run the program. If any errors occur visit the [Technical Support Document - Common Errors & Solutions](src/com/extensions/simulation/technical-support.md).
 
