@@ -1,12 +1,5 @@
 # iFogSim Web of Thing Extension
 
-## About
-
-This project is part of my third-year dissertation for my Computer Science Course. It focuses on 
-addressing challenges in IoT system development by automating the integration and simulation of IoT devices. The tool 
-leverages IoT Thing Descriptions (TDs) from the Web of Things (WoT) standard and integrates with iFogSim to enhance 
-interoperability, scalability, and testing efficiency.
-
 ## Overview
 The Internet of Things (IoT) is expanding rapidly, with new devices continuously introduced to enhance 
 capabilities. However, this growth presents significant challenges for IoT developers, who must integrate, 
